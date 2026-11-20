@@ -28,3 +28,19 @@ npm test        # Playwright: asserts the page matches data/stats.json
 ```sh
 python3 -m http.server 8000   # open http://localhost:8000
 ```
+
+## Irrigation console
+
+`irrigation.html` is a garden irrigation console. Valve decisions come from `controller/ctl.rs`, a
+Verus-verified controller (pump capacity, max run time, tank never underflows). The same file runs:
+
+- on macOS (built by the bridge with the verus-stack toolchain), and
+- as a Nanvix guest (`controller/nanvix-guest`, branch `conduit-irrigation` of maceip/nanvix) on a
+  Windows 11 machine with WHP, driven over SSH.
+
+```sh
+python3 bridge/conduit_bridge.py --nanvix-host user@windows-host   # settings saved to ~/.conduit-lab/
+```
+
+Open the page (local or on GitHub Pages) and allow Chrome's local-network prompt. Soil moisture is simulated;
+valve state, tank level and delivered water are the controller's real replies.
