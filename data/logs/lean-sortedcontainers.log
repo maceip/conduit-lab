@@ -1,16 +1,5 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/sortedcontainers
-# exit: 0  seconds: 3.06
+# exit: 0  seconds: 0.15
 
-✔ [2/13] Built SortedcontainersCore.Impl.SortedList (288ms)
-✔ [3/13] Built SortedcontainersCore.Impl.SortedSet (208ms)
-✔ [4/13] Built SortedcontainersCore.Impl.SortedDict (197ms)
-✔ [5/13] Built SortedcontainersCore.Bundle (259ms)
-✔ [6/13] Built SortedcontainersCore.Harness (258ms)
-✔ [7/13] Built SortedcontainersCore.Spec.Aux (165ms)
-✔ [8/13] Built SortedcontainersCore.Spec.SortedList (278ms)
-✔ [9/13] Built SortedcontainersCore.Spec.SortedSet (234ms)
-✔ [10/13] Built SortedcontainersCore.Spec.SortedDict (244ms)
-✔ [11/13] Built SortedcontainersCore.Test (1.8s)
-✔ [12/13] Built SortedcontainersCore (136ms)
 Build completed successfully (13 jobs).

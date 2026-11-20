@@ -1,12 +1,5 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/toposort
-# exit: 0  seconds: 2.34
+# exit: 0  seconds: 0.15
 
-✔ [2/9] Built ToposortSort.Impl.Toposort (911ms)
-✔ [3/9] Built ToposortSort.Bundle (227ms)
-✔ [4/9] Built ToposortSort.Harness (334ms)
-✔ [5/9] Built ToposortSort.Spec.Aux (276ms)
-✔ [6/9] Built ToposortSort.Test (462ms)
-✔ [7/9] Built ToposortSort.Spec.Toposort (265ms)
-✔ [8/9] Built ToposortSort (214ms)
 Build completed successfully (9 jobs).

@@ -1,11 +1,5 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/ipaddress
-# exit: 0  seconds: 0.99
+# exit: 0  seconds: 0.15
 
-✔ [2/8] Built Ipaddress.Impl.Cidr (165ms)
-✔ [3/8] Built Ipaddress.Bundle (178ms)
-✔ [4/8] Built Ipaddress.Test (196ms)
-✔ [5/8] Built Ipaddress.Harness (193ms)
-✔ [6/8] Built Ipaddress.Spec.Cidr (227ms)
-✔ [7/8] Built Ipaddress (143ms)
 Build completed successfully (8 jobs).

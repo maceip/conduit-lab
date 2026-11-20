@@ -113,9 +113,10 @@
       <div class="section-head">
         <div class="eyebrow">VERO / LEAN 4</div>
         <h2>Benchmark builds</h2>
-        <p>A passing <code>lake build</code> means the frozen types, APIs and specs compile. It does not mean the specs are proved:
-          each remaining <code>sorry</code> is an open obligation for an agent to discharge. Benchmarks that depend on mathlib are
-          only built when the collector runs with <code>--with-mathlib</code>.</p>
+        <p>Each instance is built with its curator reference implementation and proofs in place. A passing <code>lake build</code>
+          with zero open <code>sorry</code> means the Lean kernel checked every proof in that instance (declared axioms aside).
+          The <code>sorry</code> column counts Lean's own “declaration uses sorry” warnings from the build log, and each one is an
+          unproved declaration. Benchmarks that depend on mathlib are only built when the collector runs with <code>--with-mathlib</code>.</p>
       </div>
       <div class="filters" role="group" aria-label="Filter benchmarks" id="bench-filters"></div>
       <div class="table-wrap">
@@ -147,7 +148,7 @@
           <ul>
             <li>VeriStruct repair success: needs model API keys, so the collector only checks the tooling, not repair outcomes</li>
             <li>SkySynth synthesis quality: only a CLI smoke check is recorded</li>
-            <li>Vero proof completion: builds are recorded, proofs are not graded here</li>
+            <li>Vero agent performance: the reference solutions are built, not agent submissions</li>
             <li>mathlib-dependent benchmarks, unless run with <code>--with-mathlib</code></li>
             <li>Reproducibility on other machines: results are from the host listed above</li>
           </ul>

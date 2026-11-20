@@ -1,17 +1,5 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/deposit_sc
-# exit: 0  seconds: 1.72
+# exit: 0  seconds: 0.15
 
-✔ [2/14] Built DepositSc.Impl.Bits (170ms)
-✔ [3/14] Built DepositSc.Impl.Tree (227ms)
-✔ [4/14] Built DepositSc.Impl.Merkle (258ms)
-✔ [5/14] Built DepositSc.Impl.Contract (179ms)
-✔ [6/14] Built DepositSc.Bundle (206ms)
-✔ [7/14] Built DepositSc.Test (305ms)
-✔ [8/14] Built DepositSc.Harness (220ms)
-✔ [9/14] Built DepositSc.Spec.Contract (191ms)
-✔ [10/14] Built DepositSc.Spec.Bits (218ms)
-✔ [11/14] Built DepositSc.Spec.Tree (230ms)
-✔ [12/14] Built DepositSc.Spec.Merkle (230ms)
-✔ [13/14] Built DepositSc (138ms)
 Build completed successfully (14 jobs).

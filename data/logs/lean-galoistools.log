@@ -1,13 +1,5 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/galoistools
-# exit: 0  seconds: 1.51
+# exit: 0  seconds: 0.15
 
-✔ [2/10] Built Galoistools.Impl.Ring (179ms)
-✔ [3/10] Built Galoistools.Impl.Division (205ms)
-✔ [4/10] Built Galoistools.Bundle (209ms)
-✔ [5/10] Built Galoistools.Test (362ms)
-✔ [6/10] Built Galoistools.Harness (241ms)
-✔ [7/10] Built Galoistools.Spec.Ring (192ms)
-✔ [8/10] Built Galoistools.Spec.Division (201ms)
-✔ [9/10] Built Galoistools (153ms)
 Build completed successfully (10 jobs).

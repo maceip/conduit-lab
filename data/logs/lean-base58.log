@@ -1,11 +1,5 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/base58
-# exit: 0  seconds: 1.09
+# exit: 0  seconds: 0.15
 
-✔ [2/8] Built Base58.Impl.Codec (173ms)
-✔ [3/8] Built Base58.Bundle (164ms)
-✔ [4/8] Built Base58.Test (187ms)
-✔ [5/8] Built Base58.Harness (214ms)
-✔ [6/8] Built Base58.Spec.Codec (286ms)
-✔ [7/8] Built Base58 (161ms)
 Build completed successfully (8 jobs).

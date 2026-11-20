@@ -1,11 +1,5 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/cachetools
-# exit: 0  seconds: 1.09
+# exit: 0  seconds: 0.15
 
-✔ [2/8] Built Cachetools.Impl.Lru (191ms)
-✔ [3/8] Built Cachetools.Bundle (170ms)
-✔ [4/8] Built Cachetools.Test (197ms)
-✔ [5/8] Built Cachetools.Harness (201ms)
-✔ [6/8] Built Cachetools.Spec.Lru (260ms)
-✔ [7/8] Built Cachetools (138ms)
 Build completed successfully (8 jobs).

@@ -1,11 +1,5 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/intervaltree
-# exit: 0  seconds: 0.99
+# exit: 0  seconds: 0.15
 
-✔ [2/8] Built Intervaltree.Impl.Merge (206ms)
-✔ [3/8] Built Intervaltree.Bundle (161ms)
-✔ [4/8] Built Intervaltree.Test (192ms)
-✔ [5/8] Built Intervaltree.Harness (192ms)
-✔ [6/8] Built Intervaltree.Spec.Merge (239ms)
-✔ [7/8] Built Intervaltree (137ms)
 Build completed successfully (8 jobs).

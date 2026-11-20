@@ -1,6 +1,6 @@
 $ cargo verus --help
 # cwd: ~/workspaces/verus-stack
-# exit: 0  seconds: 0.05
+# exit: 0  seconds: 0.01
 
 A Cargo subcommand that enables verification of Rust code as part of the normal Cargo workflow.
 

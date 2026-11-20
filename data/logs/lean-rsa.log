@@ -1,13 +1,5 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/rsa
-# exit: 0  seconds: 0.98
+# exit: 0  seconds: 0.15
 
-✔ [2/10] Built Rsa.Impl.Transform (164ms)
-✔ [3/10] Built Rsa.Impl.Common (175ms)
-✔ [4/10] Built Rsa.Bundle (163ms)
-✔ [5/10] Built Rsa.Test (196ms)
-✔ [6/10] Built Rsa.Harness (193ms)
-✔ [7/10] Built Rsa.Spec.Transform (169ms)
-✔ [8/10] Built Rsa.Spec.Common (245ms)
-✔ [9/10] Built Rsa (138ms)
 Build completed successfully (10 jobs).

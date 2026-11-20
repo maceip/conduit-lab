@@ -1,10 +1,5 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/primepy
-# exit: 0  seconds: 0.88
+# exit: 0  seconds: 0.15
 
-✔ [2/7] Built Primepy.Impl.Primes (164ms)
-✔ [3/7] Built Primepy.Bundle (140ms)
-✔ [4/7] Built Primepy.Harness (140ms)
-✔ [5/7] Built Primepy.Test (187ms)
-✔ [6/7] Built Primepy (132ms)
 Build completed successfully (7 jobs).

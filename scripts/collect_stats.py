@@ -143,7 +143,7 @@ def verify_examples() -> list[dict]:
     return res
 
 
-SORRY_RE = re.compile(r"\bsorry\b")
+SORRY_RE = re.compile(r"^warning: (\S+?):(\d+):\d+: declaration uses .sorry.", re.M)
 JOBS_RE = re.compile(r"Build completed successfully \((\d+) jobs?\)")
 
 
@@ -153,9 +153,8 @@ def lean_benchmarks(with_mathlib: bool) -> list[dict]:
     for d in sorted(p for p in root.iterdir() if p.is_dir()):
         lakefiles = list(d.glob("lakefile.*"))
         needs_mathlib = any("mathlib" in f.read_text().lower() for f in lakefiles)
-        sorries = sum(len(SORRY_RE.findall(f.read_text(errors="ignore")))
-                      for f in d.rglob("*.lean") if ".lake" not in f.parts)
-        entry = {"name": d.name, "needs_mathlib": needs_mathlib, "sorry_count": sorries}
+        # sorry_count comes from Lean's own warnings in the build log (null if not built)
+        entry = {"name": d.name, "needs_mathlib": needs_mathlib, "sorry_count": None}
         if not lakefiles:
             res.append({**entry, "status": "no_lakefile"})
             continue
@@ -167,6 +166,7 @@ def lean_benchmarks(with_mathlib: bool) -> list[dict]:
         m = JOBS_RE.search(text)
         res.append({
             **entry,
+            "sorry_count": len(set(SORRY_RE.findall(text))) if code == 0 else None,
             "status": "passed" if code == 0 else ("timeout" if code == -1 else "failed"),
             "jobs": int(m.group(1)) if m else None,
             "seconds": secs,

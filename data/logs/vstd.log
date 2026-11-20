@@ -1,5 +1,5 @@
-$ verus --internal-test-mode --extern verus_builtin=~/workspaces/verus-stack/verus/source/target-verus/release/libverus_builtin.rlib --extern verus_builtin_macros=~/workspaces/verus-stack/verus/source/target-verus/release/libverus_builtin_macros.dylib --extern verus_state_machines_macros=~/workspaces/verus-stack/verus/source/target-verus/release/libverus_state_machines_macros.dylib --crate-type=lib --export /var/folders/8j/5mwkcdz55xbcg1pg_54tlcf00000gn/T/tmpgyv29ci_/vstd.vir --out-dir /var/folders/8j/5mwkcdz55xbcg1pg_54tlcf00000gn/T/tmpgyv29ci_ --multiple-errors 2 --is-vstd --cfg feature="std" --cfg feature="alloc" vstd.rs
+$ verus --internal-test-mode --extern verus_builtin=~/workspaces/verus-stack/verus/source/target-verus/release/libverus_builtin.rlib --extern verus_builtin_macros=~/workspaces/verus-stack/verus/source/target-verus/release/libverus_builtin_macros.dylib --extern verus_state_machines_macros=~/workspaces/verus-stack/verus/source/target-verus/release/libverus_state_machines_macros.dylib --crate-type=lib --export /var/folders/8j/5mwkcdz55xbcg1pg_54tlcf00000gn/T/tmp9_gc9cf4/vstd.vir --out-dir /var/folders/8j/5mwkcdz55xbcg1pg_54tlcf00000gn/T/tmp9_gc9cf4 --multiple-errors 2 --is-vstd --cfg feature="std" --cfg feature="alloc" vstd.rs
 # cwd: ~/workspaces/verus-stack/verus/source/vstd
-# exit: 0  seconds: 12.22
+# exit: 0  seconds: 17.88
 
 verification results:: 2354 verified, 0 errors
