@@ -590,4 +590,277 @@ pub fn ipv6_parse(input: &[u8]) -> (res: Option<Vec<u16>>)
     ipv6_finish(pi, compress, addr)
 }
 
+// ---------------------------------------------------------------------------------------
+// IPv6 serializer (spec)
+// ---------------------------------------------------------------------------------------
+
+/// "find the IPv6 address compressed piece index": the loop over pieces, with its four variables.
+pub open spec fn spec_compress_loop(
+    addr: Seq<nat>,
+    i: nat,
+    longest_index: Option<nat>,
+    longest_size: nat,
+    found_index: Option<nat>,
+    found_size: nat,
+) -> Option<nat>
+    decreases 8 - i,
+{
+    if i >= 8 {
+        // "If foundSize is greater than longestSize, then return foundIndex. Return longestIndex."
+        if found_size > longest_size {
+            found_index
+        } else {
+            longest_index
+        }
+    } else if addr[i as int] != 0 {
+        // "If foundSize is greater than longestSize, then set longestIndex to foundIndex and
+        // longestSize to foundSize. Set foundIndex to null. Set foundSize to 0."
+        if found_size > longest_size {
+            spec_compress_loop(addr, i + 1, found_index, found_size, None, 0)
+        } else {
+            spec_compress_loop(addr, i + 1, longest_index, longest_size, None, 0)
+        }
+    } else {
+        // "If foundIndex is null, then set foundIndex to pieceIndex. Increment foundSize by 1."
+        let fi = if found_index is None {
+            Some(i)
+        } else {
+            found_index
+        };
+        spec_compress_loop(addr, i + 1, longest_index, longest_size, fi, found_size + 1)
+    }
+}
+
+/// "Let longestIndex be null. Let longestSize be 1. Let foundIndex be null. Let foundSize be 0."
+pub open spec fn spec_compressed_index(addr: Seq<nat>) -> Option<nat> {
+    spec_compress_loop(addr, 0, None, 1, None, 0)
+}
+
+pub open spec fn hex_lower_digit(n: nat) -> u8 {
+    if n < 10 {
+        (0x30 + n) as u8
+    } else {
+        (0x61 + n - 10) as u8
+    }
+}
+
+/// n "represented as the shortest possible lowercase hexadecimal number".
+pub open spec fn spec_hex_lower(n: nat) -> Seq<u8>
+    decreases n,
+{
+    if n < 16 {
+        seq![hex_lower_digit(n)]
+    } else {
+        spec_hex_lower(n / 16).push(hex_lower_digit(n % 16))
+    }
+}
+
+/// The serializer's loop over pieces.
+pub open spec fn spec_serialize_loop(
+    addr: Seq<nat>,
+    i: nat,
+    compress: Option<nat>,
+    ignore0: bool,
+    out: Seq<u8>,
+) -> Seq<u8>
+    decreases 8 - i,
+{
+    if i >= 8 {
+        out
+    } else if ignore0 && addr[i as int] == 0 {
+        // "If ignore0 is true and address[pieceIndex] is 0, then continue."
+        spec_serialize_loop(addr, i + 1, compress, ignore0, out)
+    } else if compress == Some(i) {
+        // "Let separator be "::" if pieceIndex is 0; otherwise U+003A (:). Append separator to
+        // output. Set ignore0 to true and continue."
+        let sep = if i == 0 {
+            seq![0x3Au8, 0x3Au8]
+        } else {
+            seq![0x3Au8]
+        };
+        spec_serialize_loop(addr, i + 1, compress, true, out + sep)
+    } else {
+        // "Otherwise, if ignore0 is true, set ignore0 to false." then append the piece and, if
+        // pieceIndex is not 7, U+003A (:).
+        let tail = if i != 7 {
+            seq![0x3Au8]
+        } else {
+            Seq::<u8>::empty()
+        };
+        spec_serialize_loop(addr, i + 1, compress, false, out + spec_hex_lower(addr[i as int]) + tail)
+    }
+}
+
+/// The IPv6 serializer (without the surrounding brackets the host serializer adds).
+pub open spec fn spec_ipv6_serialize(addr: Seq<nat>) -> Seq<u8> {
+    spec_serialize_loop(addr, 0, spec_compressed_index(addr), false, Seq::<u8>::empty())
+}
+
+/// The hex form has no leading zero, i.e. it is the shortest one.
+pub proof fn lemma_hex_lower_shortest(n: nat)
+    ensures
+        spec_hex_lower(n).len() >= 1,
+        n > 0 ==> spec_hex_lower(n)[0] != 0x30,
+    decreases n,
+{
+    if n >= 16 {
+        lemma_hex_lower_shortest(n / 16);
+    }
+}
+
+// ---------------------------------------------------------------------------------------
+// IPv6 serializer (exec)
+// ---------------------------------------------------------------------------------------
+
+pub open spec fn view_u16(s: Seq<u16>) -> Seq<nat> {
+    s.map_values(|x: u16| x as nat)
+}
+
+fn hex_lower_digit_exec(n: u16) -> (r: u8)
+    requires
+        n < 16,
+    ensures
+        r == hex_lower_digit(n as nat),
+{
+    if n < 10 {
+        0x30 + n as u8
+    } else {
+        0x61 + (n as u8) - 10
+    }
+}
+
+fn push_hex_lower(n: u16, out: &mut Vec<u8>)
+    ensures
+        final(out)@ == old(out)@ + spec_hex_lower(n as nat),
+    decreases n,
+{
+    if n < 16 {
+        out.push(hex_lower_digit_exec(n));
+        proof {
+            assert(final(out)@ =~= old(out)@ + spec_hex_lower(n as nat));
+        }
+    } else {
+        push_hex_lower(n / 16, out);
+        out.push(hex_lower_digit_exec(n % 16));
+        proof {
+            assert(final(out)@ =~= old(out)@ + spec_hex_lower(n as nat));
+        }
+    }
+}
+
+pub fn compressed_index(addr: &[u16]) -> (r: Option<usize>)
+    requires
+        addr@.len() == 8,
+    ensures
+        opt_nat(r) == spec_compressed_index(view_u16(addr@)),
+{
+    let ghost a = view_u16(addr@);
+    let mut longest_index: Option<usize> = None;
+    let mut longest_size: usize = 1;
+    let mut found_index: Option<usize> = None;
+    let mut found_size: usize = 0;
+    let mut i: usize = 0;
+    while i < 8
+        invariant
+            i <= 8,
+            addr@.len() == 8,
+            a == view_u16(addr@),
+            longest_size <= 8,
+            found_size <= i,
+            spec_compressed_index(a) == spec_compress_loop(
+                a,
+                i as nat,
+                opt_nat(longest_index),
+                longest_size as nat,
+                opt_nat(found_index),
+                found_size as nat,
+            ),
+        decreases 8 - i,
+    {
+        if addr[i] != 0 {
+            if found_size > longest_size {
+                longest_index = found_index;
+                longest_size = found_size;
+            }
+            found_index = None;
+            found_size = 0;
+        } else {
+            if found_index.is_none() {
+                found_index = Some(i);
+            }
+            found_size += 1;
+        }
+        i += 1;
+    }
+    if found_size > longest_size {
+        found_index
+    } else {
+        longest_index
+    }
+}
+
+/// The IPv6 serializer.
+pub fn ipv6_serialize(addr: &[u16]) -> (out: Vec<u8>)
+    requires
+        addr@.len() == 8,
+    ensures
+        out@ == spec_ipv6_serialize(view_u16(addr@)),
+{
+    let ghost a = view_u16(addr@);
+    let compress = compressed_index(addr);
+    let mut out: Vec<u8> = Vec::new();
+    let mut ignore0 = false;
+    let mut i: usize = 0;
+    proof {
+        assert(out@ =~= Seq::<u8>::empty());
+    }
+    while i < 8
+        invariant
+            i <= 8,
+            addr@.len() == 8,
+            a == view_u16(addr@),
+            spec_ipv6_serialize(a) == spec_serialize_loop(a, i as nat, opt_nat(compress), ignore0, out@),
+        decreases 8 - i,
+    {
+        if ignore0 && addr[i] == 0 {
+            i += 1;
+            continue;
+        }
+        ignore0 = false;
+        if compress == Some(i) {
+            let ghost before = out@;
+            if i == 0 {
+                out.push(0x3A);
+                out.push(0x3A);
+                proof {
+                    assert(out@ =~= before + seq![0x3Au8, 0x3Au8]);
+                }
+            } else {
+                out.push(0x3A);
+                proof {
+                    assert(out@ =~= before + seq![0x3Au8]);
+                }
+            }
+            ignore0 = true;
+            i += 1;
+            continue;
+        }
+        let ghost before = out@;
+        push_hex_lower(addr[i], &mut out);
+        let ghost mid = out@;
+        if i != 7 {
+            out.push(0x3A);
+            proof {
+                assert(out@ =~= before + spec_hex_lower(a[i as int]) + seq![0x3Au8]);
+            }
+        } else {
+            proof {
+                assert(out@ =~= before + spec_hex_lower(a[i as int]) + Seq::<u8>::empty());
+            }
+        }
+        i += 1;
+    }
+    out
+}
+
 } // verus!
