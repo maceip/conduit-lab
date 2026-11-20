@@ -265,9 +265,9 @@
         tr.querySelector(".open-b").addEventListener("click", (e) => act(`open${i}`, e.target, () => api("POST", "/api/command", { cmd: `open ${i}` })));
         tr.querySelector(".close-b").addEventListener("click", (e) => act(`close${i}`, e.target, () => api("POST", "/api/command", { cmd: `close ${i}` })));
         for (const k of ["low", "high"]) {
-          tr.querySelector(`.${k}`).addEventListener("change", (e) => act(`zone${i}`, null, () => api("POST", `/api/zone/${i}`, { [k]: Number(e.target.value) })));
+          tr.querySelector(`.${k}`).addEventListener("change", (e) => act(`zone${i}-${k}`, null, () => api("POST", `/api/zone/${i}`, { [k]: Number(e.target.value) })));
         }
-        tr.querySelector(".auto").addEventListener("change", (e) => act(`zone${i}`, null, () => api("POST", `/api/zone/${i}`, { auto: e.target.checked })));
+        tr.querySelector(".auto").addEventListener("change", (e) => act(`zone${i}-auto`, null, () => api("POST", `/api/zone/${i}`, { auto: e.target.checked })));
         tb.append(tr);
       });
     }

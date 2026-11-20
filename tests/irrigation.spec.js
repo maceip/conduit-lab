@@ -117,15 +117,22 @@ test("nanvix: check host reports the real Windows/WHP state", async ({ page, req
 });
 
 test("nanvix: guest runs in the micro-VM and agrees with macOS", async ({ page, request }) => {
+  test.skip(!(await status(request)).runtimes.nanvix.host, "NANVIX_HOST not set for this run");
+  await expect.poll(async () => (await status(request)).runtimes.nanvix.probe.checked || 0, { timeout: 40000 }).toBeGreaterThan(0);
   const p = (await status(request)).runtimes.nanvix.probe;
   test.skip(!(p && p.reachable && p.guest_built), "Nanvix guest not built on the host yet");
   await page.goto(PAGE);
   const card = page.getByTestId("rt-nanvix");
   await card.locator('[data-act="start"]').click();
   await expect(card).toHaveAttribute("data-running", "true", { timeout: 90000 });
-  // both runtimes restart from the same state only if macOS is restarted too
-  await page.getByTestId("rt-macos").locator('[data-act="stop"]').click();
-  await page.getByTestId("rt-macos").locator('[data-act="start"]').click();
+  // (re)start macOS so both controllers begin from the same fresh state
+  const mac = page.getByTestId("rt-macos");
+  if ((await status(request)).runtimes.macos.running) {
+    await mac.locator('[data-act="stop"]').click();
+    await expect(mac).toHaveAttribute("data-running", "false");
+  }
+  await mac.locator('[data-act="start"]').click();
+  await expect(mac).toHaveAttribute("data-running", "true");
   await page.locator('#zone-rows tr[data-zone="2"] .open-b').click();
   await expect.poll(async () => (await status(request)).runtimes.nanvix.state.open[2], { timeout: 30000 }).toBe(true);
   await expect(page.getByTestId("agree")).toContainText("in agreement");
