@@ -1,6 +1,6 @@
 # A browser engine we can formally verify over time
 
-Status: design proposal, nothing built yet. Written 2026-11-20.
+Status: design proposal. Phase 1 started in `browser/` (URL parser). Written 2026-11-20; JS engine plan added 2026-11-20.
 
 The goal is a browser that is usable on real sites from the first release, and whose
 trusted part shrinks release by release as components are replaced by verified ones.
@@ -72,7 +72,17 @@ These references are from memory and not re-checked for this draft. Confirm them
 - **Featherweight Firefox** (Bohannon, Pierce): a formal model of browser/JS interaction.
 - **Cassius / VizAssert** (Panchekha, Torlak et al.): CSS layout formalized for SMT; proves
   properties of page layouts.
-- **JSCert, KJS**: mechanized JavaScript semantics. They are too large to verify an engine against near term.
+- **JSCert / JSRef** (Bodin, Charguéraud, Gardner et al., POPL 2014): ES5 semantics in Coq, plus a
+  reference interpreter extracted to OCaml and proved correct against JSCert for ES5 chapters 8–14.
+  Running it on test262 found bugs in JSCert, JSRef, browsers, the standard, and test262 itself.
+  Pitfall: parsing was not verified (it trusted the Closure parser). Source: [jscert/jscert](https://github.com/jscert/jscert).
+- **ESMeta / JISET** (KAIST/Korea Univ. PLRG; CACM 2024): automatically extracts a mechanized spec
+  (IRES control-flow graphs) from a given commit of ecma262 `spec.html`, then runs it as an
+  interpreter and synthesizes conformance tests. Source: [es-meta/esmeta](https://github.com/es-meta/esmeta).
+- **Warblre** (De Santo, Barrière, Pit-Claudel, ICFP 2024): ECMAScript 2023 regex semantics (§22.2)
+  in Coq, with spec text interleaved line by line. It proves compilation and matching terminate with
+  no assertion failures, and passes 495 of 498 test262 regex tests. Source: [arXiv 2403.11919](https://arxiv.org/abs/2403.11919).
+- **KJS** (K framework): another executable JS semantics (from memory, not re-checked).
 - **WasmCert (Coq/Isabelle), vWasm / rWasm** (Bosamiya et al.): verified Wasm semantics and
   provably safe Wasm sandboxing. This is a route to running untrusted code with a verified boundary.
 - **Servo components** (html5ever, Stylo, WebRender): production Rust and unverified. These are the
@@ -117,14 +127,87 @@ Then replace components one by one with verified ones, and never let the verifie
 | Content | HTML tokenizer, tree builder | html5ever (untrusted) → verified replacement | Tokenizer: equivalence to the WHATWG state machine + totality; tree builder: DOM well-formedness invariants | Verus, SkySynth for code from spec | 3 |
 | Content | CSS tokenizer/parser | cssparser (untrusted) → Vest-based | Roundtrip/prefix security on tokens | Verus | 3 |
 | Layout | Block/inline layout | Stylo + Servo layout (untrusted) | Cassius-style properties (determinism, no overflow of declared boxes) on a subset | Verus/Lean | 4+ |
-| Script | JS | Embedded engine, untrusted, inside the renderer sandbox | No engine proof planned; security comes from the kernel + sandbox. Wasm via a verified sandboxing compiler later | n/a | — |
+| Script | JS engine `vjs` (§3.3) | New safe-Rust interpreter, no JIT; an untrusted engine only as a temporary fallback that has a removal criterion | Each interpreter step refines the ECMA-262 spec step; heap well-formedness and the essential internal-method invariants (§6.1.7.3) for every object; the parser matches the grammar plus early errors; GC preserves the reachable heap; regex matches the spec and terminates | Verus, Lean, ESMeta-derived spec | 1–5 |
+| Script | Wasm | Verified interpreter in `vjs`, later AOT via a verified sandboxing compiler | Interpreter refines the Wasm spec; compiled code stays inside its sandbox | Verus | 4+ |
 
 Trust at release 1: Rust compiler, Verus + Z3, the specs, the IPC glue, the crypto
 providers (libcrux/AWS-LC verified subsets as in Verdict's `verified-crypto`), and the sandbox.
 Renderers are **outside** the TCB: a compromised renderer can only misrender its own
 origin, which is the property the kernel proves.
 
-### 3.3 How each workspace tool is used
+### 3.3 Verified JavaScript engine (`vjs`)
+
+The JS engine is where Chrome's in-the-wild bugs land: at least four of 2026's exploited
+Chrome zero-days are V8 bugs, for example CVE-2026-85046, a type confusion. Leaving it
+unverified and hoping the sandbox holds is not acceptable. `vjs` is a first-class
+verified component with its own end-to-end theorem.
+
+**The theorem.** For every program `p` and fuel `n`:
+`vjs::run(p, n)` returns exactly one of:
+- `Done(v)` with `v == spec_eval(p, n)`;
+- `OutOfFuel`, which happens only if the spec also needs more than `n` steps;
+- `Unsupported(feature)`, an explicit refusal that is never a wrong answer.
+
+The ratchet shrinks the `Unsupported` set. Each spec section is either proved or reported as unsupported, never silently approximated.
+
+**Design choices.**
+1. **Safe Rust, interpreter only, no JIT.** `#![forbid(unsafe_code)]` across the engine.
+   The heap is an index-based arena, so memory safety holds by construction before any
+   functional proof. Proofs give correctness, which is what stops type-confusion-style
+   logic bugs. A JIT never enters the TCB. Performance work goes into a bytecode
+   interpreter whose compiler has a simulation proof.
+2. **Spec from the source text, not retyped.** We generate Verus spec functions from
+   ESMeta's mechanized ECMA-262, pinned to an exact `spec.html` commit, as we did by hand for
+   WHATWG URL in `browser/url`.
+   - The generator is untrusted. The generated spec is trusted, so we keep each algorithm step's text next to its spec
+     line (as Warblre does) and differential-test the spec, compiled to exec, against
+     test262 and ESMeta's own interpreter.
+   - This answers Verdict's "spec is trusted" pitfall and JSRef's
+     "spec has bugs" finding.
+3. **Same proof shape as `vurl`.**
+   - One spec function per algorithm and per loop.
+   - Exec code proved equal to it, with "remaining-computation" loop invariants.
+   - Lexicographic `decreases` everywhere. Non-termination exists only in the explicit fuel parameter.
+4. **Verify the parser.** JSRef trusted an external parser, so we don't. The lexer and
+   parser are proved against the ECMA-262 lexical and syntactic grammars, early errors included.
+   The AST→bytecode compiler, when it comes, has its own proof.
+5. **Invariants that matter for security.**
+   - Heap well-formedness (no dangling indices, shapes consistent with property maps).
+   - The §6.1.7.3 invariants of the essential internal methods, proved for ordinary objects and for every exotic object (Array, Proxy, TypedArray, arguments).
+   - Realm/agent separation, so a renderer's realms never share objects except through the kernel-mediated binding layer.
+6. **Host boundary.** DOM and Web IDL bindings go through a verified conversion layer
+   (Web IDL's ToJS/ToIDL algorithms as specs). The engine has no ambient authority: every host
+   capability is a kernel-issued handle.
+7. **GC.** A mark-sweep collector over the arena, proved to preserve the abstract heap
+   restricted to reachable objects.
+8. **Regex.** A port of Warblre's semantics to Verus, proved to match the spec,
+   terminate, and never hit an assertion failure.
+
+**Order of work.** Each step ships with test262 subsets in CI and its numbers in the ratchet report.
+
+| Step | Scope | Exit criterion (measured) |
+|---|---|---|
+| J0 | ESMeta→Verus spec generator; spec-as-exec differential harness vs test262 | Generated spec for chosen sections type-checks; harness reports per-section pass counts |
+| J1 | Types and abstract ops: UTF-16 strings, Number (incl. shortest round-trip Number::toString, StringToNumber), BigInt, ToPrimitive/ToNumber/ToString, equality | Proved exec == spec; test262 `built-ins/Number`, `language/types` subsets |
+| J2 | Object model: property descriptors, ordinary internal methods, §6.1.7.3 invariants, Array exotic | Invariant proofs; test262 `built-ins/Object` subset |
+| J3 | Lexer, parser, early errors | Proved against the grammar; test262 `language/` parse tests |
+| J4 | Interpreter core: environments, completion records, expressions, statements, functions, closures, exceptions | Step refinement proved; `vjs` runs real scripts end to end |
+| J5 | Built-ins by real-site usage (measured from a crawl corpus): Array, String, JSON (Vest round trip), Math, Map/Set, RegExp (Warblre port), Date (verified date parsing) | Per-built-in proofs; test262 pass rate per directory |
+| J6 | Promises, job queue, async/await, generators; GC proof; Proxy/Reflect | Liveness under fuel; GC theorem |
+| J7 | Bytecode compiler + interpreter with simulation proof; verified Wasm interpreter | Compiler correctness theorem; speed measured on a public benchmark set |
+
+**Usability bridge, with a removal date set by a measurement, not a calendar.**
+- Until `vjs` covers what real sites use, a renderer may run an untrusted engine, and the kernel decides per origin.
+- A "verified script" mode runs only `vjs` and shows `Unsupported(feature)` to the user instead of falling back silently.
+- The untrusted engine is deleted once `vjs` passes the crawl corpus at the same rate it does.
+- Until then, the collector reports the share of script executions that ran on `vjs`.
+
+**Scale, stated plainly.** JSRef's proof covered ES5 chapters 8–14. Current ECMA-262
+is several times larger. We don't estimate effort here. The ratchet report (proved
+sections, `Unsupported` features, test262 pass rate, verification seconds) is the only
+progress number we'll publish.
+
+### 3.4 How each workspace tool is used
 
 - **Verus + Z3**: all Rust proofs. Rules: upstream Verus only; `#![forbid(unsafe_code)]`
   outside named glue modules; every loop has `decreases`; per-function `rlimit` budgets;
@@ -150,7 +233,7 @@ origin, which is the property the kernel proves.
   component, verified obligations, `assume`/`external_body` counts, and verification time,
   all generated from real runs, so the ratchet is visible and cannot be inflated.
 
-### 3.4 The ratchet metric
+### 3.5 The ratchet metric
 
 For each release, the collector records, per crate: verified functions, trusted
 functions (`external_body`, `assume_specification`, `admit`, `assume`), unsafe blocks,
@@ -168,6 +251,7 @@ linked justification, or if the verified share of the TCB goes down.
 | 2 | Verified kernel (non-interference, address bar), HTTP/1.1 parsing, CSP/CORS policies; renderers on Nanvix | Daily-driver for simple sites | Kernel theorems verified; differential tests vs a reference engine on a crawl corpus |
 | 3 | Verified HTML tokenizer and CSS tokenizer replace untrusted ones | Same, smaller TCB | WPT html/syntax tokenizer tests; roundtrip proofs |
 | 4+ | Tree builder invariants, layout properties, Wasm sandbox | — | Per-component theorems |
+| JS track (parallel from Phase 1) | `vjs` steps J0–J7 (§3.3) | Verified-script mode from J4 | Per-step criteria in §3.3; untrusted engine removed when `vjs` matches its crawl-corpus pass rate |
 
 ## 5. Risks
 
