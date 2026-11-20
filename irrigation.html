@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONDUIT Irrigation</title>
+  <meta name="description" content="A garden irrigation console whose valves are decided by a Verus-verified controller running on your machine and inside a Nanvix micro-VM.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="irrigation.css">
+  <script src="irrigation.js" defer></script>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="index.html"><span class="brand-mark"></span> CONDUIT <span class="brand-lab">LAB</span></a>
+    <nav>
+      <a href="index.html">Lab</a>
+      <a href="irrigation.html" aria-current="page">Irrigation</a>
+      <a class="nav-ghost" href="https://github.com/maceip/conduit-lab">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="irr">
+    <section class="irr-head">
+      <div>
+        <div class="eyebrow">IRRIGATION CONSOLE / VERIFIED CONTROLLER</div>
+        <h1>Garden</h1>
+        <p class="sub">Every valve decision comes from a Verus-verified controller running on your machine,
+          and the same code can run inside a Nanvix micro-VM. Soil moisture is simulated by the bridge.</p>
+      </div>
+      <div class="conn" id="conn" data-testid="conn" data-state="connecting">
+        <span class="dot"></span><span id="conn-text">Connecting to local bridge…</span>
+      </div>
+    </section>
+
+    <section class="setup" id="setup" data-testid="setup" hidden>
+      <h2>Connect your workspace</h2>
+      <p>This page talks to a bridge on <code>127.0.0.1:8787</code> that runs the controller and the Verus toolchain. Start it from the repo:</p>
+<pre><code>cd conduit-lab
+python3 bridge/conduit_bridge.py --nanvix-host &lt;user&gt;@&lt;windows-host&gt;</code></pre>
+      <p class="muted">Every control stays disabled until the bridge answers. Nothing on this page works without it.</p>
+    </section>
+
+    <div class="irr-grid">
+      <section class="panel viz-panel">
+        <div class="panel-head">
+          <h2>Field</h2>
+          <span class="badge" id="agree" data-testid="agree"></span>
+        </div>
+        <svg id="garden" data-testid="garden" viewBox="0 0 760 420" role="img" aria-label="Garden irrigation diagram">
+          <defs>
+            <linearGradient id="waterGrad" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0" stop-color="#1b7fd1"/><stop offset="1" stop-color="#4dd4ff"/>
+            </linearGradient>
+            <pattern id="soil" width="8" height="8" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="0.9" fill="rgba(255,255,255,.06)"/><circle cx="6" cy="6" r="0.9" fill="rgba(255,255,255,.04)"/>
+            </pattern>
+          </defs>
+          <!-- tank -->
+          <g id="tank">
+            <rect x="30" y="90" width="90" height="240" rx="10" class="tank-shell"/>
+            <rect id="tank-water" x="34" y="94" width="82" height="232" rx="7" fill="url(#waterGrad)"/>
+            <text x="75" y="360" class="lbl" text-anchor="middle">TANK</text>
+            <text id="tank-text" x="75" y="380" class="val" text-anchor="middle"></text>
+          </g>
+          <!-- pump -->
+          <g id="pump">
+            <circle cx="175" cy="210" r="22" class="pump"/>
+            <path id="pump-rotor" d="M175 194 L181 210 L175 226 L169 210 Z" class="rotor"/>
+            <text x="175" y="252" class="lbl" text-anchor="middle">PUMP</text>
+            <text id="pump-text" x="175" y="270" class="val" text-anchor="middle"></text>
+          </g>
+          <path d="M120 210 H153" class="pipe"/>
+          <path d="M197 210 H240 V60 V360" class="pipe"/>
+          <g id="zones"></g>
+        </svg>
+        <div class="legend">
+          <span><i class="sw dry"></i>dry</span><span><i class="sw ok"></i>in range</span><span><i class="sw wet"></i>saturated</span>
+          <span><i class="sw flow"></i>valve open</span>
+        </div>
+      </section>
+
+      <section class="panel side">
+        <div class="panel-head"><h2>Controller</h2></div>
+        <div class="verify" data-testid="verify">
+          <button id="btn-verify" data-testid="btn-verify" disabled>Verify &amp; build</button>
+          <div id="verify-result" class="vres"></div>
+        </div>
+        <div class="runtimes">
+          <article class="rt" id="rt-macos" data-testid="rt-macos">
+            <header><b>macOS</b><span class="rt-state"></span></header>
+            <p class="rt-detail"></p>
+            <div class="rt-actions">
+              <button data-act="start" disabled>Start</button>
+              <button data-act="stop" disabled>Stop</button>
+            </div>
+          </article>
+          <article class="rt" id="rt-nanvix" data-testid="rt-nanvix">
+            <header><b>Nanvix micro-VM</b><span class="rt-state"></span></header>
+            <p class="rt-detail"></p>
+            <dl class="probe"></dl>
+            <div class="rt-actions">
+              <button data-act="probe" disabled>Check host</button>
+              <button data-act="sync" disabled>Sync &amp; build</button>
+              <button data-act="start" disabled>Start</button>
+              <button data-act="stop" disabled>Stop</button>
+            </div>
+          </article>
+        </div>
+
+        <div class="panel-head"><h2>Simulation</h2></div>
+        <div class="sim" data-testid="sim">
+          <button id="btn-run" data-testid="btn-run" disabled>Start</button>
+          <label>Tick <output id="tick-out"></output>
+            <input type="range" id="tick" min="200" max="3000" step="100" disabled></label>
+          <label>Rain/well refill <output id="refill-out"></output>
+            <input type="range" id="refill" min="0" max="50" step="1" disabled></label>
+          <label>Drive garden from
+            <select id="primary" disabled><option value="macos">macOS</option><option value="nanvix">Nanvix</option></select></label>
+          <button id="btn-reset" class="ghost" disabled>Reset garden</button>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Zones</h2><span class="muted" id="limits"></span></div>
+      <div class="table-wrap">
+        <table class="data zones" data-testid="zones">
+          <thead><tr><th>Zone</th><th>Moisture</th><th>Valve</th><th>Run</th><th>Delivered</th><th>Low %</th><th>High %</th><th>Auto</th><th></th></tr></thead>
+          <tbody id="zone-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="irr-grid two">
+      <section class="panel">
+        <div class="panel-head"><h2>Events</h2></div>
+        <ol class="events" id="events" data-testid="events"></ol>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Job log</h2><span class="muted" id="job-title"></span></div>
+        <pre class="joblog" id="joblog" data-testid="joblog"></pre>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
