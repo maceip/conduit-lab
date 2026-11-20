@@ -12,13 +12,15 @@ Spec source: whatwg/url@4f461b81 (2026-11-19). Each spec algorithm is transcribe
 |---|---|---|---|
 | `percent` | percent-encode a byte, percent-decode, the 8 percent-encode sets, percent-encode after encoding (UTF-8, no spaceAsPlus) | `percent_encode`, `percent_decode`, `in_set` | the spec's form-urlencoded note; the query-vs-fragment note; the set inclusion chain; decode∘encode = id exactly for sets containing `%` (only component and form-urlencoded), with a counterexample for the other six |
 | `ipv4` | strictly split on `.`, IPv4 number parser, IPv4 parser, ends-in-a-number checker | `split_dots`, `ipv4_number`, `ipv4_parse`, `ends_in_a_number` | the spec's note that step 5 of the checker is equivalent to "0x/0X followed by hex digits" |
+| `ipv6` | IPv6 parser (incl. IPv4-in-IPv6 and compression), find the compressed piece index, IPv6 serializer | `ipv6_parse`, `compressed_index`, `ipv6_serialize` | hex pieces are the shortest form (no leading zero) |
 
-Not yet modeled: validation errors (only return values), IPv6, opaque/domain hosts, IDNA, the
-basic URL parser state machine, and serializers.
+Not yet modeled: validation errors (only return values), opaque/domain hosts, IDNA, the basic
+URL parser state machine, and the remaining serializers. Not yet proved: serialize→parse round
+trip for IPv6 (tested on 200k random addresses, not proved).
 
 Testing (beyond the proofs, which already cover all inputs): WPT `urltestdata.json`
-(pinned, see `url/tests/data/PROVENANCE`) for the IPv4 host cases, plus differential tests
-against the `url` and `percent-encoding` crates.
+(pinned, see `url/tests/data/PROVENANCE`) for the IPv4 and IPv6 host cases, plus differential
+tests against the `url` and `percent-encoding` crates.
 
 ## Running
 
