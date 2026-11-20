@@ -97,7 +97,23 @@ code { font-family: ui-monospace, Menlo, monospace; color: var(--cyan); font-siz
 .detail-rule { height: 1px; background: var(--line); margin: 18px 0; }
 .detail-note { font-size: 11px; color: #8492ad; }
 
-.ledger { padding: 30px 4vw 70px; }
+.signals { padding: 20px 4vw 44px; }
+.signals-head { margin-bottom: 20px; }
+.signals-head h2 { font-size: 26px; margin: 8px 0 0; }
+.signal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.signal { display: grid; grid-template-columns: 54px 1fr; column-gap: 14px; align-items: center; padding: 14px; border: 1px solid var(--line); background: rgba(10,15,28,.6); }
+.signal .ico { grid-row: span 2; width: 54px; height: 54px; background-image: url('assets/conduit-icons.jpg'); background-size: 200% 200%; filter: saturate(1.15) contrast(1.05); }
+.ico.core { background-position: 0% 0%; }
+.ico.proof { background-position: 100% 0%; }
+.ico.orbit { background-position: 0% 100%; }
+.ico.wave { background-position: 100% 100%; }
+.signal b { font-size: 12px; letter-spacing: .08em; color: var(--cyan); }
+.signal span { font-size: 11px; color: var(--muted); }
+
+.ledger { position: relative; padding: 70px 4vw 70px; overflow: hidden; }
+.ledger:before { content: ''; position: absolute; inset: 0; background: url('assets/conduit-modules.jpg') center/cover no-repeat; opacity: .16; filter: saturate(.85); }
+.ledger > * { position: relative; z-index: 1; }
+.ledger:after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, var(--bg), rgba(5,6,12,.72) 35%, var(--bg)); pointer-events: none; }
 .ledger-head { max-width: 620px; margin-bottom: 26px; }
 .ledger-head h2 { font-size: 30px; margin: 10px 0; }
 .ledger-head p { color: var(--muted); }
