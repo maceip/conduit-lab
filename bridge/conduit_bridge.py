@@ -326,7 +326,12 @@ def nanvix_sync_steps() -> list:
     for src, dst in GUEST_FILES.items():
         steps.append((f"scp controller/{src} -> {dst}",
                       ["scp", "-q", "-o", "BatchMode=yes", str(CONTROLLER / src), f"{host}:{remote_dir}/{dst}"], {}))
-    steps.append(("z.ps1 build -- all", ps(f"cd '{d}'; .\\z.ps1 build -- all 2>&1; exit $LASTEXITCODE"), {}))
+    # Nanvix's Windows build needs an MSVC-host Rust; pin it for this build only (no global rustup change).
+    channel = "(Select-String -Path rust-toolchain -Pattern 'channel' | % { ($_ -split [char]34)[1] })"
+    steps.append(("z.ps1 build -- all (MSVC host toolchain)",
+                  ps(f"cd '{d}'; $env:RUSTUP_TOOLCHAIN = {channel} + '-x86_64-pc-windows-msvc'; "
+                     "Write-Output ('toolchain=' + $env:RUSTUP_TOOLCHAIN); "
+                     ".\\z.ps1 build -- all 2>&1; exit $LASTEXITCODE"), {}))
     return steps
 
 
