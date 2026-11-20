@@ -46,6 +46,7 @@ GUEST_FILES = {  # repo file -> path inside <nanvix>/src/user/irrigation-control
 }
 NANVIX_BRANCH = "conduit-irrigation"
 ALLOWED_ORIGINS = re.compile(r"^(https://maceip\.github\.io|http://(localhost|127\.0\.0\.1)(:\d+)?)$")
+REPLY_RE = re.compile(r'\{"ok":.*\}')
 VERIFY_RE = re.compile(r"verification results::\s*(\d+) verified,\s*(\d+) errors")
 
 LOCK = threading.RLock()
@@ -195,9 +196,12 @@ class Runtime:
             line = line.strip()
             self.transcript.append(line)
             del self.transcript[:-200]
-            if line.startswith("{") and line.endswith("}"):
+            # Nanvix shares stdout between the kernel log and the guest, so a reply can land
+            # mid-line after a log prefix. Extract the controller's JSON object wherever it is.
+            m = REPLY_RE.search(line)
+            if m:
                 try:
-                    self.replies.put(json.loads(line))
+                    self.replies.put(json.loads(m.group(0)))
                 except ValueError:
                     pass
         self.replies.put(None)
