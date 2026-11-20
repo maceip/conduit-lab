@@ -605,7 +605,15 @@ def main() -> None:
     ap.add_argument("--verus-stack")
     ap.add_argument("--nanvix-host", help="SSH target of the Windows/WHP machine, e.g. user@10.0.0.5")
     ap.add_argument("--nanvix-dir", help="Nanvix checkout on that machine")
+    ap.add_argument("--state-dir", help="where config, garden state, builds and logs live (default ~/.conduit-lab)")
+    ap.add_argument("--no-save-config", action="store_true", help="do not write CLI settings back to the config file")
     args = ap.parse_args()
+
+    global HOME_DIR, CONFIG_FILE, STATE_FILE, BUILD_DIR, LOG_DIR
+    if args.state_dir:
+        HOME_DIR = Path(args.state_dir).expanduser().resolve()
+        CONFIG_FILE, STATE_FILE = HOME_DIR / "bridge.json", HOME_DIR / "irrigation-state.json"
+        BUILD_DIR, LOG_DIR = HOME_DIR / "build", HOME_DIR / "logs"
 
     CONFIG.update({"port": 8787, "verus_stack": str(Path.home() / "workspaces" / "verus-stack"),
                    "nanvix_host": None, "nanvix_dir": None})
@@ -617,7 +625,8 @@ def main() -> None:
     if CONFIG["nanvix_host"] and not CONFIG["nanvix_dir"]:
         user = CONFIG["nanvix_host"].split("@")[0]
         CONFIG["nanvix_dir"] = f"C:\\Users\\{user}\\nanvix\\nanvix"
-    save_json(CONFIG_FILE, CONFIG)
+    if not args.no_save_config:
+        save_json(CONFIG_FILE, CONFIG)
 
     GARDEN.update(json.loads(json.dumps(DEFAULT_GARDEN)))
     saved = load_json(STATE_FILE, None)
