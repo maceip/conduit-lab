@@ -3,7 +3,11 @@
 //!
 //! Validation errors are not modeled yet; only the return values are. Inputs are ASCII strings
 //! as bytes (the host parser runs domain-to-ASCII first).
-use crate::percent::{hex_val, hex_value, is_ascii_hex_digit, is_hex};
+use crate::percent::{hex_val, is_hex};
+// Spec-only items are erased in non-Verus builds.
+#[cfg(verus_keep_ghost)]
+use crate::percent::{hex_value, is_ascii_hex_digit};
+#[cfg(verus_keep_ghost)]
 use vstd::arithmetic::power::pow;
 use vstd::prelude::*;
 

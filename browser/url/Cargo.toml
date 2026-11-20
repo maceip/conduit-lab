@@ -10,6 +10,9 @@ vstd = { workspace = true }
 
 [dev-dependencies]
 serde_json = "1"
+# Differential-testing oracles only (not used by the library).
+url = "2"
+percent-encoding = "2"
 
 [package.metadata.verus]
 verify = true
