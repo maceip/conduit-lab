@@ -3,3 +3,4 @@
 #![forbid(unsafe_code)]
 
 pub mod percent;
+pub mod ipv4;
