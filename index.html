@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONDUIT Lab — Local Formal Verification Workspace</title>
+  <meta name="description" content="A local SMT-backed Rust verification and neuro-symbolic synthesis workspace on Apple Silicon.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="#top"><span class="brand-mark"></span> CONDUIT <span class="brand-lab">LAB</span></a>
+    <nav>
+      <a href="#stack">Stack</a>
+      <a href="#quickstart">Quickstart</a>
+      <a href="#architecture">Architecture</a>
+      <a class="nav-ghost" href="https://github.com/maceip/conduit-lab">GitHub</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <img class="hero-img" src="assets/conduit-banner.jpg" alt="CONDUIT banner">
+      <div class="hero-scrim"></div>
+      <div class="hero-content">
+        <div class="eyebrow">LOCAL WORKSPACE / APPLE SILICON</div>
+        <h1>CONDUIT</h1>
+        <p class="tagline">A local SMT-backed Rust verification and neuro-symbolic synthesis workspace on Apple Silicon.</p>
+        <div class="chips">
+          <span>arm64 native</span><span>Z3 4.16.0</span><span>Rust 1.100.0</span><span>Lean 4.29.1</span>
+        </div>
+        <a class="cta" href="#quickstart">Open the quickstart</a>
+      </div>
+    </section>
+
+    <section class="stats" aria-label="Workspace metrics">
+      <div><strong>4</strong><span>integrated toolchains</span></div>
+      <div><strong>2354</strong><span>vstd obligations verified</span></div>
+      <div><strong>43</strong><span>Lean benchmarks</span></div>
+      <div><strong>0</strong><span>errors in verification run</span></div>
+    </section>
+
+    <section id="stack" class="section">
+      <div class="section-head">
+        <div class="eyebrow">THE STACK</div>
+        <h2>Four tools, one workspace</h2>
+        <p>Each repository is self-contained with its own pinned toolchain and isolated Python 3.12 environment.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="card-index">01 / PROVER</div>
+          <h3>Verus + Z3</h3>
+          <p>Verification-aware Rust with a native arm64 SMT solver. Built from source against Rust 1.100.0 with rustc-dev and rust-src.</p>
+          <ul><li>vstd: 2354 verified, 0 errors</li><li>Example: 9 verified, 0 errors</li><li>Z3 4.16.0 arm64</li></ul>
+        </article>
+        <article class="card">
+          <div class="card-index">02 / REPAIR</div>
+          <h3>VeriStruct</h3>
+          <p>LLM-driven proof repair over Verus benchmarks. Credentials are read from the environment; no secrets are stored in the repo.</p>
+          <ul><li>isolated uv venv, Python 3.12</li><li>gitignored local config</li><li>verus_path wired locally</li></ul>
+        </article>
+        <article class="card">
+          <div class="card-index">03 / SYNTHESIS</div>
+          <h3>SkyDiscover / SkySynth</h3>
+          <p>Proof-driven synthesis wired into Claude Code, Cursor, and Codex as the <code>/skysynth</code> skill with role agents and delivery hooks.</p>
+          <ul><li>CLI verified end to end</li><li>3 coding agents wired</li><li>httpx + numpy only</li></ul>
+        </article>
+        <article class="card">
+          <div class="card-index">04 / BENCHMARK</div>
+          <h3>Vero</h3>
+          <p>Repository-level verified code generation in Lean 4, with anti-cheat grading that re-renders and recompiles every submission.</p>
+          <ul><li>Lean 4.29.1 / Lake 5.0.0</li><li>32/32 benchmark build jobs passed</li><li>mathlib fetched on demand</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="quickstart" class="section quickstart">
+      <div class="section-head">
+        <div class="eyebrow">QUICKSTART</div>
+        <h2>Activate the workspace</h2>
+        <p>All PATH and environment exports live in a single sourced file. Your shell profile is never modified.</p>
+      </div>
+      <div class="term">
+        <div class="term-bar"><span></span><span></span><span></span><em>zsh</em></div>
+<pre><code><span class="c"># activate everything</span>
+$ source ~/workspaces/verus-stack/env.zsh
+
+<span class="c"># verify a real Verus file</span>
+$ verus ../examples/vectors.rs
+verification results:: 9 verified, 0 errors
+
+<span class="c"># use the Cargo subcommand</span>
+$ cargo verus --help
+
+<span class="c"># build a Vero benchmark</span>
+$ cd vero/benchmarks/Arithmetic &amp;&amp; lake build
+Build completed successfully (32 jobs).
+
+<span class="c"># SkySynth CLI</span>
+$ uv run skydiscover --help</code></pre>
+      </div>
+    </section>
+
+    <section id="architecture" class="section arch">
+      <img class="arch-img" src="assets/conduit-modules.jpg" alt="Modular components of the workspace">
+      <div class="arch-overlay">
+        <div class="section-head light">
+          <div class="eyebrow">DATA FLOW</div>
+          <h2>From Rust source to checked proof</h2>
+        </div>
+        <div class="flow">
+          <div class="flow-step"><b>Rust + specs</b><span>source annotations</span></div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step"><b>Verus</b><span>SMT-backed verifier</span></div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step"><b>Z3 4.16.0</b><span>native arm64 solver</span></div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step"><b>Repair + synthesis</b><span>agents + SkySynth</span></div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step"><b>Vero / Lean</b><span>independent grading</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>CONDUIT LAB</span>
+    <span>Local formal verification workspace &middot; Apple Silicon</span>
+    <a href="https://github.com/maceip/conduit-lab">Source</a>
+  </footer>
+</body>
+</html>
