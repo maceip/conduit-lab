@@ -1,6 +1,6 @@
 # A browser engine we can formally verify over time
 
-Status: design proposal. Phase 1 started in `browser/` (URL parser). Written 2026-11-20; JS engine plan added 2026-11-20.
+Status: design proposal. Phase 1 started in `browser/` (URL parser). Written 2026-11-20; JS engine plan added 2026-11-20; graphics-stack, XML, host-binding and usability revisions added 2026-11-20 after the CVE coverage review (`docs/vjs-plan-review.md`).
 
 The goal is a browser that is usable on real sites from the first release, and whose
 trusted part shrinks release by release as components are replaced by verified ones.
@@ -120,13 +120,14 @@ Then replace components one by one with verified ones, and never let the verifie
 |---|---|---|---|---|---|
 | Kernel | Tab/process manager, IPC router, navigation, address bar | New, Verus | Tab non-interference; address bar shows the origin of the displayed document; renderer can only reach its own origin's state (Quark properties) | Verus | 1 |
 | Policy | Origin model, Same-Origin Policy, CORS, CSP, cookie jar, mixed-content, permissions | New, `rspec!`-style executable specs | Exec == spec; specs carry standard properties (e.g., cookie for host H never sent to H' unless domain-match) | Verus + rspec | 1–2 |
-| Parsing | URL (WHATWG), HTTP/1.1 framing, headers, MIME sniffing, cookie header, data:, base64, percent-encoding, UTF-8/Encoding | New, Vest combinators or spec-transcribed state machines | Roundtrip + prefix security where a grammar exists; for algorithmic specs (URL), equivalence to a transcription of the spec algorithm + totality, no panics | Verus (Vest), Lean for metatheory | 1–2 |
+| Parsing | URL (WHATWG), HTTP/1.1 framing, headers, MIME sniffing, cookie header, data:, base64, percent-encoding, UTF-8/Encoding, XML (well-formedness subset; CVE-2026-125350 was an XML UAF exploited ITW) | New, Vest combinators or spec-transcribed state machines | Roundtrip + prefix security where a grammar exists (XML included); for algorithmic specs (URL), equivalence to a transcription of the spec algorithm + totality, no panics | Verus (Vest), Lean for metatheory | 1–2 |
 | TLS | Certificate validation | Verdict as a dependency, behind rustls | Already proved by Verdict (Chrome policy) | Verus | 1 |
 | Strings | `vstr` (UTF-8, ASCII case folding, prefix/suffix, split) | New | Removes Verdict-style trusted string glue | Verus | 1 |
 | Isolation | Renderer sandbox | Nanvix processes (WHP host today), OS sandbox elsewhere | Builds on Nanvix's verified kheap / frame allocator; add an IPC-channel isolation proof | Verus (in Nanvix) | 2–3 |
 | Content | HTML tokenizer, tree builder | html5ever (untrusted) → verified replacement | Tokenizer: equivalence to the WHATWG state machine + totality; tree builder: DOM well-formedness invariants | Verus, SkySynth for code from spec | 3 |
 | Content | CSS tokenizer/parser | cssparser (untrusted) → Vest-based | Roundtrip/prefix security on tokens | Verus | 3 |
 | Layout | Block/inline layout | Stylo + Servo layout (untrusted) | Cassius-style properties (determinism, no overflow of declared boxes) on a subset | Verus/Lean | 4+ |
+| Graphics | Compositor/rasterizer (Skia-class), GPU translation layer (ANGLE-class), WebGPU (Dawn-class) — 4 of the last 20 ITW Chrome CVEs (Dawn UAF, Skia OOB write, 2× ANGLE incl. a potential sandbox escape) | WebRender + untrusted GPU stack; **no verified replacement planned** — day-one untrusted, contained like the rest of the renderer | Topology decided now: GPU work runs **per-site, inside each renderer's Nanvix process**; no cross-site shared GPU service, because a shared service would add a cross-origin IPC surface and invalidate the containment theorem. If driver/hardware reality later forces a shared service, it is re-classed kernel-grade: typed Vest-encoded IPC, its own isolation proof, zero access to any origin's state | Verus (IPC/isolation surface only) | 2–3 (topology + isolation proof); replacement open |
 | Script | JS engine `vjs` (§3.3) | New safe-Rust interpreter, no JIT; an untrusted engine only as a temporary fallback that has a removal criterion | Each interpreter step refines the ECMA-262 spec step; heap well-formedness and the essential internal-method invariants (§6.1.7.3) for every object; the parser matches the grammar plus early errors; GC preserves the reachable heap; regex matches the spec and terminates | Verus, Lean, ESMeta-derived spec | 1–5 |
 | Script | Wasm | Verified interpreter in `vjs`, later AOT via a verified sandboxing compiler | Interpreter refines the Wasm spec; compiled code stays inside its sandbox | Verus | 4+ |
 
@@ -135,12 +136,23 @@ providers (libcrux/AWS-LC verified subsets as in Verdict's `verified-crypto`), a
 Renderers are **outside** the TCB: a compromised renderer can only misrender its own
 origin, which is the property the kernel proves.
 
+**Scope decision — extensions.** Release 1 ships **no extension or plugin API**. That
+removes a recurring Chrome attack surface (Extensions API / loader policy — e.g.
+CVE-2025-4664, reportedly used in a targeted campaign, though Google never published an
+ITW confirmation) instead of verifying it; none of the last 20 ITW CVEs is in this class,
+and not shipping the surface keeps it that way. If extensions ever ship, they are
+kernel-mediated, capability-scoped, and governed by their own `rspec!` policy spec —
+never renderer-side ambient authority.
+
 ### 3.3 Verified JavaScript engine (`vjs`)
 
-The JS engine is where Chrome's in-the-wild bugs land: at least four of 2026's exploited
-Chrome zero-days are V8 bugs, for example CVE-2026-85046, a type confusion. Leaving it
-unverified and hoping the sandbox holds is not acceptable. `vjs` is a first-class
-verified component with its own end-to-end theorem.
+The JS engine is where most of Chrome's in-the-wild bugs land: of the eight Chrome
+zero-days exploited in the wild in 2026 (as of 2026-11-20), four are V8 bugs — including
+CVE-2026-85046, a type confusion — and the other four are XML, CSS, Dawn, and Skia. The
+non-V8 half is answered by containment and the §3.2 Graphics/Parsing rows, not by `vjs`
+(the full last-20 CVE list and coverage map are in `docs/vjs-plan-review.md`). Leaving
+the engine unverified and hoping the sandbox holds is not acceptable. `vjs` is a
+first-class verified component with its own end-to-end theorem.
 
 **The theorem.** For every program `p` and fuel `n`:
 `vjs::run(p, n)` returns exactly one of:
@@ -191,16 +203,25 @@ The ratchet shrinks the `Unsupported` set. Each spec section is either proved or
 | J1 | Types and abstract ops: UTF-16 strings, Number (incl. shortest round-trip Number::toString, StringToNumber), BigInt, ToPrimitive/ToNumber/ToString, equality | Proved exec == spec; test262 `built-ins/Number`, `language/types` subsets |
 | J2 | Object model: property descriptors, ordinary internal methods, §6.1.7.3 invariants, Array exotic | Invariant proofs; test262 `built-ins/Object` subset |
 | J3 | Lexer, parser, early errors | Proved against the grammar; test262 `language/` parse tests |
-| J4 | Interpreter core: environments, completion records, expressions, statements, functions, closures, exceptions | Step refinement proved; `vjs` runs real scripts end to end |
+| J4 | Interpreter core: environments, completion records, expressions, statements, functions, closures, exceptions. Memory until J6: an **unverified safe-Rust mark-sweep collector** (safety by construction — worst case is leaks/slowdown, never UAF) under a per-realm heap quota | Step refinement proved; `vjs` runs real scripts end to end; heap quota enforced; J6 replaces the collector with the proved one |
+| J4b | Host boundary: Web IDL ToJS/ToIDL conversions as spec functions; every host capability is a kernel-issued handle; no ambient authority in the engine | Conversion proofs for the IDL surface of the top-N crawl-corpus sites; engine-wide audit shows zero non-handle host accesses |
 | J5 | Built-ins by real-site usage (measured from a crawl corpus): Array, String, JSON (Vest round trip), Math, Map/Set, RegExp (Warblre port), Date (verified date parsing) | Per-built-in proofs; test262 pass rate per directory |
 | J6 | Promises, job queue, async/await, generators; GC proof; Proxy/Reflect | Liveness under fuel; GC theorem |
 | J7 | Bytecode compiler + interpreter with simulation proof; verified Wasm interpreter | Compiler correctness theorem; speed measured on a public benchmark set |
 
 **Usability bridge, with a removal date set by a measurement, not a calendar.**
-- Until `vjs` covers what real sites use, a renderer may run an untrusted engine, and the kernel decides per origin.
+- Day-one speed comes from the untrusted engine, **JIT included**: no-JIT is a rule for
+  `vjs` (the verified TCB), never for the user-facing default path. A browser nobody uses
+  protects nobody — the default renderer runs the fast untrusted engine inside its
+  sandbox, and the kernel decides per origin.
 - A "verified script" mode runs only `vjs` and shows `Unsupported(feature)` to the user instead of falling back silently.
 - The untrusted engine is deleted once `vjs` passes the crawl corpus at the same rate it does.
 - Until then, the collector reports the share of script executions that ran on `vjs`.
+- Long-term speed for verified mode: J7's proved bytecode compiler first. If that is still
+  too slow for daily use, the next candidate is an *untrusted* JIT whose emitted code is
+  confined by a verified sandbox (rWasm/vWasm-style code-region isolation, reusing the
+  Phase 4+ Wasm work) — the JIT stays outside the TCB; what is verified is the sandbox
+  that contains its output. A decision point, not a commitment.
 
 **Scale, stated plainly.** JSRef's proof covered ES5 chapters 8–14. Current ECMA-262
 is several times larger. We don't estimate effort here. The ratchet report (proved
