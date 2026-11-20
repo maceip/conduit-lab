@@ -1,0 +1,6 @@
+[workspace]
+resolver = "2"
+members = ["url"]
+
+[workspace.dependencies]
+vstd = "=0.0.0-2026-11-15-0327"
