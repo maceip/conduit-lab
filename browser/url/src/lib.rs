@@ -4,3 +4,4 @@
 
 pub mod percent;
 pub mod ipv4;
+pub mod ipv6;

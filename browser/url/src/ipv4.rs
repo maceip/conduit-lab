@@ -308,6 +308,13 @@ pub open spec fn sat_eq(v: u64, x: nat) -> bool {
     }
 }
 
+pub fn is_ascii_digit_exec(c: u8) -> (r: bool)
+    ensures
+        r == is_ascii_digit(c),
+{
+    c >= 0x30 && c <= 0x39
+}
+
 pub fn split_dots(input: &[u8]) -> (parts: Vec<Vec<u8>>)
     ensures
         parts.deep_view() == spec_split_dots(input@),
