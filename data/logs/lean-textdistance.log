@@ -1,0 +1,11 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/textdistance
+# exit: 0  seconds: 1.08
+
+✔ [2/8] Built Textdistance.Impl.Edit (231ms)
+✔ [3/8] Built Textdistance.Bundle (187ms)
+✔ [4/8] Built Textdistance.Test (212ms)
+✔ [5/8] Built Textdistance.Harness (208ms)
+✔ [6/8] Built Textdistance.Spec.Edit (226ms)
+✔ [7/8] Built Textdistance (140ms)
+Build completed successfully (8 jobs).

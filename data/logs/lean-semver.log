@@ -1,0 +1,11 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/semver
+# exit: 0  seconds: 1.09
+
+✔ [2/8] Built Semver.Impl.Version (220ms)
+✔ [3/8] Built Semver.Bundle (164ms)
+✔ [4/8] Built Semver.Test (205ms)
+✔ [5/8] Built Semver.Harness (193ms)
+✔ [6/8] Built Semver.Spec.Version (244ms)
+✔ [7/8] Built Semver (138ms)
+Build completed successfully (8 jobs).

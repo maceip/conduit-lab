@@ -1,0 +1,11 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/primefac
+# exit: 0  seconds: 0.99
+
+✔ [2/8] Built Primefac.Impl.Factor (148ms)
+✔ [3/8] Built Primefac.Bundle (161ms)
+✔ [4/8] Built Primefac.Test (221ms)
+✔ [5/8] Built Primefac.Harness (191ms)
+✔ [6/8] Built Primefac.Spec.Factor (222ms)
+✔ [7/8] Built Primefac (135ms)
+Build completed successfully (8 jobs).

@@ -1,0 +1,13 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/networkx
+# exit: 0  seconds: 1.29
+
+✔ [2/10] Built Networkx.Impl.Components (161ms)
+✔ [3/10] Built Networkx.Impl.Mst (157ms)
+✔ [4/10] Built Networkx.Bundle (170ms)
+✔ [5/10] Built Networkx.Test (226ms)
+✔ [6/10] Built Networkx.Harness (200ms)
+✔ [7/10] Built Networkx.Spec.Components (161ms)
+✔ [8/10] Built Networkx.Spec.Mst (165ms)
+✔ [9/10] Built Networkx (135ms)
+Build completed successfully (10 jobs).

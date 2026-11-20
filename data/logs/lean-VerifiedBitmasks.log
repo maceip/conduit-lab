@@ -1,0 +1,29 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/VerifiedBitmasks
+# exit: 0  seconds: 1.61
+
+✔ [2/26] Built VerifiedBitmasks.Impl.MachineTypes (243ms)
+✔ [3/26] Built VerifiedBitmasks.Impl.BitFieldsAxioms (243ms)
+✔ [4/26] Built VerifiedBitmasks.Impl.BitFields (279ms)
+✔ [5/26] Built VerifiedBitmasks.Impl.BitmaskSpec (261ms)
+✔ [6/26] Built VerifiedBitmasks.Impl.BitmaskFixedChunks (281ms)
+✔ [7/26] Built VerifiedBitmasks.Impl.BitmaskIF (251ms)
+✔ [8/26] Built VerifiedBitmasks.Impl.BitmaskImplIF (250ms)
+✔ [9/26] Built VerifiedBitmasks.Impl.BitmaskSeq (251ms)
+✔ [10/26] Built VerifiedBitmasks.Impl.MachineWords (253ms)
+✔ [11/26] Built VerifiedBitmasks.Impl.BitmaskArray (267ms)
+✔ [12/26] Built VerifiedBitmasks.Test (181ms)
+✔ [13/26] Built VerifiedBitmasks.Bundle (255ms)
+✔ [14/26] Built VerifiedBitmasks.Harness (242ms)
+✔ [15/26] Built VerifiedBitmasks.Spec.MachineTypes (278ms)
+✔ [16/26] Built VerifiedBitmasks.Spec.BitFieldsAxioms (278ms)
+✔ [17/26] Built VerifiedBitmasks.Spec.BitFields (278ms)
+✔ [18/26] Built VerifiedBitmasks.Spec.BitmaskSpec (283ms)
+✔ [19/26] Built VerifiedBitmasks.Spec.BitmaskIF (279ms)
+✔ [20/26] Built VerifiedBitmasks.Spec.BitmaskImplIF (296ms)
+✔ [21/26] Built VerifiedBitmasks.Spec.BitmaskFixedChunks (284ms)
+✔ [22/26] Built VerifiedBitmasks.Spec.BitmaskSeq (303ms)
+✔ [23/26] Built VerifiedBitmasks.Spec.BitmaskArray (300ms)
+✔ [24/26] Built VerifiedBitmasks.Spec.MachineWords (335ms)
+✔ [25/26] Built VerifiedBitmasks (137ms)
+Build completed successfully (26 jobs).

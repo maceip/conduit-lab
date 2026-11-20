@@ -1,0 +1,25 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/Unicode
+# exit: 0  seconds: 3.26
+
+✔ [2/22] Built UnicodeV2.Impl.Unicode (1.2s)
+✔ [3/22] Built UnicodeV2.Spec.Unicode (204ms)
+✔ [4/22] Built UnicodeV2.Impl.UnicodeEncodingForm (249ms)
+✔ [5/22] Built UnicodeV2.Impl.AbstractUnicodeStrings (244ms)
+✔ [6/22] Built UnicodeV2.Impl.Utf8EncodingForm (272ms)
+✔ [7/22] Built UnicodeV2.Impl.Utf16EncodingForm (260ms)
+✔ [8/22] Built UnicodeV2.Impl.UnicodeStringsWithUnicodeChar (244ms)
+✔ [9/22] Built UnicodeV2.Impl.Utf8EncodingScheme (158ms)
+✔ [10/22] Built UnicodeV2.Impl.UnicodeStringsWithoutUnicodeChar (577ms)
+✔ [11/22] Built UnicodeV2.Bundle (198ms)
+✔ [12/22] Built UnicodeV2.Harness (232ms)
+✔ [13/22] Built UnicodeV2.Spec.UnicodeEncodingForm (243ms)
+✔ [14/22] Built UnicodeV2.Spec.AbstractUnicodeStrings (241ms)
+✔ [15/22] Built UnicodeV2.Spec.Utf8EncodingForm (239ms)
+✔ [16/22] Built UnicodeV2.Spec.Utf16EncodingForm (243ms)
+✔ [17/22] Built UnicodeV2.Spec.Utf8EncodingScheme (234ms)
+✔ [18/22] Built UnicodeV2.Spec.UnicodeStringsWithoutUnicodeChar (252ms)
+✔ [19/22] Built UnicodeV2.Spec.UnicodeStringsWithUnicodeChar (239ms)
+✔ [20/22] Built UnicodeV2.Test (284ms)
+✔ [21/22] Built UnicodeV2 (137ms)
+Build completed successfully (22 jobs).

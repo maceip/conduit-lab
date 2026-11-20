@@ -1,0 +1,19 @@
+$ uv run skydiscover --help
+# cwd: ~/workspaces/verus-stack/skydiscover
+# exit: 0  seconds: 0.07
+
+usage: skydiscover [-h] <command> ...
+
+SkyDiscover: AI-driven scientific, algorithmic, and end-to-end systems
+discovery.
+
+positional arguments:
+  <command>
+    optimize  run a discovery search against an evaluator (Optimize)
+    viewer    replay a completed run in the monitor UI
+    init      set up /skysynth in your coding agent: the skill, the agent
+              roles, and the hook that runs the tests before anything is
+              delivered
+
+options:
+  -h, --help  show this help message and exit

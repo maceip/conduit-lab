@@ -1,0 +1,11 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/packaging_version
+# exit: 0  seconds: 1.19
+
+✔ [2/8] Built PackagingVersion.Impl.Version (302ms)
+✔ [3/8] Built PackagingVersion.Bundle (162ms)
+✔ [4/8] Built PackagingVersion.Test (206ms)
+✔ [5/8] Built PackagingVersion.Harness (193ms)
+✔ [6/8] Built PackagingVersion.Spec.Version (248ms)
+✔ [7/8] Built PackagingVersion (134ms)
+Build completed successfully (8 jobs).

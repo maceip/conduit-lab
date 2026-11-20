@@ -1,0 +1,5 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/Arithmetic
+# exit: 0  seconds: 0.15
+
+Build completed successfully (32 jobs).

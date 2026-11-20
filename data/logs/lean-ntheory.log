@@ -1,0 +1,11 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/ntheory
+# exit: 0  seconds: 0.98
+
+✔ [2/8] Built Ntheory.Impl.Residue (170ms)
+✔ [3/8] Built Ntheory.Bundle (165ms)
+✔ [4/8] Built Ntheory.Test (219ms)
+✔ [5/8] Built Ntheory.Harness (192ms)
+✔ [6/8] Built Ntheory.Spec.Residue (228ms)
+✔ [7/8] Built Ntheory (133ms)
+Build completed successfully (8 jobs).

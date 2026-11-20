@@ -1,0 +1,11 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/dijkstar
+# exit: 0  seconds: 1.09
+
+✔ [2/8] Built Dijkstar.Impl.ShortestPath (150ms)
+✔ [3/8] Built Dijkstar.Bundle (163ms)
+✔ [4/8] Built Dijkstar.Test (190ms)
+✔ [5/8] Built Dijkstar.Harness (218ms)
+✔ [6/8] Built Dijkstar.Spec.ShortestPath (310ms)
+✔ [7/8] Built Dijkstar (154ms)
+Build completed successfully (8 jobs).

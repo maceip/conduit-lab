@@ -1,0 +1,11 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/netaddr
+# exit: 0  seconds: 0.99
+
+✔ [2/8] Built Netaddr.Impl.Cidr (181ms)
+✔ [3/8] Built Netaddr.Bundle (161ms)
+✔ [4/8] Built Netaddr.Test (180ms)
+✔ [5/8] Built Netaddr.Harness (196ms)
+✔ [6/8] Built Netaddr.Spec.Cidr (222ms)
+✔ [7/8] Built Netaddr (141ms)
+Build completed successfully (8 jobs).

@@ -1,0 +1,32 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/munkres
+# exit: 0  seconds: 1.19
+
+✔ [2/8] Built Munkres.Impl.Assign (390ms)
+✔ [3/8] Built Munkres.Bundle (163ms)
+✔ [4/8] Built Munkres.Test (236ms)
+✔ [5/8] Built Munkres.Harness (191ms)
+⚠ [6/8] Built Munkres.Spec.Assign (176ms)
+warning: Munkres/Spec/Assign.lean:294:31: unused variable `impl`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Munkres/Spec/Assign.lean:306:34: unused variable `impl`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Munkres/Spec/Assign.lean:323:39: unused variable `impl`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Munkres/Spec/Assign.lean:337:38: unused variable `impl`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Munkres/Spec/Assign.lean:349:37: unused variable `impl`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Munkres/Spec/Assign.lean:359:34: unused variable `impl`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Munkres/Spec/Assign.lean:369:31: unused variable `impl`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+✔ [7/8] Built Munkres (135ms)
+Build completed successfully (8 jobs).

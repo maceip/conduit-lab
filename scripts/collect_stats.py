@@ -132,10 +132,14 @@ def verify_vstd() -> dict:
 
 def verify_examples() -> list[dict]:
     res = []
+    (DATA / "examples").mkdir(parents=True, exist_ok=True)
     for ex in EXAMPLES:
+        # publish the exact source that was verified, so the page never embeds a stale copy
+        shutil.copyfile(Path(ENV["VERUS_SOURCE"]).parent / "examples" / ex, DATA / "examples" / ex)
         log = f"example-{ex}.log"
         code, text, secs = run(["verus", f"../examples/{ex}"], cwd=Path(ENV["VERUS_SOURCE"]), log=log)
-        res.append({"file": f"verus/examples/{ex}", **parse_verus(code, text, secs, log)})
+        res.append({"file": f"verus/examples/{ex}", "source": f"data/examples/{ex}",
+                    **parse_verus(code, text, secs, log)})
     return res
 
 

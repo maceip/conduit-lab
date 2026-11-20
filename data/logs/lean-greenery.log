@@ -1,0 +1,13 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/greenery
+# exit: 0  seconds: 1.41
+
+✔ [2/10] Built Greenery.Impl.Fsm (209ms)
+✔ [3/10] Built Greenery.Impl.Algebra (259ms)
+✔ [4/10] Built Greenery.Bundle (166ms)
+✔ [5/10] Built Greenery.Test (231ms)
+✔ [6/10] Built Greenery.Harness (194ms)
+✔ [7/10] Built Greenery.Spec.Fsm (175ms)
+✔ [8/10] Built Greenery.Spec.Algebra (154ms)
+✔ [9/10] Built Greenery (135ms)
+Build completed successfully (10 jobs).

@@ -1,0 +1,20 @@
+$ cargo verus --help
+# cwd: ~/workspaces/verus-stack
+# exit: 0  seconds: 0.05
+
+A Cargo subcommand that enables verification of Rust code as part of the normal Cargo workflow.
+
+Usage: cargo verus <COMMAND>
+
+Commands:
+  new        Create a new Verus project
+  fmt        Format Verus and Rust source files
+  toolchain  Manage Verus toolchains
+  verify     Verify the current crate with 'cargo build'
+  focus      Verify only crate contents, without dependencies
+  build      Verify and build the current crate with 'cargo build'
+  check      Runs the 'cargo check' subcommand
+  help       Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help  Print help

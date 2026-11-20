@@ -1,0 +1,454 @@
+{
+  "schema": 1,
+  "generated_at": "2026-11-20T01:55:20+00:00",
+  "generator": "scripts/collect_stats.py",
+  "host": {
+    "machine": "arm64",
+    "system": "Darwin",
+    "release": "27.2"
+  },
+  "toolchains": {
+    "z3": "Z3 version 4.16.0 - 64 bit",
+    "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+    "verus": "0.2026.11.19.0dab219",
+    "lean": "Lean (version 4.29.1, arm64-apple-darwin24.6.0, commit f72c35b3f637c8c6571d353742168ab66cc22c00, Release)",
+    "lake": "Lake version 5.0.0-src+f72c35b (Lean version 4.29.1)",
+    "uv": "uv 0.11.23 (3cdf50e09 2026-06-19 aarch64-apple-darwin)"
+  },
+  "repos": [
+    {
+      "name": "verus",
+      "commit": "0dab219272ac2353320bd177ebb3929453b90a9e",
+      "commit_date": "2026-11-19T23:58:17Z",
+      "uncommitted_files": 0,
+      "remote": "https://github.com/verus-lang/verus.git"
+    },
+    {
+      "name": "VeriStruct",
+      "commit": "2c19dfca20b8c9a81f3460344a88b903582ad1f7",
+      "commit_date": "2026-05-27T16:27:21-07:00",
+      "uncommitted_files": 0,
+      "remote": "https://github.com/ChuyueSun/VeriStruct.git"
+    },
+    {
+      "name": "skydiscover",
+      "commit": "0d932b690670a7e544388ad362e9876c8bd256a0",
+      "commit_date": "2026-09-13T22:07:49-07:00",
+      "uncommitted_files": 2,
+      "remote": "https://github.com/skydiscover-ai/skydiscover.git"
+    },
+    {
+      "name": "vero",
+      "commit": "0a7325df9e9e6dbc275c0ad483b3d1cbe38d9b09",
+      "commit_date": "2026-08-16T23:00:25-07:00",
+      "uncommitted_files": 0,
+      "remote": "https://github.com/sunblaze-ucb/vero.git"
+    }
+  ],
+  "verus": {
+    "vstd": {
+      "exit_code": 0,
+      "verified": 2354,
+      "errors": 0,
+      "seconds": 12.22,
+      "log": "data/logs/vstd.log"
+    },
+    "examples": [
+      {
+        "file": "verus/examples/vectors.rs",
+        "exit_code": 0,
+        "verified": 9,
+        "errors": 0,
+        "seconds": 0.58,
+        "log": "data/logs/example-vectors.rs.log"
+      }
+    ]
+  },
+  "lean": {
+    "benchmarks": [
+      {
+        "name": "Arithmetic",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 32,
+        "seconds": 0.15,
+        "log": "data/logs/lean-Arithmetic.log"
+      },
+      {
+        "name": "DedekindReals",
+        "needs_mathlib": true,
+        "sorry_count": 0,
+        "status": "skipped_mathlib"
+      },
+      {
+        "name": "Flocq",
+        "needs_mathlib": true,
+        "sorry_count": 1,
+        "status": "skipped_mathlib"
+      },
+      {
+        "name": "Huffman",
+        "needs_mathlib": true,
+        "sorry_count": 0,
+        "status": "skipped_mathlib"
+      },
+      {
+        "name": "Json",
+        "needs_mathlib": true,
+        "sorry_count": 0,
+        "status": "skipped_mathlib"
+      },
+      {
+        "name": "Sequences",
+        "needs_mathlib": true,
+        "sorry_count": 0,
+        "status": "skipped_mathlib"
+      },
+      {
+        "name": "Unicode",
+        "needs_mathlib": false,
+        "sorry_count": 6,
+        "status": "passed",
+        "jobs": 22,
+        "seconds": 3.26,
+        "log": "data/logs/lean-Unicode.log"
+      },
+      {
+        "name": "VerifiedBitmasks",
+        "needs_mathlib": false,
+        "sorry_count": 3,
+        "status": "passed",
+        "jobs": 26,
+        "seconds": 1.61,
+        "log": "data/logs/lean-VerifiedBitmasks.log"
+      },
+      {
+        "name": "VerifiedIronkv",
+        "needs_mathlib": true,
+        "sorry_count": 0,
+        "status": "skipped_mathlib"
+      },
+      {
+        "name": "base58",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 1.09,
+        "log": "data/logs/lean-base58.log"
+      },
+      {
+        "name": "cachetools",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 1.09,
+        "log": "data/logs/lean-cachetools.log"
+      },
+      {
+        "name": "croniter",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 0.98,
+        "log": "data/logs/lean-croniter.log"
+      },
+      {
+        "name": "deposit_sc",
+        "needs_mathlib": false,
+        "sorry_count": 2,
+        "status": "passed",
+        "jobs": 14,
+        "seconds": 1.72,
+        "log": "data/logs/lean-deposit_sc.log"
+      },
+      {
+        "name": "difflib",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 1.09,
+        "log": "data/logs/lean-difflib.log"
+      },
+      {
+        "name": "dijkstar",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 1.09,
+        "log": "data/logs/lean-dijkstar.log"
+      },
+      {
+        "name": "ecdsa",
+        "needs_mathlib": true,
+        "sorry_count": 0,
+        "status": "skipped_mathlib"
+      },
+      {
+        "name": "galoistools",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 10,
+        "seconds": 1.51,
+        "log": "data/logs/lean-galoistools.log"
+      },
+      {
+        "name": "greenery",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 10,
+        "seconds": 1.41,
+        "log": "data/logs/lean-greenery.log"
+      },
+      {
+        "name": "intervaltree",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 0.99,
+        "log": "data/logs/lean-intervaltree.log"
+      },
+      {
+        "name": "ipaddress",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 0.99,
+        "log": "data/logs/lean-ipaddress.log"
+      },
+      {
+        "name": "jsonpatch",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 10,
+        "seconds": 1.61,
+        "log": "data/logs/lean-jsonpatch.log"
+      },
+      {
+        "name": "linked_list",
+        "needs_mathlib": false,
+        "sorry_count": 1,
+        "status": "passed",
+        "jobs": 41,
+        "seconds": 2.03,
+        "log": "data/logs/lean-linked_list.log"
+      },
+      {
+        "name": "munkres",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 1.19,
+        "log": "data/logs/lean-munkres.log"
+      },
+      {
+        "name": "netaddr",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 0.99,
+        "log": "data/logs/lean-netaddr.log"
+      },
+      {
+        "name": "networkx",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 10,
+        "seconds": 1.29,
+        "log": "data/logs/lean-networkx.log"
+      },
+      {
+        "name": "ntheory",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 0.98,
+        "log": "data/logs/lean-ntheory.log"
+      },
+      {
+        "name": "packaging_version",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 1.19,
+        "log": "data/logs/lean-packaging_version.log"
+      },
+      {
+        "name": "piggybank",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 12,
+        "seconds": 1.3,
+        "log": "data/logs/lean-piggybank.log"
+      },
+      {
+        "name": "portion",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 0.98,
+        "log": "data/logs/lean-portion.log"
+      },
+      {
+        "name": "primefac",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 0.99,
+        "log": "data/logs/lean-primefac.log"
+      },
+      {
+        "name": "primepy",
+        "needs_mathlib": false,
+        "sorry_count": 1,
+        "status": "passed",
+        "jobs": 7,
+        "seconds": 0.88,
+        "log": "data/logs/lean-primepy.log"
+      },
+      {
+        "name": "prolepticgregorian",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 1.09,
+        "log": "data/logs/lean-prolepticgregorian.log"
+      },
+      {
+        "name": "pyradix",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 0.99,
+        "log": "data/logs/lean-pyradix.log"
+      },
+      {
+        "name": "pythonconstraint",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 0.99,
+        "log": "data/logs/lean-pythonconstraint.log"
+      },
+      {
+        "name": "reedsolo",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 1.09,
+        "log": "data/logs/lean-reedsolo.log"
+      },
+      {
+        "name": "rsa",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 10,
+        "seconds": 0.98,
+        "log": "data/logs/lean-rsa.log"
+      },
+      {
+        "name": "semver",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 1.09,
+        "log": "data/logs/lean-semver.log"
+      },
+      {
+        "name": "sortedcontainers",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 13,
+        "seconds": 3.06,
+        "log": "data/logs/lean-sortedcontainers.log"
+      },
+      {
+        "name": "textdistance",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 1.08,
+        "log": "data/logs/lean-textdistance.log"
+      },
+      {
+        "name": "textwrap",
+        "needs_mathlib": false,
+        "sorry_count": 0,
+        "status": "passed",
+        "jobs": 8,
+        "seconds": 0.98,
+        "log": "data/logs/lean-textwrap.log"
+      },
+      {
+        "name": "toposort",
+        "needs_mathlib": false,
+        "sorry_count": 1,
+        "status": "passed",
+        "jobs": 9,
+        "seconds": 2.34,
+        "log": "data/logs/lean-toposort.log"
+      },
+      {
+        "name": "verdict",
+        "needs_mathlib": false,
+        "sorry_count": 20,
+        "status": "passed",
+        "jobs": 28,
+        "seconds": 2.33,
+        "log": "data/logs/lean-verdict.log"
+      },
+      {
+        "name": "vest",
+        "needs_mathlib": false,
+        "sorry_count": 4,
+        "status": "passed",
+        "jobs": 46,
+        "seconds": 5.03,
+        "log": "data/logs/lean-vest.log"
+      }
+    ]
+  },
+  "cli": [
+    {
+      "name": "cargo-verus",
+      "command": "cargo verus --help",
+      "exit_code": 0,
+      "seconds": 0.05,
+      "log": "data/logs/cli-cargo-verus.log"
+    },
+    {
+      "name": "skydiscover",
+      "command": "uv run skydiscover --help",
+      "exit_code": 0,
+      "seconds": 0.07,
+      "log": "data/logs/cli-skydiscover.log"
+    }
+  ],
+  "duration_seconds": 64.9
+}

@@ -1,0 +1,13 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/jsonpatch
+# exit: 0  seconds: 1.61
+
+✔ [2/10] Built JsonPatch.Impl.Pointer (441ms)
+✔ [3/10] Built JsonPatch.Impl.Patch (178ms)
+✔ [4/10] Built JsonPatch.Bundle (170ms)
+✔ [5/10] Built JsonPatch.Test (298ms)
+✔ [6/10] Built JsonPatch.Harness (205ms)
+✔ [7/10] Built JsonPatch.Spec.Pointer (164ms)
+✔ [8/10] Built JsonPatch.Spec.Patch (212ms)
+✔ [9/10] Built JsonPatch (134ms)
+Build completed successfully (10 jobs).

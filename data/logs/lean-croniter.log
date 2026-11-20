@@ -1,0 +1,11 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/croniter
+# exit: 0  seconds: 0.98
+
+✔ [2/8] Built Croniter.Impl.Cron (175ms)
+✔ [3/8] Built Croniter.Bundle (163ms)
+✔ [4/8] Built Croniter.Test (179ms)
+✔ [5/8] Built Croniter.Harness (198ms)
+✔ [6/8] Built Croniter.Spec.Cron (241ms)
+✔ [7/8] Built Croniter (149ms)
+Build completed successfully (8 jobs).

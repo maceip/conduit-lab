@@ -1,0 +1,11 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/portion
+# exit: 0  seconds: 0.98
+
+✔ [2/8] Built Portion.Impl.Algebra (173ms)
+✔ [3/8] Built Portion.Bundle (161ms)
+✔ [4/8] Built Portion.Test (221ms)
+✔ [5/8] Built Portion.Harness (190ms)
+✔ [6/8] Built Portion.Spec.Algebra (191ms)
+✔ [7/8] Built Portion (133ms)
+Build completed successfully (8 jobs).

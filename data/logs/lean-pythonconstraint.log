@@ -1,0 +1,11 @@
+$ lake build
+# cwd: ~/workspaces/verus-stack/vero/benchmarks/pythonconstraint
+# exit: 0  seconds: 0.99
+
+✔ [2/8] Built Pythonconstraint.Impl.Csp (205ms)
+✔ [3/8] Built Pythonconstraint.Bundle (171ms)
+✔ [4/8] Built Pythonconstraint.Test (292ms)
+✔ [5/8] Built Pythonconstraint.Harness (206ms)
+✔ [6/8] Built Pythonconstraint.Spec.Csp (196ms)
+✔ [7/8] Built Pythonconstraint (142ms)
+Build completed successfully (8 jobs).
