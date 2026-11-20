@@ -189,6 +189,18 @@ def cli_smoke() -> list[dict]:
     return out
 
 
+def browser_ratchet() -> dict | None:
+    """Verified-browser crates: re-run browser/scripts/ratchet.py and embed its report."""
+    script = SITE / "browser" / "scripts" / "ratchet.py"
+    if not script.exists():
+        return None
+    code, text, secs = run(["python3", str(script)], cwd=SITE / "browser", log="browser-ratchet.log", timeout=3600)
+    report = SITE / "browser" / "ratchet.json"
+    if code != 0 or not report.exists():
+        return {"exit_code": code, "seconds": secs, "log": "data/logs/browser-ratchet.log"}
+    return {**json.loads(report.read_text()), "log": "data/logs/browser-ratchet.log"}
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--with-mathlib", action="store_true",
@@ -213,6 +225,7 @@ def main() -> None:
         "verus": {"vstd": verify_vstd(), "examples": verify_examples()},
         "lean": {"benchmarks": lean_benchmarks(args.with_mathlib)},
         "cli": cli_smoke(),
+        "browser": browser_ratchet(),
     }
     stats["duration_seconds"] = round((dt.datetime.now(dt.timezone.utc) - started).total_seconds(), 1)
     (DATA / "stats.json").write_text(json.dumps(stats, indent=2) + "\n")

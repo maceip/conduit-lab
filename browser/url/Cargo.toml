@@ -1,0 +1,18 @@
+[package]
+name = "vurl"
+version = "0.1.0"
+edition = "2021"
+description = "WHATWG URL parsing, formally verified with Verus (in progress)"
+license = "MIT"
+
+[dependencies]
+vstd = { workspace = true }
+
+[dev-dependencies]
+serde_json = "1"
+# Differential-testing oracles only (not used by the library).
+url = "2"
+percent-encoding = "2"
+
+[package.metadata.verus]
+verify = true
