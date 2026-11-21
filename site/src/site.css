@@ -551,6 +551,17 @@ body {
   display: block;
 }
 
+.ch-sticker-medallion {
+  flex-shrink: 0;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.32));
+}
+
+[data-theme='light'] .ch-sticker-medallion {
+  filter: drop-shadow(0 4px 10px rgba(20, 20, 28, 0.16));
+}
+
 .ch-flair-thumb {
   flex-shrink: 0;
   border-radius: 6px;

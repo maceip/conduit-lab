@@ -273,9 +273,9 @@ export default function App() {
             <div className="ch-arch-header">
               <div className="ch-section-lead">
                 <img
-                  src="assets/flair-kernel.webp"
-                  alt="Verified security kernel hardware boundary emblem"
-                  className="ch-flair-medallion"
+                  src="assets/sticker-lock.webp"
+                  alt="Isolated capability padlock over circuit hexagon illustration"
+                  className="ch-sticker-medallion"
                   width={76}
                   height={76}
                 />

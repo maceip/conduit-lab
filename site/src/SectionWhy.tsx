@@ -47,11 +47,11 @@ const SectionWhy: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
       <div className="ch-prose-col">
         <div className="ch-section-lead">
           <img
-            src="assets/flair-synthesis.webp"
-            alt="Neuro-symbolic specification synthesis orbital core"
-            className="ch-flair-medallion"
-            width={76}
-            height={76}
+            src="assets/sticker-knot.webp"
+            alt="CONDUIT interlocked circuit boundary emblem"
+            className="ch-sticker-medallion"
+            width={72}
+            height={72}
           />
           <h2 className="ch-section-title">
             Why verification targets boundaries instead of 36 million lines

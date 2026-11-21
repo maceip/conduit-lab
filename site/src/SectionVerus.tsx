@@ -142,11 +142,11 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
       <div className="ch-prose-col">
         <div className="ch-section-lead">
           <img
-            src="assets/flair-prover.webp"
-            alt="Verus SMT solver processor die illustration"
-            className="ch-flair-medallion"
-            width={76}
-            height={76}
+            src="assets/sticker-scroll.webp"
+            alt="Sealed formal specification scroll illustration"
+            className="ch-sticker-medallion"
+            width={72}
+            height={72}
           />
           <h2 className="ch-section-title">What a proof guarantees that tests never can</h2>
         </div>

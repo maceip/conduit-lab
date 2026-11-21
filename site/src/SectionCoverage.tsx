@@ -45,9 +45,18 @@ const SectionCoverage: React.FC = () => {
   return (
     <section className="ch-spec-row" id="coverage">
       <div className="ch-prose-col">
-        <h2 className="ch-section-title">
-          What attackers exploited in Chrome, and where this design answers it
-        </h2>
+        <div className="ch-section-lead">
+          <img
+            src="assets/sticker-shield.webp"
+            alt="Verified security shield illustration"
+            className="ch-sticker-medallion"
+            width={72}
+            height={72}
+          />
+          <h2 className="ch-section-title">
+            What attackers exploited in Chrome, and where this design answers it
+          </h2>
+        </div>
         <p className="ch-prose-text" data-testid="coverage-tally">
           These are the last {CVES.length} Chrome vulnerabilities Google confirmed attackers
           exploited in the wild through 2026-11-20. V8 accounts for {tally.v8} of them.
