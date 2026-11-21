@@ -35,7 +35,12 @@ test("single scroll: no pane layout, chapters in familiarity order, plain copy",
   await expect(page.locator("ix-pane-layout")).toHaveCount(0);
   await expect(page.locator("ix-blind")).toHaveCount(0);
   const ids = await page.locator("main section").evaluateAll((ss) => ss.map((s) => s.id));
-  expect(ids).toEqual(["verus", "why", "status", "coverage", "arch"]);
+  expect(ids).toEqual(["coverage", "verus", "why", "arch", "status"]);
+  const navTargets = await page.locator(".wb-nav a").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
+  expect(navTargets).toEqual(ids.map((id) => `#${id}`));
+  const lede = page.getByTestId("lede");
+  await expect(lede).toContainText("Of the last 20 Chrome bugs");
+  await expect(lede).toContainText("13 were in V8");
   const body = await page.locator("body").innerText();
   for (const phrase of ["Honesty clause", "First contact", "The other half", "project's bet"]) {
     expect(body, `marketing phrase removed: ${phrase}`).not.toContain(phrase);
