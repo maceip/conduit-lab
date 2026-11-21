@@ -49,10 +49,10 @@ describe('弹性柱销联轴器 · 柱销分布', () => {
 /* ────────────────────────── 涡桨发动机 ────────────────────────── */
 
 import {
-  REDUCTION, STAGE1, STAGE2, carrierAngle, fanOffset, freeAngle, hpAngle,
+  REDUCTION, STAGE1, STAGE2, carrierAngle, freeAngle, hpAngle,
   normAngle as tpNorm, planetCentre, planetSpin, stageRatio, totalRatio,
 } from './turboprop/kinematics';
-import { TP, fanX } from './turboprop/data';
+import { PARTS, TP } from './turboprop/data';
 
 describe('涡桨发动机 · 双转子与行星减速', () => {
   it('三个转速比 = 1 : −0.75 : 0.05，且 0.75/0.05 = 15:1', () => {
@@ -100,12 +100,23 @@ describe('涡桨发动机 · 双转子与行星减速', () => {
     expect(a[2]).toBeCloseTo(b[2], 6);
   });
 
-  it('内部链扇出：每级步长 −0.4u，t=1 时相邻级间距增加 0.4u', () => {
-    const step = TP.u * TP.fanStep;
-    for (let k = 0; k < 10; k += 1) {
-      expect(fanX(k) - fanX(k + 1)).toBeCloseTo(step, 6);
-      expect(fanOffset(k, TP.fanAnchor, step)).toBeCloseTo(fanX(k), 6);
+  it('内部链扇出：转子每级 −0.50u、静子径向 +0.85u、涡轮链 Δ −2.55..−3.15u（对照表）', () => {
+    const byId = (id: string) => PARTS.find((pp) => pp.id === id)!;
+    // 转子链相邻级步长 0.50u
+    expect(byId('rotor-1').explode[0] - byId('rotor-2').explode[0]).toBeCloseTo(TP.u * 0.5, 6);
+    expect(byId('rotor-2').explode[0] - byId('rotor-3').explode[0]).toBeCloseTo(TP.u * 0.5, 6);
+    // 静子环径向 +0.85u
+    for (const id of ['stator-1', 'stator-2', 'stator-3']) {
+      expect(byId(id).explode[1]).toBeCloseTo(TP.u * 0.85, 6);
     }
+    // 涡轮链 Δ：高压 −2.55u、动力一级 −2.85u、动力二级 −3.15u
+    expect(byId('hp-turbine').explode[0]).toBeCloseTo(-TP.u * 2.55, 6);
+    expect(byId('pt-disk-1').explode[0]).toBeCloseTo(-TP.u * 2.85, 6);
+    expect(byId('pt-disk-2').explode[0]).toBeCloseTo(-TP.u * 3.15, 6);
+    // 桨叶径向 +1.15u、火焰筒 −1.25u、叶轮 −0.90u（对照表）
+    expect(byId('blade-1').explode[1]).toBeCloseTo(TP.u * 1.15, 6);
+    expect(byId('combustor-liner').explode[0]).toBeCloseTo(-TP.u * 1.25, 6);
+    expect(byId('impeller').explode[0]).toBeCloseTo(-TP.u * 0.9, 6);
   });
 
   it('关键尺寸为正且桨叶数/叶排数在工程范围内', () => {
