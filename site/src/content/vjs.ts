@@ -1,5 +1,6 @@
 // docs/verified-browser-engine.md §3.3 — the vjs work order.
-// Status is honest: as of the current ratchet, only vurl exists; every J-step is design.
+// Live verification status, function counts, and test262/WPT/Wasm pass rates are
+// joined at runtime from browser/ratchet.json.
 export interface VjsStep {
   step: string;
   short: string;

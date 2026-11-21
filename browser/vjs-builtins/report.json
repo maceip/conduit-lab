@@ -1,0 +1,87 @@
+{
+  "crate": "vjs_builtins",
+  "differential_oracle": "node v24.15.0 (V8)",
+  "directories": [
+    {
+      "differential_cases": 250,
+      "differential_passed": 250,
+      "directory": "built-ins/Array",
+      "name": "Array",
+      "pass_rate": 1.0,
+      "test262_passed": 17,
+      "test262_total": 17
+    },
+    {
+      "differential_cases": 250,
+      "differential_passed": 250,
+      "directory": "built-ins/String",
+      "name": "String",
+      "pass_rate": 1.0,
+      "test262_passed": 17,
+      "test262_total": 17
+    },
+    {
+      "differential_cases": 300,
+      "differential_passed": 300,
+      "directory": "built-ins/JSON",
+      "name": "JSON",
+      "pass_rate": 1.0,
+      "test262_passed": 16,
+      "test262_total": 16
+    },
+    {
+      "differential_cases": 260,
+      "differential_passed": 260,
+      "directory": "built-ins/Math",
+      "name": "Math",
+      "pass_rate": 1.0,
+      "test262_passed": 16,
+      "test262_total": 16
+    },
+    {
+      "differential_cases": 250,
+      "differential_passed": 250,
+      "directory": "built-ins/Map",
+      "name": "Map",
+      "pass_rate": 1.0,
+      "test262_passed": 16,
+      "test262_total": 16
+    },
+    {
+      "differential_cases": 250,
+      "differential_passed": 250,
+      "directory": "built-ins/Set",
+      "name": "Set",
+      "pass_rate": 1.0,
+      "test262_passed": 16,
+      "test262_total": 16
+    },
+    {
+      "differential_cases": 280,
+      "differential_passed": 280,
+      "directory": "built-ins/RegExp",
+      "name": "RegExp",
+      "pass_rate": 1.0,
+      "test262_passed": 17,
+      "test262_total": 17
+    },
+    {
+      "differential_cases": 260,
+      "differential_passed": 260,
+      "directory": "built-ins/Date",
+      "name": "Date",
+      "pass_rate": 1.0,
+      "test262_passed": 16,
+      "test262_total": 16
+    }
+  ],
+  "step": "J5",
+  "summary": {
+    "differential_passed": 2100,
+    "differential_total": 2100,
+    "test262_pass_rate": 1.0,
+    "test262_passed": 131,
+    "test262_total": 131
+  },
+  "test262_commit": "2a1ade303f72d3de80565c921d685222405c32ce"
+}

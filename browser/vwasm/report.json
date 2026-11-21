@@ -1,0 +1,197 @@
+{
+  "crate": "vwasm",
+  "fac_assertions_passed": 21,
+  "fib_assertions_passed": 5,
+  "suites": [
+    {
+      "category": "i32",
+      "failed": 0,
+      "file": "i32.wast",
+      "passed": 359,
+      "total": 359,
+      "unsupported": 0
+    },
+    {
+      "category": "i64",
+      "failed": 0,
+      "file": "i64.wast",
+      "passed": 359,
+      "total": 359,
+      "unsupported": 0
+    },
+    {
+      "category": "control",
+      "failed": 0,
+      "file": "block.wast",
+      "passed": 40,
+      "total": 41,
+      "unsupported": 1
+    },
+    {
+      "category": "control",
+      "failed": 0,
+      "file": "loop.wast",
+      "passed": 49,
+      "total": 66,
+      "unsupported": 17
+    },
+    {
+      "category": "control",
+      "failed": 0,
+      "file": "if.wast",
+      "passed": 84,
+      "total": 88,
+      "unsupported": 4
+    },
+    {
+      "category": "control",
+      "failed": 0,
+      "file": "br.wast",
+      "passed": 63,
+      "total": 63,
+      "unsupported": 0
+    },
+    {
+      "category": "control",
+      "failed": 0,
+      "file": "br_if.wast",
+      "passed": 88,
+      "total": 88,
+      "unsupported": 0
+    },
+    {
+      "category": "control",
+      "failed": 0,
+      "file": "br_table.wast",
+      "passed": 146,
+      "total": 146,
+      "unsupported": 0
+    },
+    {
+      "category": "control",
+      "failed": 0,
+      "file": "return.wast",
+      "passed": 63,
+      "total": 63,
+      "unsupported": 0
+    },
+    {
+      "category": "control",
+      "failed": 0,
+      "file": "select.wast",
+      "passed": 94,
+      "total": 94,
+      "unsupported": 0
+    },
+    {
+      "category": "control",
+      "failed": 0,
+      "file": "unreachable.wast",
+      "passed": 61,
+      "total": 61,
+      "unsupported": 0
+    },
+    {
+      "category": "memory",
+      "failed": 0,
+      "file": "memory.wast",
+      "passed": 44,
+      "total": 45,
+      "unsupported": 1
+    },
+    {
+      "category": "memory",
+      "failed": 0,
+      "file": "memory_size.wast",
+      "passed": 36,
+      "total": 36,
+      "unsupported": 0
+    },
+    {
+      "category": "memory",
+      "failed": 0,
+      "file": "memory_grow.wast",
+      "passed": 84,
+      "total": 84,
+      "unsupported": 0
+    },
+    {
+      "category": "memory",
+      "failed": 0,
+      "file": "memory_trap.wast",
+      "passed": 171,
+      "total": 171,
+      "unsupported": 0
+    },
+    {
+      "category": "fac",
+      "failed": 0,
+      "file": "fac.wast",
+      "passed": 6,
+      "total": 6,
+      "unsupported": 0
+    },
+    {
+      "category": "fib_and_call",
+      "failed": 0,
+      "file": "call.wast",
+      "passed": 62,
+      "total": 63,
+      "unsupported": 1
+    },
+    {
+      "category": "fib_and_call",
+      "failed": 0,
+      "file": "call_indirect.wast",
+      "passed": 95,
+      "total": 118,
+      "unsupported": 23
+    },
+    {
+      "category": "globals",
+      "failed": 0,
+      "file": "globals.wast",
+      "passed": 50,
+      "total": 50,
+      "unsupported": 0
+    },
+    {
+      "category": "local",
+      "failed": 0,
+      "file": "local_get.wast",
+      "passed": 17,
+      "total": 19,
+      "unsupported": 2
+    },
+    {
+      "category": "local",
+      "failed": 0,
+      "file": "local_set.wast",
+      "passed": 18,
+      "total": 19,
+      "unsupported": 1
+    },
+    {
+      "category": "local",
+      "failed": 0,
+      "file": "local_tee.wast",
+      "passed": 51,
+      "total": 55,
+      "unsupported": 4
+    },
+    {
+      "category": "binary_leb128",
+      "failed": 0,
+      "file": "binary-leb128.wast",
+      "passed": 56,
+      "total": 56,
+      "unsupported": 0
+    }
+  ],
+  "total_evaluated": 2150,
+  "total_failed": 0,
+  "total_passed": 2096,
+  "total_unsupported": 54,
+  "upstream_commit": "977f97014c962f7bd1291fcc6d28b41a924882bf",
+  "upstream_repo": "https://github.com/WebAssembly/spec"
+}

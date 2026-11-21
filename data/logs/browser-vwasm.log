@@ -1,0 +1,351 @@
+$ $VERUS_RELEASE/cargo-verus verify -p vwasm -- --triggers-mode silent
+# cwd: /private/tmp/conduit-integrate-j0-j7/browser
+# exit: 0  seconds: 3.14
+
+verification results:: 181 verified, 0 errors
+    Checking vwasm v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vwasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.04s
+
+$ cargo test -p vwasm
+# cwd: /private/tmp/conduit-integrate-j0-j7/browser
+# exit: 0  seconds: 4.34
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 3 tests
+test test_wasm_sandbox_containment_and_leb128_properties ... ok
+test test_provenance_sha256_integrity ... ok
+test test_upstream_wasm_spec_suite_and_write_report ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.11s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Compiling memchr v2.8.3
+   Compiling leb128 v0.2.7
+warning: negative impls are experimental
+   --> ~/workspaces/verus-stack/verus/source/builtin/src/lib.rs:976:6
+    |
+976 | impl !Copy for NoCopy {}
+    |      ^
+    |
+    = note: see issue #68318 <https://github.com/rust-lang/rust/issues/68318> for more information
+    = warning: unstable syntax can change at any point in the future, causing a hard error!
+    = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
+
+warning: negative impls are experimental
+   --> ~/workspaces/verus-stack/verus/source/builtin/src/lib.rs:982:6
+    |
+982 | impl !Sync for NoSyncSend {}
+    |      ^
+    |
+    = note: see issue #68318 <https://github.com/rust-lang/rust/issues/68318> for more information
+    = warning: unstable syntax can change at any point in the future, causing a hard error!
+    = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
+
+warning: negative impls are experimental
+   --> ~/workspaces/verus-stack/verus/source/builtin/src/lib.rs:984:6
+    |
+984 | impl !Send for NoSyncSend {}
+    |      ^
+    |
+    = note: see issue #68318 <https://github.com/rust-lang/rust/issues/68318> for more information
+    = warning: unstable syntax can change at any point in the future, causing a hard error!
+    = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
+
+   Compiling unicode-width v0.2.3
+   Compiling bumpalo v3.20.4
+warning: `verus_builtin` (lib) generated 3 warnings
+warning: unused variable: `perm`
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+511 | macro_rules! ptr_atomic_methods {
+...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
+    | ----------------------------------------------------- in this macro invocation
+    |
+help: `perm` is captured in macro and introduced a unused variable
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
+    | ----------------------------------------------------- in this macro invocation
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `perm`
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+511 | macro_rules! ptr_atomic_methods {
+...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
+    | ----------------------------------------------------- in this macro invocation
+    |
+help: `perm` is captured in macro and introduced a unused variable
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
+    | ----------------------------------------------------- in this macro invocation
+
+warning: unused variable: `perm`
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+511 | macro_rules! ptr_atomic_methods {
+...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
+    | ----------------------------------------------------- in this macro invocation
+    |
+help: `perm` is captured in macro and introduced a unused variable
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
+    | ----------------------------------------------------- in this macro invocation
+
+warning: unused variable: `perm`
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+511 | macro_rules! ptr_atomic_methods {
+...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
+    | ------------------------------------------------- in this macro invocation
+    |
+help: `perm` is captured in macro and introduced a unused variable
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
+    | ------------------------------------------------- in this macro invocation
+
+warning: unused variable: `perm`
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+511 | macro_rules! ptr_atomic_methods {
+...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
+    | ------------------------------------------------------------ in this macro invocation
+    |
+help: `perm` is captured in macro and introduced a unused variable
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
+    | ------------------------------------------------------------ in this macro invocation
+
+warning: unused variable: `perm`
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+511 | macro_rules! ptr_atomic_methods {
+...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
+    | ----------------------------------------------------- in this macro invocation
+    |
+help: `perm` is captured in macro and introduced a unused variable
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
+    | ----------------------------------------------------- in this macro invocation
+
+warning: unused variable: `perm`
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+511 | macro_rules! ptr_atomic_methods {
+...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
+    | ----------------------------------------------------- in this macro invocation
+    |
+help: `perm` is captured in macro and introduced a unused variable
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
+    | ----------------------------------------------------- in this macro invocation
+
+warning: unused variable: `perm`
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+511 | macro_rules! ptr_atomic_methods {
+...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
+    | ----------------------------------------------------- in this macro invocation
+    |
+help: `perm` is captured in macro and introduced a unused variable
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
+    | ----------------------------------------------------- in this macro invocation
+
+warning: unused variable: `perm`
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+511 | macro_rules! ptr_atomic_methods {
+...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
+    | ------------------------------------------------- in this macro invocation
+    |
+help: `perm` is captured in macro and introduced a unused variable
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
+    | ------------------------------------------------- in this macro invocation
+
+warning: unused variable: `perm`
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+511 | macro_rules! ptr_atomic_methods {
+...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
+    | ------------------------------------------------------------ in this macro invocation
+    |
+help: `perm` is captured in macro and introduced a unused variable
+   --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
+    |
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+    |                                                   ^^^^
+...
+616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
+    | ------------------------------------------------------------ in this macro invocation
+
+warning: unused variable: `out`
+   --> ~/workspaces/verus-stack/verus/source/vstd/hash_map.rs:535:13
+    |
+535 |         let out = self.m.m.remove(k);
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_out`
+
+warning: negative impls are experimental
+   --> ~/workspaces/verus-stack/verus/source/vstd/invariant.rs:171:18
+    |
+171 | impl<K, V, Pred> !Sync for LocalInvariant<K, V, Pred> {}
+    |                  ^
+    |
+    = note: see issue #68318 <https://github.com/rust-lang/rust/issues/68318> for more information
+    = warning: unstable syntax can change at any point in the future, causing a hard error!
+    = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
+
+warning: negative impls are experimental
+  --> ~/workspaces/verus-stack/verus/source/vstd/resource/pcm.rs:58:14
+   |
+58 | impl<P: PCM> !Copy for Resource<P> {
+   |              ^
+   |
+   = note: see issue #68318 <https://github.com/rust-lang/rust/issues/68318> for more information
+   = warning: unstable syntax can change at any point in the future, causing a hard error!
+   = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
+
+warning: negative impls are experimental
+  --> ~/workspaces/verus-stack/verus/source/vstd/resource/storage_protocol.rs:39:15
+   |
+39 | impl<K, V, P> !Copy for StorageResource<K, V, P> {
+   |               ^
+   |
+   = note: see issue #68318 <https://github.com/rust-lang/rust/issues/68318> for more information
+   = warning: unstable syntax can change at any point in the future, causing a hard error!
+   = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
+
+warning: negative impls are experimental
+  --> ~/workspaces/verus-stack/verus/source/vstd/resource/trusted/protocol.rs:43:15
+   |
+43 | impl<K, V, P> !Copy for StorageResource<K, V, P> {
+   |               ^
+   |
+   = note: see issue #68318 <https://github.com/rust-lang/rust/issues/68318> for more information
+   = warning: unstable syntax can change at any point in the future, causing a hard error!
+   = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
+
+warning: negative impls are experimental
+  --> ~/workspaces/verus-stack/verus/source/vstd/resource/trusted/ra.rs:56:13
+   |
+56 | impl<P: RA> !Copy for Resource<P> {
+   |             ^
+   |
+   = note: see issue #68318 <https://github.com/rust-lang/rust/issues/68318> for more information
+   = warning: unstable syntax can change at any point in the future, causing a hard error!
+   = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
+
+warning: negative impls are experimental
+   --> ~/workspaces/verus-stack/verus/source/vstd/thread.rs:153:6
+    |
+153 | impl !Sync for IsThread {
+    |      ^
+    |
+    = note: see issue #68318 <https://github.com/rust-lang/rust/issues/68318> for more information
+    = warning: unstable syntax can change at any point in the future, causing a hard error!
+    = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
+
+warning: negative impls are experimental
+   --> ~/workspaces/verus-stack/verus/source/vstd/thread.rs:158:6
+    |
+158 | impl !Send for IsThread {
+    |      ^
+    |
+    = note: see issue #68318 <https://github.com/rust-lang/rust/issues/68318> for more information
+    = warning: unstable syntax can change at any point in the future, causing a hard error!
+    = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
+
+warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
+   Compiling vwasm v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vwasm)
+   Compiling wasm-encoder v0.220.1
+   Compiling serde_json v1.0.154
+   Compiling wast v220.0.1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.74s
+     Running unittests src/lib.rs (target/debug/build/vwasm/ac9f2ea35037791b/out/vwasm-ac9f2ea35037791b)
+     Running tests/wasm_spec.rs (target/debug/build/vwasm/88d930562b974c33/out/wasm_spec-88d930562b974c33)
+   Doc-tests vwasm

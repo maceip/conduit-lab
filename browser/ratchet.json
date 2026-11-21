@@ -1,13 +1,18 @@
 {
-  "generated_at": "2026-11-20T10:41:55+00:00",
+  "generated_at": "2026-11-21T02:11:43+00:00",
   "generator": "browser/scripts/ratchet.py",
   "crates": [
     {
       "name": "vurl",
+      "path": "browser/url",
+      "step": "Phase 1",
+      "scope": "WHATWG URL Standard (percent, ipv4, ipv6)",
+      "theorem": "exec == spec + percent roundtrip & shortest IPv6 hex",
       "verify_exit": 0,
+      "exit_code": 0,
       "verified": 65,
       "errors": 0,
-      "verify_seconds": 2.17,
+      "verify_seconds": 1.72,
       "trusted": {
         "assume": 0,
         "admit": 0,
@@ -20,8 +25,963 @@
       "tests_exit": 0,
       "tests_passed": 9,
       "tests_failed": 0,
-      "test_seconds": 3.12
+      "test_seconds": 1.55,
+      "log": "data/logs/browser-vurl.log",
+      "proof_source": "data/examples/browser-vurl-ipv6.rs"
+    },
+    {
+      "name": "vjs_spec",
+      "path": "browser/vjs-spec",
+      "step": "J0",
+      "scope": "ESMeta <emu-alg> -> Verus compiler (25 ECMA-262 clauses)",
+      "theorem": "exec == spec across 135 generated spec steps",
+      "verify_exit": 0,
+      "exit_code": 0,
+      "verified": 271,
+      "errors": 0,
+      "verify_seconds": 3.6,
+      "trusted": {
+        "assume": 0,
+        "admit": 0,
+        "external_body": 0,
+        "external": 0,
+        "assume_specification": 0,
+        "unsafe": 0
+      },
+      "source_lines": 5579,
+      "tests_exit": 0,
+      "tests_passed": 4,
+      "tests_failed": 0,
+      "test_seconds": 1.46,
+      "log": "data/logs/browser-vjs_spec.log",
+      "proof_source": "data/examples/browser-vjs_spec-generated.rs"
+    },
+    {
+      "name": "vjs_types",
+      "path": "browser/vjs-types",
+      "step": "J1",
+      "scope": "UTF-16, IEEE-754 JsNumber, JsBigInt, ToPrimitive & equality",
+      "theorem": "Burger-Dybvig Number::toString, RNE StringToNumber, ToInt32/ToUint32",
+      "verify_exit": 0,
+      "exit_code": 0,
+      "verified": 504,
+      "errors": 0,
+      "verify_seconds": 8.6,
+      "trusted": {
+        "assume": 0,
+        "admit": 0,
+        "external_body": 0,
+        "external": 0,
+        "assume_specification": 0,
+        "unsafe": 0
+      },
+      "source_lines": 8611,
+      "tests_exit": 0,
+      "tests_passed": 8,
+      "tests_failed": 0,
+      "test_seconds": 2.0,
+      "log": "data/logs/browser-vjs_types.log",
+      "proof_source": "data/examples/browser-vjs_types-ops.rs"
+    },
+    {
+      "name": "vjs_object",
+      "path": "browser/vjs-object",
+      "step": "J2",
+      "scope": "Arena heap, descriptors, ordinary & Array exotic internal methods",
+      "theorem": "Heap::wf + ECMA-262 \u00a76.1.7.3 Essential Internal Method Invariants",
+      "verify_exit": 0,
+      "exit_code": 0,
+      "verified": 371,
+      "errors": 0,
+      "verify_seconds": 5.36,
+      "trusted": {
+        "assume": 0,
+        "admit": 0,
+        "external_body": 0,
+        "external": 0,
+        "assume_specification": 0,
+        "unsafe": 0
+      },
+      "source_lines": 11039,
+      "tests_exit": 0,
+      "tests_passed": 10,
+      "tests_failed": 0,
+      "test_seconds": 1.68,
+      "log": "data/logs/browser-vjs_object.log",
+      "proof_source": "data/examples/browser-vjs_object-invariants_proof.rs"
+    },
+    {
+      "name": "vjs_syntax",
+      "path": "browser/vjs-syntax",
+      "step": "J3",
+      "scope": "UTF-8/UTF-16 lexer (ASI + <USP>), Pratt/RD parser & Early Errors",
+      "theorem": "Total panic-free lex/parse (decreases) + Program::wf & Early Errors",
+      "verify_exit": 0,
+      "exit_code": 0,
+      "verified": 364,
+      "errors": 0,
+      "verify_seconds": 16.45,
+      "trusted": {
+        "assume": 0,
+        "admit": 0,
+        "external_body": 0,
+        "external": 0,
+        "assume_specification": 0,
+        "unsafe": 0
+      },
+      "source_lines": 20861,
+      "tests_exit": 0,
+      "tests_passed": 5,
+      "tests_failed": 0,
+      "test_seconds": 1.74,
+      "log": "data/logs/browser-vjs_syntax.log",
+      "proof_source": "data/examples/browser-vjs_syntax-token.rs"
+    },
+    {
+      "name": "vjs",
+      "path": "browser/vjs",
+      "step": "J4",
+      "scope": "ECMAScript interpreter core, closures, completion records, realm GC",
+      "theorem": "End-to-end step refinement, fuel exactness & cross-realm isolation",
+      "verify_exit": 0,
+      "exit_code": 0,
+      "verified": 1179,
+      "errors": 0,
+      "verify_seconds": 56.26,
+      "trusted": {
+        "assume": 0,
+        "admit": 0,
+        "external_body": 0,
+        "external": 0,
+        "assume_specification": 0,
+        "unsafe": 0
+      },
+      "source_lines": 29575,
+      "tests_exit": 0,
+      "tests_passed": 7,
+      "tests_failed": 0,
+      "test_seconds": 9.93,
+      "log": "data/logs/browser-vjs.log",
+      "proof_source": "data/examples/browser-vjs-env.rs"
+    },
+    {
+      "name": "vjs_webidl",
+      "path": "browser/vjs-webidl",
+      "step": "J4b",
+      "scope": "WHATWG Web IDL ToJS/ToIDL boundary & generational KernelCapTable",
+      "theorem": "USVString idempotence, no-use-after-revoke & cross-origin non-interference",
+      "verify_exit": 0,
+      "exit_code": 0,
+      "verified": 463,
+      "errors": 0,
+      "verify_seconds": 11.36,
+      "trusted": {
+        "assume": 0,
+        "admit": 0,
+        "external_body": 0,
+        "external": 0,
+        "assume_specification": 0,
+        "unsafe": 0
+      },
+      "source_lines": 12326,
+      "tests_exit": 0,
+      "tests_passed": 13,
+      "tests_failed": 0,
+      "test_seconds": 1.79,
+      "log": "data/logs/browser-vjs_webidl.log",
+      "proof_source": "data/examples/browser-vjs_webidl-dispatch.rs"
+    },
+    {
+      "name": "vjs_builtins",
+      "path": "browser/vjs-builtins",
+      "step": "J5",
+      "scope": "JSON, Warblre RegExp, \u00a721.4 Date, Math, Array, String, Map, Set",
+      "theorem": "Vest JSON roundtrip/prefix security & terminating RegExp matcher",
+      "verify_exit": 0,
+      "exit_code": 0,
+      "verified": 355,
+      "errors": 0,
+      "verify_seconds": 4.39,
+      "trusted": {
+        "assume": 0,
+        "admit": 0,
+        "external_body": 0,
+        "external": 0,
+        "assume_specification": 0,
+        "unsafe": 0
+      },
+      "source_lines": 10931,
+      "tests_exit": 0,
+      "tests_passed": 7,
+      "tests_failed": 0,
+      "test_seconds": 1.57,
+      "log": "data/logs/browser-vjs_builtins.log",
+      "proof_source": "data/examples/browser-vjs_builtins-json.rs"
+    },
+    {
+      "name": "vjs_gc",
+      "path": "browser/vjs-gc",
+      "step": "J6",
+      "scope": "Tricolor Mark-Sweep GC, Proxy/Reflect, Promise queue & Generators",
+      "theorem": "Reachable preservation, Proxy \u00a76.1.7.3 & FIFO drain_jobs liveness",
+      "verify_exit": 0,
+      "exit_code": 0,
+      "verified": 233,
+      "errors": 0,
+      "verify_seconds": 3.1,
+      "trusted": {
+        "assume": 0,
+        "admit": 0,
+        "external_body": 0,
+        "external": 0,
+        "assume_specification": 0,
+        "unsafe": 0
+      },
+      "source_lines": 7867,
+      "tests_exit": 0,
+      "tests_passed": 6,
+      "tests_failed": 0,
+      "test_seconds": 1.32,
+      "log": "data/logs/browser-vjs_gc.log",
+      "proof_source": "data/examples/browser-vjs_gc-gc.rs"
+    },
+    {
+      "name": "vjs_vm",
+      "path": "browser/vjs-vm",
+      "step": "J7",
+      "scope": "Bytecode compiler & stack VM with frame recycling",
+      "theorem": "CompCert-style simulation: spec_run_vm(compile(p)) == spec_eval(p)",
+      "verify_exit": 0,
+      "exit_code": 0,
+      "verified": 116,
+      "errors": 0,
+      "verify_seconds": 15.74,
+      "trusted": {
+        "assume": 0,
+        "admit": 0,
+        "external_body": 0,
+        "external": 0,
+        "assume_specification": 0,
+        "unsafe": 0
+      },
+      "source_lines": 5707,
+      "tests_exit": 0,
+      "tests_passed": 2,
+      "tests_failed": 0,
+      "test_seconds": 7.41,
+      "log": "data/logs/browser-vjs_vm.log",
+      "proof_source": "data/examples/browser-vjs_vm-compiler_proof.rs"
+    },
+    {
+      "name": "vwasm",
+      "path": "browser/vwasm",
+      "step": "J7",
+      "scope": "WebAssembly 1.0 binary decoder & sandboxed linear-memory interpreter",
+      "theorem": "LEB128 prefix/roundtrip + theorem_wasm_invoke_sandbox_containment",
+      "verify_exit": 0,
+      "exit_code": 0,
+      "verified": 181,
+      "errors": 0,
+      "verify_seconds": 3.14,
+      "trusted": {
+        "assume": 0,
+        "admit": 0,
+        "external_body": 0,
+        "external": 0,
+        "assume_specification": 0,
+        "unsafe": 0
+      },
+      "source_lines": 6465,
+      "tests_exit": 0,
+      "tests_passed": 3,
+      "tests_failed": 0,
+      "test_seconds": 4.34,
+      "log": "data/logs/browser-vwasm.log",
+      "proof_source": "data/examples/browser-vwasm-binary.rs"
     }
   ],
-  "verus": "0.2026.11.19.0dab219"
+  "verus": "0.2026.11.19.0dab219",
+  "esmeta_specgen": {
+    "self_test_exit": 0,
+    "check_exit": 0,
+    "seconds": 0.12,
+    "log": "data/logs/browser-esmeta-specgen.log"
+  },
+  "totals": {
+    "crates": 11,
+    "verified": 4102,
+    "errors": 0,
+    "trusted": {
+      "assume": 0,
+      "admit": 0,
+      "external_body": 0,
+      "external": 0,
+      "assume_specification": 0,
+      "unsafe": 0
+    },
+    "source_lines": 120990,
+    "tests_passed": 74,
+    "tests_failed": 0,
+    "verify_seconds": 129.72,
+    "test_seconds": 34.79
+  },
+  "j_steps": [
+    {
+      "step": "J0",
+      "scope": "ESMeta <emu-alg> -> Verus compiler (25 ECMA-262 clauses)",
+      "theorem": "exec == spec across 135 generated spec steps",
+      "status": "verified",
+      "verified": 271,
+      "errors": 0,
+      "trusted": 0,
+      "tests_passed": 4,
+      "verify_seconds": 3.6,
+      "crate": "vjs_spec",
+      "test262_passed": 191,
+      "test262_total": 191
+    },
+    {
+      "step": "J1",
+      "scope": "UTF-16, IEEE-754 JsNumber, JsBigInt, ToPrimitive & equality",
+      "theorem": "Burger-Dybvig Number::toString, RNE StringToNumber, ToInt32/ToUint32",
+      "status": "verified",
+      "verified": 504,
+      "errors": 0,
+      "trusted": 0,
+      "tests_passed": 8,
+      "verify_seconds": 8.6,
+      "crate": "vjs_types",
+      "test262_passed": 165,
+      "test262_total": 165
+    },
+    {
+      "step": "J2",
+      "scope": "Arena heap, descriptors, ordinary & Array exotic internal methods",
+      "theorem": "Heap::wf + ECMA-262 \u00a76.1.7.3 Essential Internal Method Invariants",
+      "status": "verified",
+      "verified": 371,
+      "errors": 0,
+      "trusted": 0,
+      "tests_passed": 10,
+      "verify_seconds": 5.36,
+      "crate": "vjs_object",
+      "test262_passed": 100,
+      "test262_total": 100
+    },
+    {
+      "step": "J3",
+      "scope": "UTF-8/UTF-16 lexer (ASI + <USP>), Pratt/RD parser & Early Errors",
+      "theorem": "Total panic-free lex/parse (decreases) + Program::wf & Early Errors",
+      "status": "verified",
+      "verified": 364,
+      "errors": 0,
+      "trusted": 0,
+      "tests_passed": 5,
+      "verify_seconds": 16.45,
+      "crate": "vjs_syntax",
+      "test262_passed": 180,
+      "test262_total": 180
+    },
+    {
+      "step": "J4",
+      "scope": "ECMAScript interpreter core, closures, completion records, realm GC",
+      "theorem": "End-to-end step refinement, fuel exactness & cross-realm isolation",
+      "status": "verified",
+      "verified": 1179,
+      "errors": 0,
+      "trusted": 0,
+      "tests_passed": 7,
+      "verify_seconds": 56.26,
+      "crate": "vjs",
+      "test262_passed": 130,
+      "test262_total": 130
+    },
+    {
+      "step": "J4b",
+      "scope": "WHATWG Web IDL ToJS/ToIDL boundary & generational KernelCapTable",
+      "theorem": "USVString idempotence, no-use-after-revoke & cross-origin non-interference",
+      "status": "verified",
+      "verified": 463,
+      "errors": 0,
+      "trusted": 0,
+      "tests_passed": 13,
+      "verify_seconds": 11.36,
+      "crate": "vjs_webidl",
+      "test262_passed": 153,
+      "test262_total": 153
+    },
+    {
+      "step": "J5",
+      "scope": "JSON, Warblre RegExp, \u00a721.4 Date, Math, Array, String, Map, Set",
+      "theorem": "Vest JSON roundtrip/prefix security & terminating RegExp matcher",
+      "status": "verified",
+      "verified": 355,
+      "errors": 0,
+      "trusted": 0,
+      "tests_passed": 7,
+      "verify_seconds": 4.39,
+      "crate": "vjs_builtins",
+      "test262_passed": 131,
+      "test262_total": 131
+    },
+    {
+      "step": "J6",
+      "scope": "Tricolor Mark-Sweep GC, Proxy/Reflect, Promise queue & Generators",
+      "theorem": "Reachable preservation, Proxy \u00a76.1.7.3 & FIFO drain_jobs liveness",
+      "status": "verified",
+      "verified": 233,
+      "errors": 0,
+      "trusted": 0,
+      "tests_passed": 6,
+      "verify_seconds": 3.1,
+      "crate": "vjs_gc",
+      "test262_passed": 51,
+      "test262_total": 51
+    },
+    {
+      "step": "J7",
+      "scope": "Bytecode compiler + stack VM & Wasm 1.0 binary sandbox interpreter",
+      "theorem": "CompCert simulation theorem + Wasm linear-memory containment",
+      "status": "verified",
+      "verified": 297,
+      "errors": 0,
+      "trusted": 0,
+      "tests_passed": 5,
+      "verify_seconds": 18.88,
+      "crates": [
+        "vjs_vm",
+        "vwasm"
+      ],
+      "crate": "vjs_vm, vwasm",
+      "test262_passed": 2096,
+      "test262_total": 2150
+    }
+  ],
+  "j0_sections": [
+    {
+      "clause": "6.1.6.1.2",
+      "name": "Number::bitwiseNOT",
+      "spec_steps": 2,
+      "test262_passed": 10,
+      "test262_total": 10,
+      "differential_cases": 555
+    },
+    {
+      "clause": "6.1.6.1.9",
+      "name": "Number::leftShift",
+      "spec_steps": 4,
+      "test262_passed": 13,
+      "test262_total": 13,
+      "differential_cases": 2500
+    },
+    {
+      "clause": "6.1.6.1.10",
+      "name": "Number::signedRightShift",
+      "spec_steps": 4,
+      "test262_passed": 5,
+      "test262_total": 5,
+      "differential_cases": 2500
+    },
+    {
+      "clause": "6.1.6.1.11",
+      "name": "Number::unsignedRightShift",
+      "spec_steps": 4,
+      "test262_passed": 13,
+      "test262_total": 13,
+      "differential_cases": 2500
+    },
+    {
+      "clause": "6.1.6.1.13",
+      "name": "Number::equal",
+      "spec_steps": 6,
+      "test262_passed": 68,
+      "test262_total": 68,
+      "differential_cases": 2500
+    },
+    {
+      "clause": "6.1.6.1.14",
+      "name": "Number::sameValue",
+      "spec_steps": 5,
+      "test262_passed": 16,
+      "test262_total": 16,
+      "differential_cases": 2500
+    },
+    {
+      "clause": "6.1.6.1.15",
+      "name": "Number::sameValueZero",
+      "spec_steps": 5,
+      "test262_passed": 16,
+      "test262_total": 16,
+      "differential_cases": 2500
+    },
+    {
+      "clause": "6.1.6.1.16",
+      "name": "NumberBitwiseOp",
+      "spec_steps": 12,
+      "test262_passed": 15,
+      "test262_total": 15,
+      "differential_cases": 7500
+    },
+    {
+      "clause": "6.1.6.1.17",
+      "name": "Number::bitwiseAND",
+      "spec_steps": 1,
+      "test262_passed": 5,
+      "test262_total": 5,
+      "differential_cases": 2500
+    },
+    {
+      "clause": "6.1.6.1.18",
+      "name": "Number::bitwiseXOR",
+      "spec_steps": 1,
+      "test262_passed": 5,
+      "test262_total": 5,
+      "differential_cases": 2500
+    },
+    {
+      "clause": "6.1.6.1.19",
+      "name": "Number::bitwiseOR",
+      "spec_steps": 1,
+      "test262_passed": 5,
+      "test262_total": 5,
+      "differential_cases": 2500
+    },
+    {
+      "clause": "7.1.2",
+      "name": "ToBoolean",
+      "spec_steps": 5,
+      "test262_passed": 16,
+      "test262_total": 16,
+      "differential_cases": 1100
+    },
+    {
+      "clause": "7.1.4",
+      "name": "ToNumber",
+      "spec_steps": 10,
+      "test262_passed": 102,
+      "test262_total": 102,
+      "differential_cases": 800
+    },
+    {
+      "clause": "7.1.5",
+      "name": "ToIntegerOrInfinity",
+      "spec_steps": 5,
+      "test262_passed": 64,
+      "test262_total": 64,
+      "differential_cases": 800
+    },
+    {
+      "clause": "7.1.7",
+      "name": "ToFixedSizeInteger",
+      "spec_steps": 5,
+      "test262_passed": 64,
+      "test262_total": 64,
+      "differential_cases": 2400
+    },
+    {
+      "clause": "7.1.8",
+      "name": "ToInt32",
+      "spec_steps": 2,
+      "test262_passed": 43,
+      "test262_total": 43,
+      "differential_cases": 800
+    },
+    {
+      "clause": "7.1.9",
+      "name": "ToUint32",
+      "spec_steps": 2,
+      "test262_passed": 31,
+      "test262_total": 31,
+      "differential_cases": 800
+    },
+    {
+      "clause": "7.1.11",
+      "name": "ToUint16",
+      "spec_steps": 2,
+      "test262_passed": 8,
+      "test262_total": 8,
+      "differential_cases": 800
+    },
+    {
+      "clause": "7.2.1",
+      "name": "RequireObjectCoercible",
+      "spec_steps": 2,
+      "test262_passed": 11,
+      "test262_total": 11,
+      "differential_cases": 1100
+    },
+    {
+      "clause": "7.2.8",
+      "name": "SameType",
+      "spec_steps": 9,
+      "test262_passed": 100,
+      "test262_total": 100,
+      "differential_cases": 6084
+    },
+    {
+      "clause": "7.2.9",
+      "name": "SameValue",
+      "spec_steps": 4,
+      "test262_passed": 16,
+      "test262_total": 16,
+      "differential_cases": 6084
+    },
+    {
+      "clause": "7.2.10",
+      "name": "SameValueZero",
+      "spec_steps": 4,
+      "test262_passed": 16,
+      "test262_total": 16,
+      "differential_cases": 6084
+    },
+    {
+      "clause": "7.2.11",
+      "name": "SameValueNonNumber",
+      "spec_steps": 14,
+      "test262_passed": 100,
+      "test262_total": 100,
+      "differential_cases": 587
+    },
+    {
+      "clause": "7.2.13",
+      "name": "IsLooselyEqual",
+      "spec_steps": 22,
+      "test262_passed": 38,
+      "test262_total": 38,
+      "differential_cases": 6084
+    },
+    {
+      "clause": "7.2.14",
+      "name": "IsStrictlyEqual",
+      "spec_steps": 4,
+      "test262_passed": 68,
+      "test262_total": 68,
+      "differential_cases": 6084
+    }
+  ],
+  "test262_suites": [
+    {
+      "suite": "wpt/urltestdata (IPv4 & IPv6 hosts)",
+      "crate": "vurl",
+      "step": "Phase 1",
+      "passed": 74,
+      "total": 74,
+      "differential_cases": 600000
+    },
+    {
+      "suite": "tc39/test262 (25 ECMA-262 clauses)",
+      "crate": "vjs_spec",
+      "step": "J0",
+      "passed": 191,
+      "total": 191,
+      "differential_cases": 70162
+    },
+    {
+      "suite": "tc39/test262 (Number, String, language/types)",
+      "crate": "vjs_types",
+      "step": "J1",
+      "passed": 165,
+      "total": 165,
+      "differential_cases": 38947
+    },
+    {
+      "suite": "tc39/test262 (Object/* & Array/length)",
+      "crate": "vjs_object",
+      "step": "J2",
+      "passed": 100,
+      "total": 100,
+      "differential_cases": 600
+    },
+    {
+      "suite": "tc39/test262 (13 language/* parse suites)",
+      "crate": "vjs_syntax",
+      "step": "J3",
+      "passed": 180,
+      "total": 180,
+      "differential_cases": 654
+    },
+    {
+      "suite": "tc39/test262 (5 language/* eval suites)",
+      "crate": "vjs",
+      "step": "J4",
+      "passed": 130,
+      "total": 130,
+      "differential_cases": 320
+    },
+    {
+      "suite": "wpt/webidl (7 conversion & binding suites)",
+      "crate": "vjs_webidl",
+      "step": "J4b",
+      "passed": 153,
+      "total": 153,
+      "differential_cases": 1710
+    },
+    {
+      "suite": "tc39/test262 (built-ins/Array)",
+      "crate": "vjs_builtins",
+      "step": "J5",
+      "passed": 17,
+      "total": 17,
+      "differential_cases": 250
+    },
+    {
+      "suite": "tc39/test262 (built-ins/String)",
+      "crate": "vjs_builtins",
+      "step": "J5",
+      "passed": 17,
+      "total": 17,
+      "differential_cases": 250
+    },
+    {
+      "suite": "tc39/test262 (built-ins/JSON)",
+      "crate": "vjs_builtins",
+      "step": "J5",
+      "passed": 16,
+      "total": 16,
+      "differential_cases": 300
+    },
+    {
+      "suite": "tc39/test262 (built-ins/Math)",
+      "crate": "vjs_builtins",
+      "step": "J5",
+      "passed": 16,
+      "total": 16,
+      "differential_cases": 260
+    },
+    {
+      "suite": "tc39/test262 (built-ins/Map)",
+      "crate": "vjs_builtins",
+      "step": "J5",
+      "passed": 16,
+      "total": 16,
+      "differential_cases": 250
+    },
+    {
+      "suite": "tc39/test262 (built-ins/Set)",
+      "crate": "vjs_builtins",
+      "step": "J5",
+      "passed": 16,
+      "total": 16,
+      "differential_cases": 250
+    },
+    {
+      "suite": "tc39/test262 (built-ins/RegExp)",
+      "crate": "vjs_builtins",
+      "step": "J5",
+      "passed": 17,
+      "total": 17,
+      "differential_cases": 280
+    },
+    {
+      "suite": "tc39/test262 (built-ins/Date)",
+      "crate": "vjs_builtins",
+      "step": "J5",
+      "passed": 16,
+      "total": 16,
+      "differential_cases": 260
+    },
+    {
+      "suite": "tc39/test262 (Promise, Proxy, Reflect, Generator)",
+      "crate": "vjs_gc",
+      "step": "J6",
+      "passed": 51,
+      "total": 51,
+      "differential_cases": 1161
+    },
+    {
+      "suite": "WebAssembly/spec (23 .wast suites; 54 float unsupported, 0 failed)",
+      "crate": "vwasm",
+      "step": "J7",
+      "passed": 2096,
+      "total": 2150,
+      "failed": 0,
+      "unsupported": 54,
+      "differential_cases": null
+    }
+  ],
+  "vm_benchmarks": [
+    {
+      "name": "fib(28)",
+      "iterations": 3,
+      "ast_ms": 104.378,
+      "bytecode_ms": 60.518,
+      "speedup": 1.72,
+      "result_verified_equal": true
+    },
+    {
+      "name": "sieve(8192)",
+      "iterations": 40,
+      "ast_ms": 23.829,
+      "bytecode_ms": 12.561,
+      "speedup": 1.9,
+      "result_verified_equal": true
+    },
+    {
+      "name": "tak(18, 12, 6)",
+      "iterations": 10,
+      "ast_ms": 37.907,
+      "bytecode_ms": 14.862,
+      "speedup": 2.55,
+      "result_verified_equal": true
+    },
+    {
+      "name": "gcd_sum(5000)",
+      "iterations": 20,
+      "ast_ms": 33.492,
+      "bytecode_ms": 21.386,
+      "speedup": 1.57,
+      "result_verified_equal": true
+    },
+    {
+      "name": "collatz_max(2000)",
+      "iterations": 15,
+      "ast_ms": 72.923,
+      "bytecode_ms": 44.154,
+      "speedup": 1.65,
+      "result_verified_equal": true
+    },
+    {
+      "name": "bubble_sort(256)",
+      "iterations": 20,
+      "ast_ms": 36.662,
+      "bytecode_ms": 24.448,
+      "speedup": 1.5,
+      "result_verified_equal": true
+    }
+  ],
+  "vm_benchmarks_geomean_speedup": 1.79,
+  "proof_showcase": [
+    {
+      "label": "vurl \u00b7 ipv6.rs",
+      "crate": "vurl",
+      "step": "Phase 1",
+      "file": "browser/url/src/ipv6.rs",
+      "source": "data/examples/browser-vurl-ipv6.rs",
+      "verified": 65,
+      "errors": 0,
+      "seconds": 1.72,
+      "log": "data/logs/browser-vurl.log",
+      "exit_code": 0
+    },
+    {
+      "label": "J0 \u00b7 generated.rs",
+      "crate": "vjs_spec",
+      "step": "J0",
+      "file": "browser/vjs-spec/src/generated.rs",
+      "source": "data/examples/browser-vjs_spec-generated.rs",
+      "verified": 271,
+      "errors": 0,
+      "seconds": 3.6,
+      "log": "data/logs/browser-vjs_spec.log",
+      "exit_code": 0
+    },
+    {
+      "label": "J1 \u00b7 ops.rs",
+      "crate": "vjs_types",
+      "step": "J1",
+      "file": "browser/vjs-types/src/ops.rs",
+      "source": "data/examples/browser-vjs_types-ops.rs",
+      "verified": 504,
+      "errors": 0,
+      "seconds": 8.6,
+      "log": "data/logs/browser-vjs_types.log",
+      "exit_code": 0
+    },
+    {
+      "label": "J2 \u00b7 invariants_proof.rs",
+      "crate": "vjs_object",
+      "step": "J2",
+      "file": "browser/vjs-object/src/invariants_proof.rs",
+      "source": "data/examples/browser-vjs_object-invariants_proof.rs",
+      "verified": 371,
+      "errors": 0,
+      "seconds": 5.36,
+      "log": "data/logs/browser-vjs_object.log",
+      "exit_code": 0
+    },
+    {
+      "label": "J3 \u00b7 token.rs",
+      "crate": "vjs_syntax",
+      "step": "J3",
+      "file": "browser/vjs-syntax/src/token.rs",
+      "source": "data/examples/browser-vjs_syntax-token.rs",
+      "verified": 364,
+      "errors": 0,
+      "seconds": 16.45,
+      "log": "data/logs/browser-vjs_syntax.log",
+      "exit_code": 0
+    },
+    {
+      "label": "J4 \u00b7 env.rs",
+      "crate": "vjs",
+      "step": "J4",
+      "file": "browser/vjs/src/env.rs",
+      "source": "data/examples/browser-vjs-env.rs",
+      "verified": 1179,
+      "errors": 0,
+      "seconds": 56.26,
+      "log": "data/logs/browser-vjs.log",
+      "exit_code": 0
+    },
+    {
+      "label": "J4b \u00b7 dispatch.rs",
+      "crate": "vjs_webidl",
+      "step": "J4b",
+      "file": "browser/vjs-webidl/src/dispatch.rs",
+      "source": "data/examples/browser-vjs_webidl-dispatch.rs",
+      "verified": 463,
+      "errors": 0,
+      "seconds": 11.36,
+      "log": "data/logs/browser-vjs_webidl.log",
+      "exit_code": 0
+    },
+    {
+      "label": "J5 \u00b7 json.rs",
+      "crate": "vjs_builtins",
+      "step": "J5",
+      "file": "browser/vjs-builtins/src/json.rs",
+      "source": "data/examples/browser-vjs_builtins-json.rs",
+      "verified": 355,
+      "errors": 0,
+      "seconds": 4.39,
+      "log": "data/logs/browser-vjs_builtins.log",
+      "exit_code": 0
+    },
+    {
+      "label": "J6 \u00b7 gc.rs",
+      "crate": "vjs_gc",
+      "step": "J6",
+      "file": "browser/vjs-gc/src/gc.rs",
+      "source": "data/examples/browser-vjs_gc-gc.rs",
+      "verified": 233,
+      "errors": 0,
+      "seconds": 3.1,
+      "log": "data/logs/browser-vjs_gc.log",
+      "exit_code": 0
+    },
+    {
+      "label": "J7 \u00b7 compiler_proof.rs",
+      "crate": "vjs_vm",
+      "step": "J7",
+      "file": "browser/vjs-vm/src/compiler_proof.rs",
+      "source": "data/examples/browser-vjs_vm-compiler_proof.rs",
+      "verified": 116,
+      "errors": 0,
+      "seconds": 15.74,
+      "log": "data/logs/browser-vjs_vm.log",
+      "exit_code": 0
+    },
+    {
+      "label": "J7 \u00b7 vwasm/binary.rs",
+      "crate": "vwasm",
+      "step": "J7",
+      "file": "browser/vwasm/src/binary.rs",
+      "source": "data/examples/browser-vwasm-binary.rs",
+      "verified": 181,
+      "errors": 0,
+      "seconds": 3.14,
+      "log": "data/logs/browser-vwasm.log",
+      "exit_code": 0
+    }
+  ]
 }

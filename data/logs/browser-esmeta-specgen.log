@@ -1,0 +1,25 @@
+$ python3 /private/tmp/conduit-integrate-j0-j7/browser/scripts/esmeta_to_verus.py --self-test
+# cwd: /private/tmp/conduit-integrate-j0-j7/browser
+# exit: 0  seconds: 0.07
+
+test_cfg_every_operation_has_entry_and_exit_blocks (__main__.TestEsmetaToVerusCompiler.test_cfg_every_operation_has_entry_and_exit_blocks) ... ok
+test_completion_shorthands_question_and_bang (__main__.TestEsmetaToVerusCompiler.test_completion_shorthands_question_and_bang) ... ok
+test_ecmarkup_inline_normalization_and_attributes (__main__.TestEsmetaToVerusCompiler.test_ecmarkup_inline_normalization_and_attributes) ... ok
+test_hierarchical_step_numbering_1_a_i (__main__.TestEsmetaToVerusCompiler.test_hierarchical_step_numbering_1_a_i) ... ok
+test_if_elif_else_coalescing_and_ssa_phi_lifting (__main__.TestEsmetaToVerusCompiler.test_if_elif_else_coalescing_and_ssa_phi_lifting) ... ok
+test_nested_subclauses_skipped_cleanly (__main__.TestEsmetaToVerusCompiler.test_nested_subclauses_skipped_cleanly) ... ok
+test_recursion_and_decreases_synthesis (__main__.TestEsmetaToVerusCompiler.test_recursion_and_decreases_synthesis) ... ok
+test_set_mutation_analysis_and_modulo_lowering (__main__.TestEsmetaToVerusCompiler.test_set_mutation_analysis_and_modulo_lowering) ... ok
+test_topological_call_graph_ordering (__main__.TestEsmetaToVerusCompiler.test_topological_call_graph_ordering) ... ok
+test_warblre_interleaved_comments_and_zero_trusted_markers (__main__.TestEsmetaToVerusCompiler.test_warblre_interleaved_comments_and_zero_trusted_markers) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.022s
+
+OK
+
+$ python3 /private/tmp/conduit-integrate-j0-j7/browser/scripts/esmeta_to_verus.py --check
+# cwd: /private/tmp/conduit-integrate-j0-j7/browser
+# exit: 0  seconds: 0.05
+
+OK: /private/tmp/conduit-integrate-j0-j7/browser/vjs-spec/src/generated.rs matches compiled /private/tmp/conduit-integrate-j0-j7/browser/vjs-spec/spec_inputs/ecma262_clauses.html (25 ECMA-262 operations)

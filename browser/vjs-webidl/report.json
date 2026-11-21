@@ -1,0 +1,86 @@
+{
+  "ambient_authority_audit": {
+    "crates_scanned": [
+      "url",
+      "vjs",
+      "vjs-builtins",
+      "vjs-gc",
+      "vjs-object",
+      "vjs-spec",
+      "vjs-syntax",
+      "vjs-types",
+      "vjs-vm",
+      "vjs-webidl",
+      "vwasm"
+    ],
+    "files_scanned": 63,
+    "forbidden_imports_found": 0,
+    "lines_scanned": 120990,
+    "trusted_markers": {
+      "admit": 0,
+      "assume": 0,
+      "assume_specification": 0,
+      "external": 0,
+      "external_body": 0,
+      "unsafe": 0
+    },
+    "violations": []
+  },
+  "capability_security_cases": 37,
+  "crate": "vjs_webidl",
+  "differential_oracle": {
+    "cases_passed": 1710,
+    "cases_total": 1710,
+    "engine": "Node.js v24.15.0 (V8 13.6.233.17-node.48)"
+  },
+  "spec_source": "whatwg/webidl@54a5f2de6a34e27a517a49370bc07d8943b0be11",
+  "step": "J4b",
+  "wpt_failed": 0,
+  "wpt_passed": 153,
+  "wpt_source": "web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b",
+  "wpt_suites": [
+    {
+      "name": "EnforceRange (IDB + 8 integer types)",
+      "passed": 27,
+      "total": 27,
+      "wpt_path": "IndexedDB/idbobjectstore-getAll-enforcerange.any.js"
+    },
+    {
+      "name": "Clamp ties-to-even (WebSockets + byte/octet)",
+      "passed": 45,
+      "total": 45,
+      "wpt_path": "websockets/close-invalid.any.js"
+    },
+    {
+      "name": "USVString unpaired surrogates & pairs",
+      "passed": 8,
+      "total": 8,
+      "wpt_path": "encoding/api-surrogates-utf8.any.js"
+    },
+    {
+      "name": "URLSearchParams USVString records & sequences",
+      "passed": 6,
+      "total": 6,
+      "wpt_path": "url/urlsearchparams-constructor.any.js"
+    },
+    {
+      "name": "ByteString & Headers record/sequence",
+      "passed": 11,
+      "total": 11,
+      "wpt_path": "fetch/api/headers/headers-errors.any.js"
+    },
+    {
+      "name": "Dictionaries (EventInit, RequestInit, StorageOp, NodeOp, UrlHref)",
+      "passed": 15,
+      "total": 15,
+      "wpt_path": "dom/events/Event-constructors.any.js"
+    },
+    {
+      "name": "DOMException & sequence-conversion",
+      "passed": 41,
+      "total": 41,
+      "wpt_path": "webidl/ecmascript-binding/es-exceptions/DOMException-constructor-behavior.any.js"
+    }
+  ],
+  "wpt_total": 153
+}

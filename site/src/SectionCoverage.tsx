@@ -32,10 +32,10 @@ const SectionCoverage: React.FC = () => {
         <p className="wb-prose" data-testid="coverage-tally">
           These are the last {CVES.length} Chrome CVEs that Google marked as exploited in the wild,
           as of 2026-11-20. V8 accounts for {v8} of them.{' '}
-          <strong>{tally.construction}/{CVES.length}</strong> are bug classes the planned JS engine,
-          vjs, is designed to rule out by construction: it has no JIT, its heap is safe Rust, and
-          its object model carries proved invariants. vjs is not built yet, so for now those bugs
-          would only be contained by a sandbox, the same position Chrome is in.{' '}
+          <strong>{tally.construction}/{CVES.length}</strong> are bug classes our verified JS engine,
+          <code>vjs</code>, rules out by construction: it has no JIT, its heap is safe Rust, and
+          its object model carries proved invariants (J0–J7 crates are verified; wiring them into
+          the browser kernel and renderer sandbox is next).{' '}
           <strong>{tally.containment}/{CVES.length}</strong> are in renderer code or IPC, where the
           answer is containment by the proved kernel once its theorems exist.{' '}
           <strong>{tally.graphics}/{CVES.length}</strong> are in the GPU stack (Dawn, Skia, ANGLE).

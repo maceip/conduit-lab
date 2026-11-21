@@ -3,6 +3,18 @@
 version = 4
 
 [[package]]
+name = "bitflags"
+version = "2.13.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
+
+[[package]]
+name = "bumpalo"
+version = "3.20.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
+
+[[package]]
 name = "convert_case"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -159,6 +171,12 @@ name = "itoa"
 version = "1.0.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3bd1574e617a9a6c1f8f8181bd7e841e1f20e4277607ef28945765188d6284d4"
+
+[[package]]
+name = "leb128"
+version = "0.2.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c83bff1d572d6b9aeef67ddfc8448e4a3737909cb28e81f97c791b9018703e52"
 
 [[package]]
 name = "litemap"
@@ -320,6 +338,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2c754d6c33795a1c324727428e5a7dedb5b06195f9890bdbcba760d3e246563"
 
 [[package]]
+name = "unicode-width"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ca718471876992059f251e33aafc334346ada08042b7661dd1fe313a9bced557"
+
+[[package]]
 name = "url"
 version = "2.5.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -391,6 +415,88 @@ dependencies = [
 ]
 
 [[package]]
+name = "vjs"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "vjs_builtins",
+ "vjs_gc",
+ "vjs_object",
+ "vjs_spec",
+ "vjs_syntax",
+ "vjs_types",
+ "vjs_vm",
+ "vjs_webidl",
+ "vstd",
+ "vurl",
+ "vwasm",
+]
+
+[[package]]
+name = "vjs_builtins"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "vstd",
+]
+
+[[package]]
+name = "vjs_gc"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "vstd",
+]
+
+[[package]]
+name = "vjs_object"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "vstd",
+]
+
+[[package]]
+name = "vjs_spec"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "vstd",
+]
+
+[[package]]
+name = "vjs_syntax"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "vstd",
+]
+
+[[package]]
+name = "vjs_types"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "vstd",
+]
+
+[[package]]
+name = "vjs_vm"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "vstd",
+]
+
+[[package]]
+name = "vjs_webidl"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "vstd",
+]
+
+[[package]]
 name = "vstd"
 version = "0.0.0-2026-11-15-0327"
 dependencies = [
@@ -407,6 +513,48 @@ dependencies = [
  "serde_json",
  "url",
  "vstd",
+]
+
+[[package]]
+name = "vwasm"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "vstd",
+ "wast",
+]
+
+[[package]]
+name = "wasm-encoder"
+version = "0.220.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e913f9242315ca39eff82aee0e19ee7a372155717ff0eb082c741e435ce25ed1"
+dependencies = [
+ "leb128",
+ "wasmparser",
+]
+
+[[package]]
+name = "wasmparser"
+version = "0.220.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8d07b6a3b550fefa1a914b6d54fc175dd11c3392da11eee604e6ffc759805d25"
+dependencies = [
+ "bitflags",
+ "indexmap",
+]
+
+[[package]]
+name = "wast"
+version = "220.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "83215033c469bc2b141ffd194b97a5d9abe71515bc45959a9e7021d804d60052"
+dependencies = [
+ "bumpalo",
+ "leb128",
+ "memchr",
+ "unicode-width",
+ "wasm-encoder",
 ]
 
 [[package]]

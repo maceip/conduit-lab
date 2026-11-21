@@ -1,0 +1,52 @@
+{
+  "crate": "vjs",
+  "milestone": "J4",
+  "test262": {
+    "failed": 0,
+    "passed": 130,
+    "suites": {
+      "language/block-scope": {
+        "failed": 0,
+        "passed": 14,
+        "total": 14
+      },
+      "language/exceptions": {
+        "failed": 0,
+        "passed": 17,
+        "total": 17
+      },
+      "language/expressions": {
+        "failed": 0,
+        "passed": 49,
+        "total": 49
+      },
+      "language/function-code": {
+        "failed": 0,
+        "passed": 14,
+        "total": 14
+      },
+      "language/statements": {
+        "failed": 0,
+        "passed": 36,
+        "total": 36
+      }
+    },
+    "total": 130
+  },
+  "trusted_items": {
+    "admit": 0,
+    "assume": 0,
+    "assume_specification": 0,
+    "external": 0,
+    "external_body": 0,
+    "unsafe": 0
+  },
+  "upstream_test262_commit": "2a1ade303f72d3de80565c921d685222405c32ce",
+  "upstream_test262_repository": "https://github.com/tc39/test262.git",
+  "v8_differential": {
+    "failed": 0,
+    "passed": 320,
+    "total": 320
+  },
+  "v8_oracle_binary": "/Users/mac/.nvm/versions/node/v24.15.0/bin/node"
+}

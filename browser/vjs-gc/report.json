@@ -1,0 +1,68 @@
+{
+  "crate": "vjs_gc",
+  "differential_and_stress": {
+    "generator_state_machine_vs_v8": 140,
+    "mark_sweep_gc_arenas_vs_bfs_oracle": 550,
+    "promise_and_async_await_vs_v8": 151,
+    "proxy_invariants_and_reflect_vs_v8": 320,
+    "total_cases": 1161
+  },
+  "oracle_node": "/Users/mac/.nvm/versions/node/v24.15.0/bin/node",
+  "step": "J6",
+  "test262_commit": "2a1ade303f72d3de80565c921d685222405c32ce",
+  "test262_summary": {
+    "by_directory": [
+      {
+        "directory": "built-ins/GeneratorFunction",
+        "pass_rate": 1.0,
+        "passed": 3,
+        "total": 3
+      },
+      {
+        "directory": "built-ins/GeneratorPrototype",
+        "pass_rate": 1.0,
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "directory": "built-ins/Promise",
+        "pass_rate": 1.0,
+        "passed": 11,
+        "total": 11
+      },
+      {
+        "directory": "built-ins/Proxy",
+        "pass_rate": 1.0,
+        "passed": 18,
+        "total": 18
+      },
+      {
+        "directory": "built-ins/Reflect",
+        "pass_rate": 1.0,
+        "passed": 13,
+        "total": 13
+      }
+    ],
+    "passed": 51,
+    "total": 51
+  },
+  "theorems_proved": [
+    "gc::mark_sweep wf preservation (zero dangling pointers + exact per-realm byte/object quotas)",
+    "gc::mark_sweep soundness (spec_reachable live object & outgoing edge preservation + subgraph isomorphism)",
+    "gc::mark_sweep completeness (!spec_reachable reclaimed to Free + exact freed_slots/freed_bytes)",
+    "gc::mark_sweep termination (decreases spec_count_unmarked(colors@) + worklist@.len())",
+    "proxy::revoke_proxy clears both [[ProxyTarget]] and [[ProxyHandler]] and rejects all 11 internal methods with TypeError",
+    "proxy::theorem_proxy_essential_invariants_against_malicious_traps (§6.1.7.3 post-trap invariants across all 11 essential internal methods)",
+    "promise_jobs::drain_jobs & theorem_settle_once_monotonic_arbitrary_ops (Promise settle-once monotonicity)",
+    "promise_jobs::drain_jobs & theorem_fifo_order_and_liveness_under_fuel (FIFO microtask execution & liveness under fuel)",
+    "generator::generator_next/return/throw & step_async_frame (Completed is absorbing; Executing re-entry throws TypeError per §27.5.3.2)"
+  ],
+  "trusted": {
+    "admit": 0,
+    "assume": 0,
+    "assume_specification": 0,
+    "external": 0,
+    "external_body": 0,
+    "unsafe": 0
+  }
+}

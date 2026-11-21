@@ -1,0 +1,89 @@
+{
+  "component": "vjs_types",
+  "differential": {
+    "f64_oracle_assertions": 33214,
+    "total_differential_assertions": 38947,
+    "v8_node_oracle_assertions": 5733
+  },
+  "node_oracle": "/Users/mac/.nvm/versions/node/v24.15.0/bin/node",
+  "step": "J1",
+  "suites": [
+    {
+      "passed": 86,
+      "suite": "built-ins/Number",
+      "total": 86
+    },
+    {
+      "passed": 4,
+      "suite": "built-ins/Number/isFinite",
+      "total": 4
+    },
+    {
+      "passed": 5,
+      "suite": "built-ins/Number/isInteger",
+      "total": 5
+    },
+    {
+      "passed": 3,
+      "suite": "built-ins/Number/isNaN",
+      "total": 3
+    },
+    {
+      "passed": 6,
+      "suite": "built-ins/Number/isSafeInteger",
+      "total": 6
+    },
+    {
+      "passed": 5,
+      "suite": "built-ins/Number/prototype",
+      "total": 5
+    },
+    {
+      "passed": 18,
+      "suite": "built-ins/String",
+      "total": 18
+    },
+    {
+      "passed": 3,
+      "suite": "language/types/boolean",
+      "total": 3
+    },
+    {
+      "passed": 3,
+      "suite": "language/types/null",
+      "total": 3
+    },
+    {
+      "passed": 21,
+      "suite": "language/types/number",
+      "total": 21
+    },
+    {
+      "passed": 7,
+      "suite": "language/types/string",
+      "total": 7
+    },
+    {
+      "passed": 4,
+      "suite": "language/types/undefined",
+      "total": 4
+    }
+  ],
+  "test262_commit": "2a1ade303f72d3de80565c921d685222405c32ce",
+  "test262_summary": {
+    "built_ins_Number": {
+      "passed": 109,
+      "total": 109
+    },
+    "built_ins_String": {
+      "passed": 18,
+      "total": 18
+    },
+    "language_types": {
+      "passed": 38,
+      "total": 38
+    },
+    "total_files": 165,
+    "total_passed": 165
+  }
+}

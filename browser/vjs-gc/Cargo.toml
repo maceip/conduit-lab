@@ -1,0 +1,15 @@
+[package]
+name = "vjs_gc"
+version = "0.1.0"
+edition = "2021"
+description = "Formally verified Mark-Sweep GC, Proxy/Reflect (§10.5, §28.1, §6.1.7.3), Promises & FIFO Job Queue (§27.2, §9.5), and Generators/Async (§27.5, §27.7) in Verus"
+license = "MIT"
+
+[dependencies]
+vstd = { workspace = true }
+
+[dev-dependencies]
+serde_json = "1"
+
+[package.metadata.verus]
+verify = true

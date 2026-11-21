@@ -1,0 +1,677 @@
+<!-- Pinned verbatim <emu-clause> excerpts from https://github.com/tc39/ecma262.git@74c33d406ec1763ca9ee5ad9165571661649d6e6 (spec.html, sha256=26be7f84c6f2d60dd50fe16e92f8a891a0b489eb0f2dd07dd43714a952d9f0f1) -->
+
+<!-- @ecma262-excerpt clause=6.1.6.1.2 id=sec-numeric-types-number-bitwiseNOT lines=L1740-L1752 sha256=58c12ad957af76eaf50f97359ab6f2d15ef1043cdb7fc529fefe1a0932eca2c8 -->
+        <emu-clause id="sec-numeric-types-number-bitwiseNOT" type="numeric method">
+          <h1>
+            Number::bitwiseNOT (
+              _number_: a Number,
+            ): an integral Number
+          </h1>
+          <dl class="header">
+          </dl>
+          <emu-alg>
+            1. Let _oldValue_ be ! ToInt32(_number_).
+            1. Return the bitwise complement of _oldValue_. The mathematical value of the result is exactly representable as a 32-bit two's complement bit string.
+          </emu-alg>
+        </emu-clause>
+
+<!-- @ecma262-excerpt clause=6.1.6.1.9 id=sec-numeric-types-number-leftShift lines=L1951-L1966 sha256=6d82a80334bc80d3aece965263032027543c2e5dbffad7565ebb65496b1eafb4 -->
+        <emu-clause id="sec-numeric-types-number-leftShift" type="numeric method">
+          <h1>
+            Number::leftShift (
+              _x_: a Number,
+              _y_: a Number,
+            ): an integral Number
+          </h1>
+          <dl class="header">
+          </dl>
+          <emu-alg>
+            1. Let _leftNumber_ be ! ToInt32(_x_).
+            1. Let _rightNumber_ be ! ToUint32(_y_).
+            1. Let _shiftCount_ be ℝ(_rightNumber_) modulo 32.
+            1. Return the result of left shifting _leftNumber_ by _shiftCount_ bits. The mathematical value of the result is exactly representable as a 32-bit two's complement bit string.
+          </emu-alg>
+        </emu-clause>
+
+<!-- @ecma262-excerpt clause=6.1.6.1.10 id=sec-numeric-types-number-signedRightShift lines=L1968-L1983 sha256=2d606c46bce8bdd86dd538c01842330df81d5c3f4cb1b396ca485e275497a35c -->
+        <emu-clause id="sec-numeric-types-number-signedRightShift" type="numeric method">
+          <h1>
+            Number::signedRightShift (
+              _x_: a Number,
+              _y_: a Number,
+            ): an integral Number
+          </h1>
+          <dl class="header">
+          </dl>
+          <emu-alg>
+            1. Let _leftNumber_ be ! ToInt32(_x_).
+            1. Let _rightNumber_ be ! ToUint32(_y_).
+            1. Let _shiftCount_ be ℝ(_rightNumber_) modulo 32.
+            1. Return the result of performing a sign-extending right shift of _leftNumber_ by _shiftCount_ bits. The most significant bit is propagated. The mathematical value of the result is exactly representable as a 32-bit two's complement bit string.
+          </emu-alg>
+        </emu-clause>
+
+<!-- @ecma262-excerpt clause=6.1.6.1.11 id=sec-numeric-types-number-unsignedRightShift lines=L1985-L2000 sha256=e0df6784c060da166785efc63b7ab58d6eac70f8d2e98fe00e2e753174aa65c7 -->
+        <emu-clause id="sec-numeric-types-number-unsignedRightShift" type="numeric method">
+          <h1>
+            Number::unsignedRightShift (
+              _x_: a Number,
+              _y_: a Number,
+            ): an integral Number
+          </h1>
+          <dl class="header">
+          </dl>
+          <emu-alg>
+            1. Let _leftNumber_ be ! ToUint32(_x_).
+            1. Let _rightNumber_ be ! ToUint32(_y_).
+            1. Let _shiftCount_ be ℝ(_rightNumber_) modulo 32.
+            1. Return the result of performing a zero-filling right shift of _leftNumber_ by _shiftCount_ bits. Vacated bits are filled with zero. The mathematical value of the result is exactly representable as a 32-bit unsigned bit string.
+          </emu-alg>
+        </emu-clause>
+
+<!-- @ecma262-excerpt clause=6.1.6.1.13 id=sec-numeric-types-number-equal lines=L2027-L2044 sha256=82c2b31f96f32f553544eeffb6006ad4d0cf50db7e52df4ec87c1e692153e108 -->
+        <emu-clause id="sec-numeric-types-number-equal" type="numeric method">
+          <h1>
+            Number::equal (
+              _x_: a Number,
+              _y_: a Number,
+            ): a Boolean
+          </h1>
+          <dl class="header">
+          </dl>
+          <emu-alg>
+            1. If _x_ is *NaN*, return *false*.
+            1. If _y_ is *NaN*, return *false*.
+            1. If _x_ is _y_, return *true*.
+            1. If _x_ is *+0*<sub>𝔽</sub> and _y_ is *-0*<sub>𝔽</sub>, return *true*.
+            1. If _x_ is *-0*<sub>𝔽</sub> and _y_ is *+0*<sub>𝔽</sub>, return *true*.
+            1. Return *false*.
+          </emu-alg>
+        </emu-clause>
+
+<!-- @ecma262-excerpt clause=6.1.6.1.14 id=sec-numeric-types-number-sameValue lines=L2046-L2062 sha256=846a3f712c33a2d6ed829ee382368b9f4c174bc2144904a18d5e68e5db0190d3 -->
+        <emu-clause id="sec-numeric-types-number-sameValue" type="numeric method">
+          <h1>
+            Number::sameValue (
+              _x_: a Number,
+              _y_: a Number,
+            ): a Boolean
+          </h1>
+          <dl class="header">
+          </dl>
+          <emu-alg>
+            1. If _x_ is *NaN* and _y_ is *NaN*, return *true*.
+            1. If _x_ is *+0*<sub>𝔽</sub> and _y_ is *-0*<sub>𝔽</sub>, return *false*.
+            1. If _x_ is *-0*<sub>𝔽</sub> and _y_ is *+0*<sub>𝔽</sub>, return *false*.
+            1. If _x_ is _y_, return *true*.
+            1. Return *false*.
+          </emu-alg>
+        </emu-clause>
+
+<!-- @ecma262-excerpt clause=6.1.6.1.15 id=sec-numeric-types-number-sameValueZero lines=L2064-L2080 sha256=8852982507c136efcfff51d6fdd51fd585bb0890cf4b005685daed085359e317 -->
+        <emu-clause id="sec-numeric-types-number-sameValueZero" type="numeric method">
+          <h1>
+            Number::sameValueZero (
+              _x_: a Number,
+              _y_: a Number,
+            ): a Boolean
+          </h1>
+          <dl class="header">
+          </dl>
+          <emu-alg>
+            1. If _x_ is *NaN* and _y_ is *NaN*, return *true*.
+            1. If _x_ is *+0*<sub>𝔽</sub> and _y_ is *-0*<sub>𝔽</sub>, return *true*.
+            1. If _x_ is *-0*<sub>𝔽</sub> and _y_ is *+0*<sub>𝔽</sub>, return *true*.
+            1. If _x_ is _y_, return *true*.
+            1. Return *false*.
+          </emu-alg>
+        </emu-clause>
+
+<!-- @ecma262-excerpt clause=6.1.6.1.16 id=sec-numberbitwiseop lines=L2082-L2106 sha256=7bace185189f4c2a8c81bb62453cf87d34dc37fdc6fb21b2a58a75046c9a54b2 -->
+        <emu-clause id="sec-numberbitwiseop" type="abstract operation">
+          <h1>
+            NumberBitwiseOp (
+              _op_: `&amp;`, `^`, or `|`,
+              _x_: a Number,
+              _y_: a Number,
+            ): an integral Number
+          </h1>
+          <dl class="header">
+          </dl>
+          <emu-alg>
+            1. Let _leftNumber_ be ! ToInt32(_x_).
+            1. Let _rightNumber_ be ! ToInt32(_y_).
+            1. Let _leftBits_ be the 32-bit two's complement bit string representing ℝ(_leftNumber_).
+            1. Let _rightBits_ be the 32-bit two's complement bit string representing ℝ(_rightNumber_).
+            1. If _op_ is `&amp;`, then
+              1. Let _result_ be the result of applying the bitwise <code>AND</code> operation to _leftBits_ and _rightBits_.
+            1. Else if _op_ is `^`, then
+              1. Let _result_ be the result of applying the bitwise <code>XOR</code> (exclusive OR) operation to _leftBits_ and _rightBits_.
+            1. Else,
+              1. Assert: _op_ is `|`.
+              1. Let _result_ be the result of applying the bitwise <code>OR</code> (inclusive OR) operation to _leftBits_ and _rightBits_.
+            1. Return the Number value for the integer represented by the 32-bit two's complement bit string _result_.
+          </emu-alg>
+        </emu-clause>
+
+<!-- @ecma262-excerpt clause=6.1.6.1.17 id=sec-numeric-types-number-bitwiseAND lines=L2108-L2120 sha256=6c2f4ba95024c3882ca9218273e7dba337d9602bc40b8cedb696093be1aed334 -->
+        <emu-clause id="sec-numeric-types-number-bitwiseAND" type="numeric method">
+          <h1>
+            Number::bitwiseAND (
+              _x_: a Number,
+              _y_: a Number,
+            ): an integral Number
+          </h1>
+          <dl class="header">
+          </dl>
+          <emu-alg>
+            1. Return NumberBitwiseOp(`&amp;`, _x_, _y_).
+          </emu-alg>
+        </emu-clause>
+
+<!-- @ecma262-excerpt clause=6.1.6.1.18 id=sec-numeric-types-number-bitwiseXOR lines=L2122-L2134 sha256=6da6c3fa2e2edbcb928eab8224f11792a87625e62d4da18fed7cd6493f646de5 -->
+        <emu-clause id="sec-numeric-types-number-bitwiseXOR" type="numeric method">
+          <h1>
+            Number::bitwiseXOR (
+              _x_: a Number,
+              _y_: a Number,
+            ): an integral Number
+          </h1>
+          <dl class="header">
+          </dl>
+          <emu-alg>
+            1. Return NumberBitwiseOp(`^`, _x_, _y_).
+          </emu-alg>
+        </emu-clause>
+
+<!-- @ecma262-excerpt clause=6.1.6.1.19 id=sec-numeric-types-number-bitwiseOR lines=L2136-L2148 sha256=e431873ac851dce598185efbf834359f2447bca69073753f35ab6a6fa70c1ac1 -->
+        <emu-clause id="sec-numeric-types-number-bitwiseOR" type="numeric method">
+          <h1>
+            Number::bitwiseOR (
+              _x_: a Number,
+              _y_: a Number,
+            ): an integral Number
+          </h1>
+          <dl class="header">
+          </dl>
+          <emu-alg>
+            1. Return NumberBitwiseOp(`|`, _x_, _y_).
+          </emu-alg>
+        </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.1.2 id=sec-toboolean lines=L4825-L4842 sha256=bf84cd182c9c86eb91c51023e47f63a82b1d2d1cbf48df2263418c4ecabdf72a -->
+    <emu-clause id="sec-toboolean" oldids="table-toboolean-conversions,sec-IsHTMLDDA-internal-slot-to-boolean" type="abstract operation">
+      <h1>
+        ToBoolean (
+          _arg_: an ECMAScript language value,
+        ): a Boolean
+      </h1>
+      <dl class="header">
+        <dt>description</dt>
+        <dd>It converts _arg_ to a value of type Boolean.</dd>
+      </dl>
+      <emu-alg>
+        1. If _arg_ is a Boolean, return _arg_.
+        1. If _arg_ is one of *undefined*, *null*, *+0*<sub>𝔽</sub>, *-0*<sub>𝔽</sub>, *NaN*, *0*<sub>ℤ</sub>, or the empty String, return *false*.
+        1. [id="step-to-boolean-web-compat-insertion-point", normative-optional] If the host is a web browser or otherwise supports <emu-xref href="#sec-IsHTMLDDA-internal-slot" title></emu-xref>, then
+          1. If _arg_ is an Object and _arg_ has an [[IsHTMLDDA]] internal slot, return *false*.
+        1. Return *true*.
+      </emu-alg>
+    </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.1.4 id=sec-tonumber lines=L4861-L5033 sha256=17d7451b7fa3086ef7044c81a38ba2adb81d9c71e2b8283ee41e62d63e2af138 -->
+    <emu-clause id="sec-tonumber" oldids="table-tonumber-conversions" type="abstract operation">
+      <h1>
+        ToNumber (
+          _arg_: an ECMAScript language value,
+        ): either a normal completion containing a Number or a throw completion
+      </h1>
+      <dl class="header">
+        <dt>description</dt>
+        <dd>It converts _arg_ to a value of type Number.</dd>
+      </dl>
+      <emu-alg>
+        1. If _arg_ is a Number, return _arg_.
+        1. If _arg_ is either a Symbol or a BigInt, throw a *TypeError* exception.
+        1. If _arg_ is *undefined*, return *NaN*.
+        1. If _arg_ is either *null* or *false*, return *+0*<sub>𝔽</sub>.
+        1. If _arg_ is *true*, return *1*<sub>𝔽</sub>.
+        1. If _arg_ is a String, return StringToNumber(_arg_).
+        1. Assert: _arg_ is an Object.
+        1. Let _primitiveValue_ be ? ToPrimitive(_arg_, ~number~).
+        1. Assert: _primitiveValue_ is not an Object.
+        1. Return ? ToNumber(_primitiveValue_).
+      </emu-alg>
+
+      <emu-clause id="sec-tonumber-applied-to-the-string-type">
+        <h1>ToNumber Applied to the String Type</h1>
+        <p>The abstract operation StringToNumber specifies how to convert a String value to a Number value, using the following grammar.</p>
+        <h2>Syntax</h2>
+        <emu-grammar type="definition">
+          StringNumericLiteral :::
+            StrWhiteSpace?
+            StrWhiteSpace? StrNumericLiteral StrWhiteSpace?
+
+          StrWhiteSpace :::
+            StrWhiteSpaceChar StrWhiteSpace?
+
+          StrWhiteSpaceChar :::
+            WhiteSpace
+            LineTerminator
+
+          StrNumericLiteral :::
+            StrDecimalLiteral
+            NonDecimalIntegerLiteral[~Sep]
+
+          StrDecimalLiteral :::
+            StrUnsignedDecimalLiteral
+            `+` StrUnsignedDecimalLiteral
+            `-` StrUnsignedDecimalLiteral
+
+          StrUnsignedDecimalLiteral :::
+            `Infinity`
+            DecimalDigits[~Sep] `.` DecimalDigits[~Sep]? ExponentPart[~Sep]?
+            `.` DecimalDigits[~Sep] ExponentPart[~Sep]?
+            DecimalDigits[~Sep] ExponentPart[~Sep]?
+        </emu-grammar>
+        <p>All grammar symbols not explicitly defined above have the definitions used in the Lexical Grammar for numeric literals (<emu-xref href="#sec-literals-numeric-literals"></emu-xref>)</p>
+        <emu-note>
+          <p>Some differences should be noted between the syntax of a |StringNumericLiteral| and a |NumericLiteral|:</p>
+          <ul>
+            <li>
+              A |StringNumericLiteral| may include leading and/or trailing white space and/or line terminators.
+            </li>
+            <li>
+              A |StringNumericLiteral| that is decimal may have any number of leading `0` digits.
+            </li>
+            <li>
+              A |StringNumericLiteral| that is decimal may include a `+` or `-` to indicate its sign.
+            </li>
+            <li>
+              A |StringNumericLiteral| that is empty or contains only white space is converted to *+0*<sub>𝔽</sub>.
+            </li>
+            <li>
+              `Infinity` and `-Infinity` are recognized as a |StringNumericLiteral| but not as a |NumericLiteral|.
+            </li>
+            <li>
+              A |StringNumericLiteral| cannot include a |BigIntLiteralSuffix|.
+            </li>
+            <li>
+              A |StringNumericLiteral| cannot include a |NumericLiteralSeparator|.
+            </li>
+          </ul>
+        </emu-note>
+
+        <emu-clause id="sec-stringtonumber" type="abstract operation">
+          <h1>
+            StringToNumber (
+              _string_: a String,
+            ): a Number
+          </h1>
+          <dl class="header">
+          </dl>
+          <emu-alg>
+            1. Let _literal_ be ParseText(_string_, |StringNumericLiteral|).
+            1. If _literal_ is a List of errors, return *NaN*.
+            1. Return the StringNumericValue of _literal_.
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-runtime-semantics-stringnumericvalue" type="sdo" oldids="sec-runtime-semantics-mv-s">
+          <h1>Runtime Semantics: StringNumericValue ( ): a Number</h1>
+          <dl class="header">
+          </dl>
+          <emu-note>
+            <p>The conversion of a |StringNumericLiteral| to a Number value is similar overall to the determination of the NumericValue of a |NumericLiteral| (see <emu-xref href="#sec-literals-numeric-literals"></emu-xref>), but some of the details are different.</p>
+          </emu-note>
+          <emu-grammar>StringNumericLiteral ::: StrWhiteSpace?</emu-grammar>
+          <emu-alg>
+            1. Return *+0*<sub>𝔽</sub>.
+          </emu-alg>
+          <emu-grammar>StringNumericLiteral ::: StrWhiteSpace? StrNumericLiteral StrWhiteSpace?</emu-grammar>
+          <emu-alg>
+            1. Return the StringNumericValue of |StrNumericLiteral|.
+          </emu-alg>
+          <emu-grammar>StrNumericLiteral ::: NonDecimalIntegerLiteral</emu-grammar>
+          <emu-alg>
+            1. Return 𝔽(MV of |NonDecimalIntegerLiteral|).
+          </emu-alg>
+          <emu-grammar>StrDecimalLiteral ::: `-` StrUnsignedDecimalLiteral</emu-grammar>
+          <emu-alg>
+            1. Let _a_ be the StringNumericValue of |StrUnsignedDecimalLiteral|.
+            1. If _a_ is *+0*<sub>𝔽</sub>, return *-0*<sub>𝔽</sub>.
+            1. Return -_a_.
+          </emu-alg>
+          <emu-grammar>StrUnsignedDecimalLiteral ::: `Infinity`</emu-grammar>
+          <emu-alg>
+            1. Return *+∞*<sub>𝔽</sub>.
+          </emu-alg>
+          <emu-grammar>StrUnsignedDecimalLiteral ::: DecimalDigits `.` DecimalDigits? ExponentPart?</emu-grammar>
+          <emu-alg>
+            1. Let _a_ be the MV of the first |DecimalDigits|.
+            1. If the second |DecimalDigits| is present, then
+              1. Let _b_ be the MV of the second |DecimalDigits|.
+              1. Let _n_ be the number of code points in the second |DecimalDigits|.
+            1. Else,
+              1. Let _b_ be 0.
+              1. Let _n_ be 0.
+            1. If |ExponentPart| is present, let _e_ be the MV of |ExponentPart|; else let _e_ be 0.
+            1. Return RoundMVResult((_a_ + (_b_ × 10<sup>-_n_</sup>)) × 10<sup>_e_</sup>).
+          </emu-alg>
+          <emu-grammar>StrUnsignedDecimalLiteral ::: `.` DecimalDigits ExponentPart?</emu-grammar>
+          <emu-alg>
+            1. Let _b_ be the MV of |DecimalDigits|.
+            1. If |ExponentPart| is present, let _e_ be the MV of |ExponentPart|; else let _e_ be 0.
+            1. Let _n_ be the number of code points in |DecimalDigits|.
+            1. Return RoundMVResult(_b_ × 10<sup>_e_ - _n_</sup>).
+          </emu-alg>
+          <emu-grammar>StrUnsignedDecimalLiteral ::: DecimalDigits ExponentPart?</emu-grammar>
+          <emu-alg>
+            1. Let _a_ be the MV of |DecimalDigits|.
+            1. If |ExponentPart| is present, let _e_ be the MV of |ExponentPart|; else let _e_ be 0.
+            1. Return RoundMVResult(_a_ × 10<sup>_e_</sup>).
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-roundmvresult" type="abstract operation">
+          <h1>
+            RoundMVResult (
+              _n_: a mathematical value,
+            ): a Number
+          </h1>
+          <dl class="header">
+            <dt>description</dt>
+            <dd>It converts _n_ to a Number in an implementation-defined manner. For the purposes of this abstract operation, a digit is significant if it is not zero or there is a non-zero digit to its left and there is a non-zero digit to its right. For the purposes of this abstract operation, “the mathematical value denoted by” a representation of a mathematical value is the inverse of “the decimal representation of” a mathematical value.</dd>
+          </dl>
+          <emu-alg>
+            1. If the decimal representation of _n_ has 20 or fewer significant digits, return 𝔽(_n_).
+            1. Let _option1_ be the mathematical value denoted by the result of replacing each significant digit in the decimal representation of _n_ after the 20th with a 0 digit.
+            1. Let _option2_ be the mathematical value denoted by the result of replacing each significant digit in the decimal representation of _n_ after the 20th with a 0 digit and then incrementing it at the 20th position (with carrying as necessary).
+            1. Let _chosen_ be an implementation-defined choice of either _option1_ or _option2_.
+            1. Return 𝔽(_chosen_).
+          </emu-alg>
+        </emu-clause>
+      </emu-clause>
+    </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.1.5 id=sec-tointegerorinfinity lines=L5035-L5055 sha256=217fb504857a4f4c86d90f729463f4987d4a379ace4b1789aa7023ba9bbab8eb -->
+    <emu-clause id="sec-tointegerorinfinity" type="abstract operation" oldids="sec-tointeger">
+      <h1>
+        ToIntegerOrInfinity (
+          _arg_: an ECMAScript language value,
+        ): either a normal completion containing either an integer, +&infin;, or -&infin;, or a throw completion
+      </h1>
+      <dl class="header">
+        <dt>description</dt>
+        <dd>It converts _arg_ to an integer representing its Number value with fractional part truncated, or to +∞ or -∞ when that Number value is infinite.</dd>
+      </dl>
+      <emu-alg>
+        1. Let _number_ be ? ToNumber(_arg_).
+        1. If _number_ is one of *NaN*, *+0*<sub>𝔽</sub>, or *-0*<sub>𝔽</sub>, return 0.
+        1. If _number_ is *+∞*<sub>𝔽</sub>, return +∞.
+        1. If _number_ is *-∞*<sub>𝔽</sub>, return -∞.
+        1. Return truncate(ℝ(_number_)).
+      </emu-alg>
+      <emu-note>
+        𝔽(ToIntegerOrInfinity(_x_)) never returns *-0*<sub>𝔽</sub> for any value of _x_. The truncation of the fractional part is performed after converting _x_ to a mathematical value.
+      </emu-note>
+    </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.1.7 id=sec-tofixedsizeinteger lines=L5082-L5104 sha256=a0832b36c42f308ab559e411eb15e920eea4c806adf7fdbb83cdd8f8893298e9 -->
+    <emu-clause id="sec-tofixedsizeinteger" type="abstract operation">
+      <h1>
+        ToFixedSizeInteger (
+          _int_: an integer, +∞, or -∞,
+          _signed_: ~unsigned~ or ~signed~,
+          _bitWidth_: a positive integer,
+        ): an integer
+      </h1>
+      <dl class="header">
+        <dt>description</dt>
+        <dd>It maps _int_ to one of 2<sup>_bitWidth_</sup> integers in the inclusive interval from 0 to 2<sup>_bitWidth_</sup> - 1 (if _signed_ is ~unsigned~) or -2<sup>_bitWidth_ - 1</sup> to 2<sup>_bitWidth_ - 1</sup> - 1 (if _signed_ is ~signed~).</dd>
+      </dl>
+      <emu-alg>
+        1. If _int_ = +∞ or _int_ = -∞, return 0.
+        1. Let _fixedInt_ be _int_ modulo 2<sup>_bitWidth_</sup>.
+        1. NOTE: The following step does not change the two's complement representation of _fixedInt_.
+        1. If _signed_ is ~signed~ and _fixedInt_ ≥ 2<sup>_bitWidth_ - 1</sup>, set _fixedInt_ to _fixedInt_ - 2<sup>_bitWidth_</sup>.
+        1. Return _fixedInt_.
+      </emu-alg>
+      <emu-note>
+        <p>ToFixedSizeInteger is idempotent: for any ECMAScript language value _x_, ToFixedSizeInteger(ToFixedSizeInteger(_x_, _signed_, _bitWidth_), _signed_, _bitWidth_) is the same as ToFixedSizeInteger(_x_, _signed_, _bitWidth_). In fact, because +∞ and -∞ are mapped to 0, this invariant even survives inversion of _signed_ (e.g., ToFixedSizeInteger(ToFixedSizeInteger(_x_, ~signed~, 32), ~unsigned~, 32) is the same as ToFixedSizeInteger(_x_, ~unsigned~, 32)).</p>
+      </emu-note>
+    </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.1.8 id=sec-toint32 lines=L5106-L5120 sha256=2eb66b9c6613dd4d7404fb79c9c85104aac0a0f85667e843e96b07caece46db3 -->
+    <emu-clause id="sec-toint32" type="abstract operation">
+      <h1>
+        ToInt32 (
+          _arg_: an ECMAScript language value,
+        ): either a normal completion containing an integral Number or a throw completion
+      </h1>
+      <dl class="header">
+        <dt>description</dt>
+        <dd>It converts _arg_ to one of 2<sup>32</sup> integral Number values in the inclusive interval from 𝔽(-2<sup>31</sup>) to 𝔽(2<sup>31</sup> - 1), excluding *-0*<sub>𝔽</sub>.</dd>
+      </dl>
+      <emu-alg>
+        1. Let _int_ be ? ToIntegerOrInfinity(_arg_).
+        1. Return 𝔽(ToFixedSizeInteger(_int_, ~signed~, 32)).
+      </emu-alg>
+    </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.1.9 id=sec-touint32 lines=L5122-L5136 sha256=350db6611a9e534c92cedc7d23cbc7007969e67dfaaef12cd021ef2f0bf1b5de -->
+    <emu-clause id="sec-touint32" type="abstract operation">
+      <h1>
+        ToUint32 (
+          _arg_: an ECMAScript language value,
+        ): either a normal completion containing an integral Number or a throw completion
+      </h1>
+      <dl class="header">
+        <dt>description</dt>
+        <dd>It converts _arg_ to one of 2<sup>32</sup> integral Number values in the inclusive interval from *+0*<sub>𝔽</sub> to 𝔽(2<sup>32</sup> - 1).</dd>
+      </dl>
+      <emu-alg>
+        1. Let _int_ be ? ToIntegerOrInfinity(_arg_).
+        1. Return 𝔽(ToFixedSizeInteger(_int_, ~unsigned~, 32)).
+      </emu-alg>
+    </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.1.11 id=sec-touint16 lines=L5154-L5168 sha256=c738e6a9d34069bffb05b82f04741c6989b2592175b293bcff309a055eca0737 -->
+    <emu-clause id="sec-touint16" type="abstract operation">
+      <h1>
+        ToUint16 (
+          _arg_: an ECMAScript language value,
+        ): either a normal completion containing an integral Number or a throw completion
+      </h1>
+      <dl class="header">
+        <dt>description</dt>
+        <dd>It converts _arg_ to one of 2<sup>16</sup> integral Number values in the inclusive interval from *+0*<sub>𝔽</sub> to 𝔽(2<sup>16</sup> - 1).</dd>
+      </dl>
+      <emu-alg>
+        1. Let _int_ be ? ToIntegerOrInfinity(_arg_).
+        1. Return 𝔽(ToFixedSizeInteger(_int_, ~unsigned~, 16)).
+      </emu-alg>
+    </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.2.1 id=sec-requireobjectcoercible lines=L5552-L5566 sha256=35f832a6f547550cef65f398d8687b975df43b2b8dddc3a28c6f76b0ae57530a -->
+    <emu-clause id="sec-requireobjectcoercible" type="abstract operation" oldids="table-requireobjectcoercible-results,table-14">
+      <h1>
+        RequireObjectCoercible (
+          _arg_: an ECMAScript language value,
+        ): either a normal completion containing ~unused~ or a throw completion
+      </h1>
+      <dl class="header">
+        <dt>description</dt>
+        <dd>It throws an error if _arg_ is a value that cannot be converted to an Object using ToObject.</dd>
+      </dl>
+      <emu-alg>
+        1. If _arg_ is either *undefined* or *null*, throw a *TypeError* exception.
+        1. Return ~unused~.
+      </emu-alg>
+    </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.2.8 id=sec-sametype lines=L5674-L5696 sha256=860fcfaf7d56f1413f9c45369520134f16ca22a80a0086807517bad4686445fd -->
+    <emu-clause id="sec-sametype" type="abstract operation">
+      <h1>
+        SameType (
+          _x_: an ECMAScript language value,
+          _y_: an ECMAScript language value,
+        ): a Boolean
+      </h1>
+      <dl class="header">
+        <dt>description</dt>
+        <dd>It determines whether or not the two arguments are the same type.</dd>
+      </dl>
+      <emu-alg>
+        1. If _x_ is *undefined* and _y_ is *undefined*, return *true*.
+        1. If _x_ is *null* and _y_ is *null*, return *true*.
+        1. If _x_ is a Boolean and _y_ is a Boolean, return *true*.
+        1. If _x_ is a Number and _y_ is a Number, return *true*.
+        1. If _x_ is a BigInt and _y_ is a BigInt, return *true*.
+        1. If _x_ is a Symbol and _y_ is a Symbol, return *true*.
+        1. If _x_ is a String and _y_ is a String, return *true*.
+        1. If _x_ is an Object and _y_ is an Object, return *true*.
+        1. Return *false*.
+      </emu-alg>
+    </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.2.9 id=sec-samevalue lines=L5698-L5718 sha256=86b7c5ff06062c10692dd41e9cef6a818067ad1019f0d30fd002d465145b0e21 -->
+    <emu-clause id="sec-samevalue" type="abstract operation">
+      <h1>
+        SameValue (
+          _x_: an ECMAScript language value,
+          _y_: an ECMAScript language value,
+        ): a Boolean
+      </h1>
+      <dl class="header">
+        <dt>description</dt>
+        <dd>It determines whether or not the two arguments are the same value.</dd>
+      </dl>
+      <emu-alg>
+        1. If SameType(_x_, _y_) is *false*, return *false*.
+        1. If _x_ is a Number, then
+          1. Return Number::sameValue(_x_, _y_).
+        1. Return SameValueNonNumber(_x_, _y_).
+      </emu-alg>
+      <emu-note>
+        <p>This algorithm differs from the IsStrictlyEqual Algorithm by treating all *NaN* values as equivalent and by differentiating *+0*<sub>𝔽</sub> from *-0*<sub>𝔽</sub>.</p>
+      </emu-note>
+    </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.2.10 id=sec-samevaluezero lines=L5720-L5740 sha256=120e4e586c76e41baa0dae6b2349d87f051eba044033ff12db43fae80387ce96 -->
+    <emu-clause id="sec-samevaluezero" type="abstract operation">
+      <h1>
+        SameValueZero (
+          _x_: an ECMAScript language value,
+          _y_: an ECMAScript language value,
+        ): a Boolean
+      </h1>
+      <dl class="header">
+        <dt>description</dt>
+        <dd>It determines whether or not the two arguments are the same value (ignoring the difference between *+0*<sub>𝔽</sub> and *-0*<sub>𝔽</sub>).</dd>
+      </dl>
+      <emu-alg>
+        1. If SameType(_x_, _y_) is *false*, return *false*.
+        1. If _x_ is a Number, then
+          1. Return Number::sameValueZero(_x_, _y_).
+        1. Return SameValueNonNumber(_x_, _y_).
+      </emu-alg>
+      <emu-note>
+        <p>SameValueZero differs from SameValue only in that it treats *+0*<sub>𝔽</sub> and *-0*<sub>𝔽</sub> as equivalent.</p>
+      </emu-note>
+    </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.2.11 id=sec-samevaluenonnumber lines=L5742-L5773 sha256=6dfcf579e6fc09e0bbed891a4c0df9de2e959c7696a60387fda44c28f1bf0938 -->
+    <emu-clause id="sec-samevaluenonnumber" type="abstract operation" oldids="sec-samevaluenonnumeric">
+      <h1>
+        SameValueNonNumber (
+          _x_: an ECMAScript language value, but not a Number,
+          _y_: an ECMAScript language value, but not a Number,
+        ): a Boolean
+      </h1>
+      <dl class="header">
+      </dl>
+      <emu-alg>
+        1. Assert: SameType(_x_, _y_) is *true*.
+        1. If _x_ is either *undefined* or *null*, return *true*.
+        1. If _x_ is a BigInt, then
+          1. Return BigInt::equal(_x_, _y_).
+        1. If _x_ is a String, then
+          1. If _x_ and _y_ have the same length and the same code units in the same positions, return *true*.
+          1. Return *false*.
+        1. If _x_ is a Boolean, then
+          1. If _x_ is *true* and _y_ is *true*, return *true*.
+          1. If _x_ is *false* and _y_ is *false*, return *true*.
+          1. Return *false*.
+        1. NOTE: All other ECMAScript language values are compared by identity.
+        1. If _x_ is _y_, return *true*.
+        1. Return *false*.
+      </emu-alg>
+      <emu-note>
+        For expository purposes, some cases are handled separately within this algorithm even if it is unnecessary to do so.
+      </emu-note>
+      <emu-note>
+        The specifics of what “_x_ is _y_” means are detailed in <emu-xref href="#sec-identity"></emu-xref>.
+      </emu-note>
+    </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.2.13 id=sec-islooselyequal lines=L5835-L5870 sha256=31244e773d300b8ef906988300786fc4998636742a83cc5db78625e96badb2bf -->
+    <emu-clause id="sec-islooselyequal" type="abstract operation" oldids="sec-abstract-equality-comparison,sec-IsHTMLDDA-internal-slot-aec">
+      <h1>
+        IsLooselyEqual (
+          _x_: an ECMAScript language value,
+          _y_: an ECMAScript language value,
+        ): either a normal completion containing a Boolean or a throw completion
+      </h1>
+      <dl class="header">
+        <dt>description</dt>
+        <dd>It provides the semantics for the `==` operator.</dd>
+      </dl>
+      <emu-alg>
+        1. If SameType(_x_, _y_) is *true*, then
+          1. Return IsStrictlyEqual(_x_, _y_).
+        1. If _x_ is *null* and _y_ is *undefined*, return *true*.
+        1. If _x_ is *undefined* and _y_ is *null*, return *true*.
+        1. [id="step-abstract-equality-comparison-web-compat-insertion-point", normative-optional] If the host is a web browser or otherwise supports <emu-xref href="#sec-IsHTMLDDA-internal-slot" title></emu-xref>, then
+          1. If _x_ is an Object, _x_ has an [[IsHTMLDDA]] internal slot, and _y_ is either *undefined* or *null*, return *true*.
+          1. If _x_ is either *undefined* or *null*, _y_ is an Object, and _y_ has an [[IsHTMLDDA]] internal slot, return *true*.
+        1. If _x_ is a Number and _y_ is a String, return ! IsLooselyEqual(_x_, ! ToNumber(_y_)).
+        1. If _x_ is a String and _y_ is a Number, return ! IsLooselyEqual(! ToNumber(_x_), _y_).
+        1. If _x_ is a BigInt and _y_ is a String, then
+          1. Let _n_ be StringToBigInt(_y_).
+          1. If _n_ is *undefined*, return *false*.
+          1. Return ! IsLooselyEqual(_x_, _n_).
+        1. If _x_ is a String and _y_ is a BigInt, return ! IsLooselyEqual(_y_, _x_).
+        1. If _x_ is a Boolean, return ? IsLooselyEqual(! ToNumber(_x_), _y_).
+        1. If _y_ is a Boolean, return ? IsLooselyEqual(_x_, ! ToNumber(_y_)).
+        1. If _x_ is either a String, a Number, a BigInt, or a Symbol and _y_ is an Object, return ! IsLooselyEqual(_x_, ? ToPrimitive(_y_)).
+        1. If _x_ is an Object and _y_ is either a String, a Number, a BigInt, or a Symbol, return ! IsLooselyEqual(? ToPrimitive(_x_), _y_).
+        1. If _x_ is a BigInt and _y_ is a finite Number, or if _x_ is a finite Number and _y_ is a BigInt, then
+          1. If ℝ(_x_) = ℝ(_y_), return *true*.
+          1. Return *false*.
+        1. Return *false*.
+      </emu-alg>
+    </emu-clause>
+
+<!-- @ecma262-excerpt clause=7.2.14 id=sec-isstrictlyequal lines=L5872-L5892 sha256=a2ca7f556f69d72951521bae3af82df71aff8f07cf10ff9de9d47199e0f647f0 -->
+    <emu-clause id="sec-isstrictlyequal" type="abstract operation" oldids="sec-strict-equality-comparison">
+      <h1>
+        IsStrictlyEqual (
+          _x_: an ECMAScript language value,
+          _y_: an ECMAScript language value,
+        ): a Boolean
+      </h1>
+      <dl class="header">
+        <dt>description</dt>
+        <dd>It provides the semantics for the `===` operator.</dd>
+      </dl>
+      <emu-alg>
+        1. If SameType(_x_, _y_) is *false*, return *false*.
+        1. If _x_ is a Number, then
+          1. Return Number::equal(_x_, _y_).
+        1. Return SameValueNonNumber(_x_, _y_).
+      </emu-alg>
+      <emu-note>
+        <p>This algorithm differs from the SameValue Algorithm in its treatment of signed zeroes and NaNs.</p>
+      </emu-note>
+    </emu-clause>

@@ -1,0 +1,15 @@
+[package]
+name = "vjs_spec"
+version = "0.1.0"
+edition = "2021"
+description = "ECMA-262 <emu-alg> specifications compiled to formally verified Verus spec & exec functions (J0)"
+license = "MIT"
+
+[dependencies]
+vstd = { workspace = true }
+
+[dev-dependencies]
+serde_json = "1"
+
+[package.metadata.verus]
+verify = true

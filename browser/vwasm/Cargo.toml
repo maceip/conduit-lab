@@ -1,0 +1,19 @@
+[package]
+name = "vwasm"
+version = "0.1.0"
+edition = "2021"
+description = "Formally verified WebAssembly 1.0 binary parser and sandboxed interpreter"
+license = "MIT"
+
+[dependencies]
+vstd = { workspace = true }
+
+[dev-dependencies]
+serde_json = "1"
+wast = "220"
+
+[package.metadata.verus]
+verify = true
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(verus_keep_ghost)'] }

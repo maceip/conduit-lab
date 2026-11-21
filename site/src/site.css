@@ -49,7 +49,22 @@ body {
   background: var(--theme-color-2);
   border-bottom: 1px solid var(--theme-color-soft-bdr);
 }
-.wb-brand { font-weight: 700; letter-spacing: 0.14em; font-size: 13px; }
+.wb-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  font-size: 13px;
+}
+.wb-brand-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  object-fit: cover;
+  border: 1px solid var(--theme-color-soft-bdr);
+  display: block;
+}
 .wb-nav { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; }
 .wb-nav a { color: var(--theme-color-soft-text); text-decoration: none; }
 .wb-nav a:hover { color: var(--theme-color-std-text); }
@@ -381,11 +396,94 @@ body {
   .wb-main { padding: 20px 16px 48px; }
   .wb-top, .wb-scoreboard, .wb-footer { padding-inline: 16px; }
 }
-/* opening story */
-.wb-lede { display: flex; flex-direction: column; gap: 12px; max-width: 860px; padding: 28px 24px 8px; }
+/* opening story + framed banner */
+.wb-banner-wrap {
+  max-width: 1380px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px 24px 0;
+  box-sizing: border-box;
+}
+.wb-banner-frame {
+  margin: 0;
+  border: 1px solid var(--theme-color-soft-bdr);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--theme-color-2);
+}
+.wb-banner-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 320px;
+  object-fit: cover;
+}
+.wb-lede { display: flex; flex-direction: column; gap: 12px; max-width: 960px; margin: 0 auto; width: 100%; box-sizing: border-box; padding: 24px 24px 14px; }
 .wb-h1 { margin: 0; font-size: 30px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; }
 .wb-lede .wb-prose { font-size: 15px; }
+
+/* architecture illustration + 4-card workbench grid */
+.wb-arch-split {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 20px;
+  align-items: start;
+}
+.wb-iso-frame {
+  margin: 0;
+  border: 1px solid var(--theme-color-soft-bdr);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--theme-color-component-1);
+}
+.wb-iso-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.wb-arch-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 6px;
+}
+.wb-arch-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: var(--theme-color-component-1);
+  border: 1px solid var(--theme-color-soft-bdr);
+  border-radius: 3px;
+}
+.wb-arch-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid var(--theme-color-soft-bdr);
+  display: block;
+}
+.wb-arch-card-body h3 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--theme-color-std-text);
+}
+.wb-arch-card-body p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--theme-color-soft-text);
+}
+
+@media (max-width: 1024px) {
+  .wb-arch-split { grid-template-columns: 1fr; }
+  .wb-arch-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 @media (max-width: 640px) {
-  .wb-lede { padding: 20px 16px 4px; }
+  .wb-banner-wrap { padding: 14px 16px 0; }
+  .wb-lede { padding: 18px 16px 10px; }
   .wb-h1 { font-size: 23px; }
+  .wb-arch-cards { grid-template-columns: 1fr; }
 }

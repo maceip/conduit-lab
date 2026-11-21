@@ -1,0 +1,15 @@
+[package]
+name = "vjs_syntax"
+version = "0.1.0"
+edition = "2021"
+description = "ECMAScript lexer, recursive-descent + Pratt AST parser, and Static Semantics: Early Errors, formally verified with Verus"
+license = "MIT"
+
+[dependencies]
+vstd = { workspace = true }
+
+[dev-dependencies]
+serde_json = "1"
+
+[package.metadata.verus]
+verify = true

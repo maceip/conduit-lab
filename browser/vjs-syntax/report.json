@@ -1,0 +1,132 @@
+{
+  "crate": "vjs_syntax",
+  "differential_agreed": 654,
+  "differential_categories": [
+    {
+      "agreed": 63,
+      "category": "asi_and_comments",
+      "total": 63
+    },
+    {
+      "agreed": 64,
+      "category": "assign_matrix",
+      "total": 64
+    },
+    {
+      "agreed": 51,
+      "category": "functions_and_params",
+      "total": 51
+    },
+    {
+      "agreed": 30,
+      "category": "identifiers_and_reserved",
+      "total": 30
+    },
+    {
+      "agreed": 58,
+      "category": "literals",
+      "total": 58
+    },
+    {
+      "agreed": 157,
+      "category": "operator_matrix",
+      "total": 157
+    },
+    {
+      "agreed": 57,
+      "category": "precedence_and_chains",
+      "total": 57
+    },
+    {
+      "agreed": 53,
+      "category": "scope_early_errors",
+      "total": 53
+    },
+    {
+      "agreed": 85,
+      "category": "statements_and_targets",
+      "total": 85
+    },
+    {
+      "agreed": 36,
+      "category": "strict_words",
+      "total": 36
+    }
+  ],
+  "differential_oracle": "node vm.Script (V8)",
+  "differential_total": 654,
+  "scope": "ECMAScript Lexer, Recursive-Descent + Pratt AST Parser, and Static Semantics: Early Errors",
+  "step": "J3",
+  "test262_commit": "2a1ade303f72d3de80565c921d685222405c32ce",
+  "test262_negative_passed": 93,
+  "test262_passed": 180,
+  "test262_positive_passed": 87,
+  "test262_suites": [
+    {
+      "passed": 8,
+      "suite": "language/asi",
+      "total": 8
+    },
+    {
+      "passed": 8,
+      "suite": "language/block-scope",
+      "total": 8
+    },
+    {
+      "passed": 6,
+      "suite": "language/comments",
+      "total": 6
+    },
+    {
+      "passed": 6,
+      "suite": "language/directive-prologue",
+      "total": 6
+    },
+    {
+      "passed": 51,
+      "suite": "language/expressions",
+      "total": 51
+    },
+    {
+      "passed": 3,
+      "suite": "language/function-code",
+      "total": 3
+    },
+    {
+      "passed": 6,
+      "suite": "language/identifiers",
+      "total": 6
+    },
+    {
+      "passed": 4,
+      "suite": "language/line-terminators",
+      "total": 4
+    },
+    {
+      "passed": 15,
+      "suite": "language/literals",
+      "total": 15
+    },
+    {
+      "passed": 4,
+      "suite": "language/punctuators",
+      "total": 4
+    },
+    {
+      "passed": 7,
+      "suite": "language/reserved-words",
+      "total": 7
+    },
+    {
+      "passed": 58,
+      "suite": "language/statements",
+      "total": 58
+    },
+    {
+      "passed": 4,
+      "suite": "language/white-space",
+      "total": 4
+    }
+  ],
+  "test262_total": 180
+}

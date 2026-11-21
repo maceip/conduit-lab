@@ -1,6 +1,18 @@
 [workspace]
 resolver = "2"
-members = ["url"]
+members = [
+    "url",
+    "vjs-spec",
+    "vjs-types",
+    "vjs-object",
+    "vjs-syntax",
+    "vjs",
+    "vjs-webidl",
+    "vjs-builtins",
+    "vjs-gc",
+    "vjs-vm",
+    "vwasm",
+]
 
 [workspace.dependencies]
 vstd = "=0.0.0-2026-11-15-0327"

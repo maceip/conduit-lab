@@ -1,33 +1,51 @@
-# Verified browser (Phase 1)
+# Verified Browser Workspace (`browser/`)
 
-Design: [../docs/verified-browser-engine.md](../docs/verified-browser-engine.md).
+Architecture & specification roadmap: [../docs/verified-browser-engine.md](../docs/verified-browser-engine.md) · CVE coverage audit: [../docs/vjs-plan-review.md](../docs/vjs-plan-review.md).
 
-## `vurl`: the WHATWG URL Standard in Verus
+Every crate in this Cargo workspace enforces `#![forbid(unsafe_code)]`, has **zero** trusted escape hatches (`assume`, `admit`, `external_body`, `external`, `assume_specification`, `unsafe` — counted automatically by [`scripts/ratchet.py`](scripts/ratchet.py)), proves termination (`decreases` on all loops and recursive functions), and carries zero ambient host authority (`std::fs`, `std::net`, `std::process`, `std::env`, `std::os`) in `src/`. Exact verification counts, test counts, and timings are generated from live runs into [`ratchet.json`](ratchet.json) and [`../data/stats.json`](../data/stats.json).
 
-Spec source: whatwg/url@4f461b81 (2026-11-19). Each spec algorithm is transcribed as a Verus
-`spec fn`, and the executable code is proved equal to it. There are no `assume`, `admit`,
-`external_body` or `unsafe` items (`scripts/ratchet.py` counts them).
+---
 
-| Module | Spec algorithms | Exec proved equal | Spec theorems |
-|---|---|---|---|
-| `percent` | percent-encode a byte, percent-decode, the 8 percent-encode sets, percent-encode after encoding (UTF-8, no spaceAsPlus) | `percent_encode`, `percent_decode`, `in_set` | the spec's form-urlencoded note; the query-vs-fragment note; the set inclusion chain; decode∘encode = id exactly for sets containing `%` (only component and form-urlencoded), with a counterexample for the other six |
-| `ipv4` | strictly split on `.`, IPv4 number parser, IPv4 parser, ends-in-a-number checker | `split_dots`, `ipv4_number`, `ipv4_parse`, `ends_in_a_number` | the spec's note that step 5 of the checker is equivalent to "0x/0X followed by hex digits" |
-| `ipv6` | IPv6 parser (incl. IPv4-in-IPv6 and compression), find the compressed piece index, IPv6 serializer | `ipv6_parse`, `compressed_index`, `ipv6_serialize` | hex pieces are the shortest form (no leading zero) |
+## Verified Crates (11 Crates: Phase 1 `vurl` + `vjs` Track `J0`–`J7`)
 
-Not yet modeled: validation errors (only return values), opaque/domain hosts, IDNA, the basic
-URL parser state machine, and the remaining serializers. Not yet proved: serialize→parse round
-trip for IPv6 (tested on 200k random addresses, not proved).
+| Step | Crate (`Path`) | Upstream Spec / Test Corpus | Proved Properties (`exec == spec` + Invariants) | Explicit Scope Boundaries |
+| :--- | :--- | :--- | :--- | :--- |
+| **Phase 1** | `vurl` (`url/`) | `whatwg/url@4f461b81`, WPT `urltestdata.json` (`url/tests/data/PROVENANCE`) | Percent-encode/decode + 8 encode sets (roundtrip iff `%` in set), IPv4 host parser & `ends_in_a_number`, IPv6 parser (incl. IPv4-in-IPv6 & `::` compression) & shortest-hex serializer | Validation error reporting, opaque/domain hosts, IDNA, full URL state machine, and IPv6 serialize→parse roundtrip proof (tested on 200k random inputs) not yet modeled |
+| **J0** | `vjs_spec` (`vjs-spec/`, `scripts/esmeta_to_verus.py`) | `tc39/ecma262@74c33d40` `<emu-alg>`, `tc39/test262@2a1ade30` (`test262/PROVENANCE`) | Untrusted `<emu-alg>`→Verus compiler emitting interleaved clause comments + machine-checked `spec fn` / `exec fn` across 25 ECMA-262 clauses (135 spec steps); byte-exact `--check` + V8 differential harness | Covers 25 numeric/conversion/comparison abstract-operation clauses; compiler itself is untrusted and verified per output via Verus + `test262`/V8 |
+| **J1** | `vjs_types` (`vjs-types/`) | ECMA-262 §6.1 / §7.1 / §7.2, `tc39/test262@2a1ade30` (`built-ins/Number`, `String`, `language/types`) | Surrogate-aware UTF-16 (`CodePointAt`, `TrimString`, WTF-8), bit-exact IEEE-754 `JsNumber` + Burger-Dybvig shortest round-trip `Number::toString` + `BigNat` RNE `StringToNumber`, `ToInt32`/`ToUint32` modulo-$2^{32}$ theorems, canonical `JsBigInt`, `ToPrimitive`, `SameValue`/`SameValueZero`/`IsStrictlyEqual`/`IsLooselyEqual` | `Symbol` registry and locale-sensitive collations outside §6.1/§7.1/§7.2 not modeled |
+| **J2** | `vjs_object` (`vjs-object/`) | ECMA-262 §6.1.7 / §6.2.6 / §7.3 / §10.1 / §10.4.2, `tc39/test262@2a1ade30` (`built-ins/Object`, `Array/length`) | Arena `Heap::wf` (acyclic `proto_rank` prototype chains), §6.2.6 `ValidateAndApplyPropertyDescriptor`, all §10.1 ordinary internal methods (`OwnPropertyKeys` integer-index→string→symbol order), `freeze`/`seal`, §10.4.2 Array exotic `length`, and all §6.1.7.3 Essential Internal Method Invariants | `TypedArray` and `arguments` exotic objects remain outside `vjs_object` (`Proxy` is proved in `vjs_gc`) |
+| **J3** | `vjs_syntax` (`vjs-syntax/`) | ECMA-262 §11–§15, `tc39/test262@2a1ade30` (`language/` positive & `negative: phase: parse`) | Total panic-free UTF-8/UTF-16 lexer with ASI & full §12.2 `<USP>` whitespace, Pratt + recursive-descent AST parser (`Program::wf` + `grammar_wf`), Static Semantics: Early Errors (`LexicallyDeclaredNames`, `AssignmentTargetType`, strict mode, template escapes, Annex B.3.2 labeled functions) | Unimplemented syntax constructs return explicit `ParseOutcome::Unsupported(...)`, never silent misparses |
+| **J4** | `vjs` (`vjs/`) | ECMA-262 §6.2.4 / §9.1 / §13–§15, `tc39/test262@2a1ade30` (`language/expressions`, `statements`, `exceptions`, `function-code`, `block-scope`) | End-to-end refinement & fuel-exactness theorems on `run`, `run_with_quota`, `eval_script`, `eval_script_state`, and `eval_script_parsed` (`Done` / `OutOfFuel` with `fuel == 0` / explicit `Unsupported`); `EnvArena` (`var`/`let`/`const`/TDZ + free-slot reuse); closures; `try`/`catch`/`finally` overrides; `OptChain`; `ArraySetLength`; prototype/live `for..in`; joint env+object Mark-Sweep GC under `realm_heap_quota` & `RealmId` isolation (`theorem_cross_realm_isolation`) | Features outside the proved interpreter core return explicit `RunResult::Unsupported(feature)` |
+| **J4b** | `vjs_webidl` (`vjs-webidl/`) | `whatwg/webidl@54a5f2de`, `web-platform-tests/wpt@e8ca1455` (`vjs-webidl/tests/data/PROVENANCE`) | Web IDL §3.2 `ToIDL`/`ToJS` across `any`, `boolean`, all 8 integer types (`Standard`, `[EnforceRange]`, `[Clamp]` ties-to-even), `DOMString`, `ByteString`, `USVString` (idempotent, zero lone surrogates), `nullable`, `sequence`, `record`, dictionaries; generational `KernelCapTable` + `dispatch` proving no-use-after-revoke, ABA non-revivability, cross-realm/cross-origin non-interference across 6 `HostState` partitions, and per-node DOM confinement | Models typed Web IDL conversions and capability-gated host dispatch; full browser kernel IPC process manager remains a roadmap component |
+| **J5** | `vjs_builtins` (`vjs-builtins/`) | ECMA-262 §21.3 / §21.4 / §22.1 / §22.2 / §23.1 / §24.1–2 / §25.5, `tc39/test262@2a1ade30` (8 `built-ins/*` suites) | Vest-style RFC 8259 / §25.5 `JSON.parse` & ES2019 `JSON.stringify` roundtrip + prefix non-malleability; Warblre-style terminating `RegExp` matcher (`\d/\w/\s` Unicode escapes + §22.2.2.5.1 empty-match progress guard); §21.4 `Date` calendar equations, `TimeClip`, and ISO-8601 roundtrip; `Math`, `Array`, `String`, and insertion-order `JsMap`/`JsSet` (`SameValueZero`) | Backreferences and lookbehind assertions in `RegExp` and locale time-zone tables in `Date` are not yet modeled |
+| **J6** | `vjs_gc` (`vjs-gc/`) | ECMA-262 §6.1.7.3 / §9.5 / §10.5 / §27.2 / §27.5 / §27.7 / §28.1, `tc39/test262@2a1ade30` (`Promise`, `Proxy`, `Reflect`, `Generator*`) | Iterative tricolor Mark-Sweep GC (`spec_reachable` live-subgraph preservation, `!spec_reachable` slot/byte reclamation, per-realm byte/object quotas); `Proxy`/`Reflect` §6.1.7.3 post-trap invariant enforcement against arbitrary handler outputs + revocation; `Promise` settle-once monotonicity + FIFO microtask `drain_jobs` liveness under fuel; `Generator`/Async state machines | Standalone proved runtime subsystems (connected end-to-end in `vjs/tests/full_pipeline_j0_j7.rs`) |
+| **J7** | `vjs_vm` (`vjs-vm/`) | CompCert/CakeML simulation model + 6 public benchmark kernels (`benchmarks.json`) | Verified AST evaluator, bytecode compiler, stack VM (`free_frames` pooling), and machine-checked simulation theorem `theorem_compile_program_correct` (`spec_run_vm(spec_compile_program(p)) == spec_eval_program(p)`) + `compile_and_run_verified` | Covers the structured integer/call/heap-array JS kernel subset benchmarked in `benchmarks.json` |
+| **J7** | `vwasm` (`vwasm/`) | Wasm 1.0 Core Spec, `WebAssembly/spec@977f9701` (23 `.wast` suites, `vwasm/tests/data/PROVENANCE`) | `\0asm` v1 & LEB128 bounds/prefix/roundtrip proofs, `wasm_step == spec_wasm_step`, `wasm_invoke == spec_wasm_invoke` (`decreases fuel`), `i32`/`i64` ops (`lemma_div_rem_trap_characterization`), structured control flow, linear memory, and Sandbox Containment Theorems (`lemma_mem_access_oob_traps_cleanly`, `theorem_wasm_invoke_sandbox_containment`, `run_sandboxed_wasm_bytes`) | Implements Wasm 1.0 integer, control-flow, table/call_indirect, global, and linear-memory ops; `f32`/`f64` floating-point instructions return explicit `Unsupported` (54 cases across mixed `.wast` files, 0 failures) |
 
-Testing (beyond the proofs, which already cover all inputs): WPT `urltestdata.json`
-(pinned, see `url/tests/data/PROVENANCE`) for the IPv4 and IPv6 host cases, plus differential
-tests against the `url` and `percent-encoding` crates.
+---
 
-## Running
+## Cross-Crate End-to-End Integration Test
+
+[`vjs/tests/full_pipeline_j0_j7.rs`](vjs/tests/full_pipeline_j0_j7.rs) links all 11 crates via `[dev-dependencies]` (keeping `[dependencies]` in every crate restricted to `vstd` so per-crate `cargo-verus` verification remains isolated and fast) and executes one continuous in-process pipeline:
+`vurl` IPv4/IPv6 + percent-decode → `vjs_webidl` `USVString` sanitization & `KernelCapTable` capability gating → `vjs_syntax` parse + early-error check → `vjs` script evaluation → `vjs_spec` / `vjs_types` / `vjs_object` / `vjs_builtins` / `vjs_gc` operations → `vjs_vm` verified bytecode compilation & execution → `vwasm` sandboxed Wasm 1.0 execution & OOB containment trap check.
+
+---
+
+## Running Verification, Conformance Suites & the Ratchet
 
 ```bash
 source ~/workspaces/verus-stack/env.zsh
-./scripts/use-local-verus.sh        # point vstd at the Verus source that built `verus`
-cargo verus verify -p vurl          # proofs
-cargo test -p vurl                  # WPT + differential tests (no Verus needed)
-python3 scripts/ratchet.py          # writes ratchet.json: verified / trusted counts
+./scripts/use-local-verus.sh                                           # point vstd at local VERUS_SOURCE
+
+# Verify any individual crate with Verus + Z3
+"$VERUS_RELEASE/cargo-verus" verify -p vurl -- --triggers-mode silent
+"$VERUS_RELEASE/cargo-verus" verify -p vjs -- --triggers-mode silent
+
+# Run crate conformance & differential suites (plus cross-crate E2E pipeline)
+cargo test -p vjs --test full_pipeline_j0_j7
+cargo test --workspace --exclude vjs_vm
+cargo test -p vjs_vm --release                                         # writes vjs-vm/benchmarks.json
+
+# Run ESMeta specgen checks + re-verify & test all 11 crates -> writes ratchet.json
+python3 scripts/ratchet.py
 ```

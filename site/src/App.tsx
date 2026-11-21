@@ -1,12 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import { IxToggle } from '@siemens/ix-react';
-import { loadJson, fmtDate, crateOk, trustedTotal, NR, REPO, blobUrl, type Ratchet, type Stats } from './data';
+import {
+  loadJson,
+  fmtDate,
+  allCratesOk,
+  ratchetTotals,
+  sumTrusted,
+  NR,
+  REPO,
+  blobUrl,
+  type Ratchet,
+  type Stats,
+} from './data';
 import { Stat, ShimDiagram } from './parts';
 import { CVES } from './content/cves';
 import SectionVerus from './SectionVerus';
 import SectionWhy from './SectionWhy';
 import SectionStatus from './SectionStatus';
 import SectionCoverage from './SectionCoverage';
+
+const ARCH_CARDS = [
+  {
+    id: 'kernel',
+    icon: 'assets/icon-kernel.jpg',
+    title: 'Verified Kernel Boundary',
+    body: 'Typed IPC, origin policy, and capability handles isolate untrusted renderers so a compromised tab cannot escape its own origin.',
+  },
+  {
+    id: 'solver',
+    icon: 'assets/icon-solver.jpg',
+    title: 'Verus + Z3 Prover',
+    body: 'Every executable function in the verified crates carries Rust specs checked by Z3 across all possible inputs, with zero unsafe code.',
+  },
+  {
+    id: 'synthesis',
+    icon: 'assets/icon-synthesis.jpg',
+    title: 'ESMeta Spec Synthesis',
+    body: 'ECMA-262 clauses are compiled directly from <emu-alg> specifications into Verus spec functions and differentially tested against test262.',
+  },
+  {
+    id: 'telemetry',
+    icon: 'assets/icon-telemetry.jpg',
+    title: 'Monotonic Ratchet',
+    body: 'Every build writes live verified-function counts, trusted-item counts, and conformance pass rates into browser/ratchet.json.',
+  },
+];
 
 export default function App() {
   const [ratchet, setRatchet] = useState<Ratchet | null>(null);
@@ -41,16 +79,19 @@ export default function App() {
     })();
   }, []);
 
-  const vurl = ratchet?.crates.find((c) => c.name === 'vurl');
-  const ok = crateOk(vurl);
-  const trusted = trustedTotal(vurl);
+  const totals = ratchetTotals(ratchet);
+  const ok = allCratesOk(ratchet);
+  const trusted = sumTrusted(totals?.trusted);
   const z3 = stats?.toolchains?.z3;
   const z3ver = z3 ? (z3.match(/version ([\d.]+)/) ?? [null, z3])[1] ?? z3 : null;
 
   return (
     <div className="wb-page">
       <header className="wb-top">
-        <span className="wb-brand">CONDUIT // VERIFIED BROWSER</span>
+        <span className="wb-brand">
+          <img className="wb-brand-logo" src="assets/conduit-logo.jpg" alt="CONDUIT logo" />
+          <span>CONDUIT // VERIFIED BROWSER</span>
+        </span>
         <nav className="wb-nav" aria-label="Chapters">
           <a href="#coverage">01 The bugs</a>
           <a href="#verus">02 Proofs</a>
@@ -74,6 +115,15 @@ export default function App() {
         </div>
       </header>
 
+      <div className="wb-banner-wrap">
+        <figure className="wb-banner-frame" data-testid="hero-banner">
+          <img
+            src="assets/conduit-banner-wide.jpg"
+            alt="CONDUIT Verified Browser Engine wide banner"
+          />
+        </figure>
+      </div>
+
       <section className="wb-lede" data-testid="lede">
         <h1 className="wb-h1">A browser engine with its security-critical code proved, one component at a time</h1>
         <p className="wb-prose">
@@ -86,29 +136,44 @@ export default function App() {
           what its published standard says for every possible input.
         </p>
         <p className="wb-prose">
-          One component exists so far. <code>vurl</code> implements the WHATWG URL standard's
-          percent-encoding, IPv4 and IPv6 algorithms, and every function in it is proved equal to
-          a line-by-line transcription of the standard. The numbers below are read from the
-          last verifier run. Code that is not proved gets counted as trusted, and the design rule
-          is that the trusted count never rises between releases.
+          The verified workspace now spans{' '}
+          <strong>{totals ? `${totals.crates} crates` : NR}</strong>: <code>vurl</code> (WHATWG
+          URL algorithms), the full J0–J7 JavaScript engine (<code>vjs_spec</code> through{' '}
+          <code>vjs_vm</code>), the Web IDL capability boundary (<code>vjs_webidl</code>), and
+          a sandboxed WebAssembly 1.0 interpreter (<code>vwasm</code>). The browser kernel,
+          Nanvix renderer isolation, and HTML/CSS layout remain next phases. Every number below
+          is read at load time from the last verifier run, and the trusted count is ratcheted to
+          never rise between releases.
         </p>
       </section>
 
       <div className="wb-scoreboard" data-testid="ratchet-stats">
         <div className="wb-metrics">
-          <Stat value={vurl ? String(vurl.verified) : NR} label="verified functions" tone={ok ? 'verified' : 'critical'} />
-          <Stat value={trusted === null ? NR : String(trusted)} label="trusted items" tone={trusted === 0 ? 'verified' : 'critical'} />
-          <Stat value={vurl ? `${vurl.verify_seconds}s` : NR} label="re-verify time" />
           <Stat
-            value={vurl ? `${vurl.tests_passed}/${vurl.tests_passed + vurl.tests_failed}` : NR}
-            label="WPT + diff tests"
-            tone={vurl && vurl.tests_failed === 0 ? 'verified' : 'critical'}
+            value={totals ? String(totals.verified) : NR}
+            label="verified functions"
+            tone={ok ? 'verified' : 'critical'}
+          />
+          <Stat
+            value={trusted === null ? NR : String(trusted)}
+            label="trusted items"
+            tone={trusted === 0 ? 'verified' : 'critical'}
+          />
+          <Stat
+            value={totals ? `${totals.verify_seconds}s` : NR}
+            label="re-verify time"
+          />
+          <Stat
+            value={totals ? `${totals.tests_passed}/${totals.tests_passed + totals.tests_failed}` : NR}
+            label="crate tests"
+            tone={totals && totals.tests_failed === 0 ? 'verified' : 'critical'}
           />
         </div>
         <div className="wb-chips">
-          <span className="wb-chip">whatwg/url @4f461b81 · pinned</span>
-          <span className="wb-chip">verus {ratchet?.verus ?? NR} · upstream</span>
-          {z3ver && <span className="wb-chip">z3 {z3ver} · arm64</span>}
+          <span className="wb-chip">verus {ratchet?.verus ?? NR}</span>
+          <span className="wb-chip">
+            z3 {z3ver ?? NR} · {totals ? `${totals.crates} crates` : NR}
+          </span>
         </div>
       </div>
 
@@ -132,9 +197,29 @@ export default function App() {
               a socket, read a cookie or change the address bar itself. It asks over typed IPC, and
               the kernel, written in Verus, decides. The kernel owns the network parsers, the
               origin and cookie policy, tab management and the address bar. Verified components
-              then replace renderer parts one at a time, starting with the JavaScript engine.
+              replace renderer parts one at a time — starting with the URL parser, JavaScript
+              engine, Web IDL boundary, and WebAssembly sandbox already verified in this repo.
             </p>
-            <ShimDiagram />
+            <div className="wb-arch-split">
+              <figure className="wb-iso-frame" data-testid="iso-architecture">
+                <img
+                  src="assets/conduit-iso-architecture.jpg"
+                  alt="Isometric architecture diagram of the CONDUIT verified browser kernel and sandboxed renderers"
+                />
+              </figure>
+              <ShimDiagram />
+            </div>
+            <div className="wb-arch-cards" data-testid="arch-cards">
+              {ARCH_CARDS.map((card) => (
+                <article key={card.id} className="wb-arch-card">
+                  <img className="wb-arch-icon" src={card.icon} alt={card.title} />
+                  <div className="wb-arch-card-body">
+                    <h3>{card.title}</h3>
+                    <p>{card.body}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
         <SectionStatus ratchet={ratchet} />

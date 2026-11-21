@@ -1,0 +1,29 @@
+# Upstream WebAssembly 1.0 Core Specification Test Suite
+# Source repository: https://github.com/WebAssembly/spec
+# Pinned commit: 977f97014c962f7bd1291fcc6d28b41a924882bf (branch wg-1.0, W3C WebAssembly 1.0 Core Spec)
+# License: Apache-2.0 (see WebAssembly/spec/test/LICENSE)
+# Fetched: 2026-11-20
+
+i32.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/i32.wast (Apache-2.0) sha256=eebf882f7fc507fd10d1a9e0bc818a7890b48c41db233664485bb6217866158c, fetched 2026-11-20
+i64.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/i64.wast (Apache-2.0) sha256=36f1d5b1f27495db6ce12dfecc9ed9e5f4a1bbae300357a655901ee866604de5, fetched 2026-11-20
+block.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/block.wast (Apache-2.0) sha256=fb9fd8373cc0f30f97187728cffae4fc7ecef94b3f23d8aefdde1a7d90f9627e, fetched 2026-11-20
+loop.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/loop.wast (Apache-2.0) sha256=43b801fad2087bc6bae76985df92991ceb512aceac1e76564da76a1e59077d47, fetched 2026-11-20
+if.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/if.wast (Apache-2.0) sha256=deef2a86a0c12f7470d20ec66eaf6a454693d20ed3d1d49e04fa6a661805bea7, fetched 2026-11-20
+br.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/br.wast (Apache-2.0) sha256=3dbcba922f2445f933de6d3df7c7f2480d4e09c1217f1fe63c03d43d664e1277, fetched 2026-11-20
+br_if.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/br_if.wast (Apache-2.0) sha256=2522acbb63a62767e98d1dbbe324c205e78865f7fca80be5cbbf6d6b6a2a0ef2, fetched 2026-11-20
+return.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/return.wast (Apache-2.0) sha256=987f665cbf9be3d240325fcc14bfa449e8fb8ad9e8193afa3aff03ddb33bd7ce, fetched 2026-11-20
+select.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/select.wast (Apache-2.0) sha256=4efe113f5751ccd3438ef87202bffc1f19087739a3076e35131c00af031978f8, fetched 2026-11-20
+unreachable.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/unreachable.wast (Apache-2.0) sha256=be426837af2e1be909d0a1f9cc29e60a5acb1bd8dfcbd2ed68b5d3f68e68ffd5, fetched 2026-11-20
+memory.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/memory.wast (Apache-2.0) sha256=7382bcf3870934e55f933bfd51718ccd1a01f0a329fd8ed6ac25e5c827214eab, fetched 2026-11-20
+memory_size.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/memory_size.wast (Apache-2.0) sha256=71570412caf937a389127b7ffd104efe24b89d0ccd1202d48bcf04f50bd62f76, fetched 2026-11-20
+memory_grow.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/memory_grow.wast (Apache-2.0) sha256=9215c5f4ac5c2b5c22381826ffb90fed3f784d4e3169b69246da1d7260bc5668, fetched 2026-11-20
+memory_trap.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/memory_trap.wast (Apache-2.0) sha256=5034a1cde8a913a981d191b8d69ec2c840d625a2fa2ddf5a7035fb0797dc12a0, fetched 2026-11-20
+fac.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/fac.wast (Apache-2.0) sha256=7bf27b090f6533865acc79a37e0331b27fa11d7a3ab27b02e32e2efddfb405e7, fetched 2026-11-20
+call.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/call.wast (Apache-2.0) sha256=6e593cb2486515090378547d396d10d29fc0cb8ba02d4add9628ed00261af482, fetched 2026-11-20
+globals.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/globals.wast (Apache-2.0) sha256=bc7a8071dd23d83bb2360b3fe938c0fa1743ecba4e730cf83d5403a990288bc5, fetched 2026-11-20
+local_tee.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/local_tee.wast (Apache-2.0) sha256=e14027330dde3d326abbc9c3c238c0e74221db411d93db152442b6baa855feb3, fetched 2026-11-20
+binary-leb128.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/binary-leb128.wast (Apache-2.0) sha256=6b50c9e04ddd029f4538a4d2a8ed929a1774a215398f353086a08c8b9cf7159a, fetched 2026-11-20
+br_table.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/br_table.wast (Apache-2.0) sha256=4f3620de81ea0984202180b13270467df6390117007ce614ab9940d1f25d05a3, fetched 2026-11-20
+call_indirect.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/call_indirect.wast (Apache-2.0) sha256=222d2a891d7ca91bf6bc2b9c6f79f3ecb64ffef28592703c9dd69f39a1f6fd92, fetched 2026-11-20
+local_get.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/local_get.wast (Apache-2.0) sha256=ac16930d51a0d9cb4d73ab99a9e1c2e7e2baadf51f9fd44485b4fc958dbbef4a, fetched 2026-11-20
+local_set.wast: WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf test/core/local_set.wast (Apache-2.0) sha256=93df4f2089fce0a8f453635d4fcc750d676edb24af3826ba221a347a8da2df45, fetched 2026-11-20

@@ -1,10 +1,13 @@
+![CONDUIT Verified Browser Banner](assets/conduit-banner-wide.jpg)
+
 # CONDUIT Lab: a browser engine we can prove, one component at a time
 
 Of the last 20 Chrome bugs that Google confirmed were exploited in the wild, 13 were in V8.
 Most are type confusion or out-of-bounds access, where the JavaScript engine assumed something
 about an object's layout that an attacker could make false. This repository is building a browser
 in which the security-critical code is checked against its published standard by a theorem prover.
-Every unproved line is counted as trusted, and that count is supposed to shrink release by release.
+Every unproved line is counted as trusted, and that count is ratcheted so it never rises between
+releases.
 
 The tool is [Verus](https://github.com/verus-lang/verus). You write Rust plus a specification,
 also in Rust, and Verus asks the Z3 solver whether any input breaks the specification. A "no"
@@ -12,50 +15,56 @@ from Z3 means the claim holds for every input. A "yes" comes with the input that
 
 ## What exists today
 
-`browser/url` (crate `vurl`) implements these algorithms from the
-[WHATWG URL standard](https://url.spec.whatwg.org/), pinned to commit `4f461b81`:
+The `browser/` workspace contains 11 verified Rust crates (`#![forbid(unsafe_code)]`, zero `assume`,
+`admit`, `external_body`, or `unsafe`), backed by WPT, `tc39/test262`, `WebAssembly/spec`, and
+randomized differential tests:
 
-| Module | Algorithm | Proved |
-|---|---|---|
-| `percent` | percent-encode and percent-decode, all eight encode sets | exec equals the spec transcription; decode inverts encode exactly when the set contains `%` |
-| `ipv4` | IPv4 parser, including hex, octal and the ends-in-a-number check | exec equals the spec |
-| `ipv6` | IPv6 parser (with `::` compression and embedded IPv4) and serializer | exec equals the spec for both |
+| Crate | Step | Scope | Proved |
+|---|---|---|---|
+| `vurl` (`browser/url`) | Phase 1 | WHATWG URL Standard (`4f461b81`): `percent`, `ipv4`, `ipv6` | `exec == spec`, percent roundtrip, shortest IPv6 hex |
+| `vjs_spec` (`browser/vjs-spec`) | J0 | ESMeta `<emu-alg>` → Verus compiler (25 ECMA-262 clauses) | `exec == spec` across generated spec steps |
+| `vjs_types` (`browser/vjs-types`) | J1 | UTF-16, IEEE-754 `JsNumber`, `JsBigInt`, `ToPrimitive`, equality | Burger-Dybvig `Number::toString`, RNE `StringToNumber`, `ToInt32`/`ToUint32` |
+| `vjs_object` (`browser/vjs-object`) | J2 | Arena heap, property descriptors, ordinary & Array exotic objects | `Heap::wf` + ECMA-262 §6.1.7.3 Essential Internal Method Invariants |
+| `vjs_syntax` (`browser/vjs-syntax`) | J3 | UTF-8/UTF-16 lexer (ASI + `<USP>`), Pratt/RD parser, Early Errors | Total panic-free lex/parse (`decreases`) + `Program::wf` |
+| `vjs` (`browser/vjs`) | J4 | ECMAScript interpreter core, closures, completion records, realm quotas | End-to-end step refinement, fuel exactness, cross-realm isolation |
+| `vjs_webidl` (`browser/vjs-webidl`) | J4b | WHATWG Web IDL `ToJS`/`ToIDL` boundary & generational `KernelCapTable` | `USVString` idempotence, no-use-after-revoke, cross-origin non-interference |
+| `vjs_builtins` (`browser/vjs-builtins`) | J5 | JSON, Warblre RegExp, §21.4 Date, Math, Array, String, Map, Set | Vest JSON roundtrip/prefix security & terminating RegExp matcher |
+| `vjs_gc` (`browser/vjs-gc`) | J6 | Tricolor Mark-Sweep GC, Proxy/Reflect, Promise job queue, Generators | Reachable preservation, Proxy §6.1.7.3, FIFO `drain_jobs` liveness |
+| `vjs_vm` (`browser/vjs-vm`) | J7 | Bytecode compiler & stack VM with frame recycling | CompCert-style simulation: `spec_run_vm(compile(p)) == spec_eval(p)` |
+| `vwasm` (`browser/vwasm`) | J7 | WebAssembly 1.0 binary decoder & sandboxed linear-memory interpreter | LEB128 prefix/roundtrip + `theorem_wasm_invoke_sandbox_containment` |
 
-Each spec loop is its own recursive spec function, and the Rust code is proved equal to it loop
-for loop. The crate is `#![forbid(unsafe_code)]` and has no `assume`, `admit` or `external_body`.
-The proofs are backed by WPT `urltestdata.json` cases and by randomized differential tests against
-the `url` and `percent-encoding` crates. Current counts (verified functions, trusted items, seconds
-to verify, tests) are in [`browser/ratchet.json`](browser/ratchet.json), which
-`browser/scripts/ratchet.py` writes from a real run.
+Live counts (verified functions, trusted items, verification seconds, crate tests, conformance pass
+rates, and J7 bytecode VM speedups) are recorded in [`browser/ratchet.json`](browser/ratchet.json)
+by `browser/scripts/ratchet.py`.
 
-vurl does not yet cover validation errors, opaque or domain hosts, IDNA, or the main URL parser
-state machine. Proving that the IPv6 serializer output parses back to the same address is done by
-tests only.
+![CONDUIT Architecture Modules](assets/conduit-quad-icons.jpg)
 
 ## What is still design
 
-[`docs/verified-browser-engine.md`](docs/verified-browser-engine.md) is the plan. It is modeled on
-Verdict, a verified X.509 validator in Verus, and on Quark, a 2012 browser whose kernel was proved
-in Coq while unmodified WebKit ran untrusted in sandboxed tabs. A kernel written in Verus owns the
-network parsers, origin and cookie policy, tabs and the address bar. Renderers run one per site in
-a sandbox and can only act through typed IPC. The JavaScript engine, `vjs`, is a safe-Rust
-interpreter with no JIT. Its top-level theorem is that a run returns the spec's answer, runs out of
-fuel, or refuses with an explicit `Unsupported(feature)`.
-[`docs/vjs-plan-review.md`](docs/vjs-plan-review.md) maps the 20 CVEs above onto that design and
-lists what it gives up.
+![CONDUIT Isometric Architecture](assets/conduit-iso-architecture.jpg)
 
-None of the kernel, `vjs` or the Nanvix renderer isolation is code yet. Until it is, the plan's
-protection against V8-class bugs is a sandbox nobody has proved, which is where Chrome is today.
+[`docs/verified-browser-engine.md`](docs/verified-browser-engine.md) is the overall architecture.
+It is modeled on Verdict (a verified X.509 validator in Verus) and Quark (a 2012 browser whose
+kernel was proved in Coq while unmodified WebKit ran untrusted in sandboxed tabs). A kernel
+written in Verus owns the network parsers, origin and cookie policy, tabs, and the address bar.
+Renderers run one per site in a sandbox and can only act through typed IPC.
+[`docs/vjs-plan-review.md`](docs/vjs-plan-review.md) maps the 20 Chrome CVEs above onto that
+design and lists its tradeoffs.
+
+While `vurl` and the J0–J7 `vjs` + `vwasm` crates are implemented and verified, the browser kernel
+theorems, Nanvix renderer isolation, HTML/CSS layout (`html5ever`/Stylo integration), and full
+browser UI remain design/next phases. `vurl` also does not yet cover validation errors, opaque or
+domain hosts, IDNA, or the full URL parser state machine.
 
 ## The site
 
 The GitHub Pages site (`site/`, React 19 on
 [`@maceip/ix-workbench-primitives`](https://github.com/maceip/ix-workbench-primitives), Siemens iX v5)
 tells the same story in five sections: the exploited CVEs and the answer to each, what a Verus
-proof checks (shown on real vurl code), why nobody proves a whole browser or a whole Linux, the
-kernel-and-renderers design, and status. It reads every number at load time from
+proof checks (shown on real `vurl` code), why nobody proves a whole browser or a whole Linux, the
+kernel-and-renderers design, and live 11-crate status. It reads every number at load time from
 `browser/ratchet.json` and `data/stats.json`. If either file is missing, it shows an error and
-"not recorded". Playwright checks the rendered page against both files.
+`not recorded`. Playwright checks the rendered page against both files.
 
 ### Build
 
@@ -65,26 +74,31 @@ repo. `site/vite.config.ts` also accepts a checkout inside the repo, which is wh
 ```sh
 git clone https://github.com/maceip/ix-workbench-primitives ../ix-workbench-primitives
 npm --prefix site install
-npm run build          # vite build -> dist/, then stages data/, ratchet, irrigation demo
+npm run build          # vite build -> dist/, then stages data/, ratchet, assets/, irrigation demo
 ```
 
 ### Regenerate the data
 
 ```sh
 source ~/workspaces/verus-stack/env.zsh
+./browser/scripts/use-local-verus.sh
 python3 scripts/collect_stats.py               # add --with-mathlib to build mathlib benchmarks too
-(cd browser && python3 scripts/ratchet.py)     # re-verify vurl, rewrite browser/ratchet.json
+(cd browser && python3 scripts/ratchet.py)     # re-verify all 11 crates, rewrite browser/ratchet.json
 ```
 
 The collector re-verifies `vstd` into a temp dir (installed artifacts are untouched) along with
-the Verus examples, builds each Vero Lean benchmark, records toolchain versions and repo commits,
-and saves raw command output to `data/logs/`. Commit `data/` and `browser/ratchet.json` after each run.
+the Verus examples, builds each Vero Lean benchmark, runs the browser ratchet, records toolchain
+versions and repo commits, and saves raw command output to `data/logs/`. Commit `data/` and
+`browser/ratchet.json` after each run.
 
 ### Test
 
 ```sh
 npm install
-npm test        # builds dist/, then Playwright: page must match ratchet.json + stats.json
+npx playwright test tests/site.spec.js         # builds or tests dist/ against ratchet.json + stats.json
+source ~/workspaces/verus-stack/env.zsh
+./browser/scripts/use-local-verus.sh
+(cd browser && cargo test -p vjs --test full_pipeline_j0_j7)
 ```
 
 The irrigation tests also start a real local bridge on port 8797 and need the verus-stack

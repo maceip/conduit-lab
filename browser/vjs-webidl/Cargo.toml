@@ -1,0 +1,19 @@
+[package]
+name = "vjs_webidl"
+version = "0.1.0"
+edition = "2021"
+description = "Formally verified WHATWG Web IDL ToJS/ToIDL host boundary and capability handle system"
+license = "MIT"
+
+[dependencies]
+vstd = { workspace = true }
+
+[dev-dependencies]
+serde_json = "1"
+
+[package.metadata.verus]
+verify = true
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(verus_keep_ghost)'] }
+

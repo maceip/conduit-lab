@@ -1,0 +1,113 @@
+{
+  "built_ins_array_length": {
+    "passed": 18,
+    "total": 18
+  },
+  "built_ins_object": {
+    "passed": 82,
+    "total": 82
+  },
+  "crate": "vjs_object",
+  "differential_traces_passed": 600,
+  "differential_traces_total": 600,
+  "javascriptcore_native_differential_verified": true,
+  "spec_sections": [
+    "§6.1.7.2-6.1.7.3 Object Internal Methods & Essential Invariants",
+    "§6.2.6 Property Descriptor Specification Type",
+    "§7.3.15-7.3.16 SetIntegrityLevel & TestIntegrityLevel (freeze/seal)",
+    "§10.1 Ordinary Object Internal Methods & Slots",
+    "§10.1.6.3 ValidateAndApplyPropertyDescriptor",
+    "§10.1.11.1 OrdinaryOwnPropertyKeys",
+    "§10.4.2 Array Exotic Objects (ArrayCreate, ArraySetLength, [[DefineOwnProperty]])"
+  ],
+  "step": "J2",
+  "suites": [
+    {
+      "passed": 18,
+      "suite": "built-ins/Array/length",
+      "total": 18
+    },
+    {
+      "passed": 36,
+      "suite": "built-ins/Object/defineProperty",
+      "total": 36
+    },
+    {
+      "passed": 5,
+      "suite": "built-ins/Object/freeze",
+      "total": 5
+    },
+    {
+      "passed": 5,
+      "suite": "built-ins/Object/getOwnPropertyDescriptor",
+      "total": 5
+    },
+    {
+      "passed": 2,
+      "suite": "built-ins/Object/getOwnPropertyNames",
+      "total": 2
+    },
+    {
+      "passed": 3,
+      "suite": "built-ins/Object/getOwnPropertySymbols",
+      "total": 3
+    },
+    {
+      "passed": 5,
+      "suite": "built-ins/Object/getPrototypeOf",
+      "total": 5
+    },
+    {
+      "passed": 2,
+      "suite": "built-ins/Object/hasOwn",
+      "total": 2
+    },
+    {
+      "passed": 4,
+      "suite": "built-ins/Object/is",
+      "total": 4
+    },
+    {
+      "passed": 2,
+      "suite": "built-ins/Object/isExtensible",
+      "total": 2
+    },
+    {
+      "passed": 4,
+      "suite": "built-ins/Object/isFrozen",
+      "total": 4
+    },
+    {
+      "passed": 3,
+      "suite": "built-ins/Object/isSealed",
+      "total": 3
+    },
+    {
+      "passed": 3,
+      "suite": "built-ins/Object/preventExtensions",
+      "total": 3
+    },
+    {
+      "passed": 5,
+      "suite": "built-ins/Object/seal",
+      "total": 5
+    },
+    {
+      "passed": 3,
+      "suite": "built-ins/Object/setPrototypeOf",
+      "total": 3
+    }
+  ],
+  "test262_commit": "2a1ade303f72d3de80565c921d685222405c32ce",
+  "test262_passed": 100,
+  "test262_total": 100,
+  "v8_node_version": "v24.15.0",
+  "v8_spec_bugs_caught": [
+    {
+      "clause": "ECMA-262 §7.3.15 SetIntegrityLevel & §7.3.16 TestIntegrityLevel (frozen)",
+      "freeze_bypass_hits": 10,
+      "isfrozen_false_positive_hits": 114,
+      "reproducer": "const a = [ , , ]; Object.preventExtensions(a); Object.freeze(a); a.length = 0; // V8 leaves a.length writable=true and mutates frozen array to length 0; JSC and vjs_object enforce writable=false and length===2"
+    }
+  ]
+}

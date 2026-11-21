@@ -1,0 +1,28 @@
+[package]
+name = "vjs"
+version = "0.1.0"
+edition = "2021"
+description = "ECMAScript interpreter core (J4), formally verified with Verus"
+license = "MIT"
+
+[dependencies]
+vstd = { workspace = true }
+
+[dev-dependencies]
+serde_json = "1"
+vurl = { path = "../url" }
+vjs_spec = { path = "../vjs-spec" }
+vjs_types = { path = "../vjs-types" }
+vjs_object = { path = "../vjs-object" }
+vjs_syntax = { path = "../vjs-syntax" }
+vjs_webidl = { path = "../vjs-webidl" }
+vjs_builtins = { path = "../vjs-builtins" }
+vjs_gc = { path = "../vjs-gc" }
+vjs_vm = { path = "../vjs-vm" }
+vwasm = { path = "../vwasm" }
+
+[package.metadata.verus]
+verify = true
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(verus_keep_ghost)'] }

@@ -2,7 +2,7 @@
 // Transcribed from docs/vjs-plan-review.md §2, where every row was verified against
 // primary sources (Chrome Releases Blog ITW wording, cross-checked with CISA KEV
 // v2026.11.18). Coverage classes follow §3 of that review:
-//   construction — V8 block: no-JIT safe-Rust vjs + object-model invariants (0% built today)
+//   construction — V8 block: no-JIT safe-Rust vjs + object-model invariants (J0-J7 crates verified; kernel wiring next)
 //   containment  — lands in untrusted renderers / IPC; Quark-style kernel theorems apply
 //   graphics     — Dawn / Skia / ANGLE: no verified replacement planned; contained, not proved
 export type Coverage = 'construction' | 'containment' | 'graphics';
@@ -50,7 +50,7 @@ export const coverageTone = (c: Coverage): 'verified' | 'warning' | 'critical' =
 
 export const COVERAGE_DETAIL: Record<Coverage, string> = {
   construction:
-    'By construction, once vjs is built: no JIT in the verified core, a safe-Rust arena heap, and object-model invariant proofs target exactly this bug class. vjs is not built yet, so today this class is only contained by the renderer sandbox.',
+    'By construction in vjs (J0-J7 verified): no JIT in the verified core, a safe-Rust arena heap, and proved object-model invariants target this bug class directly. Wiring vjs behind the verified kernel and renderer sandbox is the next phase.',
   containment:
     'By containment, if the kernel theorems land: the bug lives in an untrusted renderer or in IPC, and the verified kernel plus per-site sandbox is supposed to make a compromise non-escapable. The kernel theorems are still design.',
   graphics:

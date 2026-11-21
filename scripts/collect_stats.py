@@ -176,28 +176,31 @@ def lean_benchmarks(with_mathlib: bool) -> list[dict]:
 
 
 def cli_smoke() -> list[dict]:
+    cargo_verus = str(Path(ENV["VERUS_RELEASE"]) / "cargo-verus")
     checks = [
-        ("cargo-verus", ["cargo", "verus", "--help"], STACK),
+        ("cargo-verus", [cargo_verus, "--help"], STACK),
         ("skydiscover", ["uv", "run", "skydiscover", "--help"], STACK / "skydiscover"),
     ]
     out = []
     for name, cmd, cwd in checks:
         log = f"cli-{name}.log"
         code, _, secs = run(cmd, cwd=cwd, log=log, timeout=300)
-        out.append({"name": name, "command": " ".join(cmd), "exit_code": code,
+        display_cmd = "$VERUS_RELEASE/cargo-verus --help" if name == "cargo-verus" else " ".join(cmd)
+        out.append({"name": name, "command": display_cmd, "exit_code": code,
                     "seconds": secs, "log": f"data/logs/{log}"})
     return out
 
 
 def browser_ratchet() -> dict | None:
-    """Verified-browser crates: re-run browser/scripts/ratchet.py and embed its report."""
+    """Verified-browser crates: re-run browser/scripts/ratchet.py (ESMeta specgen + Verus verify +
+    cargo test across all 11 crates) and embed its measured report."""
     script = SITE / "browser" / "scripts" / "ratchet.py"
     if not script.exists():
         return None
-    code, text, secs = run(["python3", str(script)], cwd=SITE / "browser", log="browser-ratchet.log", timeout=3600)
+    code, text, secs = run(["python3", str(script)], cwd=SITE / "browser", log="browser-ratchet.log", timeout=7200)
     report = SITE / "browser" / "ratchet.json"
     if code != 0 or not report.exists():
-        return {"exit_code": code, "seconds": secs, "log": "data/logs/browser-ratchet.log"}
+        raise RuntimeError(f"browser/scripts/ratchet.py failed with exit code {code}; see data/logs/browser-ratchet.log")
     return {**json.loads(report.read_text()), "log": "data/logs/browser-ratchet.log"}
 
 

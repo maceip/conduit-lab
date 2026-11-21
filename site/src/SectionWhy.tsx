@@ -1,5 +1,5 @@
 import React from 'react';
-import { NR, type Ratchet } from './data';
+import { NR, ratchetTotals, type Ratchet } from './data';
 import { SYSTEMS, SCALE_ITEMS } from './content/systems';
 import { DetailsRow, Field, ScaleCompare, Source } from './parts';
 
@@ -27,17 +27,17 @@ const REASONS = [
 ];
 
 const SectionWhy: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
-  const vurl = ratchet?.crates.find((c) => c.name === 'vurl');
+  const totals = ratchetTotals(ratchet);
   const scaleItems = [
     ...SCALE_ITEMS,
     {
-      id: 'vurl',
-      label: 'vurl — this project',
-      lines: vurl?.source_lines ?? 1,
-      display: vurl ? `${vurl.source_lines.toLocaleString('en-US')} LOC` : NR,
-      tone: 'neutral' as const,
-      note: vurl
-        ? `${vurl.verified} verified functions · ${vurl.verify_seconds}s to re-verify`
+      id: 'conduit',
+      label: 'conduit — verified crates',
+      lines: totals?.source_lines ?? 1,
+      display: totals ? `${totals.source_lines.toLocaleString('en-US')} LOC` : NR,
+      tone: 'verified' as const,
+      note: totals
+        ? `${totals.verified.toLocaleString('en-US')} verified functions across ${totals.crates} crates · ${totals.verify_seconds}s to re-verify`
         : 'load browser/ratchet.json for the live numbers',
     },
   ];

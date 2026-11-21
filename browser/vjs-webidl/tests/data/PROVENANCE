@@ -1,0 +1,19 @@
+# Upstream Web Platform Tests (WPT) pinned test vectors for vjs-webidl (J4b)
+# Repository: https://github.com/web-platform-tests/wpt
+# Commit: e8ca145562683547fb32faa7cfa9feb4cc99054b
+# License: BSD-3-Clause (W3C 3-clause BSD License)
+# Fetched: 2026-11-20
+
+sequence-conversion.html: web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b webidl/ecmascript-binding/sequence-conversion.html (BSD-3-Clause, sha256=f11dd808d24a19cda220a42a2c672f3927bbf66e6193c3de16bc2f9d587140d3), fetched 2026-11-20
+invalid-this-value-cross-realm.html: web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b webidl/ecmascript-binding/invalid-this-value-cross-realm.html (BSD-3-Clause, sha256=410212bb220431aac3ab6393d3182f7d15cca602efa07ce6d65cd7220d498fce), fetched 2026-11-20
+setter-argument.html: web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b webidl/ecmascript-binding/setter-argument.html (BSD-3-Clause, sha256=9796bb74c9409a3997bf9c77133c12ec0ca262962774fcb6089f7cda195ed365), fetched 2026-11-20
+no-regexp-special-casing.any.js: web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b webidl/ecmascript-binding/no-regexp-special-casing.any.js (BSD-3-Clause, sha256=1a303dadc0f3bf927f153823534200bc10e129b0725813e98213500622eb7e7b), fetched 2026-11-20
+DOMException-constructor-behavior.any.js: web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b webidl/ecmascript-binding/es-exceptions/DOMException-constructor-behavior.any.js (BSD-3-Clause, sha256=183b1a542f30f7852abd787e3504db3c738e807b600f9d28b9f69e6a71f30490), fetched 2026-11-20
+idbobjectstore-getAll-enforcerange.any.js: web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b IndexedDB/idbobjectstore-getAll-enforcerange.any.js (BSD-3-Clause, sha256=4ff9f38238b6583a80489871665adc06e0658375986efc34d6a3fe6c5e9b1478), fetched 2026-11-20
+close-invalid.any.js: web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b websockets/close-invalid.any.js (BSD-3-Clause, sha256=e2f2d127042a96ef36b928be92ae780fbdb97fe63eb954b3afde09df3a322e37), fetched 2026-11-20
+Close-reason-unpaired-surrogates.any.js: web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b websockets/Close-reason-unpaired-surrogates.any.js (BSD-3-Clause, sha256=9710d9e45d5e78d53fed9d8b4d3bc35ac29ee01b97a65ba3cf02303bfb2ec8b7), fetched 2026-11-20
+headers-errors.any.js: web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b fetch/api/headers/headers-errors.any.js (BSD-3-Clause, sha256=4b4b9c8d9b72a52c5200feaa67f018cc91d05e9ee0c98a2a18ad56f44873047b), fetched 2026-11-20
+headers-record.any.js: web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b fetch/api/headers/headers-record.any.js (BSD-3-Clause, sha256=79dbf361fd95af103c725c77c20510f8a43ccbeb744b98b2e4a5d62fa6d0a31b), fetched 2026-11-20
+urlsearchparams-constructor.any.js: web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b url/urlsearchparams-constructor.any.js (BSD-3-Clause, sha256=0bc48950e56b6ae61e1664ba4a63c13e9810e6ba193c3cbe6c23ef0a5751d825), fetched 2026-11-20
+Event-constructors.any.js: web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b dom/events/Event-constructors.any.js (BSD-3-Clause, sha256=860c64f2813cc3e31547aeb49f0a56ec9dde1e1bdfe0a4be7d94155bfbc1028b), fetched 2026-11-20
+api-surrogates-utf8.any.js: web-platform-tests/wpt@e8ca145562683547fb32faa7cfa9feb4cc99054b encoding/api-surrogates-utf8.any.js (BSD-3-Clause, sha256=66c441e9f6718f6e38c8bffeb52e25de785e8c4e1bc76d57b3cf1da98730b873), fetched 2026-11-20

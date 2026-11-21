@@ -1,0 +1,34 @@
+Upstream Specification Excerpts Provenance
+==========================================
+Repository : https://github.com/tc39/ecma262.git
+Commit SHA : 74c33d406ec1763ca9ee5ad9165571661649d6e6
+Source File: spec.html (sha256: 26be7f84c6f2d60dd50fe16e92f8a891a0b489eb0f2dd07dd43714a952d9f0f1)
+License    : Ecma International TC39 Alternative Copyright Notice (text) & MIT-style Software Policy (https://github.com/tc39/ecma262/blob/74c33d406ec1763ca9ee5ad9165571661649d6e6/LICENSE.md)
+Fetched    : 2026-11-20
+
+Extracted Clauses (verbatim unmodified line ranges from spec.html):
+- §6.1.6.1.2 #sec-numeric-types-number-bitwiseNOT: spec.html#L1740-L1752 (sha256: 58c12ad957af76eaf50f97359ab6f2d15ef1043cdb7fc529fefe1a0932eca2c8)
+- §6.1.6.1.9 #sec-numeric-types-number-leftShift: spec.html#L1951-L1966 (sha256: 6d82a80334bc80d3aece965263032027543c2e5dbffad7565ebb65496b1eafb4)
+- §6.1.6.1.10 #sec-numeric-types-number-signedRightShift: spec.html#L1968-L1983 (sha256: 2d606c46bce8bdd86dd538c01842330df81d5c3f4cb1b396ca485e275497a35c)
+- §6.1.6.1.11 #sec-numeric-types-number-unsignedRightShift: spec.html#L1985-L2000 (sha256: e0df6784c060da166785efc63b7ab58d6eac70f8d2e98fe00e2e753174aa65c7)
+- §6.1.6.1.13 #sec-numeric-types-number-equal: spec.html#L2027-L2044 (sha256: 82c2b31f96f32f553544eeffb6006ad4d0cf50db7e52df4ec87c1e692153e108)
+- §6.1.6.1.14 #sec-numeric-types-number-sameValue: spec.html#L2046-L2062 (sha256: 846a3f712c33a2d6ed829ee382368b9f4c174bc2144904a18d5e68e5db0190d3)
+- §6.1.6.1.15 #sec-numeric-types-number-sameValueZero: spec.html#L2064-L2080 (sha256: 8852982507c136efcfff51d6fdd51fd585bb0890cf4b005685daed085359e317)
+- §6.1.6.1.16 #sec-numberbitwiseop: spec.html#L2082-L2106 (sha256: 7bace185189f4c2a8c81bb62453cf87d34dc37fdc6fb21b2a58a75046c9a54b2)
+- §6.1.6.1.17 #sec-numeric-types-number-bitwiseAND: spec.html#L2108-L2120 (sha256: 6c2f4ba95024c3882ca9218273e7dba337d9602bc40b8cedb696093be1aed334)
+- §6.1.6.1.18 #sec-numeric-types-number-bitwiseXOR: spec.html#L2122-L2134 (sha256: 6da6c3fa2e2edbcb928eab8224f11792a87625e62d4da18fed7cd6493f646de5)
+- §6.1.6.1.19 #sec-numeric-types-number-bitwiseOR: spec.html#L2136-L2148 (sha256: e431873ac851dce598185efbf834359f2447bca69073753f35ab6a6fa70c1ac1)
+- §7.1.2 #sec-toboolean: spec.html#L4825-L4842 (sha256: bf84cd182c9c86eb91c51023e47f63a82b1d2d1cbf48df2263418c4ecabdf72a)
+- §7.1.4 #sec-tonumber: spec.html#L4861-L5033 (sha256: 17d7451b7fa3086ef7044c81a38ba2adb81d9c71e2b8283ee41e62d63e2af138)
+- §7.1.5 #sec-tointegerorinfinity: spec.html#L5035-L5055 (sha256: 217fb504857a4f4c86d90f729463f4987d4a379ace4b1789aa7023ba9bbab8eb)
+- §7.1.7 #sec-tofixedsizeinteger: spec.html#L5082-L5104 (sha256: a0832b36c42f308ab559e411eb15e920eea4c806adf7fdbb83cdd8f8893298e9)
+- §7.1.8 #sec-toint32: spec.html#L5106-L5120 (sha256: 2eb66b9c6613dd4d7404fb79c9c85104aac0a0f85667e843e96b07caece46db3)
+- §7.1.9 #sec-touint32: spec.html#L5122-L5136 (sha256: 350db6611a9e534c92cedc7d23cbc7007969e67dfaaef12cd021ef2f0bf1b5de)
+- §7.1.11 #sec-touint16: spec.html#L5154-L5168 (sha256: c738e6a9d34069bffb05b82f04741c6989b2592175b293bcff309a055eca0737)
+- §7.2.1 #sec-requireobjectcoercible: spec.html#L5552-L5566 (sha256: 35f832a6f547550cef65f398d8687b975df43b2b8dddc3a28c6f76b0ae57530a)
+- §7.2.8 #sec-sametype: spec.html#L5674-L5696 (sha256: 860fcfaf7d56f1413f9c45369520134f16ca22a80a0086807517bad4686445fd)
+- §7.2.9 #sec-samevalue: spec.html#L5698-L5718 (sha256: 86b7c5ff06062c10692dd41e9cef6a818067ad1019f0d30fd002d465145b0e21)
+- §7.2.10 #sec-samevaluezero: spec.html#L5720-L5740 (sha256: 120e4e586c76e41baa0dae6b2349d87f051eba044033ff12db43fae80387ce96)
+- §7.2.11 #sec-samevaluenonnumber: spec.html#L5742-L5773 (sha256: 6dfcf579e6fc09e0bbed891a4c0df9de2e959c7696a60387fda44c28f1bf0938)
+- §7.2.13 #sec-islooselyequal: spec.html#L5835-L5870 (sha256: 31244e773d300b8ef906988300786fc4998636742a83cc5db78625e96badb2bf)
+- §7.2.14 #sec-isstrictlyequal: spec.html#L5872-L5892 (sha256: a2ca7f556f69d72951521bae3af82df71aff8f07cf10ff9de9d47199e0f647f0)
