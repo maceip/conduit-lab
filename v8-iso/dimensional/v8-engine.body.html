@@ -1,0 +1,154 @@
+<div class="wrap">
+  <header class="tb">
+    <div class="big">
+      <div><div class="lbl">JavaScript engine · dimensional drawing</div><h1>V8 engine</h1></div>
+      <div class="v">Architecture only: address-space reservation, tagged words, heap pages and tier-up. Values read from the V8 source tree; nothing estimated.</div>
+    </div>
+    <div><div class="lbl">Dwg no.</div><div class="v">SW-JSE-V8-001</div></div>
+    <div><div class="lbl">Rev</div><div class="v">A · 2026-11-21</div></div>
+    <div><div class="lbl">Sheets</div><div class="v">1</div></div>
+    <div><div class="lbl">Units</div><div class="v">Bytes (KiB · MiB · GiB) · bits</div></div>
+    <div><div class="lbl">Scale</div><div class="v">Schematic unless noted</div></div>
+    <div><div class="lbl">Source</div><div class="v">v8/v8 main @ f4bfd902e1c4</div></div>
+    <div class="notes">
+      <div><span class="nh">NOTES:<span>(UNLESS OTHERWISE SPECIFIED)</span></span><ol>
+        <li>Do not scale from screen. Read the numbers.</li>
+        <li>Build: 64-bit desktop, sandbox and pointer compression enabled.</li>
+        <li>Constants from include/v8-internal.h, src/base/build_config.h, src/common/globals.h; thresholds from src/flags/flag-definitions.h defaults.</li></ol></div>
+      <div><span class="nh" aria-hidden="true">&nbsp;</span><ol start="4">
+        <li>Every dimension is a variable (SB, CG, T, P…). Values and formulas are in the variable tables.</li>
+        <li>Anything the source does not fix (runtime heuristics, header sizes, code-range placement) is [TBD].</li>
+        <li>Grayscale by design. Color is out of scope.</li></ol></div>
+    </div>
+    <div class="figs">
+      <div><div class="lbl">SB · sandbox</div><div class="v">2⁴⁰ = 1 TiB</div></div>
+      <div><div class="lbl">CG · cage</div><div class="v">2³² = 4 GiB</div></div>
+      <div><div class="lbl">T · tagged</div><div class="v">4 B</div></div>
+      <div><div class="lbl">P · page</div><div class="v">2¹⁸ = 256 KiB</div></div>
+      <div><div class="lbl">LOT · max-regular</div><div class="v">P ÷ 2</div></div>
+      <div><div class="lbl">SV · smi-value</div><div class="v">8·T − STS</div></div>
+      <div><div class="lbl">N2 · turbofan</div><div class="v">3000</div></div>
+    </div>
+  </header>
+  <div class="sheetwrap"><div class="scroll"><svg id="sh1" viewBox="0 0 1700 1060" role="img" aria-label="Single sheet: address-space plan, tagged word detail, exploded memory hierarchy, tiering pipeline, heap page detail, variable tables"></svg></div>
+  <div class="foot"><span>2026-11-21 &nbsp;|&nbsp; JavaScript engine reference</span><span><b>V8 engine, architecture</b> &nbsp;|&nbsp; 1</span></div></div>
+</div>
+
+<script>
+(function(){
+/*KIT*/
+
+const VAR={
+ addr:[['SB','sandbox','2⁴⁰ = 1 TiB'],['G1','guard','32 GiB + MB+1'],['','','= 64 GiB'],['GA','guard-add','288 GiB − G1'],['','','= 224 GiB'],['RV','reserve','2·G1+SB+GA'],['CG','cage','2³² = 4 GiB'],['CA','cage-align','2³²'],['MB','max-buffer','32 GiB − 1'],['EPT','ext-ptr-tbl','512 MiB']],
+ size:[['WD','word','8 B'],['T','tagged','4 B'],['P','page','2¹⁸ = 256 KiB'],['LOT','max-regular','P ÷ 2 = 128 KiB'],['HD','page-header','[TBD]']],
+ tag:[['ST','smi-tag','0'],['STS','smi-tag-size','1 bit'],['SV','smi-value','8·T−STS = 31'],['HT','heap-tag','01'],['WT','weak-tag','11'],['HTS','heap-tag-size','2 bit']],
+ tier:[['N0','fb-alloc','8'],['N1','maglev','400'],['N2','turbofan','3000'],['N3','osr','500'],['N4','maglev-osr','100'],['NS','sparkplug','[TBD]'],['GF','semi-grow','2'],['SS','semi-space','[TBD]']]
+};
+
+begin('sh1');
+notes([[0,'ALL SIZES IN BYTES, BINARY PREFIXES; BITS WHERE MARKED.'],[1,'POINTER COMPRESSION: TAGGED SLOT T = 4 B IN CAGE CG.'],[2,'CAGE BASE CB ALIGNED TO CA.  ADDR = CB + ZEXT(C).'],[3,'SB FLANKED BY G1 ON BOTH SIDES PLUS GA TRAILING.'],[4,'SB SHRINKS BY POWERS OF 2 IF VA SPACE IS SHORT.'],[5,'TRUSTED SPACE AND EPT LIVE OUTSIDE THE SANDBOX.'],[6,'OBJECTS LARGER THAN LOT GO TO A LARGE-OBJECT SPACE.'],[7,'TIER-UP COUNTS ARE FLAG DEFAULTS. ANDROID N1 = 1000.'],[0,'ANDROID: SB = 128 GIB, EPT = 256 MIB.  IOS: EPT = 128 MIB.']]);
+
+/* ===== Plan view · address-space reservation ===== */
+{const T0=140,B0=340;
+ mk('rect',{x:580,y:T0,width:60,height:B0-T0,fill:HAT,class:'hs'});
+ mk('rect',{x:1180,y:T0,width:60,height:B0-T0,fill:HAT,class:'hs'});
+ mk('rect',{x:1240,y:T0,width:120,height:B0-T0,fill:HAT,class:'hs'});
+ mk('line',{x1:1240,y1:T0,x2:1240,y2:B0,class:'thin'});
+ [[610,'Guard'],[1210,'Guard'],[1300,'Add’l guard']].forEach(([x,l])=>{const y=(T0+B0)/2;mk('rect',{x:x-34,y:y-9,width:68,height:16,fill:'#fff',stroke:'none'});tx(x,y+3,l,'sl',{'text-anchor':'middle'})});
+ rr(640,T0,540,B0-T0,10,'obj');tx(652,T0+16,'Sandbox · SB','sl');
+ rr(660,170,340,150,6,'thin');tx(672,186,'Pointer-compression cage · CG','sl');
+ const sl=(x,y,w,h,c,l,r)=>{rr(x,y,w,h,r||2,c);tx(x+w/2,y+h/2+3.2,l,'sl',{'text-anchor':'middle'})};
+ sl(672,196,64,50,'hug','RO');
+ rr(744,196,148,50,2,'hug');mk('line',{x1:818,y1:196,x2:818,y2:246,class:'thin'});
+ tx(781,219,'New','sl',{'text-anchor':'middle'});tx(781,232,'From','sl',{'text-anchor':'middle'});tx(855,219,'New','sl',{'text-anchor':'middle'});tx(855,232,'To','sl',{'text-anchor':'middle'});
+ sl(900,196,88,50,'hug','Old');
+ sl(672,256,148,50,'hug','New LO');sl(828,256,160,50,'hug','LO');
+ rr(1014,170,152,150,2,'slot');tx(1090,240,'ArrayBuffer','sl',{'text-anchor':'middle'});tx(1090,253,'backing stores','sl',{'text-anchor':'middle'});tx(1090,266,'· flex ·','sl',{'text-anchor':'middle'});
+ /* outside row */
+ tx(632,397,'Outside SB','dts',{'text-anchor':'end'});
+ sl(660,378,180,30,'hug','Trusted · trusted LO');sl(852,378,148,30,'hug','EPT');
+ rr(1014,378,152,30,2,'slot');tx(1090,396,'Code · code LO [TBD]','sl',{'text-anchor':'middle'});
+ mk('line',{x1:560,y1:240,x2:1380,y2:240,class:'cl'});
+ /* dims */
+ const ty=114;dimH(580,640,ty,T0,T0,'G1');dimH(640,1180,ty,null,T0,'SB');dimH(1180,1240,ty,null,T0,'G1');dimH(1240,1360,ty,null,T0,'GA');
+ dimH(580,1360,84,110,110,'RV = 2·G1 + SB + GA');
+ dimH(660,1000,354,320,320,'CG',{below:true});
+ callout(660,170,620,160,'CB',-1);nb(572,160,2);
+ nb(1168,T0+16,4);nb(1348,T0+16,3);nb(990,186,1);nb(1150,393,5);
+ detailRef(690,221,26,'DETAIL A',600,280);
+ detailRef(944,221,30,'DETAIL B',1030,350);
+ title(970,440,'Address-space plan','Schematic · not to scale · 64-bit desktop · z gaps n/a');}
+
+/* ===== Detail A · tagged word (12 px / bit) ===== */
+{const X0=90,BW=12,X=b=>X0+(31-b)*BW,R=X(-1);
+ const row=(y,fields,lab)=>{fields.forEach(([hi,lo,c,l])=>{rr(X(hi),y,(hi-lo+1)*BW,20,0,c);tx((X(hi)+X(lo-1))/2,y+13.5,l,'sl',{'text-anchor':'middle'})});
+  for(let b=30;b>=0;b--)mk('line',{x1:X(b),y1:y+16,x2:X(b),y2:y+20,class:'thin'});tx(R+8,y+14,lab,'dts')};
+ tx(X0,338,'31','dts',{'text-anchor':'start'});
+ row(344,[[31,2,'thin','Offset field'],[1,0,'hug','0 1']],'Strong');
+ row(376,[[31,2,'thin','Offset field'],[1,0,'hug','1 1']],'Weak');
+ row(408,[[31,1,'thin','Smi value · signed'],[0,0,'hug','0']],'Smi');
+ dimH(X0,R,312,344,344,'8·T = 32 BIT');
+ dimH(X(1),R,330,null,null,'HTS',{dx:-2});
+ const by=450;dimH(X0,X(0),by,428,null,'SV',{below:true});dimH(X(0),R,by,null,428,'STS',{below:true,dx:6});
+ nb(R+64,354,1);
+ title(282,488,'Detail A · tagged word','Scale 12 px / bit · compressed slot');
+ tx(282,520,'ADDR = CB + ZEXT(C)   ·   SMI = C ≫ STS','dt',{'text-anchor':'middle'});}
+
+/* ===== Exploded view · memory hierarchy ===== */
+{const sc=.56,TX=300,TY=890,gap=50,a=.94*sc,b=.17*sc,c=-.34*sc,dd=.47*sc;
+ const P=(x,y,z)=>[TX+a*x+c*y,TY+b*x+dd*y-z];
+ const G=z=>mk('g',{transform:'matrix('+a+','+b+','+c+','+dd+','+TX+','+(TY-z)+')'});
+ const R2=(g,x,y,w,h,r,cls,extra)=>mk('rect',Object.assign({x:x,y:y,width:w,height:h,rx:r,class:cls,'vector-effect':'non-scaling-stroke'},extra||{}),g);
+ [[70,30],[310,30],[310,170],[70,170]].forEach(([x,y])=>{const p1=P(x,y,gap*2),p2=P(x,y,gap*3);mk('line',{x1:p1[0],y1:p1[1],x2:p2[0],y2:p2[1],class:'ph'})});
+ [[216,40],[300,40],[300,95],[216,95]].forEach(([x,y])=>{const p1=P(x,y,gap*3),p2=P(x,y,gap*4);mk('line',{x1:p1[0],y1:p1[1],x2:p2[0],y2:p2[1],class:'ph'})});
+ [[216,40],[237,40],[237,95],[216,95]].forEach(([x,y])=>{const p1=P(x,y,gap*4),p2=P(x,y,gap*5);mk('line',{x1:p1[0],y1:p1[1],x2:p2[0],y2:p2[1],class:'ph'})});
+ let g=G(0);R2(g,-20,-20,600,240,0,'thin');
+ g=G(gap);R2(g,0,0,40,200,0,'hs',{fill:HAT});R2(g,40,0,440,200,10,'obj');R2(g,480,0,80,200,0,'hs',{fill:HAT});
+ g=G(gap*2);R2(g,70,30,240,140,6,'obj');R2(g,330,30,130,140,2,'slot');
+ g=G(gap*3);R2(g,80,40,40,55,2,'hug');R2(g,128,40,80,55,2,'hug');R2(g,216,40,84,55,2,'hug');R2(g,80,105,100,55,2,'hug');R2(g,188,105,112,55,2,'hug');
+ g=G(gap*4);[0,1,2,3].forEach(i=>R2(g,216+i*21,40,21,55,0,'hug'));
+ g=G(gap*5);R2(g,216,40,21,55,0,'obj');[[42,6],[50,14],[66,4],[72,10],[84,8]].forEach(([y,h])=>R2(g,218,y,17,h,0,'hug'));
+ const LX=250;
+ [[0,[-20,220],'L0 · Host process','Embedder VA space'],[gap,[0,200],'L1 · Sandbox','G1 · SB · G1 + GA'],[gap*2,[70,170],'L2 · Cage','CG · base CB'],[gap*3,[80,160],'L3 · Heap spaces','RO · new · old · LO'],[gap*4,[216,95],'L4 · Pages','P each · old space shown'],[gap*5,[216,95],'L5 · Objects','Tagged slots · T each']].forEach(([z,[x,y],t,st])=>{
+  const p1=P(x,y,z);mk('circle',{cx:p1[0],cy:p1[1],r:1.8,class:'dot'});mk('polyline',{points:p1[0]+','+p1[1]+' '+(LX+10)+','+p1[1]+' '+LX+','+p1[1],class:'lead'});
+  tx(LX-4,p1[1]-2,t,'vt',{'text-anchor':'end'});tx(LX-4,p1[1]+11,st,'dts',{'text-anchor':'end'})});
+ title(380,1014,'Exploded view','Axonometric · z gaps not to scale');}
+
+/* ===== Tiering pipeline ===== */
+{const Y0=548,H0=40;
+ const box=(x,w,c,l1,l2)=>{rr(x,Y0,w,H0,c==='hug'?4:2,c);tx(x+w/2,Y0+17,l1,'sl',{'text-anchor':'middle'});if(l2)tx(x+w/2,Y0+30,l2,'dts',{'text-anchor':'middle'})};
+ box(580,84,'slot','Source','JS text');box(684,96,'thin','Parser','AST');box(800,110,'hug','Ignition','bytecode');
+ box(930,100,'hug','Sparkplug','baseline');box(1050,100,'hug','Maglev','mid-tier');box(1170,110,'hug','TurboFan','optimizing');
+ [[664,684],[780,800],[910,930],[1030,1050],[1150,1170]].forEach(([x1,x2])=>mk('line',{x1:x1,y1:Y0+20,x2:x2,y2:Y0+20,class:'dl','marker-end':A}));
+ mk('path',{d:'M1225,'+Y0+' C1225,500 855,500 855,'+Y0,class:'ph','marker-end':A});tx(1040,512,'DEOPT · BACK TO BYTECODE','dts',{'text-anchor':'middle'});
+ tx(980,606,'Trigger NS [TBD]','dts',{'text-anchor':'middle'});
+ const ext=(x,y2)=>mk('line',{x1:x,y1:Y0+H0+3,x2:x,y2:y2+5,class:'ext'});
+ ext(800,700);tx(796,640,'0','dt',{'text-anchor':'end'});
+ dimH(800,880,636,null,Y0+H0,'N0',{});
+ dimH(800,1100,664,null,Y0+H0,'N1',{});
+ dimH(800,1225,692,null,Y0+H0,'N2',{});
+ mk('line',{x1:880,y1:Y0+H0-6,x2:880,y2:Y0+H0+2,class:'thin'});
+ tx(1300,640,'N0 FEEDBACK VECTOR','dts');tx(1300,668,'N1 → MAGLEV','dts');tx(1300,696,'N2 → TURBOFAN','dts');
+ tx(1002,720,'OSR:  N3 → TURBOFAN  ·  N4 → MAGLEV','dt',{'text-anchor':'middle'});
+ nb(1282,Y0+8,7);
+ title(1002,752,'Tiering pipeline','Invocation-count ordinates · schematic, not to scale');}
+
+/* ===== Detail B · heap page (2.5 px / KiB) ===== */
+{const X0=640,K=2.5,X=v=>X0+v*K,PY=852;
+ rr(X(0),PY,256*K,36,0,'obj');
+ mk('rect',{x:X(0),y:PY,width:40,height:36,fill:HAT,class:'hs'});
+ tx(X(0)+20,PY-6,'HD [TBD]','dts',{'text-anchor':'middle'});
+ [[16,10],[26,22],[48,6],[54,30],[84,14],[98,40],[138,8],[146,18]].forEach(([s,w])=>rr(X(s),PY+6,w*K,24,0,'hug'));
+ tx(X(200),PY+22,'Object area · bump-allocated','sl',{'text-anchor':'middle'});
+ mk('line',{x1:X(128),y1:PY-4,x2:X(128),y2:PY+40,class:'cl'});
+ dimH(X(0),X(256),826,PY,PY,'P = 256 KIB');
+ dimH(X(0),X(128),906,PY+36,PY+40,'LOT = P ÷ 2',{below:true});
+ rr(X(0),934,280*K,22,0,'ph');tx(X(140),949,'Object > LOT  →  own chunk in LO space','sl',{'text-anchor':'middle'});
+ nb(X(280)+18,945,6);
+ title(X(128),994,'Detail B · heap page','Scale 2.5 px / KiB · header width schematic');}
+
+/* ===== Tables ===== */
+{let y=table(1426,86,'Address space',VAR.addr);y=table(1426,y,'Size',VAR.size);y=table(1426,y,'Tag bits',VAR.tag);y=table(1426,y,'Tiering',VAR.tier);
+ ['SOURCE · V8/V8 MAIN @ F4BFD902E1C4','INCLUDE/V8-INTERNAL.H','SRC/BASE/BUILD_CONFIG.H','SRC/COMMON/GLOBALS.H','SRC/SANDBOX/SANDBOX.CC','SRC/FLAGS/FLAG-DEFINITIONS.H'].forEach((s,i)=>tx(1426,y-14+i*13,s,'dts'));}
+})();
+</script>
