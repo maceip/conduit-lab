@@ -370,11 +370,11 @@ stage.addEventListener("pointermove", (ev) => {
   steer(REACH[1] - share * (REACH[1] - REACH[0]));
 });
 stage.addEventListener("click", () => {
-  const cur = caseUnder(target);
+  const cur = caseUnder(touring ? x : target);
   steer(STOPS[(cur + 1) % STOPS.length]);
 });
 stage.addEventListener("keydown", (ev) => {
-  const cur = caseUnder(target);
+  const cur = caseUnder(touring ? x : target);
   if (ev.key === "ArrowRight" || ev.key === "ArrowUp") { ev.preventDefault(); steer(STOPS[Math.min(STOPS.length - 1, cur + 1)]); }
   else if (ev.key === "ArrowLeft" || ev.key === "ArrowDown") { ev.preventDefault(); steer(STOPS[Math.max(0, cur - 1)]); }
   else if (ev.key === " " || ev.key === "Enter") { ev.preventDefault(); steer(STOPS[cur === 0 ? 3 : 0]); }

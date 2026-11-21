@@ -14,6 +14,8 @@ export const EMBED_HOOK_CSS = `
 html[data-embed="1"] body { background: transparent; }
 html[data-embed="1"] .iso-page { width: 100%; max-width: none; margin: 0; }
 html[data-embed="1"] .iso-figure { margin: 0; }
+html[data-compact="1"] .iso-legend { display: none; }
+html[data-compact="1"] .iso-plate { border-radius: 10px; }
 .iso-stage:focus-visible { outline: 1px solid var(--anatomy-muted); outline-offset: 6px; border-radius: 8px; }
 `;
 
@@ -23,13 +25,18 @@ export const EMBED_HOOK_JS = `
   if (params.get("embed") === "1") {
     document.documentElement.setAttribute("data-embed", "1");
   }
+  if (params.get("compact") === "1") {
+    document.documentElement.setAttribute("data-compact", "1");
+  }
   const qTheme = params.get("theme");
   if (qTheme === "light" || qTheme === "dark") {
     document.body.setAttribute("data-theme", qTheme);
+    document.documentElement.style.colorScheme = qTheme;
   }
   window.addEventListener("message", (ev) => {
     if (ev.data && ev.data.type === "v8-iso-theme" && (ev.data.theme === "light" || ev.data.theme === "dark")) {
       document.body.setAttribute("data-theme", ev.data.theme);
+      document.documentElement.style.colorScheme = ev.data.theme;
     }
   });
   if (params.get("embed") === "1" && window.parent && window.parent !== window) {

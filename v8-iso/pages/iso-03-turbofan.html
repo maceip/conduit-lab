@@ -35,6 +35,8 @@
   html[data-embed="1"] body { background:transparent; padding:0; }
   html[data-embed="1"] main { max-width:none; }
   html[data-embed="1"] .foot-help { display:none; }
+  html[data-compact="1"] figure { padding:12px 14px; border-radius:10px; }
+  html[data-compact="1"] .cap { font-size:10.5px; letter-spacing:.09em; }
   main { max-width:760px; margin-inline:auto; display:grid; gap:12px; }
   figure { margin:0; background:var(--panel); border:1px solid var(--edge); border-radius:16px; padding:18px 22px; display:grid; gap:6px; }
   .cap { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 14px; font-size:12px; text-transform:uppercase; letter-spacing:.12em; }
@@ -80,6 +82,7 @@
 (() => {
   const params = new URLSearchParams(location.search);
   if (params.get("embed") === "1") document.documentElement.setAttribute("data-embed", "1");
+  if (params.get("compact") === "1") document.documentElement.setAttribute("data-compact", "1");
   const qt = params.get("theme");
   if (qt === "light" || qt === "dark") document.documentElement.setAttribute("data-theme", qt);
   else document.documentElement.setAttribute("data-theme", "dark");

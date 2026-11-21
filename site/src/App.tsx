@@ -20,11 +20,34 @@ import SectionVerus from './SectionVerus';
 import SectionWhy from './SectionWhy';
 import SectionStatus from './SectionStatus';
 
+const HERO_V8_TRIO = [
+  {
+    key: 'turbofan',
+    label: 'TurboFan speculative JIT & bailout',
+    anatomySlug: 'anatomy-03-turbofan',
+    isoSlug: 'iso-03-turbofan',
+  },
+  {
+    key: 'ignition',
+    label: 'Ignition bytecode & inline caches',
+    anatomySlug: 'anatomy-02-ignition',
+    isoSlug: 'iso-02-ignition',
+  },
+  {
+    key: 'orinoco',
+    label: 'HiddenClasses & Orinoco GC',
+    anatomySlug: 'anatomy-04-orinoco',
+    isoSlug: 'iso-04-orinoco',
+  },
+] as const;
+
 export default function App() {
   const [ratchet, setRatchet] = useState<Ratchet | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [heroIsoMode, setHeroIsoMode] = useState<'anatomy' | 'iso'>('anatomy');
+  const [frameHeights, setFrameHeights] = useState<Record<string, number>>({});
   const [theme, setTheme] = useState<'dark' | 'light'>(() =>
     typeof window !== 'undefined' && localStorage.getItem('conduit-theme') === 'light'
       ? 'light'
@@ -34,7 +57,23 @@ export default function App() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('conduit-theme', theme);
+    document.querySelectorAll<HTMLIFrameElement>('iframe.ch-hero-iso-frame').forEach((fr) => {
+      fr.contentWindow?.postMessage({ type: 'v8-iso-theme', theme }, '*');
+    });
   }, [theme]);
+
+  useEffect(() => {
+    const onMsg = (ev: MessageEvent) => {
+      const data = ev.data as { type?: string; id?: string; height?: number } | null;
+      if (data?.type === 'v8-iso-height' && data.id && typeof data.height === 'number' && data.height > 120) {
+        setFrameHeights((prev) =>
+          prev[data.id!] === data.height ? prev : { ...prev, [data.id!]: data.height! },
+        );
+      }
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -107,6 +146,9 @@ export default function App() {
             >
               Design doc
             </a>
+            <a className="ch-nav-link" href="v8-anatomy.html">
+              V8 anatomy
+            </a>
             <a className="ch-nav-link" href="irrigation.html">
               Irrigation demo
             </a>
@@ -126,7 +168,7 @@ export default function App() {
           </div>
         </header>
 
-        {/* Opening Hero — Isometric Hardware Scene Behind Translucent Frosted Glass Bar */}
+        {/* Opening Hero — Text Framing a Central Frosted-Glass Band of 3 Interactive V8 Figures */}
         <section className="ch-hero" data-testid="lede">
           <div className="ch-hero-backdrop" data-testid="hero-visual" aria-hidden="true">
             <img
@@ -137,36 +179,102 @@ export default function App() {
             />
           </div>
 
-          <div className="ch-hero-glass">
-            <div className="ch-hero-inner">
-              <div className="ch-hero-copy">
-                <h1 className="ch-h1">
-                  Don’t test a browser engine for memory bugs. Prove they cannot exist.
-                </h1>
-                <p className="ch-hero-prose">
-                  {v8Count} of the last {CVES.length} Chrome zero-days exploited in the wild came
-                  from V8. Almost all of them started the same way: the JavaScript engine trusted an
-                  assumption about memory or object layout that an attacker broke. CONDUIT replaces
-                  those assumptions with machine-checked Rust proofs verified by Verus and Z3 across
-                  every possible input.
-                </p>
-                <p className="ch-hero-prose">
-                  Today, <strong>{totals ? `${totals.crates} crates` : NR}</strong> verify from
-                  scratch with zero <code>unsafe</code> code and zero trusted shortcuts: URL parsing
-                  (<code>vurl</code>), the full J0–J7 JavaScript engine (<code>vjs_spec</code> to{' '}
-                  <code>vjs_vm</code>), the Web IDL capability layer (<code>vjs_webidl</code>), and
-                  a sandboxed WebAssembly 1.0 interpreter (<code>vwasm</code>). Next up: the browser
-                  security kernel, Nanvix per-site sandboxing, and HTML/CSS/XML integration.
-                </p>
-                <div className="ch-hero-actions">
-                  <a className="ch-cta-primary" href="#ratchet">
-                    <span>Inspect the verified crates</span>
-                    <IconArrowRight size={14} />
-                  </a>
-                  <a className="ch-cta-secondary" href="#proofs">
-                    <span>See a live proof</span>
-                  </a>
+          <div className="ch-hero-stack">
+            {/* Upper text framing the frosted glass band */}
+            <div className="ch-hero-band-copy ch-hero-band-top">
+              <h1 className="ch-h1">
+                Don’t test a browser engine for memory bugs. Prove they cannot exist.
+              </h1>
+              <p className="ch-hero-prose">
+                {v8Count} of the last {CVES.length} Chrome zero-days exploited in the wild came
+                from V8. Almost all of them started the same way: the JavaScript engine trusted an
+                assumption about memory or object layout that an attacker broke. CONDUIT replaces
+                those assumptions with machine-checked Rust proofs verified by Verus and Z3 across
+                every possible input.
+              </p>
+            </div>
+
+            {/* Middle Full-Width Frosted Glass Band Carrying the Best 3 Interactive V8 Figures */}
+            <div className="ch-hero-glass" data-testid="hero-v8-band">
+              <div className="ch-hero-glass-inner">
+                <div className="ch-hero-glass-bar">
+                  <div className="ch-hero-glass-heading">
+                    <span className="ch-hero-glass-kicker">Interactive V8 engine anatomy</span>
+                    <span className="ch-hero-glass-sub">
+                      Where speculative JIT, inline caches, and heap transitions fail—and what CONDUIT proves instead
+                    </span>
+                  </div>
+
+                  <div className="ch-hero-glass-controls">
+                    <div className="ch-hero-mode-seg" role="group" aria-label="Select isometric figure style">
+                      <button
+                        type="button"
+                        className="ch-hero-mode-btn"
+                        aria-pressed={heroIsoMode === 'anatomy'}
+                        data-testid="hero-iso-mode-anatomy"
+                        onClick={() => setHeroIsoMode('anatomy')}
+                      >
+                        Benchtop rigs
+                      </button>
+                      <button
+                        type="button"
+                        className="ch-hero-mode-btn"
+                        aria-pressed={heroIsoMode === 'iso'}
+                        data-testid="hero-iso-mode-iso"
+                        onClick={() => setHeroIsoMode('iso')}
+                      >
+                        Pressable consoles
+                      </button>
+                    </div>
+                    <a className="ch-hero-all-link" href="v8-anatomy.html">
+                      <span>All 10 figures</span>
+                      <IconArrowRight size={13} />
+                    </a>
+                  </div>
                 </div>
+
+                <div className="ch-hero-trio" data-testid="hero-v8-trio">
+                  {HERO_V8_TRIO.map((item) => {
+                    const slug = heroIsoMode === 'anatomy' ? item.anatomySlug : item.isoSlug;
+                    const frameId = `hero-${slug}`;
+                    const h = frameHeights[frameId];
+                    return (
+                      <div className="ch-hero-iso-card" key={`${item.key}-${heroIsoMode}`}>
+                        <iframe
+                          className="ch-hero-iso-frame"
+                          title={item.label}
+                          scrolling="no"
+                          src={`v8-iso/pages/${slug}.html?embed=1&compact=1&theme=${theme}&id=${frameId}`}
+                          style={h ? { height: `${h}px` } : undefined}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Lower text & CTAs framing below the frosted glass band */}
+            <div className="ch-hero-band-copy ch-hero-band-bottom">
+              <p className="ch-hero-prose">
+                Today, <strong>{totals ? `${totals.crates} crates` : NR}</strong> verify from
+                scratch with zero <code>unsafe</code> code and zero trusted shortcuts: URL parsing
+                (<code>vurl</code>), the full J0–J7 JavaScript engine (<code>vjs_spec</code> to{' '}
+                <code>vjs_vm</code>), the Web IDL capability layer (<code>vjs_webidl</code>), and
+                a sandboxed WebAssembly 1.0 interpreter (<code>vwasm</code>). Next up: the browser
+                security kernel, Nanvix per-site sandboxing, and HTML/CSS/XML integration.
+              </p>
+              <div className="ch-hero-actions">
+                <a className="ch-cta-primary" href="#ratchet">
+                  <span>Inspect the verified crates</span>
+                  <IconArrowRight size={14} />
+                </a>
+                <a className="ch-cta-secondary" href="v8-anatomy.html" data-testid="cta-v8-anatomy">
+                  <span>Explore all 10 V8 figures</span>
+                </a>
+                <a className="ch-cta-secondary" href="#proofs">
+                  <span>See a live proof</span>
+                </a>
               </div>
             </div>
           </div>
@@ -367,6 +475,10 @@ export default function App() {
                 data/stats.json
               </a>
               .{' '}
+              <a className="ch-mono-link" href="v8-anatomy.html">
+                V8 anatomy
+              </a>
+              {' · '}
               <a className="ch-mono-link" href="irrigation.html">
                 Irrigation demo
               </a>

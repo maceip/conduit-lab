@@ -19,6 +19,8 @@ const files = [
   'irrigation.css',
   'irrigation.js',
   'styles.css', // irrigation.html still links the legacy stylesheet
+  'v8-anatomy.html',
+  'v8-iso/pages',
   'assets',
 ];
 
