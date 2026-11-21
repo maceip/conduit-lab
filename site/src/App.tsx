@@ -126,51 +126,49 @@ export default function App() {
           </div>
         </header>
 
-        {/* Opening Hero */}
+        {/* Opening Hero — Isometric Hardware Scene Behind Translucent Frosted Glass Bar */}
         <section className="ch-hero" data-testid="lede">
-          <div className="ch-hero-inner">
-            <div className="ch-hero-copy">
-              <h1 className="ch-h1">
-                Don’t test a browser engine for memory bugs. Prove they cannot exist.
-              </h1>
-              <p className="ch-hero-prose">
-                {v8Count} of the last {CVES.length} Chrome zero-days exploited in the wild came
-                from V8. Almost all of them started the same way: the JavaScript engine trusted an
-                assumption about memory or object layout that an attacker broke. CONDUIT replaces
-                those assumptions with machine-checked Rust proofs verified by Verus and Z3 across
-                every possible input.
-              </p>
-              <p className="ch-hero-prose">
-                Today, <strong>{totals ? `${totals.crates} crates` : NR}</strong> verify from
-                scratch with zero <code>unsafe</code> code and zero trusted shortcuts: URL parsing
-                (<code>vurl</code>), the full J0–J7 JavaScript engine (<code>vjs_spec</code> to{' '}
-                <code>vjs_vm</code>), the Web IDL capability layer (<code>vjs_webidl</code>), and a
-                sandboxed WebAssembly 1.0 interpreter (<code>vwasm</code>). Next up: the browser
-                security kernel, Nanvix per-site sandboxing, and HTML/CSS/XML integration.
-              </p>
-              <div className="ch-hero-actions">
-                <a className="ch-cta-primary" href="#ratchet">
-                  <span>Inspect the verified crates</span>
-                  <IconArrowRight size={14} />
-                </a>
-                <a className="ch-cta-secondary" href="#proofs">
-                  <span>See a live proof</span>
-                </a>
+          <div className="ch-hero-backdrop" data-testid="hero-visual" aria-hidden="true">
+            <img
+              src="assets/hero-modules-backdrop.webp"
+              alt=""
+              width={1920}
+              height={1071}
+            />
+          </div>
+
+          <div className="ch-hero-glass">
+            <div className="ch-hero-inner">
+              <div className="ch-hero-copy">
+                <h1 className="ch-h1">
+                  Don’t test a browser engine for memory bugs. Prove they cannot exist.
+                </h1>
+                <p className="ch-hero-prose">
+                  {v8Count} of the last {CVES.length} Chrome zero-days exploited in the wild came
+                  from V8. Almost all of them started the same way: the JavaScript engine trusted an
+                  assumption about memory or object layout that an attacker broke. CONDUIT replaces
+                  those assumptions with machine-checked Rust proofs verified by Verus and Z3 across
+                  every possible input.
+                </p>
+                <p className="ch-hero-prose">
+                  Today, <strong>{totals ? `${totals.crates} crates` : NR}</strong> verify from
+                  scratch with zero <code>unsafe</code> code and zero trusted shortcuts: URL parsing
+                  (<code>vurl</code>), the full J0–J7 JavaScript engine (<code>vjs_spec</code> to{' '}
+                  <code>vjs_vm</code>), the Web IDL capability layer (<code>vjs_webidl</code>), and
+                  a sandboxed WebAssembly 1.0 interpreter (<code>vwasm</code>). Next up: the browser
+                  security kernel, Nanvix per-site sandboxing, and HTML/CSS/XML integration.
+                </p>
+                <div className="ch-hero-actions">
+                  <a className="ch-cta-primary" href="#ratchet">
+                    <span>Inspect the verified crates</span>
+                    <IconArrowRight size={14} />
+                  </a>
+                  <a className="ch-cta-secondary" href="#proofs">
+                    <span>See a live proof</span>
+                  </a>
+                </div>
               </div>
             </div>
-
-            <figure className="ch-hero-stage" data-testid="hero-visual">
-              <img
-                src="assets/hero-conduit-core.webp"
-                alt="CONDUIT verified hardware core sculpture floating over drafting grid"
-                width={348}
-                height={348}
-              />
-              <figcaption className="ch-hero-caption">
-                <span>Safe Rust · Verus SMT</span>
-                <span>Zero trusted shortcuts</span>
-              </figcaption>
-            </figure>
           </div>
         </section>
 

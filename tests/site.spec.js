@@ -271,7 +271,7 @@ test("provenance footer and staged local assets resolve with HTTP 200", async ({
     "styles.css",
     "assets/conduit-favicon.png",
     "assets/conduit-mark.png",
-    "assets/hero-conduit-core.webp",
+    "assets/hero-modules-backdrop.webp",
     "assets/hw-kernel.webp",
     "assets/hw-prover.webp",
     "assets/hw-synthesis.webp",
