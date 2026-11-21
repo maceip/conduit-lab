@@ -3,32 +3,44 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fig 1 — v8::Isolate · Modular Factory Skid</title>
+<title>Fig 1 — v8::Isolate · Twin-Silo Process Skid</title>
 <style>
   :root {
     color-scheme: dark;
-    --bg:#0c0d0e; --panel:#141516; --edge:#222426;
-    --line:#3e4347; --detail:#2a2d30; --body:#17181a; --deck:#1c1e21;
-    --ink:#868b8f; --ink-hi:#e6e8e9; --live:#f4f5f5;
-    --kn:#232629; --kn-line:#565b5f; --ko:#d9dcde; --ko-line:#5a5f63; --ko-ink:#141618;
-    --glass:#0a0b0c;
+    --bg:#0c0d0e; --panel:#141516; --edge:#232629;
+    --line:#586068; --rib:#2e3338; --live:#f4f6f7;
+    --ink:#8a9096; --ink-hi:#e8ecee;
+    --bd0:#111315; --bd1:#171a1d; --bd2:#1e2226; --bd3:#262b30;
+    --dk0:#0b0c0e; --dk1:#101214; --dk2:#16191c;
+    --hi0:#8e959c; --hi1:#b2b8be; --hi2:#cfd4d8; --hi3:#e8ecef;
+    --glass:rgba(14,17,20,0.74);
+    --tag-bg:#191c20; --tag-line:#4c545c;
+    --ko:#dde1e4; --ko-ink:#121416;
     --mono:"JetBrains Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
   }
   @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
     color-scheme: light;
-    --bg:#e9eaea; --panel:#f6f6f5; --edge:#d6d8d8;
-    --line:#8b9095; --detail:#c3c6c8; --body:#ececeb; --deck:#f3f3f2;
-    --ink:#5f6468; --ink-hi:#16181a; --live:#0c0d0e;
-    --kn:#ffffff; --kn-line:#7b8084; --ko:#242628; --ko-line:#0c0d0e; --ko-ink:#f4f5f5;
-    --glass:#e1e3e3;
+    --bg:#e9eaea; --panel:#f6f6f5; --edge:#d3d6d8;
+    --line:#565c62; --rib:#bfc4c8; --live:#0f1214;
+    --ink:#5b6167; --ink-hi:#14171a;
+    --bd0:#d5d8da; --bd1:#e1e3e5; --bd2:#eceeed; --bd3:#f6f7f6;
+    --dk0:#9ea4aa; --dk1:#b5bbc0; --dk2:#cbd0d4;
+    --hi0:#2b2f33; --hi1:#3b4046; --hi2:#4d535a; --hi3:#60676f;
+    --glass:rgba(222,227,232,0.72);
+    --tag-bg:#ffffff; --tag-line:#848b92;
+    --ko:#1e2124; --ko-ink:#f6f7f7;
   } }
   :root[data-theme="light"] {
     color-scheme: light;
-    --bg:#e9eaea; --panel:#f6f6f5; --edge:#d6d8d8;
-    --line:#8b9095; --detail:#c3c6c8; --body:#ececeb; --deck:#f3f3f2;
-    --ink:#5f6468; --ink-hi:#16181a; --live:#0c0d0e;
-    --kn:#ffffff; --kn-line:#7b8084; --ko:#242628; --ko-line:#0c0d0e; --ko-ink:#f4f5f5;
-    --glass:#e1e3e3;
+    --bg:#e9eaea; --panel:#f6f6f5; --edge:#d3d6d8;
+    --line:#565c62; --rib:#bfc4c8; --live:#0f1214;
+    --ink:#5b6167; --ink-hi:#14171a;
+    --bd0:#d5d8da; --bd1:#e1e3e5; --bd2:#eceeed; --bd3:#f6f7f6;
+    --dk0:#9ea4aa; --dk1:#b5bbc0; --dk2:#cbd0d4;
+    --hi0:#2b2f33; --hi1:#3b4046; --hi2:#4d535a; --hi3:#60676f;
+    --glass:rgba(222,227,232,0.72);
+    --tag-bg:#ffffff; --tag-line:#848b92;
+    --ko:#1e2124; --ko-ink:#f6f7f7;
   }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--mono); font-size:13px; padding:20px 16px; }
@@ -38,53 +50,57 @@
   html[data-embed="1"] svg { aspect-ratio: 6 / 5; }
   html[data-compact="1"] figure { padding:12px 14px; border-radius:12px; }
   html[data-compact="1"] .cap { font-size:10.5px; letter-spacing:.09em; }
-  main { max-width:820px; margin-inline:auto; display:grid; gap:12px; }
+  main { max-width:860px; margin-inline:auto; display:grid; gap:12px; }
   figure { margin:0; background:var(--panel); border:1px solid var(--edge); border-radius:20px; padding:20px 24px; display:grid; gap:6px; }
   .cap { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 16px; font-size:12px; text-transform:uppercase; letter-spacing:.13em; }
   .cap .hi { color:var(--ink-hi); text-transform:none; letter-spacing:.04em; }
-  svg { width:100%; height:auto; display:block; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  svg { width:100%; height:auto; display:block; touch-action:none; user-select:none; -webkit-user-select:none; cursor:grab; }
+  svg:active { cursor:grabbing; }
   svg:focus-visible { outline:2px solid var(--live); outline-offset:4px; border-radius:8px; }
-  .face { fill:var(--body); stroke:var(--line); stroke-width:1; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
-  .face.top { fill:var(--deck); }
-  .detail { fill:none; stroke:var(--detail); stroke-width:1; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
-  .struct { fill:none; stroke:var(--line); stroke-width:1; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
-  .live-stroke { fill:none; stroke:var(--live); stroke-width:1.25; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
-  .glass { fill:var(--glass); }
-  .lcd { fill:var(--live); font-family:var(--mono); }
-  .lcd-dim { fill:var(--ink); font-family:var(--mono); }
-  .lbl { fill:var(--ink); font-family:var(--mono); text-anchor:middle; pointer-events:none; }
-  .lbl-hi { fill:var(--ink-hi); font-family:var(--mono); text-anchor:middle; pointer-events:none; }
-  .press { cursor:pointer; transition:transform 60ms ease-out; }
-  .press .face { fill:var(--kn); stroke:var(--kn-line); transition:stroke 90ms, fill 90ms; }
-  .press.op .face { fill:var(--ko); stroke:var(--ko-line); }
-  .press text { fill:var(--ink-hi); font-family:var(--mono); text-anchor:middle; pointer-events:none; }
-  .press.op text { fill:var(--ko-ink); }
-  .press.down { transform:translateY(4px); }
-  .press.down .face, .press:hover .face.top, .press.sel .face { stroke:var(--live); }
-  .press.sel text { fill:var(--live); }
-  .press.op.sel text { fill:var(--ko-ink); }
-  .unit { transition:transform 160ms cubic-bezier(.22,.8,.24,1); }
-  .unit .face { transition:stroke 120ms, fill 120ms; }
-  .unit.lit .face { stroke:var(--live); }
-  .unit.lit .face.top { fill:var(--ko); }
-  .unit.lit .lbl-hi { fill:var(--live); }
-  .unit.lit .top-lbl { fill:var(--ko-ink); }
-  .top-lbl { fill:var(--ink-hi); font-family:var(--mono); text-anchor:middle; pointer-events:none; }
-  .unit.mid .face { stroke:var(--kn-line); }
-  .foot-help { margin:0; max-width:68ch; line-height:1.6; font-size:12px; }
+
+  .cad-bd-0 { fill:var(--bd0); stroke:var(--bd0); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-bd-1 { fill:var(--bd1); stroke:var(--bd1); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-bd-2 { fill:var(--bd2); stroke:var(--bd2); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-bd-3 { fill:var(--bd3); stroke:var(--bd3); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-dk-0 { fill:var(--dk0); stroke:var(--dk0); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-dk-1 { fill:var(--dk1); stroke:var(--dk1); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-dk-2 { fill:var(--dk2); stroke:var(--dk2); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-hi-0 { fill:var(--hi0); stroke:var(--hi0); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-hi-1 { fill:var(--hi1); stroke:var(--hi1); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-hi-2 { fill:var(--hi2); stroke:var(--hi2); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-hi-3 { fill:var(--hi3); stroke:var(--hi3); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-live-1 { fill:var(--hi1); stroke:var(--hi1); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-live-2 { fill:var(--hi2); stroke:var(--hi2); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-live-3 { fill:var(--hi3); stroke:var(--hi3); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-glass { fill:var(--glass); stroke:var(--line); stroke-width:0.75; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+
+  .cad-edge { stroke:var(--line); stroke-width:1.05; stroke-linecap:round; vector-effect:non-scaling-stroke; pointer-events:none; }
+  .cad-edge-live { stroke:var(--live); stroke-width:1.35; stroke-linecap:round; vector-effect:non-scaling-stroke; pointer-events:none; }
+  .cad-rib { stroke:var(--rib); stroke-width:0.75; stroke-linecap:round; vector-effect:non-scaling-stroke; pointer-events:none; }
+  .cad-hit { cursor:pointer; }
+
+  .cad-tag { pointer-events:auto; }
+  .cad-tag.press { cursor:pointer; }
+  .cad-leader { stroke:var(--tag-line); stroke-width:0.9; stroke-dasharray:2.5 2; vector-effect:non-scaling-stroke; pointer-events:none; }
+  .cad-dot { fill:var(--live); pointer-events:none; }
+  .cad-pill { fill:var(--tag-bg); stroke:var(--tag-line); stroke-width:1; vector-effect:non-scaling-stroke; }
+  .cad-tag text { fill:var(--ink-hi); font-family:var(--mono); font-size:9.2px; text-anchor:middle; pointer-events:none; letter-spacing:0.04em; }
+  .cad-tag.op .cad-pill { fill:var(--ko); stroke:var(--ko); }
+  .cad-tag.op text { fill:var(--ko-ink); font-weight:600; }
+  .cad-tag.sel .cad-pill, .cad-tag.press:hover .cad-pill { stroke:var(--live); stroke-width:1.4; }
+
+  .foot-help { margin:0; max-width:74ch; line-height:1.6; font-size:12px; }
   kbd { font:inherit; color:var(--ink-hi); border:1px solid var(--edge); border-radius:4px; padding:0 4px; }
-  @media (prefers-reduced-motion:reduce){ .press, .unit { transition:none !important; } }
-  
 </style>
 </head>
 <body>
 <main>
   <figure class="iso-plate">
-    <div class="cap"><span class="hi">Fig 1</span><span>v8::Isolate · Modular Factory Skid</span></div>
-    <svg id="stage" viewBox="0 0 589 503" tabindex="0" role="img" aria-label="Isometric v8::Isolate modular factory skid with forklift pockets, 4 GiB pointer-compression cage bollards, NEMA control cabinet, twin heap reservation tanks, and thread-lockout controls."></svg>
-    <div class="cap"><span>lock thread · spawn realm · drain microtasks</span><span class="hi" id="readout" data-readout>thread #1 locked · 1 realm · cage 4096 MiB</span></div>
+    <div class="cap"><span class="hi">Fig 1</span><span>v8::Isolate · Twin-Silo Process Skid</span></div>
+    <svg id="stage" viewBox="0 0 640 520" tabindex="0" role="img" aria-label="3D isometric v8::Isolate refinery-style process skid on open structural steel I-beams, featuring two vertical cylindrical domed heap silos, overhead flanged manifold piping, a centrifugal microtask volute pump, tubular cage handrails, and a rotary v8::Locker cam switch."></svg>
+    <div class="cap"><span>lock thread cam · spawn realm silo · drain pump · drag to orbit</span><span class="hi" id="readout" data-readout>thread #1 locked · 1 realm · 2 tasks</span></div>
   </figure>
-  <p class="foot-help">Controls: <kbd>1</kbd> lock Thread #1 · <kbd>2</kbd> contend Thread #2 · <kbd>U</kbd> unlock v8::Locker · <kbd>R</kbd> spawn Context/Realm · <kbd>M</kbd> enqueue microtask · <kbd>D</kbd> drain queue.</p>
+  <p class="foot-help">Click parts or keys: <kbd>1</kbd> lock Thread #1 · <kbd>2</kbd> contend Thread #2 · <kbd>U</kbd> unlock v8::Locker · <kbd>R</kbd> spawn Context/Realm · <kbd>M</kbd> enqueue microtask · <kbd>D</kbd> drain pump · Drag or <kbd>[</kbd> <kbd>]</kbd> to orbit.</p>
 </main>
 <script>
 (() => {
@@ -92,8 +108,7 @@
   if (params.get("embed") === "1") document.documentElement.setAttribute("data-embed", "1");
   if (params.get("compact") === "1") document.documentElement.setAttribute("data-compact", "1");
   const qt = params.get("theme");
-  if (qt === "light" || qt === "dark") document.documentElement.setAttribute("data-theme", qt);
-  else document.documentElement.setAttribute("data-theme", "dark");
+  document.documentElement.setAttribute("data-theme", qt === "light" ? "light" : "dark");
   window.addEventListener("message", (ev) => {
     if (ev.data && ev.data.type === "v8-iso-theme" && (ev.data.theme === "light" || ev.data.theme === "dark")) {
       document.documentElement.setAttribute("data-theme", ev.data.theme);
@@ -110,179 +125,816 @@
   }
 })();
 
-// ---- iso kernel (verbatim MrBongoC/ai-iso-skill) ----
-const C = Math.cos(Math.PI/6), S = Math.sin(Math.PI/6), OX = 245, OY = 178;
-const P = (x,y,z) => [(x-y)*C + OX, (x+y)*S - z + OY];
-const D = (x,y,z) => [(x-y)*C, (x+y)*S - z];
-const plane = (O,U,V) => { const o=P(...O), u=D(...U), v=D(...V); return `matrix(${u[0]} ${u[1]} ${v[0]} ${v[1]} ${o[0]} ${o[1]})`; };
-const TOP = (x,y,z) => plane([x,y,z],[1,0,0],[0,1,0]);
-const FRONT = (x,y,z) => plane([x,y,z],[1,0,0],[0,0,-1]);
-const SIDE = (x,y,z) => plane([x,y,z],[0,-1,0],[0,0,-1]);
-const rect = (t,w,h,r=0,cls='face') => `<g transform="${t}"><rect class="${cls}" width="${w}" height="${h}" rx="${r}"/></g>`;
-const box = (x,y,z,w,d,h,r=0) => rect(SIDE(x+w,y+d,z+h),d,h,Math.min(r,h/4)) + rect(FRONT(x,y+d,z+h),w,h,Math.min(r,h/4)) + rect(TOP(x,y,z+h),w,d,r,'face top');
+function createCad(camOpts = {}) {
+  const az = ((camOpts.azDeg ?? 42) * Math.PI) / 180;
+  const el = ((camOpts.elDeg ?? 32) * Math.PI) / 180;
+  const V = [Math.cos(el) * Math.cos(az), Math.cos(el) * Math.sin(az), Math.sin(el)];
+  const Rx = [Math.sin(az), -Math.cos(az), 0];
+  const Ds = [Math.sin(el) * Math.cos(az), Math.sin(el) * Math.sin(az), -Math.cos(el)];
+  const L = (() => {
+    const lx = Math.cos(az - 0.55) * 0.48;
+    const ly = Math.sin(az - 0.55) * 0.48;
+    const lz = 0.88;
+    const len = Math.hypot(lx, ly, lz);
+    return [lx / len, ly / len, lz / len];
+  })();
 
+  const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cross = (a, b) => [
+    a[1] * b[2] - a[2] * b[1],
+    a[2] * b[0] - a[0] * b[2],
+    a[0] * b[1] - a[1] * b[0],
+  ];
+  const norm = (a) => {
+    const l = Math.hypot(a[0], a[1], a[2]) || 1;
+    return [a[0] / l, a[1] / l, a[2] / l];
+  };
+  const lerp3 = (a, b, t) => [
+    a[0] + (b[0] - a[0]) * t,
+    a[1] + (b[1] - a[1]) * t,
+    a[2] + (b[2] - a[2]) * t,
+  ];
 
-let svg = '';
-// 1. Heavy structural steel Skid Base (340 x 226 x 18) with forklift pockets & floor deck grid
-svg += box(0, 0, 0, 340, 226, 18, 4);
-svg += `<g transform="${FRONT(0, 226, 18)}">
-  <rect class="face glass" x="52" y="5" width="46" height="9" rx="1.5"/>
-  <rect class="face glass" x="236" y="5" width="46" height="9" rx="1.5"/>
-  ${Array.from({length:15},(_,i)=>`<path class="detail" d="M${14+i*22} 2v2"/>`).join('')}
-</g>`;
-svg += `<g transform="${SIDE(340, 226, 18)}">
-  <rect class="face glass" x="48" y="5" width="40" height="9" rx="1.5"/>
-  <rect class="face glass" x="138" y="5" width="40" height="9" rx="1.5"/>
-</g>`;
-// Checker-plate deck grid inside 4 GiB cage perimeter
-svg += `<g transform="${TOP(0, 0, 18)}">
-  <rect class="detail" x="10" y="10" width="320" height="206" rx="3"/>
-  ${Array.from({length:7},(_,i)=>`<path class="detail" d="M10 ${36+i*26}h320"/>`).join('')}
-  ${Array.from({length:9},(_,i)=>`<path class="detail" d="M${38+i*34} 10v206"/>`).join('')}
-</g>`;
+  const ident = () => [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+  const mmul = (A, B) => {
+    const R = new Array(16).fill(0);
+    for (let r = 0; r < 4; r++) {
+      for (let c = 0; c < 4; c++) {
+        R[r * 4 + c] =
+          A[r * 4] * B[c] +
+          A[r * 4 + 1] * B[4 + c] +
+          A[r * 4 + 2] * B[8 + c] +
+          A[r * 4 + 3] * B[12 + c];
+      }
+    }
+    return R;
+  };
+  const mTrans = (x, y, z) => [1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1];
+  const mRotX = (a) => {
+    const c = Math.cos(a), s = Math.sin(a);
+    return [1, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0, 0, 0, 0, 1];
+  };
+  const mRotY = (a) => {
+    const c = Math.cos(a), s = Math.sin(a);
+    return [c, 0, s, 0, 0, 1, 0, 0, -s, 0, c, 0, 0, 0, 0, 1];
+  };
+  const mRotZ = (a) => {
+    const c = Math.cos(a), s = Math.sin(a);
+    return [c, -s, 0, 0, s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+  };
+  const mScale = (sx, sy = sx, sz = sx) => [sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, 0, 0, 0, 0, 1];
 
-// 2. Back corner bollards (4 GiB Pointer-Compression Cage boundary)
-svg += box(6, 6, 18, 10, 10, 96, 2);
-svg += box(324, 6, 18, 10, 10, 96, 2);
-// Back perimeter cage rail
-svg += box(16, 8, 92, 308, 6, 6, 1);
+  const stack = [ident()];
+  const curM = () => stack[stack.length - 1];
+  const xfP = (p) => {
+    const M = curM();
+    return [
+      M[0] * p[0] + M[1] * p[1] + M[2] * p[2] + M[3],
+      M[4] * p[0] + M[5] * p[1] + M[6] * p[2] + M[7],
+      M[8] * p[0] + M[9] * p[1] + M[10] * p[2] + M[11],
+    ];
+  };
 
-// 3. Back-left NEMA VM Control & v8::Locker Cabinet
-svg += box(20, 20, 18, 124, 66, 114, 5);
-svg += `<g transform="${SIDE(144, 86, 132)}">
-  ${Array.from({length:8},(_,i)=>`<path class="detail" d="M14 ${20+i*9}h38"/>`).join('')}
-</g>`;
-svg += `<g transform="${FRONT(20, 86, 132)}">
-  <defs><clipPath id="isoScr"><rect x="10" y="10" width="104" height="58" rx="4"/></clipPath></defs>
-  <rect class="face glass" x="10" y="10" width="104" height="58" rx="4"/>
-  <g clip-path="url(#isoScr)">
-    <text id="cabCage" class="lcd-dim" x="15" y="22" font-size="7.2">CAGE 0x2800_0000_0000</text>
-    <text id="cabLock" class="lcd" x="15" y="35" font-size="8.5">LOCKER: THREAD #1</text>
-    <text id="cabRealm" class="lcd-dim" x="15" y="48" font-size="7.5">REALMS: 1 · TASKS: 2</text>
-    <text id="cabMsg" class="lcd" x="15" y="61" font-size="7.5">ISOLATE ENTERED</text>
-  </g>
-  <rect class="detail" x="10" y="76" width="104" height="28" rx="2"/>
-  <path class="detail" d="M62 76v28"/>
-  <circle class="struct" cx="55" cy="90" r="2.2"/>
-  <circle class="struct" cx="69" cy="90" r="2.2"/>
-</g>`;
+  const projRaw = (p) => [dot(p, Rx), dot(p, Ds)];
+  const drawItems = [];
+  const callouts = [];
+  const rawBounds = { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity };
+  const trackPt = (p) => {
+    const [sx, sy] = projRaw(p);
+    if (sx < rawBounds.minX) rawBounds.minX = sx;
+    if (sx > rawBounds.maxX) rawBounds.maxX = sx;
+    if (sy < rawBounds.minY) rawBounds.minY = sy;
+    if (sy > rawBounds.maxY) rawBounds.maxY = sy;
+    return [sx, sy];
+  };
 
-// 4. Back-right Twin Heap Reservation Vessels (Code-Range & Old/New Cage Silos)
-svg += box(160, 22, 18, 72, 64, 98, 6);
-svg += `<g transform="${TOP(160, 22, 116)}">
-  <circle class="struct" cx="36" cy="32" r="20"/>
-  <circle class="detail" cx="36" cy="32" r="11"/>
-</g>`;
-svg += `<g transform="${FRONT(160, 86, 116)}">
-  <rect class="face glass" x="28" y="10" width="16" height="58" rx="3"/>
-  <rect id="tankBar1" fill="var(--live)" x="31" y="44" width="10" height="21" rx="1"/>
-  <text class="lbl" x="36" y="78" font-size="6.6">HEAP 4G</text>
-</g>`;
-
-svg += box(244, 22, 18, 70, 64, 82, 6);
-svg += `<g transform="${TOP(244, 22, 100)}">
-  <circle class="struct" cx="35" cy="32" r="18"/>
-  <circle class="detail" cx="35" cy="32" r="9"/>
-</g>`;
-svg += `<g transform="${FRONT(244, 86, 100)}">
-  <rect class="face glass" x="27" y="10" width="16" height="46" rx="3"/>
-  <rect id="tankBar2" fill="var(--live)" x="30" y="36" width="10" height="17" rx="1"/>
-  <text class="lbl" x="35" y="66" font-size="6.6">REALMS</text>
-</g>`;
-
-// 5. Middle Microtask Pump Manifold + 4 Queue Stage Cells (y = 104..146)
-svg += box(156, 102, 18, 160, 42, 22, 4);
-for (let i = 0; i < 4; i++) {
-  const qx = 166 + i * 37;
-  svg += `<g class="unit" id="mtask${i}">${box(qx, 109, 40, 28, 28, 8, 2)}<g transform="${TOP(qx, 109, 48)}"><text x="14" y="17" font-size="7.2" class="top-lbl">Q${i+1}</text></g></g>`;
-}
-
-// 6. Front Operator Control Pedestal (y = 152..198, completely clear of front corner guards)
-svg += box(18, 152, 18, 272, 46, 14, 4);
-const BTNS = [
-  ['t1', 'LOCK T1', 24, 44, true],
-  ['t2', 'LOCK T2', 73, 44, false],
-  ['unlock', 'UNLOCK', 122, 42, false],
-  ['realm', '+REALM', 169, 40, false],
-  ['enq', '+TASK', 214, 34, false],
-  ['drain', 'DRAIN', 253, 32, true]
-];
-BTNS.forEach(([id, lbl, bx, bw, op]) => {
-  svg += `<g class="press${op?' op':''}" data-k="${id}">${box(bx, 158, 32, bw, 30, 8, 3)}<g transform="${TOP(bx, 158, 40)}"><text x="${bw/2}" y="18.5" font-size="7">${lbl}</text></g></g>`;
-});
-
-// 7. Low front corner skid bumper bollards completing the 4 GiB cage perimeter
-svg += box(6, 212, 18, 10, 10, 28, 2);
-svg += box(324, 212, 18, 10, 10, 28, 2);
-
-const stage = document.getElementById('stage');
-stage.innerHTML = svg;
-
-const st = { owner: 1, realms: 1, tasks: 2, msg: 'ISOLATE ENTERED (T1)', blocked: false };
-const $ = id => document.getElementById(id);
-const keys = new Map([...stage.querySelectorAll('.press')].map(k => [k.dataset.k, k]));
-
-function render() {
-  $('cabLock').textContent = st.owner ? 'LOCKER: THREAD #' + st.owner : 'LOCKER: UNLOCKED (IDLE)';
-  $('cabRealm').textContent = 'REALMS: ' + st.realms + ' · QUEUE: ' + st.tasks + '/4';
-  $('cabMsg').textContent = st.msg;
-  const h1 = Math.min(50, 14 + st.realms * 8 + st.tasks * 3);
-  $('tankBar1').setAttribute('y', String(65 - h1));
-  $('tankBar1').setAttribute('height', String(h1));
-  const h2 = Math.min(38, st.realms * 9);
-  $('tankBar2').setAttribute('y', String(53 - h2));
-  $('tankBar2').setAttribute('height', String(h2));
-
-  for (let i = 0; i < 4; i++) {
-    $('mtask' + i).classList.toggle('lit', i < st.tasks && st.owner !== 0);
-    $('mtask' + i).classList.toggle('mid', i < st.tasks && st.owner === 0);
+  function faceNormal(pts) {
+    let nx = 0, ny = 0, nz = 0;
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[i], b = pts[(i + 1) % pts.length];
+      nx += (a[1] - b[1]) * (a[2] + b[2]);
+      ny += (a[2] - b[2]) * (a[0] + b[0]);
+      nz += (a[0] - b[0]) * (a[1] + b[1]);
+    }
+    return norm([nx, ny, nz]);
   }
-  keys.get('t1').classList.toggle('sel', st.owner === 1);
-  keys.get('t2').classList.toggle('sel', st.owner === 2);
 
-  const lockStr = st.owner ? 'thread #' + st.owner + ' locked' : 'unlocked';
-  $('readout').textContent = (st.blocked ? 'contended · ' : '') + lockStr + ' · ' + st.realms + (st.realms === 1 ? ' realm · ' : ' realms · ') + st.tasks + ' tasks';
+  function shadeClass(n, opts) {
+    if (opts.glass) return "cad-glass";
+    const b = dot(n, L);
+    const pal = opts.tone || "body";
+    if (pal === "live") return b > 0.45 ? "cad-live-3" : b > 0.05 ? "cad-live-2" : "cad-live-1";
+    if (pal === "hi") return b > 0.52 ? "cad-hi-3" : b > 0.12 ? "cad-hi-2" : b > -0.25 ? "cad-hi-1" : "cad-hi-0";
+    if (pal === "dark") return b > 0.35 ? "cad-dk-2" : b > -0.15 ? "cad-dk-1" : "cad-dk-0";
+    return b > 0.55 ? "cad-bd-3" : b > 0.16 ? "cad-bd-2" : b > -0.22 ? "cad-bd-1" : "cad-bd-0";
+  }
+
+  function addMesh(faces, opts = {}) {
+    const cosCrease = Math.cos(((opts.creaseDeg ?? 34) * Math.PI) / 180);
+    const doubleSided = !!opts.doubleSided;
+    const vKey = (p) => Math.round(p[0] * 50) + "," + Math.round(p[1] * 50) + "," + Math.round(p[2] * 50);
+    const eKey = (k1, k2) => (k1 < k2 ? k1 + "|" + k2 : k2 + "|" + k1);
+
+    const edgeMap = new Map();
+
+    for (let fi = 0; fi < faces.length; fi++) {
+      const raw = faces[fi];
+      const pts = opts.world ? raw.pts : raw.pts.map(xfP);
+      let n = faceNormal(pts);
+      let vn = dot(n, V);
+      let vis = vn > 1e-5;
+      if (!vis && doubleSided) {
+        n = mul(n, -1);
+        vn = -vn;
+        vis = vn > 1e-5;
+      }
+      let cx = 0, cy = 0, cz = 0;
+      for (const p of pts) { cx += p[0]; cy += p[1]; cz += p[2]; }
+      const inv = 1 / pts.length;
+      const cent = [cx * inv, cy * inv, cz * inv];
+      const depth = dot(cent, V) + (opts.depthBias || 0);
+      const fObj = { pts, n, vis, depth, sharp: !!raw.sharp, skipEdges: raw.skipEdges || null };
+
+      if (vis) {
+        const spts = pts.map(trackPt);
+        drawItems.push({
+          kind: "poly",
+          depth,
+          spts,
+          cls: shadeClass(n, opts),
+          key: opts.key || null,
+        });
+      }
+
+      const keys = pts.map(vKey);
+      for (let i = 0; i < pts.length; i++) {
+        if (fObj.skipEdges && fObj.skipEdges.has(i)) continue;
+        const j = (i + 1) % pts.length;
+        if (keys[i] === keys[j]) continue;
+        const ek = eKey(keys[i], keys[j]);
+        let ent = edgeMap.get(ek);
+        if (!ent) {
+          ent = { a: pts[i], b: pts[j], faces: [], forceDetail: false };
+          edgeMap.set(ek, ent);
+        }
+        ent.faces.push(fObj);
+        if (raw.ribEdges && raw.ribEdges.has(i)) ent.forceDetail = true;
+      }
+    }
+
+    if (opts.noOutlines) return;
+    for (const ent of edgeMap.values()) {
+      const visFaces = ent.faces.filter((f) => f.vis);
+      if (visFaces.length === 0) continue;
+      let isContour = false;
+      if (visFaces.length === 1) {
+        isContour = true;
+      } else {
+        const f0 = visFaces[0], f1 = visFaces[1];
+        if (f0.sharp || f1.sharp || dot(f0.n, f1.n) < cosCrease) isContour = true;
+      }
+      if (!isContour && !ent.forceDetail) continue;
+      let maxD = -Infinity;
+      for (const f of visFaces) if (f.depth > maxD) maxD = f.depth;
+      const sa = trackPt(ent.a), sb = trackPt(ent.b);
+      drawItems.push({
+        kind: "line",
+        depth: maxD + (isContour ? 0.12 : 0.09),
+        sa,
+        sb,
+        cls: isContour ? (opts.liveStroke ? "cad-edge-live" : "cad-edge") : "cad-rib",
+        key: opts.key || null,
+      });
+    }
+  }
+
+  function box3(x, y, z, w, d, h, opts = {}) {
+    const p000 = [x, y, z], p100 = [x + w, y, z], p110 = [x + w, y + d, z], p010 = [x, y + d, z];
+    const p001 = [x, y, z + h], p101 = [x + w, y, z + h], p111 = [x + w, y + d, z + h], p011 = [x, y + d, z + h];
+    addMesh([
+      { pts: [p001, p101, p111, p011], sharp: true },
+      { pts: [p000, p010, p110, p100], sharp: true },
+      { pts: [p010, p011, p111, p110], sharp: true },
+      { pts: [p100, p110, p111, p101], sharp: true },
+      { pts: [p000, p100, p101, p001], sharp: true },
+      { pts: [p000, p001, p011, p010], sharp: true },
+    ], opts);
+  }
+
+  function cyl(p0, p1, r0, r1 = r0, opts = {}) {
+    const segs = opts.segs || 24;
+    const axis = sub(p1, p0);
+    const u = norm(axis);
+    const ref = Math.abs(u[2]) < 0.85 ? [0, 0, 1] : [1, 0, 0];
+    const e1 = norm(cross(ref, u));
+    const e2 = norm(cross(u, e1));
+    const a0 = opts.a0 ?? 0, a1 = opts.a1 ?? Math.PI * 2;
+    const full = Math.abs(a1 - a0 - Math.PI * 2) < 1e-3;
+    const holeR0 = opts.holeR0 ?? opts.holeR ?? 0;
+    const holeR1 = opts.holeR1 ?? opts.holeR ?? 0;
+    const ringAt = (c, r, i) => {
+      const a = a0 + ((a1 - a0) * i) / segs;
+      const ca = Math.cos(a), sa = Math.sin(a);
+      return [
+        c[0] + r * (ca * e1[0] + sa * e2[0]),
+        c[1] + r * (ca * e1[1] + sa * e2[1]),
+        c[2] + r * (ca * e1[2] + sa * e2[2]),
+      ];
+    };
+    const faces = [];
+    const ribEvery = opts.ribEvery || 0;
+    for (let i = 0; i < segs; i++) {
+      const j = full ? (i + 1) % segs : i + 1;
+      const b0 = ringAt(p0, r0, i), b1 = ringAt(p0, r0, j);
+      const t0 = ringAt(p1, r1, i), t1 = ringAt(p1, r1, j);
+      const ribEdges = ribEvery && i % ribEvery === 0 ? new Set([3]) : null;
+      if (r0 > 1e-4 || r1 > 1e-4) {
+        if (r0 <= 1e-4) faces.push({ pts: [p0, t1, t0] });
+        else if (r1 <= 1e-4) faces.push({ pts: [b0, b1, p1] });
+        else faces.push({ pts: [b0, b1, t1, t0], ribEdges });
+      }
+      if (holeR0 > 1e-4 || holeR1 > 1e-4) {
+        const hb0 = ringAt(p0, holeR0, i), hb1 = ringAt(p0, holeR0, j);
+        const ht0 = ringAt(p1, holeR1, i), ht1 = ringAt(p1, holeR1, j);
+        faces.push({ pts: [hb1, hb0, ht0, ht1] });
+        if (opts.caps !== false) {
+          faces.push({ pts: [t0, t1, ht1, ht0], skipEdges: new Set([1, 3]) });
+          faces.push({ pts: [hb0, hb1, b1, b0], skipEdges: new Set([1, 3]) });
+        }
+      }
+    }
+    if (opts.caps !== false && holeR0 <= 1e-4 && holeR1 <= 1e-4) {
+      if (r1 > 1e-4 && full) {
+        const topPts = Array.from({ length: segs }, (_, i) => ringAt(p1, r1, i));
+        faces.push({ pts: topPts, sharp: true });
+      }
+      if (r0 > 1e-4 && full) {
+        const botPts = Array.from({ length: segs }, (_, i) => ringAt(p0, r0, segs - 1 - i));
+        faces.push({ pts: botPts, sharp: true });
+      }
+    }
+    addMesh(faces, opts);
+  }
+
+  function triangulate2D(pts) {
+    const n = pts.length;
+    if (n < 3) return [];
+    let area = 0;
+    for (let i = 0; i < n; i++) {
+      const a = pts[i], b = pts[(i + 1) % n];
+      area += a[0] * b[1] - b[0] * a[1];
+    }
+    const idx = Array.from({ length: n }, (_, i) => (area >= 0 ? i : n - 1 - i));
+    const tris = [];
+    const cross2 = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+    const inTri = (p, a, b, c) =>
+      cross2(a, b, p) >= -1e-6 && cross2(b, c, p) >= -1e-6 && cross2(c, a, p) >= -1e-6;
+
+    let guard = n * n * 2;
+    while (idx.length > 3 && guard-- > 0) {
+      let cut = false;
+      for (let i = 0; i < idx.length; i++) {
+        const i0 = idx[(i + idx.length - 1) % idx.length];
+        const i1 = idx[i];
+        const i2 = idx[(i + 1) % idx.length];
+        const a = pts[i0], b = pts[i1], c = pts[i2];
+        if (cross2(a, b, c) <= 1e-6) continue;
+        let blocked = false;
+        for (let k = 0; k < idx.length; k++) {
+          const ik = idx[k];
+          if (ik === i0 || ik === i1 || ik === i2) continue;
+          if (inTri(pts[ik], a, b, c)) { blocked = true; break; }
+        }
+        if (!blocked) {
+          tris.push([i0, i1, i2]);
+          idx.splice(i, 1);
+          cut = true;
+          break;
+        }
+      }
+      if (!cut) {
+        tris.push([idx[0], idx[1], idx[2]]);
+        idx.splice(1, 1);
+      }
+    }
+    if (idx.length === 3) tris.push([idx[0], idx[1], idx[2]]);
+    return tris;
+  }
+
+  function revolve(profile, opts = {}) {
+    const axis = opts.axis || "z";
+    const orig = opts.origin || [0, 0, 0];
+    const segs = opts.segs || 28;
+    const a0 = opts.a0 ?? 0, a1 = opts.a1 ?? Math.PI * 2;
+    const full = Math.abs(a1 - a0 - Math.PI * 2) < 1e-3;
+    const ribRings = new Set(opts.ribRings || []);
+    const pt = (s, r, a) => {
+      const ca = Math.cos(a), sa = Math.sin(a);
+      if (axis === "x") return [orig[0] + s, orig[1] + r * ca, orig[2] + r * sa];
+      if (axis === "y") return [orig[0] + r * sa, orig[1] + s, orig[2] + r * ca];
+      return [orig[0] + r * ca, orig[1] + r * sa, orig[2] + s];
+    };
+    const faces = [];
+    for (let k = 0; k < profile.length - 1; k++) {
+      const [s0, r0] = profile[k];
+      const [s1, r1] = profile[k + 1];
+      if (r0 < 1e-4 && r1 < 1e-4) continue;
+      const rib = ribRings.has(k) ? new Set([0]) : null;
+      for (let i = 0; i < segs; i++) {
+        const ang0 = a0 + ((a1 - a0) * i) / segs;
+        const ang1 = a0 + ((a1 - a0) * (i + 1)) / segs;
+        const p00 = pt(s0, r0, ang0), p10 = pt(s0, r0, ang1);
+        const p01 = pt(s1, r1, ang0), p11 = pt(s1, r1, ang1);
+        if (r0 < 1e-4) faces.push({ pts: [p00, p11, p01] });
+        else if (r1 < 1e-4) faces.push({ pts: [p00, p10, p11] });
+        else faces.push({ pts: [p00, p10, p11, p01], ribEdges: rib });
+      }
+    }
+    if (!full && opts.cutCaps && profile.length >= 3) {
+      for (const [ang, rev] of [[a0, false], [a1, true]]) {
+        const poly2 = profile.map(([s, r]) => [s, r]);
+        const tris = triangulate2D(poly2);
+        for (const [ia, ib, ic] of tris) {
+          const pa = pt(profile[ia][0], profile[ia][1], ang);
+          const pb = pt(profile[ib][0], profile[ib][1], ang);
+          const pc = pt(profile[ic][0], profile[ic][1], ang);
+          faces.push({ pts: rev ? [pa, pc, pb] : [pa, pb, pc], sharp: true, skipEdges: new Set([0, 1, 2]) });
+        }
+      }
+    }
+    addMesh(faces, opts);
+  }
+
+  function loft(stations, opts = {}) {
+    const closed = opts.closed !== false;
+    const ribStations = new Set(opts.ribStations || []);
+    const m = stations[0].length;
+    const ringCenter = (R) => {
+      let sx = 0, sy = 0, sz = 0;
+      for (const p of R) { sx += p[0]; sy += p[1]; sz += p[2]; }
+      return [sx / R.length, sy / R.length, sz / R.length];
+    };
+    const faces = [];
+    for (let s = 0; s < stations.length - 1; s++) {
+      const A = stations[s], B = stations[s + 1];
+      const cMid = lerp3(ringCenter(A), ringCenter(B), 0.5);
+      const count = closed ? m : m - 1;
+      const isRib = ribStations.has(s);
+      for (let i = 0; i < count; i++) {
+        const j = (i + 1) % m;
+        let q = [A[i], A[j], B[j], B[i]];
+        let ribSet = isRib ? new Set([0]) : null;
+        if (closed && opts.autoOutward !== false) {
+          const fn = faceNormal(q);
+          const qc = [
+            (q[0][0] + q[1][0] + q[2][0] + q[3][0]) * 0.25,
+            (q[0][1] + q[1][1] + q[2][1] + q[3][1]) * 0.25,
+            (q[0][2] + q[1][2] + q[2][2] + q[3][2]) * 0.25,
+          ];
+          if (dot(fn, sub(qc, cMid)) < 0) {
+            q = [A[i], B[i], B[j], A[j]];
+            ribSet = isRib ? new Set([3]) : null;
+          }
+        }
+        faces.push({ pts: q, ribEdges: ribSet });
+      }
+    }
+    if (opts.capStart && closed) {
+      let cap = [...stations[0]];
+      const dir = sub(ringCenter(stations[0]), ringCenter(stations[1]));
+      if (dot(faceNormal(cap), dir) < 0) cap.reverse();
+      faces.push({ pts: cap, sharp: true });
+    }
+    if (opts.capEnd && closed) {
+      const last = stations.length - 1;
+      let cap = [...stations[last]];
+      const dir = sub(ringCenter(stations[last]), ringCenter(stations[last - 1]));
+      if (dot(faceNormal(cap), dir) < 0) cap.reverse();
+      faces.push({ pts: cap, sharp: true });
+    }
+    addMesh(faces, opts);
+  }
+
+  function extrudePoly(pts2D, opts = {}) {
+    const orig = opts.origin || [0, 0, 0];
+    const uAx = norm(opts.uAxis || [1, 0, 0]);
+    const vAx = norm(opts.vAxis || [0, 0, 1]);
+    const wAx = norm(opts.wAxis || cross(uAx, vAx));
+    const depth = opts.depth ?? 20;
+    const taper = opts.taper ?? 1;
+    let cu = 0, cv = 0;
+    for (const [u, v] of pts2D) { cu += u; cv += v; }
+    cu /= pts2D.length; cv /= pts2D.length;
+
+    const pFront = pts2D.map(([u, v]) => [
+      orig[0] + u * uAx[0] + v * vAx[0],
+      orig[1] + u * uAx[1] + v * vAx[1],
+      orig[2] + u * uAx[2] + v * vAx[2],
+    ]);
+    const pBack = pts2D.map(([u, v]) => {
+      const tu = cu + (u - cu) * taper, tv = cv + (v - cv) * taper;
+      return [
+        orig[0] + tu * uAx[0] + tv * vAx[0] + depth * wAx[0],
+        orig[1] + tu * uAx[1] + tv * vAx[1] + depth * wAx[1],
+        orig[2] + tu * uAx[2] + tv * vAx[2] + depth * wAx[2],
+      ];
+    });
+
+    let area = 0;
+    for (let i = 0; i < pts2D.length; i++) {
+      const a = pts2D[i], b = pts2D[(i + 1) % pts2D.length];
+      area += a[0] * b[1] - b[0] * a[1];
+    }
+    const ccw = area >= 0;
+    const faces = [];
+    const n = pts2D.length;
+    for (let i = 0; i < n; i++) {
+      const j = (i + 1) % n;
+      faces.push({
+        pts: ccw ? [pFront[j], pFront[i], pBack[i], pBack[j]] : [pFront[i], pFront[j], pBack[j], pBack[i]],
+      });
+    }
+    const tris = triangulate2D(pts2D);
+    const boundaryEdgeSet = new Set();
+    for (let i = 0; i < n; i++) {
+      const j = (i + 1) % n;
+      boundaryEdgeSet.add(i < j ? i + "|" + j : j + "|" + i);
+    }
+    for (const [ia, ib, ic] of tris) {
+      const triIdx = [ia, ib, ic];
+      const skipF = new Set(), skipB = new Set();
+      for (let e = 0; e < 3; e++) {
+        const u = triIdx[e], v = triIdx[(e + 1) % 3];
+        const k = u < v ? u + "|" + v : v + "|" + u;
+        if (!boundaryEdgeSet.has(k)) skipF.add(e);
+      }
+      const bIdx = [ia, ic, ib];
+      for (let e = 0; e < 3; e++) {
+        const u = bIdx[e], v = bIdx[(e + 1) % 3];
+        const k = u < v ? u + "|" + v : v + "|" + u;
+        if (!boundaryEdgeSet.has(k)) skipB.add(e);
+      }
+      faces.push({ pts: [pFront[ia], pFront[ic], pFront[ib]], skipEdges: skipB });
+      faces.push({ pts: [pBack[ia], pBack[ib], pBack[ic]], skipEdges: skipF });
+    }
+    addMesh(faces, opts);
+  }
+
+  function sweepTube(rawPts, radius, opts = {}) {
+    if (rawPts.length < 2) return;
+    const closed = !!opts.closed;
+    let pts = rawPts;
+    if (opts.cornerR && rawPts.length >= 3 && !closed) {
+      const cr = opts.cornerR;
+      const out = [rawPts[0]];
+      for (let i = 1; i < rawPts.length - 1; i++) {
+        const pPrev = rawPts[i - 1], pCur = rawPts[i], pNext = rawPts[i + 1];
+        const v1 = sub(pPrev, pCur), v2 = sub(pNext, pCur);
+        const l1 = Math.hypot(...v1), l2 = Math.hypot(...v2);
+        const d = Math.min(cr, l1 * 0.45, l2 * 0.45);
+        const a = add(pCur, mul(norm(v1), d));
+        const b = add(pCur, mul(norm(v2), d));
+        for (let s = 0; s <= 4; s++) {
+          const t = s / 4, it = 1 - t;
+          out.push([
+            it * it * a[0] + 2 * it * t * pCur[0] + t * t * b[0],
+            it * it * a[1] + 2 * it * t * pCur[1] + t * t * b[1],
+            it * it * a[2] + 2 * it * t * pCur[2] + t * t * b[2],
+          ]);
+        }
+      }
+      out.push(rawPts[rawPts.length - 1]);
+      pts = out;
+    }
+
+    const segs = opts.segs || 12;
+    const tangents = pts.map((_, i) => {
+      if (closed) return norm(sub(pts[(i + 1) % pts.length], pts[(i - 1 + pts.length) % pts.length]));
+      if (i === 0) return norm(sub(pts[1], pts[0]));
+      if (i === pts.length - 1) return norm(sub(pts[i], pts[i - 1]));
+      return norm(sub(pts[i + 1], pts[i - 1]));
+    });
+
+    let t0 = tangents[0];
+    let n0 = norm(cross(Math.abs(t0[2]) < 0.85 ? [0, 0, 1] : [1, 0, 0], t0));
+    const rings = [];
+    for (let i = 0; i < pts.length; i++) {
+      const ti = tangents[i];
+      if (i > 0) {
+        const axis = cross(t0, ti);
+        const sinA = Math.hypot(...axis);
+        if (sinA > 1e-5) {
+          const k = mul(axis, 1 / sinA);
+          const cosA = Math.max(-1, Math.min(1, dot(t0, ti)));
+          const kv = cross(k, n0);
+          const kd = dot(k, n0);
+          n0 = norm([
+            n0[0] * cosA + kv[0] * sinA + k[0] * kd * (1 - cosA),
+            n0[1] * cosA + kv[1] * sinA + k[1] * kd * (1 - cosA),
+            n0[2] * cosA + kv[2] * sinA + k[2] * kd * (1 - cosA),
+          ]);
+        }
+        t0 = ti;
+      }
+      const b0 = norm(cross(ti, n0));
+      const rVal = typeof radius === "function" ? radius(i / (pts.length - 1)) : radius;
+      const ring = [];
+      for (let j = 0; j < segs; j++) {
+        const a = (j / segs) * Math.PI * 2;
+        const ca = Math.cos(a) * rVal, sa = Math.sin(a) * rVal;
+        ring.push([
+          pts[i][0] + ca * n0[0] + sa * b0[0],
+          pts[i][1] + ca * n0[1] + sa * b0[1],
+          pts[i][2] + ca * n0[2] + sa * b0[2],
+        ]);
+      }
+      rings.push(ring);
+    }
+    if (closed) rings.push(rings[0]);
+    loft(rings, {
+      ...opts,
+      closed: true,
+      capStart: !closed && opts.caps !== false,
+      capEnd: !closed && opts.caps !== false,
+    });
+  }
+
+  function stadium2D(len, r, segs = 12) {
+    const out = [];
+    for (let i = 0; i <= segs; i++) {
+      const a = -Math.PI / 2 + (Math.PI * i) / segs;
+      out.push([len / 2 + Math.cos(a) * r, Math.sin(a) * r]);
+    }
+    for (let i = 0; i <= segs; i++) {
+      const a = Math.PI / 2 + (Math.PI * i) / segs;
+      out.push([-len / 2 + Math.cos(a) * r, Math.sin(a) * r]);
+    }
+    return out;
+  }
+
+  function gear2D(teeth, rRoot, rTip) {
+    const out = [];
+    const step = (Math.PI * 2) / teeth;
+    for (let i = 0; i < teeth; i++) {
+      const a = i * step;
+      out.push([Math.cos(a) * rRoot, Math.sin(a) * rRoot]);
+      out.push([Math.cos(a + step * 0.18) * rTip, Math.sin(a + step * 0.18) * rTip]);
+      out.push([Math.cos(a + step * 0.46) * rTip, Math.sin(a + step * 0.46) * rTip]);
+      out.push([Math.cos(a + step * 0.64) * rRoot, Math.sin(a + step * 0.64) * rRoot]);
+    }
+    return out;
+  }
+
+  function helix3D(cx, cy, r0, r1, z0, z1, turns, steps = 48) {
+    const pts = [];
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const a = t * turns * Math.PI * 2;
+      const r = r0 + (r1 - r0) * t;
+      pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r, z0 + (z1 - z0) * t]);
+    }
+    return pts;
+  }
+
+  function callout(pt3, dx, dy, text, opts = {}) {
+    const wp = xfP(pt3);
+    const sp = trackPt(wp);
+    const bx = sp[0] + dx, by = sp[1] + dy;
+    const w = Math.max(44, text.length * 6.4 + 16), h = 19;
+    const x0 = dx >= 0 ? bx : bx - w;
+    if (x0 - 6 < rawBounds.minX) rawBounds.minX = x0 - 6;
+    if (x0 + w + 6 > rawBounds.maxX) rawBounds.maxX = x0 + w + 6;
+    if (by - h < rawBounds.minY) rawBounds.minY = by - h;
+    if (by + h > rawBounds.maxY) rawBounds.maxY = by + h;
+    callouts.push({ sp, bx, by, dx, w, h, x0, text, key: opts.key || null, op: !!opts.op, sel: !!opts.sel });
+  }
+
+  function compileSvg(fixedBox = null, padRatio = 0.08) {
+    drawItems.sort((a, b) => a.depth - b.depth);
+    let ox, oy, vw, vh;
+    if (fixedBox) {
+      ({ ox, oy, vw, vh } = fixedBox);
+    } else {
+      const spanX = Math.max(80, rawBounds.maxX - rawBounds.minX);
+      const spanY = Math.max(80, rawBounds.maxY - rawBounds.minY);
+      const padX = Math.max(20, spanX * padRatio);
+      const padY = Math.max(18, spanY * padRatio);
+      vw = Math.ceil(spanX + padX * 2);
+      vh = Math.ceil(spanY + padY * 2);
+      ox = Math.round(padX - rawBounds.minX);
+      oy = Math.round(padY - rawBounds.minY);
+    }
+
+    const parts = [];
+    for (const it of drawItems) {
+      const kAttr = it.key ? ' data-k="' + it.key + '" class="' + it.cls + ' cad-hit"' : ' class="' + it.cls + '"';
+      if (it.kind === "poly") {
+        const d = "M" + it.spts.map((p) => (p[0] + ox).toFixed(1) + "," + (p[1] + oy).toFixed(1)).join("L") + "Z";
+        parts.push("<path" + kAttr + ' d="' + d + '"/>');
+      } else {
+        const x1 = (it.sa[0] + ox).toFixed(1), y1 = (it.sa[1] + oy).toFixed(1);
+        const x2 = (it.sb[0] + ox).toFixed(1), y2 = (it.sb[1] + oy).toFixed(1);
+        parts.push("<line" + kAttr + ' x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '"/>');
+      }
+    }
+
+    for (const c of callouts) {
+      const ax = (c.sp[0] + ox).toFixed(1), ay = (c.sp[1] + oy).toFixed(1);
+      const ex = (c.bx + ox).toFixed(1), ey = (c.by + oy).toFixed(1);
+      const rx = (c.x0 + ox).toFixed(1), ry = (c.by - c.h / 2 + oy).toFixed(1);
+      const tx = (c.x0 + c.w / 2 + ox).toFixed(1), ty = (c.by + 3.6 + oy).toFixed(1);
+      const cls = "cad-tag" + (c.key ? " press" : "") + (c.op ? " op" : "") + (c.sel ? " sel" : "");
+      const kAttr = c.key ? ' data-k="' + c.key + '"' : "";
+      parts.push(
+        '<g class="' + cls + '"' + kAttr + ">" +
+          '<line class="cad-leader" x1="' + ax + '" y1="' + ay + '" x2="' + ex + '" y2="' + ey + '"/>' +
+          '<circle class="cad-dot" cx="' + ax + '" cy="' + ay + '" r="2.1"/>' +
+          '<rect class="cad-pill" x="' + rx + '" y="' + ry + '" width="' + c.w.toFixed(1) + '" height="' + c.h + '" rx="4"/>' +
+          "<text x=\"" + tx + "\" y=\"" + ty + "\">" + c.text + "</text>" +
+        "</g>"
+      );
+    }
+
+    return { svg: parts.join(""), box: { ox, oy, vw, vh } };
+  }
+
+  return {
+    push: (M) => stack.push(mmul(curM(), M)),
+    pop: () => { if (stack.length > 1) stack.pop(); },
+    mTrans, mRotX, mRotY, mRotZ, mScale, mmul,
+    add, sub, mul, dot, cross, norm, lerp3,
+    addMesh, box3, cyl, revolve, loft, extrudePoly, sweepTube,
+    stadium2D, gear2D, helix3D, callout, compileSvg,
+  };
 }
+
+const stage = document.getElementById("stage");
+const readoutEl = document.getElementById("readout");
+const DEFAULT_AZ = 40, DEFAULT_EL = 28;
+let camAz = DEFAULT_AZ, camEl = DEFAULT_EL;
+let lockedBox = null;
+
+
+const st = { owner: 1, realms: 1, tasks: 2, blocked: false };
+const KM = { '1': 't1', '2': 't2', u: 'unlock', r: 'realm', m: 'enq', d: 'drain', ' ': 'drain' };
 
 function act(k) {
-  const el = keys.get(k);
-  if (el) { el.classList.add('down'); setTimeout(() => el.classList.remove('down'), 110); }
   st.blocked = false;
   if (k === 't1' || k === 't2') {
     const want = k === 't1' ? 1 : 2;
-    if (st.owner !== 0 && st.owner !== want) {
-      st.blocked = true;
-      st.msg = 'DENIED: T' + st.owner + ' HOLDS v8::Locker';
-    } else {
-      st.owner = want;
-      st.msg = 'ISOLATE ENTERED (T' + want + ')';
-    }
+    if (st.owner !== 0 && st.owner !== want) st.blocked = true;
+    else st.owner = want;
   } else if (k === 'unlock') {
     st.owner = 0;
-    st.msg = 'EXITED ISOLATE · IDLE';
   } else if (k === 'realm') {
-    if (!st.owner) { st.blocked = true; st.msg = 'LOCK THREAD BEFORE ALLOC'; }
-    else { st.realms = (st.realms % 4) + 1; st.msg = 'NEW v8::Context #' + st.realms; }
+    if (!st.owner) st.blocked = true;
+    else st.realms = (st.realms % 4) + 1;
   } else if (k === 'enq') {
-    if (!st.owner) { st.blocked = true; st.msg = 'LOCK THREAD TO ENQUEUE'; }
-    else if (st.tasks < 4) { st.tasks++; st.msg = 'ENQUEUED PROMISE JOB #' + st.tasks; }
-    else st.msg = 'MICROTASK RING FULL (4/4)';
+    if (!st.owner) st.blocked = true;
+    else if (st.tasks < 4) st.tasks++;
   } else if (k === 'drain') {
-    if (!st.owner) { st.blocked = true; st.msg = 'LOCK THREAD TO DRAIN'; }
-    else { const n = st.tasks; st.tasks = 0; st.msg = 'DRAINED ' + n + ' MICROTASKS'; }
+    if (!st.owner) st.blocked = true;
+    else st.tasks = 0;
   }
-  render();
+  redraw(false);
 }
 
-stage.addEventListener('pointerdown', e => { const el = e.target.closest('.press'); if (el) { e.preventDefault(); act(el.dataset.k); } });
-const KM = { '1':'t1', '2':'t2', 'u':'unlock', 'r':'realm', 'm':'enq', 'd':'drain', ' ':'drain' };
-window.addEventListener('keydown', e => {
+function buildScene(cad) {
+  // 1. Open Structural Steel I-Beam Skid Rails (NO flat rectangular slab!)
+  const iBeam2D = [[-8,0],[8,0],[8,3],[2.2,3],[2.2,13],[8,13],[8,16],[-8,16],[-8,13],[-2.2,13],[-2.2,3],[-8,3]];
+  for (const ry of [-56, 56]) {
+    cad.extrudePoly(iBeam2D, { origin: [-118, ry, 0], uAxis: [0, 1, 0], vAxis: [0, 0, 1], wAxis: [1, 0, 0], depth: 236, tone: 'dark' });
+  }
+  // 4 Transverse Structural Cross-Channels
+  for (const cx of [-96, -28, 42, 102]) {
+    cad.box3(cx - 4, -50, 4, 8, 100, 9, { tone: 'dark' });
+  }
+
+  // 2. Tubular Yellow/Accent 4 GiB Pointer-Compression Cage Safety Handrails (swept 3D pipes!)
+  cad.sweepTube([[-112, -58, 16], [-112, -58, 66], [112, -58, 66], [112, -58, 16]], 2.1, { cornerR: 8, tone: 'body' });
+  cad.sweepTube([[-112, -58, 66], [-112, 58, 66], [-48, 58, 66]], 2.1, { cornerR: 8, tone: 'body' });
+
+  // 3. Tall Cylindrical Domed 4 GiB Cage Heap Silo (left-rear, lathed pressure vessel!)
+  for (const ang of [0.6, 2.2, 3.8, 5.4]) {
+    cad.cyl([-56 + Math.cos(ang)*26, -16 + Math.sin(ang)*26, 14], [-56 + Math.cos(ang)*26, -16 + Math.sin(ang)*26, 36], 2.6, 2.6, { segs: 10, tone: 'dark' });
+  }
+  cad.revolve(
+    [[30, 0.4], [33, 18], [40, 31], [118, 31], [128, 25], [135, 13], [138, 0.4]],
+    { axis: 'z', origin: [-56, -16, 0], segs: 26, ribRings: [2, 3], tone: 'body' }
+  );
+  // Top Flanged Manway Neck on Main Silo
+  cad.cyl([-56, -16, 137], [-56, -16, 147], 8, 8, { segs: 16, tone: 'hi' });
+  cad.cyl([-56, -16, 147], [-56, -16, 150], 11.5, 11.5, { segs: 16, tone: 'hi' });
+
+  // 4. Secondary Cylindrical Context / Realm Silo (scales ring bands with st.realms!)
+  cad.revolve(
+    [[26, 0.4], [30, 16], [36, 25], [96 + st.realms * 7, 25], [105 + st.realms * 7, 17], [110 + st.realms * 7, 0.4]],
+    { axis: 'z', origin: [18, -22, 0], segs: 24, ribRings: [2, 3], tone: 'hi', key: 'realm' }
+  );
+  // Realm Sight-Rings wrapped around Secondary Silo
+  for (let r = 0; r < st.realms; r++) {
+    cad.cyl([18, -22, 44 + r * 14], [18, -22, 48 + r * 14], 26.8, 26.8, { segs: 22, tone: 'hi', liveStroke: true, key: 'realm' });
+  }
+
+  // 5. Overhead Swept 3D Process Manifold Pipes & Valve Flanges connecting Silos -> Pump!
+  cad.sweepTube([[-56, -16, 144], [-56, -16, 162], [18, -22, 162], [18, -22, 108 + st.realms * 7]], 4.2, { cornerR: 14, tone: 'hi' });
+  cad.sweepTube([[18, -2, 54], [58, -2, 54], [76, 18, 36]], 4.0, { cornerR: 12, tone: 'body' });
+
+  // 6. Centrifugal Microtask Volute Pump & 4 Illuminated Ring Stages (front-right!)
+  cad.cyl([76, 22, 16], [76, 22, 24], 22, 20, { segs: 20, tone: 'dark' }); // pump pedestal
+  cad.cyl([76, 10, 42], [76, 36, 42], 21, 21, { segs: 24, holeR: 9, tone: st.tasks > 0 ? 'hi' : 'body', key: 'drain' });
+  // Tangential vertical discharge stack with 4 microtask sight rings!
+  cad.cyl([91, 22, 42], [91, 22, 96], 6.5, 6.5, { segs: 16, tone: 'body', key: 'enq' });
+  for (let q = 0; q < 4; q++) {
+    const active = q < st.tasks;
+    cad.cyl([91, 22, 52 + q * 10], [91, 22, 57 + q * 10], active ? 9.2 : 7.4, active ? 9.2 : 7.4, {
+      segs: 16,
+      tone: active ? 'hi' : 'dark',
+      liveStroke: active,
+      key: 'enq',
+    });
+  }
+
+  // 7. Front-Left Rotary v8::Locker Cam Valve & Handwheel (rotates between T1, Idle, Contended T2!)
+  cad.cyl([-52, 36, 16], [-52, 36, 52], 12, 10, { segs: 18, tone: 'body', key: 't1' });
+  const wheelAngle = st.owner === 1 ? -0.55 : st.owner === 2 ? 0.55 : 0;
+  cad.push(cad.mTrans(-52, 46, 44));
+  cad.push(cad.mRotY(wheelAngle));
+  // Toroidal/hollow handwheel rim + 3 spokes + locking lever handle
+  cad.cyl([0, 0, 0], [0, 5, 0], 19, 19, { segs: 22, holeR: 15, tone: st.owner ? 'hi' : 'body', liveStroke: st.blocked, key: 't2' });
+  for (let s = 0; s < 3; s++) {
+    const a = (s * Math.PI * 2) / 3;
+    cad.sweepTube([[0, 2.5, 0], [Math.cos(a) * 16, 2.5, Math.sin(a) * 16]], 1.8, { tone: 'hi', key: 't2' });
+  }
+  cad.cyl([0, 5, 16], [0, 14, 16], 2.5, 2.5, { segs: 10, tone: 'hi', key: 'unlock' });
+  cad.pop(); cad.pop();
+
+  // Direct Technical Callouts
+  cad.callout([-52, 54, 56], -44, 34, st.owner === 1 ? 'LOCKED: T1' : 'LOCK T1', { key: 't1', op: st.owner === 1, sel: st.owner === 1 });
+  cad.callout([-36, 50, 32], -26, 62, st.blocked ? 'DENIED: T2 CONTENDED' : (st.owner === 2 ? 'LOCKED: T2' : 'TRY THREAD #2'), { key: 't2', sel: st.blocked || st.owner === 2 });
+  cad.callout([-68, 36, 24], -54, -18, st.owner === 0 ? 'IDLE (UNLOCKED)' : 'UNLOCK LOCKER', { key: 'unlock', sel: st.owner === 0 });
+  cad.callout([18, -22, 112 + st.realms * 7], 36, -28, '+REALM (' + st.realms + ')', { key: 'realm', op: true });
+  cad.callout([91, 22, 96], 42, -20, '+TASK (' + st.tasks + '/4)', { key: 'enq' });
+  cad.callout([76, 36, 40], 40, 38, 'DRAIN PUMP', { key: 'drain', op: true });
+
+  const lockStr = st.owner ? 'thread #' + st.owner + ' locked' : 'unlocked';
+  return (st.blocked ? 'contended · ' : '') + lockStr + ' · ' + st.realms + (st.realms === 1 ? ' realm · ' : ' realms · ') + st.tasks + ' tasks';
+}
+
+
+function redraw(reframe = false) {
+  const cad = createCad({ azDeg: camAz, elDeg: camEl });
+  const text = buildScene(cad);
+  const { svg, box } = cad.compileSvg(reframe || !lockedBox ? null : lockedBox);
+  if (!lockedBox || reframe) lockedBox = box;
+  stage.setAttribute("viewBox", `0 0 ${lockedBox.vw} ${lockedBox.vh}`);
+  stage.innerHTML = svg;
+  if (typeof text === "string") readoutEl.textContent = text;
+}
+
+let drag = null;
+stage.addEventListener("pointerdown", (e) => {
+  const hit = e.target.closest("[data-k]");
+  if (hit) {
+    e.preventDefault();
+    act(hit.dataset.k);
+    return;
+  }
+  drag = { id: e.pointerId, x: e.clientX, y: e.clientY, az0: camAz, el0: camEl, moved: false };
+  stage.setPointerCapture?.(e.pointerId);
+});
+stage.addEventListener("pointermove", (e) => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (!drag.moved && Math.hypot(dx, dy) < 4) return;
+  drag.moved = true;
+  camAz = drag.az0 + dx * 0.45;
+  camEl = Math.max(10, Math.min(62, drag.el0 + dy * 0.32));
+  redraw(true);
+});
+const endDrag = (e) => { if (drag && e.pointerId === drag.id) drag = null; };
+stage.addEventListener("pointerup", endDrag);
+stage.addEventListener("pointercancel", endDrag);
+stage.addEventListener("dblclick", (e) => {
+  if (!e.target.closest("[data-k]")) {
+    camAz = DEFAULT_AZ; camEl = DEFAULT_EL;
+    lockedBox = null;
+    redraw(true);
+  }
+});
+
+window.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
-  const k = KM[e.key] || KM[e.key.toLowerCase()];
+  if (e.key === "[") { e.preventDefault(); camAz -= 12; redraw(true); return; }
+  if (e.key === "]") { e.preventDefault(); camAz += 12; redraw(true); return; }
+  const k = (typeof KM !== "undefined") && (KM[e.key] || KM[e.key.toLowerCase()]);
   if (k) { e.preventDefault(); act(k); }
 });
-render();
 
+redraw(true);
 </script>
 </body>
 </html>

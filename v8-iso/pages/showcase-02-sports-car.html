@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auto 2 — Sculpted Grand-Tourer Coupe · Multi-Station Loft</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg:#0c0d0e; --panel:#141516; --edge:#232629;
+    --line:#586068; --rib:#2e3338; --live:#f4f6f7;
+    --ink:#8a9096; --ink-hi:#e8ecee;
+    --bd0:#111315; --bd1:#171a1d; --bd2:#1e2226; --bd3:#262b30;
+    --dk0:#0b0c0e; --dk1:#101214; --dk2:#16191c;
+    --hi0:#8e959c; --hi1:#b2b8be; --hi2:#cfd4d8; --hi3:#e8ecef;
+    --glass:rgba(14,17,20,0.74);
+    --tag-bg:#191c20; --tag-line:#4c545c;
+    --ko:#dde1e4; --ko-ink:#121416;
+    --mono:"JetBrains Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg:#e9eaea; --panel:#f6f6f5; --edge:#d3d6d8;
+    --line:#565c62; --rib:#bfc4c8; --live:#0f1214;
+    --ink:#5b6167; --ink-hi:#14171a;
+    --bd0:#d5d8da; --bd1:#e1e3e5; --bd2:#eceeed; --bd3:#f6f7f6;
+    --dk0:#9ea4aa; --dk1:#b5bbc0; --dk2:#cbd0d4;
+    --hi0:#2b2f33; --hi1:#3b4046; --hi2:#4d535a; --hi3:#60676f;
+    --glass:rgba(222,227,232,0.72);
+    --tag-bg:#ffffff; --tag-line:#848b92;
+    --ko:#1e2124; --ko-ink:#f6f7f7;
+  } }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --bg:#e9eaea; --panel:#f6f6f5; --edge:#d3d6d8;
+    --line:#565c62; --rib:#bfc4c8; --live:#0f1214;
+    --ink:#5b6167; --ink-hi:#14171a;
+    --bd0:#d5d8da; --bd1:#e1e3e5; --bd2:#eceeed; --bd3:#f6f7f6;
+    --dk0:#9ea4aa; --dk1:#b5bbc0; --dk2:#cbd0d4;
+    --hi0:#2b2f33; --hi1:#3b4046; --hi2:#4d535a; --hi3:#60676f;
+    --glass:rgba(222,227,232,0.72);
+    --tag-bg:#ffffff; --tag-line:#848b92;
+    --ko:#1e2124; --ko-ink:#f6f7f7;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--mono); font-size:13px; padding:20px 16px; }
+  html[data-embed="1"] body { background:transparent; padding:0; }
+  html[data-embed="1"] main { max-width:none; }
+  html[data-embed="1"] .foot-help { display:none; }
+  html[data-embed="1"] svg { aspect-ratio: 6 / 5; }
+  html[data-compact="1"] figure { padding:12px 14px; border-radius:12px; }
+  html[data-compact="1"] .cap { font-size:10.5px; letter-spacing:.09em; }
+  main { max-width:860px; margin-inline:auto; display:grid; gap:12px; }
+  figure { margin:0; background:var(--panel); border:1px solid var(--edge); border-radius:20px; padding:20px 24px; display:grid; gap:6px; }
+  .cap { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 16px; font-size:12px; text-transform:uppercase; letter-spacing:.13em; }
+  .cap .hi { color:var(--ink-hi); text-transform:none; letter-spacing:.04em; }
+  svg { width:100%; height:auto; display:block; touch-action:none; user-select:none; -webkit-user-select:none; cursor:grab; }
+  svg:active { cursor:grabbing; }
+  svg:focus-visible { outline:2px solid var(--live); outline-offset:4px; border-radius:8px; }
+
+  .cad-bd-0 { fill:var(--bd0); stroke:var(--bd0); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-bd-1 { fill:var(--bd1); stroke:var(--bd1); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-bd-2 { fill:var(--bd2); stroke:var(--bd2); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-bd-3 { fill:var(--bd3); stroke:var(--bd3); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-dk-0 { fill:var(--dk0); stroke:var(--dk0); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-dk-1 { fill:var(--dk1); stroke:var(--dk1); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-dk-2 { fill:var(--dk2); stroke:var(--dk2); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-hi-0 { fill:var(--hi0); stroke:var(--hi0); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-hi-1 { fill:var(--hi1); stroke:var(--hi1); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-hi-2 { fill:var(--hi2); stroke:var(--hi2); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-hi-3 { fill:var(--hi3); stroke:var(--hi3); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-live-1 { fill:var(--hi1); stroke:var(--hi1); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-live-2 { fill:var(--hi2); stroke:var(--hi2); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-live-3 { fill:var(--hi3); stroke:var(--hi3); stroke-width:0.55; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .cad-glass { fill:var(--glass); stroke:var(--line); stroke-width:0.75; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+
+  .cad-edge { stroke:var(--line); stroke-width:1.05; stroke-linecap:round; vector-effect:non-scaling-stroke; pointer-events:none; }
+  .cad-edge-live { stroke:var(--live); stroke-width:1.35; stroke-linecap:round; vector-effect:non-scaling-stroke; pointer-events:none; }
+  .cad-rib { stroke:var(--rib); stroke-width:0.75; stroke-linecap:round; vector-effect:non-scaling-stroke; pointer-events:none; }
+  .cad-hit { cursor:pointer; }
+
+  .cad-tag { pointer-events:auto; }
+  .cad-tag.press { cursor:pointer; }
+  .cad-leader { stroke:var(--tag-line); stroke-width:0.9; stroke-dasharray:2.5 2; vector-effect:non-scaling-stroke; pointer-events:none; }
+  .cad-dot { fill:var(--live); pointer-events:none; }
+  .cad-pill { fill:var(--tag-bg); stroke:var(--tag-line); stroke-width:1; vector-effect:non-scaling-stroke; }
+  .cad-tag text { fill:var(--ink-hi); font-family:var(--mono); font-size:9.2px; text-anchor:middle; pointer-events:none; letter-spacing:0.04em; }
+  .cad-tag.op .cad-pill { fill:var(--ko); stroke:var(--ko); }
+  .cad-tag.op text { fill:var(--ko-ink); font-weight:600; }
+  .cad-tag.sel .cad-pill, .cad-tag.press:hover .cad-pill { stroke:var(--live); stroke-width:1.4; }
+
+  .foot-help { margin:0; max-width:74ch; line-height:1.6; font-size:12px; }
+  kbd { font:inherit; color:var(--ink-hi); border:1px solid var(--edge); border-radius:4px; padding:0 4px; }
+</style>
+</head>
+<body>
+<main>
+  <figure class="iso-plate">
+    <div class="cap"><span class="hi">Auto 2</span><span>Sculpted Grand-Tourer Coupe · Multi-Station Loft</span></div>
+    <svg id="stage" viewBox="0 0 640 520" tabindex="0" role="img" aria-label="Interactive 3D isometric grand-tourer sports coupe built from multi-station lofted bodywork, flared fenders, fastback glasshouse canopy, steerable 5-spoke alloy wheels, and active swan-neck rear wing."></svg>
+    <div class="cap"><span>steer front axle · deploy active aero · toggle lamps · drag to orbit</span><span class="hi" id="readout" data-readout>aero wing stowed · steer +18° · quad-diffuser gt</span></div>
+  </figure>
+  <p class="foot-help">Click parts or keys: <kbd>S</kbd> cycle front steering · <kbd>W</kbd> / <kbd>Space</kbd> deploy active DRS/airbrake rear wing · <kbd>L</kbd> toggle headlamps · Drag or <kbd>[</kbd> <kbd>]</kbd> to orbit in 3D.</p>
+</main>
+<script>
+(() => {
+  const params = new URLSearchParams(location.search);
+  if (params.get("embed") === "1") document.documentElement.setAttribute("data-embed", "1");
+  if (params.get("compact") === "1") document.documentElement.setAttribute("data-compact", "1");
+  const qt = params.get("theme");
+  document.documentElement.setAttribute("data-theme", qt === "light" ? "light" : "dark");
+  window.addEventListener("message", (ev) => {
+    if (ev.data && ev.data.type === "v8-iso-theme" && (ev.data.theme === "light" || ev.data.theme === "dark")) {
+      document.documentElement.setAttribute("data-theme", ev.data.theme);
+    }
+  });
+  if (params.get("embed") === "1" && window.parent && window.parent !== window) {
+    const postH = () => {
+      const f = document.querySelector("figure");
+      if (f) window.parent.postMessage({ type: "v8-iso-height", id: params.get("id") || "showcase-02-sports-car", height: Math.ceil(f.getBoundingClientRect().height) }, "*");
+    };
+    new ResizeObserver(postH).observe(document.body);
+    window.addEventListener("load", postH);
+    setTimeout(postH, 60);
+  }
+})();
+
+function createCad(camOpts = {}) {
+  const az = ((camOpts.azDeg ?? 42) * Math.PI) / 180;
+  const el = ((camOpts.elDeg ?? 32) * Math.PI) / 180;
+  const V = [Math.cos(el) * Math.cos(az), Math.cos(el) * Math.sin(az), Math.sin(el)];
+  const Rx = [Math.sin(az), -Math.cos(az), 0];
+  const Ds = [Math.sin(el) * Math.cos(az), Math.sin(el) * Math.sin(az), -Math.cos(el)];
+  const L = (() => {
+    const lx = Math.cos(az - 0.55) * 0.48;
+    const ly = Math.sin(az - 0.55) * 0.48;
+    const lz = 0.88;
+    const len = Math.hypot(lx, ly, lz);
+    return [lx / len, ly / len, lz / len];
+  })();
+
+  const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cross = (a, b) => [
+    a[1] * b[2] - a[2] * b[1],
+    a[2] * b[0] - a[0] * b[2],
+    a[0] * b[1] - a[1] * b[0],
+  ];
+  const norm = (a) => {
+    const l = Math.hypot(a[0], a[1], a[2]) || 1;
+    return [a[0] / l, a[1] / l, a[2] / l];
+  };
+  const lerp3 = (a, b, t) => [
+    a[0] + (b[0] - a[0]) * t,
+    a[1] + (b[1] - a[1]) * t,
+    a[2] + (b[2] - a[2]) * t,
+  ];
+
+  const ident = () => [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+  const mmul = (A, B) => {
+    const R = new Array(16).fill(0);
+    for (let r = 0; r < 4; r++) {
+      for (let c = 0; c < 4; c++) {
+        R[r * 4 + c] =
+          A[r * 4] * B[c] +
+          A[r * 4 + 1] * B[4 + c] +
+          A[r * 4 + 2] * B[8 + c] +
+          A[r * 4 + 3] * B[12 + c];
+      }
+    }
+    return R;
+  };
+  const mTrans = (x, y, z) => [1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1];
+  const mRotX = (a) => {
+    const c = Math.cos(a), s = Math.sin(a);
+    return [1, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0, 0, 0, 0, 1];
+  };
+  const mRotY = (a) => {
+    const c = Math.cos(a), s = Math.sin(a);
+    return [c, 0, s, 0, 0, 1, 0, 0, -s, 0, c, 0, 0, 0, 0, 1];
+  };
+  const mRotZ = (a) => {
+    const c = Math.cos(a), s = Math.sin(a);
+    return [c, -s, 0, 0, s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+  };
+  const mScale = (sx, sy = sx, sz = sx) => [sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, 0, 0, 0, 0, 1];
+
+  const stack = [ident()];
+  const curM = () => stack[stack.length - 1];
+  const xfP = (p) => {
+    const M = curM();
+    return [
+      M[0] * p[0] + M[1] * p[1] + M[2] * p[2] + M[3],
+      M[4] * p[0] + M[5] * p[1] + M[6] * p[2] + M[7],
+      M[8] * p[0] + M[9] * p[1] + M[10] * p[2] + M[11],
+    ];
+  };
+
+  const projRaw = (p) => [dot(p, Rx), dot(p, Ds)];
+  const drawItems = [];
+  const callouts = [];
+  const rawBounds = { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity };
+  const trackPt = (p) => {
+    const [sx, sy] = projRaw(p);
+    if (sx < rawBounds.minX) rawBounds.minX = sx;
+    if (sx > rawBounds.maxX) rawBounds.maxX = sx;
+    if (sy < rawBounds.minY) rawBounds.minY = sy;
+    if (sy > rawBounds.maxY) rawBounds.maxY = sy;
+    return [sx, sy];
+  };
+
+  function faceNormal(pts) {
+    let nx = 0, ny = 0, nz = 0;
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[i], b = pts[(i + 1) % pts.length];
+      nx += (a[1] - b[1]) * (a[2] + b[2]);
+      ny += (a[2] - b[2]) * (a[0] + b[0]);
+      nz += (a[0] - b[0]) * (a[1] + b[1]);
+    }
+    return norm([nx, ny, nz]);
+  }
+
+  function shadeClass(n, opts) {
+    if (opts.glass) return "cad-glass";
+    const b = dot(n, L);
+    const pal = opts.tone || "body";
+    if (pal === "live") return b > 0.45 ? "cad-live-3" : b > 0.05 ? "cad-live-2" : "cad-live-1";
+    if (pal === "hi") return b > 0.52 ? "cad-hi-3" : b > 0.12 ? "cad-hi-2" : b > -0.25 ? "cad-hi-1" : "cad-hi-0";
+    if (pal === "dark") return b > 0.35 ? "cad-dk-2" : b > -0.15 ? "cad-dk-1" : "cad-dk-0";
+    return b > 0.55 ? "cad-bd-3" : b > 0.16 ? "cad-bd-2" : b > -0.22 ? "cad-bd-1" : "cad-bd-0";
+  }
+
+  function addMesh(faces, opts = {}) {
+    const cosCrease = Math.cos(((opts.creaseDeg ?? 34) * Math.PI) / 180);
+    const doubleSided = !!opts.doubleSided;
+    const vKey = (p) => Math.round(p[0] * 50) + "," + Math.round(p[1] * 50) + "," + Math.round(p[2] * 50);
+    const eKey = (k1, k2) => (k1 < k2 ? k1 + "|" + k2 : k2 + "|" + k1);
+
+    const edgeMap = new Map();
+
+    for (let fi = 0; fi < faces.length; fi++) {
+      const raw = faces[fi];
+      const pts = opts.world ? raw.pts : raw.pts.map(xfP);
+      let n = faceNormal(pts);
+      let vn = dot(n, V);
+      let vis = vn > 1e-5;
+      if (!vis && doubleSided) {
+        n = mul(n, -1);
+        vn = -vn;
+        vis = vn > 1e-5;
+      }
+      let cx = 0, cy = 0, cz = 0;
+      for (const p of pts) { cx += p[0]; cy += p[1]; cz += p[2]; }
+      const inv = 1 / pts.length;
+      const cent = [cx * inv, cy * inv, cz * inv];
+      const depth = dot(cent, V) + (opts.depthBias || 0);
+      const fObj = { pts, n, vis, depth, sharp: !!raw.sharp, skipEdges: raw.skipEdges || null };
+
+      if (vis) {
+        const spts = pts.map(trackPt);
+        drawItems.push({
+          kind: "poly",
+          depth,
+          spts,
+          cls: shadeClass(n, opts),
+          key: opts.key || null,
+        });
+      }
+
+      const keys = pts.map(vKey);
+      for (let i = 0; i < pts.length; i++) {
+        if (fObj.skipEdges && fObj.skipEdges.has(i)) continue;
+        const j = (i + 1) % pts.length;
+        if (keys[i] === keys[j]) continue;
+        const ek = eKey(keys[i], keys[j]);
+        let ent = edgeMap.get(ek);
+        if (!ent) {
+          ent = { a: pts[i], b: pts[j], faces: [], forceDetail: false };
+          edgeMap.set(ek, ent);
+        }
+        ent.faces.push(fObj);
+        if (raw.ribEdges && raw.ribEdges.has(i)) ent.forceDetail = true;
+      }
+    }
+
+    if (opts.noOutlines) return;
+    for (const ent of edgeMap.values()) {
+      const visFaces = ent.faces.filter((f) => f.vis);
+      if (visFaces.length === 0) continue;
+      let isContour = false;
+      if (visFaces.length === 1) {
+        isContour = true;
+      } else {
+        const f0 = visFaces[0], f1 = visFaces[1];
+        if (f0.sharp || f1.sharp || dot(f0.n, f1.n) < cosCrease) isContour = true;
+      }
+      if (!isContour && !ent.forceDetail) continue;
+      let maxD = -Infinity;
+      for (const f of visFaces) if (f.depth > maxD) maxD = f.depth;
+      const sa = trackPt(ent.a), sb = trackPt(ent.b);
+      drawItems.push({
+        kind: "line",
+        depth: maxD + (isContour ? 0.12 : 0.09),
+        sa,
+        sb,
+        cls: isContour ? (opts.liveStroke ? "cad-edge-live" : "cad-edge") : "cad-rib",
+        key: opts.key || null,
+      });
+    }
+  }
+
+  function box3(x, y, z, w, d, h, opts = {}) {
+    const p000 = [x, y, z], p100 = [x + w, y, z], p110 = [x + w, y + d, z], p010 = [x, y + d, z];
+    const p001 = [x, y, z + h], p101 = [x + w, y, z + h], p111 = [x + w, y + d, z + h], p011 = [x, y + d, z + h];
+    addMesh([
+      { pts: [p001, p101, p111, p011], sharp: true },
+      { pts: [p000, p010, p110, p100], sharp: true },
+      { pts: [p010, p011, p111, p110], sharp: true },
+      { pts: [p100, p110, p111, p101], sharp: true },
+      { pts: [p000, p100, p101, p001], sharp: true },
+      { pts: [p000, p001, p011, p010], sharp: true },
+    ], opts);
+  }
+
+  function cyl(p0, p1, r0, r1 = r0, opts = {}) {
+    const segs = opts.segs || 24;
+    const axis = sub(p1, p0);
+    const u = norm(axis);
+    const ref = Math.abs(u[2]) < 0.85 ? [0, 0, 1] : [1, 0, 0];
+    const e1 = norm(cross(ref, u));
+    const e2 = norm(cross(u, e1));
+    const a0 = opts.a0 ?? 0, a1 = opts.a1 ?? Math.PI * 2;
+    const full = Math.abs(a1 - a0 - Math.PI * 2) < 1e-3;
+    const holeR0 = opts.holeR0 ?? opts.holeR ?? 0;
+    const holeR1 = opts.holeR1 ?? opts.holeR ?? 0;
+    const ringAt = (c, r, i) => {
+      const a = a0 + ((a1 - a0) * i) / segs;
+      const ca = Math.cos(a), sa = Math.sin(a);
+      return [
+        c[0] + r * (ca * e1[0] + sa * e2[0]),
+        c[1] + r * (ca * e1[1] + sa * e2[1]),
+        c[2] + r * (ca * e1[2] + sa * e2[2]),
+      ];
+    };
+    const faces = [];
+    const ribEvery = opts.ribEvery || 0;
+    for (let i = 0; i < segs; i++) {
+      const j = full ? (i + 1) % segs : i + 1;
+      const b0 = ringAt(p0, r0, i), b1 = ringAt(p0, r0, j);
+      const t0 = ringAt(p1, r1, i), t1 = ringAt(p1, r1, j);
+      const ribEdges = ribEvery && i % ribEvery === 0 ? new Set([3]) : null;
+      if (r0 > 1e-4 || r1 > 1e-4) {
+        if (r0 <= 1e-4) faces.push({ pts: [p0, t1, t0] });
+        else if (r1 <= 1e-4) faces.push({ pts: [b0, b1, p1] });
+        else faces.push({ pts: [b0, b1, t1, t0], ribEdges });
+      }
+      if (holeR0 > 1e-4 || holeR1 > 1e-4) {
+        const hb0 = ringAt(p0, holeR0, i), hb1 = ringAt(p0, holeR0, j);
+        const ht0 = ringAt(p1, holeR1, i), ht1 = ringAt(p1, holeR1, j);
+        faces.push({ pts: [hb1, hb0, ht0, ht1] });
+        if (opts.caps !== false) {
+          faces.push({ pts: [t0, t1, ht1, ht0], skipEdges: new Set([1, 3]) });
+          faces.push({ pts: [hb0, hb1, b1, b0], skipEdges: new Set([1, 3]) });
+        }
+      }
+    }
+    if (opts.caps !== false && holeR0 <= 1e-4 && holeR1 <= 1e-4) {
+      if (r1 > 1e-4 && full) {
+        const topPts = Array.from({ length: segs }, (_, i) => ringAt(p1, r1, i));
+        faces.push({ pts: topPts, sharp: true });
+      }
+      if (r0 > 1e-4 && full) {
+        const botPts = Array.from({ length: segs }, (_, i) => ringAt(p0, r0, segs - 1 - i));
+        faces.push({ pts: botPts, sharp: true });
+      }
+    }
+    addMesh(faces, opts);
+  }
+
+  function triangulate2D(pts) {
+    const n = pts.length;
+    if (n < 3) return [];
+    let area = 0;
+    for (let i = 0; i < n; i++) {
+      const a = pts[i], b = pts[(i + 1) % n];
+      area += a[0] * b[1] - b[0] * a[1];
+    }
+    const idx = Array.from({ length: n }, (_, i) => (area >= 0 ? i : n - 1 - i));
+    const tris = [];
+    const cross2 = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+    const inTri = (p, a, b, c) =>
+      cross2(a, b, p) >= -1e-6 && cross2(b, c, p) >= -1e-6 && cross2(c, a, p) >= -1e-6;
+
+    let guard = n * n * 2;
+    while (idx.length > 3 && guard-- > 0) {
+      let cut = false;
+      for (let i = 0; i < idx.length; i++) {
+        const i0 = idx[(i + idx.length - 1) % idx.length];
+        const i1 = idx[i];
+        const i2 = idx[(i + 1) % idx.length];
+        const a = pts[i0], b = pts[i1], c = pts[i2];
+        if (cross2(a, b, c) <= 1e-6) continue;
+        let blocked = false;
+        for (let k = 0; k < idx.length; k++) {
+          const ik = idx[k];
+          if (ik === i0 || ik === i1 || ik === i2) continue;
+          if (inTri(pts[ik], a, b, c)) { blocked = true; break; }
+        }
+        if (!blocked) {
+          tris.push([i0, i1, i2]);
+          idx.splice(i, 1);
+          cut = true;
+          break;
+        }
+      }
+      if (!cut) {
+        tris.push([idx[0], idx[1], idx[2]]);
+        idx.splice(1, 1);
+      }
+    }
+    if (idx.length === 3) tris.push([idx[0], idx[1], idx[2]]);
+    return tris;
+  }
+
+  function revolve(profile, opts = {}) {
+    const axis = opts.axis || "z";
+    const orig = opts.origin || [0, 0, 0];
+    const segs = opts.segs || 28;
+    const a0 = opts.a0 ?? 0, a1 = opts.a1 ?? Math.PI * 2;
+    const full = Math.abs(a1 - a0 - Math.PI * 2) < 1e-3;
+    const ribRings = new Set(opts.ribRings || []);
+    const pt = (s, r, a) => {
+      const ca = Math.cos(a), sa = Math.sin(a);
+      if (axis === "x") return [orig[0] + s, orig[1] + r * ca, orig[2] + r * sa];
+      if (axis === "y") return [orig[0] + r * sa, orig[1] + s, orig[2] + r * ca];
+      return [orig[0] + r * ca, orig[1] + r * sa, orig[2] + s];
+    };
+    const faces = [];
+    for (let k = 0; k < profile.length - 1; k++) {
+      const [s0, r0] = profile[k];
+      const [s1, r1] = profile[k + 1];
+      if (r0 < 1e-4 && r1 < 1e-4) continue;
+      const rib = ribRings.has(k) ? new Set([0]) : null;
+      for (let i = 0; i < segs; i++) {
+        const ang0 = a0 + ((a1 - a0) * i) / segs;
+        const ang1 = a0 + ((a1 - a0) * (i + 1)) / segs;
+        const p00 = pt(s0, r0, ang0), p10 = pt(s0, r0, ang1);
+        const p01 = pt(s1, r1, ang0), p11 = pt(s1, r1, ang1);
+        if (r0 < 1e-4) faces.push({ pts: [p00, p11, p01] });
+        else if (r1 < 1e-4) faces.push({ pts: [p00, p10, p11] });
+        else faces.push({ pts: [p00, p10, p11, p01], ribEdges: rib });
+      }
+    }
+    if (!full && opts.cutCaps && profile.length >= 3) {
+      for (const [ang, rev] of [[a0, false], [a1, true]]) {
+        const poly2 = profile.map(([s, r]) => [s, r]);
+        const tris = triangulate2D(poly2);
+        for (const [ia, ib, ic] of tris) {
+          const pa = pt(profile[ia][0], profile[ia][1], ang);
+          const pb = pt(profile[ib][0], profile[ib][1], ang);
+          const pc = pt(profile[ic][0], profile[ic][1], ang);
+          faces.push({ pts: rev ? [pa, pc, pb] : [pa, pb, pc], sharp: true, skipEdges: new Set([0, 1, 2]) });
+        }
+      }
+    }
+    addMesh(faces, opts);
+  }
+
+  function loft(stations, opts = {}) {
+    const closed = opts.closed !== false;
+    const ribStations = new Set(opts.ribStations || []);
+    const m = stations[0].length;
+    const ringCenter = (R) => {
+      let sx = 0, sy = 0, sz = 0;
+      for (const p of R) { sx += p[0]; sy += p[1]; sz += p[2]; }
+      return [sx / R.length, sy / R.length, sz / R.length];
+    };
+    const faces = [];
+    for (let s = 0; s < stations.length - 1; s++) {
+      const A = stations[s], B = stations[s + 1];
+      const cMid = lerp3(ringCenter(A), ringCenter(B), 0.5);
+      const count = closed ? m : m - 1;
+      const isRib = ribStations.has(s);
+      for (let i = 0; i < count; i++) {
+        const j = (i + 1) % m;
+        let q = [A[i], A[j], B[j], B[i]];
+        let ribSet = isRib ? new Set([0]) : null;
+        if (closed && opts.autoOutward !== false) {
+          const fn = faceNormal(q);
+          const qc = [
+            (q[0][0] + q[1][0] + q[2][0] + q[3][0]) * 0.25,
+            (q[0][1] + q[1][1] + q[2][1] + q[3][1]) * 0.25,
+            (q[0][2] + q[1][2] + q[2][2] + q[3][2]) * 0.25,
+          ];
+          if (dot(fn, sub(qc, cMid)) < 0) {
+            q = [A[i], B[i], B[j], A[j]];
+            ribSet = isRib ? new Set([3]) : null;
+          }
+        }
+        faces.push({ pts: q, ribEdges: ribSet });
+      }
+    }
+    if (opts.capStart && closed) {
+      let cap = [...stations[0]];
+      const dir = sub(ringCenter(stations[0]), ringCenter(stations[1]));
+      if (dot(faceNormal(cap), dir) < 0) cap.reverse();
+      faces.push({ pts: cap, sharp: true });
+    }
+    if (opts.capEnd && closed) {
+      const last = stations.length - 1;
+      let cap = [...stations[last]];
+      const dir = sub(ringCenter(stations[last]), ringCenter(stations[last - 1]));
+      if (dot(faceNormal(cap), dir) < 0) cap.reverse();
+      faces.push({ pts: cap, sharp: true });
+    }
+    addMesh(faces, opts);
+  }
+
+  function extrudePoly(pts2D, opts = {}) {
+    const orig = opts.origin || [0, 0, 0];
+    const uAx = norm(opts.uAxis || [1, 0, 0]);
+    const vAx = norm(opts.vAxis || [0, 0, 1]);
+    const wAx = norm(opts.wAxis || cross(uAx, vAx));
+    const depth = opts.depth ?? 20;
+    const taper = opts.taper ?? 1;
+    let cu = 0, cv = 0;
+    for (const [u, v] of pts2D) { cu += u; cv += v; }
+    cu /= pts2D.length; cv /= pts2D.length;
+
+    const pFront = pts2D.map(([u, v]) => [
+      orig[0] + u * uAx[0] + v * vAx[0],
+      orig[1] + u * uAx[1] + v * vAx[1],
+      orig[2] + u * uAx[2] + v * vAx[2],
+    ]);
+    const pBack = pts2D.map(([u, v]) => {
+      const tu = cu + (u - cu) * taper, tv = cv + (v - cv) * taper;
+      return [
+        orig[0] + tu * uAx[0] + tv * vAx[0] + depth * wAx[0],
+        orig[1] + tu * uAx[1] + tv * vAx[1] + depth * wAx[1],
+        orig[2] + tu * uAx[2] + tv * vAx[2] + depth * wAx[2],
+      ];
+    });
+
+    let area = 0;
+    for (let i = 0; i < pts2D.length; i++) {
+      const a = pts2D[i], b = pts2D[(i + 1) % pts2D.length];
+      area += a[0] * b[1] - b[0] * a[1];
+    }
+    const ccw = area >= 0;
+    const faces = [];
+    const n = pts2D.length;
+    for (let i = 0; i < n; i++) {
+      const j = (i + 1) % n;
+      faces.push({
+        pts: ccw ? [pFront[j], pFront[i], pBack[i], pBack[j]] : [pFront[i], pFront[j], pBack[j], pBack[i]],
+      });
+    }
+    const tris = triangulate2D(pts2D);
+    const boundaryEdgeSet = new Set();
+    for (let i = 0; i < n; i++) {
+      const j = (i + 1) % n;
+      boundaryEdgeSet.add(i < j ? i + "|" + j : j + "|" + i);
+    }
+    for (const [ia, ib, ic] of tris) {
+      const triIdx = [ia, ib, ic];
+      const skipF = new Set(), skipB = new Set();
+      for (let e = 0; e < 3; e++) {
+        const u = triIdx[e], v = triIdx[(e + 1) % 3];
+        const k = u < v ? u + "|" + v : v + "|" + u;
+        if (!boundaryEdgeSet.has(k)) skipF.add(e);
+      }
+      const bIdx = [ia, ic, ib];
+      for (let e = 0; e < 3; e++) {
+        const u = bIdx[e], v = bIdx[(e + 1) % 3];
+        const k = u < v ? u + "|" + v : v + "|" + u;
+        if (!boundaryEdgeSet.has(k)) skipB.add(e);
+      }
+      faces.push({ pts: [pFront[ia], pFront[ic], pFront[ib]], skipEdges: skipB });
+      faces.push({ pts: [pBack[ia], pBack[ib], pBack[ic]], skipEdges: skipF });
+    }
+    addMesh(faces, opts);
+  }
+
+  function sweepTube(rawPts, radius, opts = {}) {
+    if (rawPts.length < 2) return;
+    const closed = !!opts.closed;
+    let pts = rawPts;
+    if (opts.cornerR && rawPts.length >= 3 && !closed) {
+      const cr = opts.cornerR;
+      const out = [rawPts[0]];
+      for (let i = 1; i < rawPts.length - 1; i++) {
+        const pPrev = rawPts[i - 1], pCur = rawPts[i], pNext = rawPts[i + 1];
+        const v1 = sub(pPrev, pCur), v2 = sub(pNext, pCur);
+        const l1 = Math.hypot(...v1), l2 = Math.hypot(...v2);
+        const d = Math.min(cr, l1 * 0.45, l2 * 0.45);
+        const a = add(pCur, mul(norm(v1), d));
+        const b = add(pCur, mul(norm(v2), d));
+        for (let s = 0; s <= 4; s++) {
+          const t = s / 4, it = 1 - t;
+          out.push([
+            it * it * a[0] + 2 * it * t * pCur[0] + t * t * b[0],
+            it * it * a[1] + 2 * it * t * pCur[1] + t * t * b[1],
+            it * it * a[2] + 2 * it * t * pCur[2] + t * t * b[2],
+          ]);
+        }
+      }
+      out.push(rawPts[rawPts.length - 1]);
+      pts = out;
+    }
+
+    const segs = opts.segs || 12;
+    const tangents = pts.map((_, i) => {
+      if (closed) return norm(sub(pts[(i + 1) % pts.length], pts[(i - 1 + pts.length) % pts.length]));
+      if (i === 0) return norm(sub(pts[1], pts[0]));
+      if (i === pts.length - 1) return norm(sub(pts[i], pts[i - 1]));
+      return norm(sub(pts[i + 1], pts[i - 1]));
+    });
+
+    let t0 = tangents[0];
+    let n0 = norm(cross(Math.abs(t0[2]) < 0.85 ? [0, 0, 1] : [1, 0, 0], t0));
+    const rings = [];
+    for (let i = 0; i < pts.length; i++) {
+      const ti = tangents[i];
+      if (i > 0) {
+        const axis = cross(t0, ti);
+        const sinA = Math.hypot(...axis);
+        if (sinA > 1e-5) {
+          const k = mul(axis, 1 / sinA);
+          const cosA = Math.max(-1, Math.min(1, dot(t0, ti)));
+          const kv = cross(k, n0);
+          const kd = dot(k, n0);
+          n0 = norm([
+            n0[0] * cosA + kv[0] * sinA + k[0] * kd * (1 - cosA),
+            n0[1] * cosA + kv[1] * sinA + k[1] * kd * (1 - cosA),
+            n0[2] * cosA + kv[2] * sinA + k[2] * kd * (1 - cosA),
+          ]);
+        }
+        t0 = ti;
+      }
+      const b0 = norm(cross(ti, n0));
+      const rVal = typeof radius === "function" ? radius(i / (pts.length - 1)) : radius;
+      const ring = [];
+      for (let j = 0; j < segs; j++) {
+        const a = (j / segs) * Math.PI * 2;
+        const ca = Math.cos(a) * rVal, sa = Math.sin(a) * rVal;
+        ring.push([
+          pts[i][0] + ca * n0[0] + sa * b0[0],
+          pts[i][1] + ca * n0[1] + sa * b0[1],
+          pts[i][2] + ca * n0[2] + sa * b0[2],
+        ]);
+      }
+      rings.push(ring);
+    }
+    if (closed) rings.push(rings[0]);
+    loft(rings, {
+      ...opts,
+      closed: true,
+      capStart: !closed && opts.caps !== false,
+      capEnd: !closed && opts.caps !== false,
+    });
+  }
+
+  function stadium2D(len, r, segs = 12) {
+    const out = [];
+    for (let i = 0; i <= segs; i++) {
+      const a = -Math.PI / 2 + (Math.PI * i) / segs;
+      out.push([len / 2 + Math.cos(a) * r, Math.sin(a) * r]);
+    }
+    for (let i = 0; i <= segs; i++) {
+      const a = Math.PI / 2 + (Math.PI * i) / segs;
+      out.push([-len / 2 + Math.cos(a) * r, Math.sin(a) * r]);
+    }
+    return out;
+  }
+
+  function gear2D(teeth, rRoot, rTip) {
+    const out = [];
+    const step = (Math.PI * 2) / teeth;
+    for (let i = 0; i < teeth; i++) {
+      const a = i * step;
+      out.push([Math.cos(a) * rRoot, Math.sin(a) * rRoot]);
+      out.push([Math.cos(a + step * 0.18) * rTip, Math.sin(a + step * 0.18) * rTip]);
+      out.push([Math.cos(a + step * 0.46) * rTip, Math.sin(a + step * 0.46) * rTip]);
+      out.push([Math.cos(a + step * 0.64) * rRoot, Math.sin(a + step * 0.64) * rRoot]);
+    }
+    return out;
+  }
+
+  function helix3D(cx, cy, r0, r1, z0, z1, turns, steps = 48) {
+    const pts = [];
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const a = t * turns * Math.PI * 2;
+      const r = r0 + (r1 - r0) * t;
+      pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r, z0 + (z1 - z0) * t]);
+    }
+    return pts;
+  }
+
+  function callout(pt3, dx, dy, text, opts = {}) {
+    const wp = xfP(pt3);
+    const sp = trackPt(wp);
+    const bx = sp[0] + dx, by = sp[1] + dy;
+    const w = Math.max(44, text.length * 6.4 + 16), h = 19;
+    const x0 = dx >= 0 ? bx : bx - w;
+    if (x0 - 6 < rawBounds.minX) rawBounds.minX = x0 - 6;
+    if (x0 + w + 6 > rawBounds.maxX) rawBounds.maxX = x0 + w + 6;
+    if (by - h < rawBounds.minY) rawBounds.minY = by - h;
+    if (by + h > rawBounds.maxY) rawBounds.maxY = by + h;
+    callouts.push({ sp, bx, by, dx, w, h, x0, text, key: opts.key || null, op: !!opts.op, sel: !!opts.sel });
+  }
+
+  function compileSvg(fixedBox = null, padRatio = 0.08) {
+    drawItems.sort((a, b) => a.depth - b.depth);
+    let ox, oy, vw, vh;
+    if (fixedBox) {
+      ({ ox, oy, vw, vh } = fixedBox);
+    } else {
+      const spanX = Math.max(80, rawBounds.maxX - rawBounds.minX);
+      const spanY = Math.max(80, rawBounds.maxY - rawBounds.minY);
+      const padX = Math.max(20, spanX * padRatio);
+      const padY = Math.max(18, spanY * padRatio);
+      vw = Math.ceil(spanX + padX * 2);
+      vh = Math.ceil(spanY + padY * 2);
+      ox = Math.round(padX - rawBounds.minX);
+      oy = Math.round(padY - rawBounds.minY);
+    }
+
+    const parts = [];
+    for (const it of drawItems) {
+      const kAttr = it.key ? ' data-k="' + it.key + '" class="' + it.cls + ' cad-hit"' : ' class="' + it.cls + '"';
+      if (it.kind === "poly") {
+        const d = "M" + it.spts.map((p) => (p[0] + ox).toFixed(1) + "," + (p[1] + oy).toFixed(1)).join("L") + "Z";
+        parts.push("<path" + kAttr + ' d="' + d + '"/>');
+      } else {
+        const x1 = (it.sa[0] + ox).toFixed(1), y1 = (it.sa[1] + oy).toFixed(1);
+        const x2 = (it.sb[0] + ox).toFixed(1), y2 = (it.sb[1] + oy).toFixed(1);
+        parts.push("<line" + kAttr + ' x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '"/>');
+      }
+    }
+
+    for (const c of callouts) {
+      const ax = (c.sp[0] + ox).toFixed(1), ay = (c.sp[1] + oy).toFixed(1);
+      const ex = (c.bx + ox).toFixed(1), ey = (c.by + oy).toFixed(1);
+      const rx = (c.x0 + ox).toFixed(1), ry = (c.by - c.h / 2 + oy).toFixed(1);
+      const tx = (c.x0 + c.w / 2 + ox).toFixed(1), ty = (c.by + 3.6 + oy).toFixed(1);
+      const cls = "cad-tag" + (c.key ? " press" : "") + (c.op ? " op" : "") + (c.sel ? " sel" : "");
+      const kAttr = c.key ? ' data-k="' + c.key + '"' : "";
+      parts.push(
+        '<g class="' + cls + '"' + kAttr + ">" +
+          '<line class="cad-leader" x1="' + ax + '" y1="' + ay + '" x2="' + ex + '" y2="' + ey + '"/>' +
+          '<circle class="cad-dot" cx="' + ax + '" cy="' + ay + '" r="2.1"/>' +
+          '<rect class="cad-pill" x="' + rx + '" y="' + ry + '" width="' + c.w.toFixed(1) + '" height="' + c.h + '" rx="4"/>' +
+          "<text x=\"" + tx + "\" y=\"" + ty + "\">" + c.text + "</text>" +
+        "</g>"
+      );
+    }
+
+    return { svg: parts.join(""), box: { ox, oy, vw, vh } };
+  }
+
+  return {
+    push: (M) => stack.push(mmul(curM(), M)),
+    pop: () => { if (stack.length > 1) stack.pop(); },
+    mTrans, mRotX, mRotY, mRotZ, mScale, mmul,
+    add, sub, mul, dot, cross, norm, lerp3,
+    addMesh, box3, cyl, revolve, loft, extrudePoly, sweepTube,
+    stadium2D, gear2D, helix3D, callout, compileSvg,
+  };
+}
+
+const stage = document.getElementById("stage");
+const readoutEl = document.getElementById("readout");
+const DEFAULT_AZ = -144, DEFAULT_EL = 24;
+let camAz = DEFAULT_AZ, camEl = DEFAULT_EL;
+let lockedBox = null;
+
+
+const st = { steerDeg: 18, wingUp: false, lamps: true };
+const KM = { s: 'steer', w: 'wing', ' ': 'wing', l: 'lamps' };
+
+function act(k) {
+  if (k === 'steer') st.steerDeg = st.steerDeg === 18 ? -18 : st.steerDeg === -18 ? 0 : 18;
+  else if (k === 'wing') st.wingUp = !st.wingUp;
+  else if (k === 'lamps') st.lamps = !st.lamps;
+  redraw(false);
+}
+
+function buildScene(cad) {
+  // Helper: symmetric transverse car body cross-section at station x
+  // Returns closed 10-point loop: bottom-center -> R-sill -> R-fender-mid -> R-shoulder -> R-hood-in -> center-top -> L-...
+  function bodyRing(x, zBot, ySill, yMid, zMid, yTop, zShoulder, zCenter) {
+    return [
+      [x, 0, zBot],
+      [x, -ySill, zBot + 2],
+      [x, -yMid, zMid],
+      [x, -yTop, zShoulder],
+      [x, -yTop * 0.48, zCenter],
+      [x, yTop * 0.48, zCenter],
+      [x, yTop, zShoulder],
+      [x, yMid, zMid],
+      [x, ySill, zBot + 2],
+    ];
+  }
+
+  // 1. Front Carbon Splitter Lip + Rear Quad-Fin Diffuser Tray
+  cad.extrudePoly(
+    [[-168, -54], [-156, -60], [-132, -60], [-132, 60], [-156, 60], [-168, 54]],
+    { origin: [0, 0, 10], uAxis: [1, 0, 0], vAxis: [0, 1, 0], wAxis: [0, 0, 1], depth: 3.5, tone: 'dark' }
+  );
+  cad.box3(132, -54, 12, 26, 108, 6, { tone: 'dark' });
+  for (const fy of [-38, -14, 14, 38]) {
+    cad.box3(138, fy - 1.2, 9, 22, 2.4, 9, { tone: 'hi' });
+  }
+  // Quad Cylindrical Exhaust Tailpipes
+  for (const ey of [-44, -34, 34, 44]) {
+    cad.cyl([152, ey, 16], [163, ey, 16], 3.8, 3.8, { segs: 14, holeR: 2.7, tone: 'hi' });
+  }
+
+  // 2. Sculpted Multi-Station Lofted Coachwork (10 stations with raised wheel-arch cutouts!)
+  const bodyStations = [
+    bodyRing(-164, 13, 38, 44, 19, 40, 24, 23),  // low sharp nose
+    bodyRing(-140, 13, 52, 60, 26, 56, 36, 33),  // headlamp / front intake flare
+    bodyRing(-102, 27, 46, 67, 36, 63, 45, 41),  // front wheel-arch crown (raised arch!)
+    bodyRing(-64,  13, 56, 64, 31, 60, 46, 45),  // cowl base of windshield
+    bodyRing(-12,  12, 53, 59, 29, 56, 47, 46),  // pinched coke-bottle door waist!
+    bodyRing(44,   12, 56, 65, 32, 61, 49, 47),  // rear haunch intake swell
+    bodyRing(96,   29, 46, 68, 38, 63, 51, 48),  // muscular rear wheel-arch crown (raised arch!)
+    bodyRing(136,  16, 54, 61, 33, 56, 48, 46),  // rear decklid taper
+    bodyRing(156,  18, 48, 53, 32, 49, 45, 44),  // Kammback transom tail
+  ];
+  cad.loft(bodyStations, { closed: true, capStart: true, capEnd: true, ribStations: [2, 4, 6], creaseDeg: 28, tone: 'body' });
+
+  // 3. Sculpted Fastback Glasshouse Canopy (lofted from cowl -> roof peak -> fastback hatch!)
+  const cabinRing = (x, yBase, zBase, yRoof, zRoof) => [
+    [x, -yBase, zBase],
+    [x, -yRoof, zRoof],
+    [x, 0, zRoof + 2.2],
+    [x, yRoof, zRoof],
+    [x, yBase, zBase],
+  ];
+  cad.loft([
+    cabinRing(-58, 52, 45, 48, 46),
+    cabinRing(-18, 50, 47, 41, 68), // top of raked windshield
+    cabinRing(32,  50, 48, 39, 69), // roof crown
+    cabinRing(88,  48, 49, 35, 60), // fastback slope
+    cabinRing(132, 42, 47, 34, 48), // rear deck merge
+  ], { closed: true, capStart: true, capEnd: true, glass: true, creaseDeg: 24 });
+
+  // A-pillar -> Roofline -> Fastback Cantrail Structural Chrome/Carbon Bows
+  for (const sgn of [-1, 1]) {
+    cad.sweepTube([
+      [-56, sgn * 51, 45.5],
+      [-18, sgn * 41.5, 68.5],
+      [32, sgn * 39.5, 69.5],
+      [88, sgn * 35.5, 60.5],
+      [130, sgn * 34.5, 48],
+    ], 1.5, { cornerR: 12, tone: 'hi' });
+    // Sculpted Wing Mirrors on stalks
+    cad.sweepTube([[-34, sgn * 54, 47], [-38, sgn * 66, 52]], 1.4, { tone: 'dark' });
+    cad.cyl([-43, sgn * 67, 52], [-33, sgn * 67, 52.5], 2.5, 4.2, { segs: 12, tone: 'hi' });
+  }
+
+  // 4. Recessed Headlamp Pods + Full-Width Taillight Blade
+  for (const sgn of [-1, 1]) {
+    cad.extrudePoly(
+      [[-152, sgn * 38], [-132, sgn * 53], [-124, sgn * 49], [-145, sgn * 34]],
+      {
+        origin: [0, 0, 31],
+        uAxis: [1, 0, 0],
+        vAxis: [0, 1, 0],
+        wAxis: [0, 0, 1],
+        depth: 4,
+        tone: st.lamps ? 'hi' : 'dark',
+        liveStroke: st.lamps,
+        key: 'lamps',
+      }
+    );
+  }
+  cad.box3(154, -46, 37, 4, 92, 4.5, { tone: 'hi', liveStroke: st.lamps, key: 'lamps' });
+
+  // 5. Four 3D Cylindrical Tires + Deep-Dish 5-Spoke Alloy Rims + Brake Rotors!
+  function drawWheel(wx, wy, rTire, width, steerRad) {
+    cad.push(cad.mTrans(wx, wy, rTire));
+    if (steerRad) cad.push(cad.mRotZ(steerRad));
+    const yIn = wy < 0 ? width / 2 : -width / 2;
+    const yOut = wy < 0 ? -width / 2 : width / 2;
+    // Recessed dark wheelhouse drum behind wheel
+    cad.cyl([0, yIn * 1.15, 0], [0, yOut * 0.7, 0], rTire + 3, rTire + 3, { segs: 20, tone: 'dark' });
+    // Thick rubber tire with sidewall shoulder
+    cad.cyl([0, yIn, 0], [0, yOut, 0], rTire, rTire, { segs: 26, holeR: rTire * 0.66, tone: 'dark', key: 'steer' });
+    // Alloy rim barrel + brake disc + center lock nut + 5 spokes!
+    cad.cyl([0, yIn * 0.4, 0], [0, yOut * 0.92, 0], rTire * 0.66, rTire * 0.66, { segs: 22, holeR: rTire * 0.56, tone: 'hi', key: 'steer' });
+    cad.cyl([0, yOut * 0.3, 0], [0, yOut * 0.55, 0], rTire * 0.48, rTire * 0.48, { segs: 18, tone: 'body' }); // brake rotor
+    cad.cyl([0, yOut * 0.4, 0], [0, yOut * 0.98, 0], 5.2, 4.2, { segs: 14, tone: 'hi', key: 'steer' });
+    for (let sp = 0; sp < 5; sp++) {
+      const a = (sp * Math.PI * 2) / 5 + 0.2;
+      const p1 = [Math.cos(a) * 4.5, yOut * 0.86, Math.sin(a) * 4.5];
+      const p2 = [Math.cos(a) * (rTire * 0.60), yOut * 0.88, Math.sin(a) * (rTire * 0.60)];
+      cad.sweepTube([p1, p2], 1.7, { segs: 8, tone: 'hi', key: 'steer' });
+    }
+    if (steerRad) cad.pop();
+    cad.pop();
+  }
+  const steerRad = (st.steerDeg * Math.PI) / 180;
+  drawWheel(-102, -57, 25, 18, steerRad);
+  drawWheel(-102,  57, 25, 18, steerRad);
+  drawWheel( 96,  -59, 27, 21, 0);
+  drawWheel( 96,   59, 27, 21, 0);
+
+  // 6. Active Swan-Neck Rear Aero Wing (stowed flush vs elevated high-downforce pitch!)
+  const wz = st.wingUp ? 66 : 51;
+  const wpitch = st.wingUp ? 0.24 : 0.04;
+  for (const py of [-26, 26]) {
+    cad.sweepTube([[130, py, 46], [138, py, wz + 2]], 1.8, { tone: 'dark', key: 'wing' });
+  }
+  cad.push(cad.mTrans(142, 0, wz));
+  cad.push(cad.mRotY(wpitch));
+  cad.extrudePoly(
+    [[-14, 0], [12, -2], [16, 1.5], [-10, 3.2]],
+    { origin: [0, -56, 0], uAxis: [1, 0, 0], vAxis: [0, 0, 1], wAxis: [0, 1, 0], depth: 112, tone: 'hi', liveStroke: st.wingUp, key: 'wing' }
+  );
+  // Wing endplates
+  for (const ey of [-57, 55]) {
+    cad.box3(-15, ey, -5, 33, 2, 11, { tone: 'body', key: 'wing' });
+  }
+  cad.pop(); cad.pop();
+
+  // Callout Actuator Tags
+  cad.callout([-102, -62, 20], -38, 48, 'STEER (' + (st.steerDeg > 0 ? '+' : '') + st.steerDeg + '°)', { key: 'steer', op: true, sel: st.steerDeg !== 0 });
+  cad.callout([-142, 46, 34], 42, 34, st.lamps ? 'LAMPS: ON' : 'LAMPS: OFF', { key: 'lamps', sel: st.lamps });
+  cad.callout([142, 34, wz + 3], -34, -34, st.wingUp ? 'AERO WING: ACTIVE' : 'DEPLOY AERO WING', { key: 'wing', op: true, sel: st.wingUp });
+
+  return (st.wingUp ? 'active aero (+2.4 kN) · ' : 'aero stowed · ') + 'steer ' + (st.steerDeg > 0 ? '+' : '') + st.steerDeg + '° · lamps ' + (st.lamps ? 'on' : 'off');
+}
+
+
+function redraw(reframe = false) {
+  const cad = createCad({ azDeg: camAz, elDeg: camEl });
+  const text = buildScene(cad);
+  const { svg, box } = cad.compileSvg(reframe || !lockedBox ? null : lockedBox);
+  if (!lockedBox || reframe) lockedBox = box;
+  stage.setAttribute("viewBox", `0 0 ${lockedBox.vw} ${lockedBox.vh}`);
+  stage.innerHTML = svg;
+  if (typeof text === "string") readoutEl.textContent = text;
+}
+
+let drag = null;
+stage.addEventListener("pointerdown", (e) => {
+  const hit = e.target.closest("[data-k]");
+  if (hit) {
+    e.preventDefault();
+    act(hit.dataset.k);
+    return;
+  }
+  drag = { id: e.pointerId, x: e.clientX, y: e.clientY, az0: camAz, el0: camEl, moved: false };
+  stage.setPointerCapture?.(e.pointerId);
+});
+stage.addEventListener("pointermove", (e) => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (!drag.moved && Math.hypot(dx, dy) < 4) return;
+  drag.moved = true;
+  camAz = drag.az0 + dx * 0.45;
+  camEl = Math.max(10, Math.min(62, drag.el0 + dy * 0.32));
+  redraw(true);
+});
+const endDrag = (e) => { if (drag && e.pointerId === drag.id) drag = null; };
+stage.addEventListener("pointerup", endDrag);
+stage.addEventListener("pointercancel", endDrag);
+stage.addEventListener("dblclick", (e) => {
+  if (!e.target.closest("[data-k]")) {
+    camAz = DEFAULT_AZ; camEl = DEFAULT_EL;
+    lockedBox = null;
+    redraw(true);
+  }
+});
+
+window.addEventListener("keydown", (e) => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === "[") { e.preventDefault(); camAz -= 12; redraw(true); return; }
+  if (e.key === "]") { e.preventDefault(); camAz += 12; redraw(true); return; }
+  const k = (typeof KM !== "undefined") && (KM[e.key] || KM[e.key.toLowerCase()]);
+  if (k) { e.preventDefault(); act(k); }
+});
+
+redraw(true);
+</script>
+</body>
+</html>
