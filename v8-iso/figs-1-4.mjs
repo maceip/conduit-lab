@@ -347,9 +347,9 @@ function buildScene(cad) {
   }
 
   // Callouts
-  cad.callout([86, -22, 48], 38, 36, 'PUNCH +x (@+4)', { key: 'x', op: st.props.includes('x'), sel: st.props.includes('x') });
-  cad.callout([86,   0, 48], 46, 10, 'PUNCH +y (@+8)', { key: 'y', op: st.props.includes('y'), sel: st.props.includes('y') });
-  cad.callout([86,  22, 48], 38, -22, 'PUNCH +z (@+12)', { key: 'z', op: st.props.includes('z'), sel: st.props.includes('z') });
+  cad.callout([86, -22, 48], 42, 36, 'PUNCH +x (@+4)', { key: 'x', op: st.props.includes('x'), sel: st.props.includes('x') });
+  cad.callout([86,   0, 48], 52,  2, 'PUNCH +y (@+8)', { key: 'y', op: st.props.includes('y'), sel: st.props.includes('y') });
+  cad.callout([86,  22, 48], 42, -32, 'PUNCH +z (@+12)', { key: 'z', op: st.props.includes('z'), sel: st.props.includes('z') });
   cad.callout([24, -48, 32], -46, 38, st.dict ? 'DICT MODE (HASH)' : 'DELETE (DICT)', { key: 'del', sel: st.dict });
   cad.callout([26, 0, 182], -40, -24, 'NEW BLANK (M0)', { key: 'new' });
 
@@ -455,12 +455,12 @@ function buildScene(cad) {
   drawCyclone(112, -66, st.astCount, st.gate === 'eager' && !st.err, 'hot');
   drawCyclone(112,  36, st.scopeCount, st.gate === 'lazy' && !st.err, 'cold');
 
-  // Callouts
-  cad.callout([-54, 52, bz + 44], -44, 34, 'FEED COLD FN (LAZY)', { key: 'cold', sel: st.gate === 'lazy' });
+  // Callouts (kept outside bowl rim so helical track is 100% unobstructed!)
+  cad.callout([-96, 46, bz + 34], -42, 24, 'FEED COLD FN (LAZY)', { key: 'cold', sel: st.gate === 'lazy' });
   cad.callout([112, -66, 62], 36, -28, 'HOT IIFE -> AST (' + st.astCount + ')', { key: 'hot', op: true, sel: st.gate === 'eager' });
   cad.callout([112,  36, 62], 38, 28, 'SCOPEINFO (' + st.scopeCount + ')', { key: 'arrow', sel: st.gate === 'lazy' });
-  cad.callout([22, -40, 82], -36, -32, st.err ? 'SYNTAX ERR!' : 'EARLY ERR GATE', { key: 'err', sel: st.err });
-  cad.callout([-54, -48, 12], -44, -18, 'EMPTY CYCLONES', { key: 'clr' });
+  cad.callout([22, -40, 84], 24, -44, st.err ? 'SYNTAX ERR!' : 'EARLY ERR GATE', { key: 'err', sel: st.err });
+  cad.callout([-54, 48, 6], -44, 46, 'EMPTY CYCLONES', { key: 'clr' });
 
   return st.err
     ? 'early syntax error · rejected at gate · ' + st.tokens + ' tok'

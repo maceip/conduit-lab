@@ -224,6 +224,37 @@
       gap: 28px;
       align-items: start;
     }
+    .showcase-section {
+      margin-bottom: 44px;
+      padding-bottom: 36px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .section-head h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      letter-spacing: -0.02em;
+    }
+    .section-head span {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+      align-items: start;
+    }
+    body[data-cols="1"] .showcase-grid,
     body[data-cols="1"] .machines-grid {
       grid-template-columns: minmax(0, 900px);
       justify-content: center;
@@ -321,6 +352,7 @@
 
     @media (max-width: 1040px) {
       .intro { grid-template-columns: 1fr; }
+      .showcase-grid { grid-template-columns: 1fr; }
       .machines-grid { grid-template-columns: 1fr; }
       .topbar { padding: 12px 16px; }
       .container { padding: 24px 16px 64px; }
@@ -335,6 +367,7 @@
     </a>
 
     <nav class="jump-nav" aria-label="Tier-1 V8 components">
+      <a href="#cad-showcases">Aero/Auto/Ship</a>
       <a href="#isolate">01 Isolate</a>
       <a href="#pointer-tagging">02 Tagging</a>
       <a href="#hidden-classes">03 Maps</a>
@@ -359,14 +392,14 @@
 
     <section class="intro">
       <div>
-        <div class="eyebrow">Tier 1 · Engine Cannot Run JavaScript Without These</div>
-        <h1>8 Isometric Machines of the V8 Mandatory Core</h1>
+        <div class="eyebrow">iso-figure v2 · Parametric 3D Surfaces, Lathes, Lofts, Tubes &amp; Extrusions</div>
+        <h1>8 Isometric 3D Sculptures of the V8 Mandatory Core + Vehicle CAD Showcases</h1>
         <p>
-          Built with the 15-line SVG <code>matrix()</code> plane projection kernel from
-          <code>MrBongoC/ai-iso-skill</code>. Each industrial apparatus models one mandatory V8
-          execution or memory subsystem—press buttons directly on the isometric deck or focus a
-          figure to operate it by keyboard, paired with live verification counts from CONDUIT’s
-          Verus-proved Rust crates.
+          Powered by the upgraded <code>iso-cad</code> 3D surface &amp; silhouette kernel
+          (<code>revolve</code>, <code>loft</code>, <code>extrudePoly</code>, <code>cyl</code>,
+          <code>sweepTube</code>, automatic crease/horizon contour extraction, and live 3D
+          drag-to-orbit)—capable of crafting aircraft turbofans, sculpted cars, ocean liners, and
+          purpose-built industrial machinery with zero box-on-slab templates.
         </p>
       </div>
       <aside class="ratchet-box" data-testid="gallery-ratchet-summary">
@@ -379,6 +412,61 @@
         </p>
       </aside>
     </section>
+
+    <section class="showcase-section" id="cad-showcases" data-testid="cad-showcases">
+      <div class="section-head">
+        <h2>Universal 3D CAD Kernel Showcases — Aerospace, Automotive &amp; Naval</h2>
+        <span>Click parts to actuate · Drag any figure (or press [ / ]) to orbit in 3D</span>
+      </div>
+      <div class="showcase-grid">
+        <article class="machine-card" data-testid="showcase-jet-engine">
+          <div class="machine-top">
+            <div class="machine-title-group">
+              <h2>Aero 1 · High-Bypass Turbofan Jet Engine</h2>
+              <div class="machine-metaphor">Cutaway Nacelle · 18-Blade Fan · Combustor &amp; Reverser</div>
+            </div>
+          </div>
+          <div class="machine-bar">
+            <span class="standalone-link">revolve + extrudePoly + sweepTube</span>
+            <a class="standalone-link" href="v8-iso/pages/showcase-01-jet-engine.html" target="_blank" rel="noreferrer">Open standalone ↗</a>
+          </div>
+          <iframe class="fig-frame" id="frame-show-01" title="High-Bypass Aircraft Turbofan Jet Engine" scrolling="no" src="v8-iso/pages/showcase-01-jet-engine.html?embed=1&amp;compact=1&amp;id=frame-show-01"></iframe>
+        </article>
+
+        <article class="machine-card" data-testid="showcase-sports-car">
+          <div class="machine-top">
+            <div class="machine-title-group">
+              <h2>Auto 2 · Sculpted Grand-Tourer Coupe</h2>
+              <div class="machine-metaphor">Multi-Station Coachwork Loft · Steerable 5-Spoke Wheels · Active Wing</div>
+            </div>
+          </div>
+          <div class="machine-bar">
+            <span class="standalone-link">loft + glass canopy + hollow cyl</span>
+            <a class="standalone-link" href="v8-iso/pages/showcase-02-sports-car.html" target="_blank" rel="noreferrer">Open standalone ↗</a>
+          </div>
+          <iframe class="fig-frame" id="frame-show-02" title="Sculpted Grand-Tourer Sports Car" scrolling="no" src="v8-iso/pages/showcase-02-sports-car.html?embed=1&amp;compact=1&amp;id=frame-show-02"></iframe>
+        </article>
+
+        <article class="machine-card" data-testid="showcase-cruise-ship">
+          <div class="machine-top">
+            <div class="machine-title-group">
+              <h2>Marine 3 · Ocean Cruise Liner</h2>
+              <div class="machine-metaphor">Bulbous Bow Hull Loft · 6 Terraced Decks · Bridge Wings &amp; Azimuth Pods</div>
+            </div>
+          </div>
+          <div class="machine-bar">
+            <span class="standalone-link">naval loft + terraced extrudePoly</span>
+            <a class="standalone-link" href="v8-iso/pages/showcase-03-cruise-ship.html" target="_blank" rel="noreferrer">Open standalone ↗</a>
+          </div>
+          <iframe class="fig-frame" id="frame-show-03" title="Ocean Cruise Liner" scrolling="no" src="v8-iso/pages/showcase-03-cruise-ship.html?embed=1&amp;compact=1&amp;id=frame-show-03"></iframe>
+        </article>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <h2>Tier 1 · 8 Mandatory Core V8 Subsystems (Engine Cannot Run JS Without These)</h2>
+      <span>Zero shared base slabs · Every subsystem sculpted from its true mechanical geometry</span>
+    </div>
 
     <div class="machines-grid" data-testid="machines-grid">
       <!-- 01: v8::Isolate -->

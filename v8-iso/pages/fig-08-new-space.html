@@ -901,7 +901,7 @@ function buildScene(cad) {
   cad.callout([-96, 16, 98], -42, -32, 'FEED NURSERY', { key: 'feed' });
   cad.callout([-58, -18, 96], -44, 34, 'DIE YOUNG', { key: 'die' });
   cad.callout([-21, 22, 92], 14, -44, 'SCAVENGE PULSE', { key: 'scav', op: true });
-  cad.callout([-10, 24, 24], -26, 48, st.dropped + ' DROPPED (0 CYC)', { key: 'scav' });
+  cad.callout([-10, 24, 24], -26, 48, 'CLR (' + st.dropped + ' DROPPED)', { key: 'rst' });
   cad.callout([126, 16, 118], 38, -24, 'AUGER PROMOTE (' + st.promoted + ')', { key: 'promo', op: true });
 
   return 'scavenger · ' + st.toSpace.length + ' to-space / ' + st.dropped + ' dropped · ' + st.promoted + ' promoted';

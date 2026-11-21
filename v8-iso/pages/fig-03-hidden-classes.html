@@ -868,9 +868,9 @@ function buildScene(cad) {
   }
 
   // Callouts
-  cad.callout([86, -22, 48], 38, 36, 'PUNCH +x (@+4)', { key: 'x', op: st.props.includes('x'), sel: st.props.includes('x') });
-  cad.callout([86,   0, 48], 46, 10, 'PUNCH +y (@+8)', { key: 'y', op: st.props.includes('y'), sel: st.props.includes('y') });
-  cad.callout([86,  22, 48], 38, -22, 'PUNCH +z (@+12)', { key: 'z', op: st.props.includes('z'), sel: st.props.includes('z') });
+  cad.callout([86, -22, 48], 42, 36, 'PUNCH +x (@+4)', { key: 'x', op: st.props.includes('x'), sel: st.props.includes('x') });
+  cad.callout([86,   0, 48], 52,  2, 'PUNCH +y (@+8)', { key: 'y', op: st.props.includes('y'), sel: st.props.includes('y') });
+  cad.callout([86,  22, 48], 42, -32, 'PUNCH +z (@+12)', { key: 'z', op: st.props.includes('z'), sel: st.props.includes('z') });
   cad.callout([24, -48, 32], -46, 38, st.dict ? 'DICT MODE (HASH)' : 'DELETE (DICT)', { key: 'del', sel: st.dict });
   cad.callout([26, 0, 182], -40, -24, 'NEW BLANK (M0)', { key: 'new' });
 

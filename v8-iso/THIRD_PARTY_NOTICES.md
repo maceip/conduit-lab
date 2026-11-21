@@ -1,6 +1,6 @@
 # Third-Party Notices (`v8-iso/`)
 
-The 8 interactive isometric V8 Tier-1 Mandatory Core figures in this directory (`v8-iso/pages/fig-01-isolate.html` through `fig-08-new-space.html`) are built using the open-source `ai-iso-skill` methodology and SVG projection kernel:
+The interactive 3D isometric V8 Tier-1 Mandatory Core sculptures and Aerospace/Automotive/Marine CAD showcases in this directory are built on an upgraded `iso-figure` v2 (`iso-cad`) parametric surface & silhouette kernel inspired by:
 
 - **ai-iso-skill (`iso-figure`)** — <https://github.com/MrBongoC/ai-iso-skill> (MIT License)
-  - Uses the 15-line `TOP` / `FRONT` / `SIDE` SVG `matrix()` plane projection kernel (`v8-iso/iso-shell.mjs`), numerical 3D bounding-box framing, `vector-effect: non-scaling-stroke` hairline geometry, and interactive `.press` / `.unit` state machines (`v8-iso/figs-1-4.mjs` and `v8-iso/figs-5-8.mjs`).
+  - Plate caption framing (`Fig N`, title, hint, live state readout), dark/light monochrome custom-property tokens, and self-contained zero-dependency HTML/SVG delivery, extended in `v8-iso/iso-cad.mjs` (`.agents/skills/iso-figure/SKILL.md`) with 3D surfaces of revolution (`revolve`), multi-station cross-section skinning (`loft`), concave ear-clipped profile extrusion (`extrudePoly`), parallel-transport swept tubes (`sweepTube`), topological horizon-silhouette & crease extraction, and live 3D drag-to-orbit.
