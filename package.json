@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "stats": "python3 scripts/collect_stats.py",
-    "test": "playwright test"
+    "build": "npm --prefix site run build",
+    "test": "npm run build && playwright test"
   },
   "devDependencies": {
     "@playwright/test": "1.65.1"

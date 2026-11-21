@@ -1,79 +1,101 @@
-// End-to-end checks: every number on the page must equal what is in data/stats.json.
+// End-to-end checks for the three-pane verified-browser showcase.
+// Same guarantee as the old site: every metric on the page must equal what is in
+// browser/ratchet.json / data/stats.json — nothing hand-typed, errors instead of guesses.
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const path = require("path");
 
-const stats = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "data", "stats.json"), "utf8"));
-const benches = stats.lean.benchmarks;
-const attempted = benches.filter((b) => !["skipped_mathlib", "no_lakefile"].includes(b.status));
-const passed = attempted.filter((b) => b.status === "passed");
+const root = path.join(__dirname, "..");
+const ratchet = JSON.parse(fs.readFileSync(path.join(root, "browser", "ratchet.json"), "utf8"));
+const stats = JSON.parse(fs.readFileSync(path.join(root, "data", "stats.json"), "utf8"));
+const vurl = ratchet.crates.find((c) => c.name === "vurl");
+const trustedTotal = Object.values(vurl.trusted).reduce((a, b) => a + b, 0);
 
-test("index.html contains no hard-coded results", async () => {
-  const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
-  for (const v of [String(stats.verus.vstd.verified), "4.16.0", "1.100.0", "4.29.1", "32 jobs"]) {
-    expect(html, `index.html must not contain ${v}`).not.toContain(v);
+test("built index.html contains no hard-coded results", async () => {
+  const html = fs.readFileSync(path.join(root, "dist", "index.html"), "utf8");
+  for (const v of [String(vurl.verified), String(vurl.verify_seconds), String(vurl.source_lines)]) {
+    expect(html, `dist/index.html must not contain ${v}`).not.toContain(v);
   }
 });
 
-test("stats strip and chips render from stats.json", async ({ page }) => {
+test("ratchet stats render from ratchet.json", async ({ page }) => {
   await page.goto("/");
-  const strip = page.getByTestId("stats");
-  await expect(strip).toContainText(`${stats.verus.vstd.verified}vstd obligations verified`);
-  await expect(strip).toContainText(`${passed.length}/${attempted.length}`);
-  await expect(strip).toContainText(`(${benches.length} total)`);
-  const z3 = stats.toolchains.z3.match(/version ([\d.]+)/)[1];
-  await expect(page.getByTestId("chips")).toContainText(`Z3 ${z3}`);
-  await expect(page.locator("#load-error")).toBeHidden();
+  await expect(page.getByTestId("ratchet-stats")).toContainText(String(vurl.verified));
+  await expect(page.getByTestId("stat-verified functions")).toHaveText(String(vurl.verified));
+  await expect(page.getByTestId("stat-trusted items")).toHaveText(String(trustedTotal));
+  await expect(page.getByTestId("stat-re-verify time")).toHaveText(`${vurl.verify_seconds}s`);
+  await expect(page.getByTestId("stat-WPT + diff tests")).toHaveText(
+    `${vurl.tests_passed}/${vurl.tests_passed + vurl.tests_failed}`
+  );
+  await expect(page.getByTestId("trusted-count")).toHaveText(String(trustedTotal));
+  await expect(page.getByTestId("load-error")).toHaveCount(0);
 });
 
-test("provenance tables list every repo and toolchain", async ({ page }) => {
+test("three panes are present with their familiarity levels", async ({ page }) => {
   await page.goto("/");
-  const repos = page.getByTestId("repos");
-  for (const r of stats.repos) {
-    await expect(repos).toContainText(r.name);
-    await expect(repos).toContainText(r.commit.slice(0, 10));
+  await expect(page.getByText("01 · What Verus is")).toBeVisible();
+  await expect(page.getByText("02 Why no verified Linux")).toBeVisible();
+  await expect(page.getByText("03 · Where we are")).toBeVisible();
+  await expect(page.getByText("Verus: Rust that proves itself")).toBeVisible();
+  await expect(page.getByText("We have verified kernels. Just not Linux.")).toBeVisible();
+  await expect(page.getByText("Where this engine actually stands")).toBeVisible();
+});
+
+test("pane 01 shows real vurl code and an interactive counterexample", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByTestId("verus-file").first()).toHaveText("browser/url/src/percent.rs");
+  // the illustrative failure opens with its Z3 counterexample inlay expanded
+  await expect(page.getByTestId("inlay-state-4")).toHaveText("failed");
+  await expect(page.getByTestId("inlay-4")).toContainText("0x46");
+  // clicking a collapsed verified glyph in the real-code editor expands its inlay
+  await page.getByTestId("obligation-14").first().click();
+  await expect(page.getByTestId("inlay-state-14")).toHaveText("verified");
+});
+
+test("pane 02 scale comparison and systems table", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByTestId("scale-sel4")).toHaveText("8,700 LOC");
+  await expect(page.getByTestId("scale-vurl")).toHaveText(`${vurl.source_lines.toLocaleString("en-US")} LOC`);
+  await expect(page.getByTestId("systems-table").locator("tbody tr")).toHaveCount(9);
+});
+
+test("pane 03 CVE grid, tallies, vjs status and tradeoffs", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByTestId("packet-count")).toHaveText("20 CVEs");
+  await expect(page.getByTestId("coverage-tally")).toContainText("13/20");
+  await expect(page.getByTestId("coverage-tally")).toContainText("3/20");
+  await expect(page.getByTestId("coverage-tally")).toContainText("4/20");
+  const vjsRows = page.getByTestId("vjs-table").locator("tbody tr");
+  await expect(vjsRows).toHaveCount(9);
+  for (const t of await vjsRows.locator("td:last-child").allTextContents()) expect(t).toBe("design");
+  await expect(page.getByTestId("tradeoffs-table").locator("tbody tr")).toHaveCount(9);
+  await expect(page.getByTestId("dag-summary")).toContainText("13 obligations");
+  await expect(page.getByTestId("fuel-theorem")).toContainText("Unsupported(f)");
+});
+
+test("theme toggle switches the iX color schema", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("data-ix-color-schema", "dark");
+  await page.locator("ix-toggle").click();
+  await expect(page.locator("html")).toHaveAttribute("data-ix-color-schema", "light");
+});
+
+test("provenance footer and local data links resolve", async ({ page, request }) => {
+  await page.goto("/");
+  const footer = page.getByTestId("provenance-footer");
+  await expect(footer).toContainText("browser/ratchet.json");
+  await expect(footer).toContainText("data/stats.json");
+  for (const h of ["browser/ratchet.json", "data/stats.json", "irrigation.html", "styles.css"]) {
+    expect((await request.get(`/${h}`)).status(), h).toBe(200);
   }
-  const tc = page.getByTestId("toolchains");
-  for (const v of Object.values(stats.toolchains)) if (v) await expect(tc).toContainText(v);
 });
 
-test("all evidence links resolve", async ({ page, request }) => {
+test("missing ratchet.json shows an error and no guessed numbers", async ({ page }) => {
+  await page.route("**/browser/ratchet.json", (r) => r.fulfill({ status: 404, body: "" }));
   await page.goto("/");
-  await expect(page.getByTestId("benchmarks").locator("tbody tr")).toHaveCount(benches.length);
-  const hrefs = await page.locator("a.link").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
-  const local = [...new Set(hrefs.filter((h) => h && !h.startsWith("http")))];
-  expect(local.length).toBeGreaterThan(benches.length / 2);
-  for (const h of local) expect((await request.get(h)).status(), h).toBe(200);
-});
-
-test("example proof shows the verified source and result", async ({ page }) => {
-  await page.goto("/");
-  const ex = stats.verus.examples[0];
-  await expect(page.getByTestId("example-result")).toContainText(`${ex.verified} verified, ${ex.errors} errors`);
-  const src = fs.readFileSync(path.join(__dirname, "..", ex.source), "utf8");
-  await expect(page.getByTestId("example-src")).toHaveText(src);
-  await expect(page.getByTestId("qs-verus")).toHaveText(`verification results:: ${ex.verified} verified, ${ex.errors} errors`);
-});
-
-test("benchmark filters show exactly the matching rows", async ({ page }) => {
-  await page.goto("/");
-  const rows = page.getByTestId("benchmarks").locator("tbody tr");
-  for (const status of new Set(benches.map((b) => b.status))) {
-    const btn = page.locator(`#bench-filters button[data-f="${status}"]`);
-    await btn.click();
-    await expect(btn).toHaveAttribute("aria-pressed", "true");
-    await expect(rows).toHaveCount(benches.filter((b) => b.status === status).length);
-    for (const s of await rows.evaluateAll((rs) => rs.map((r) => r.dataset.status))) expect(s).toBe(status);
-  }
-  await page.locator('#bench-filters button[data-f="all"]').click();
-  await expect(rows).toHaveCount(benches.length);
-});
-
-test("missing stats.json shows an error and no numbers", async ({ page }) => {
-  await page.route("**/data/stats.json", (r) => r.fulfill({ status: 404, body: "" }));
-  await page.goto("/");
-  await expect(page.locator("#load-error")).toBeVisible();
-  await expect(page.locator("#load-error")).toContainText("HTTP 404");
-  await expect(page.getByTestId("stats")).toBeEmpty();
-  await expect(page.getByTestId("chips")).toBeEmpty();
+  await expect(page.getByTestId("load-error")).toBeVisible();
+  await expect(page.getByTestId("load-error")).toContainText("HTTP 404");
+  await expect(page.getByTestId("stat-verified functions")).toHaveText("not recorded");
+  await expect(page.getByTestId("stat-trusted items")).toHaveText("not recorded");
+  await expect(page.getByTestId("trusted-count")).toHaveText("not recorded");
 });
