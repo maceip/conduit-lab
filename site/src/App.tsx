@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import {
-  IxApplication,
-  IxApplicationHeader,
-  IxPaneLayout,
-  IxPane,
-  IxToggle,
-} from '@siemens/ix-react';
-import { IxDigestBadge } from '@maceip/ix-workbench-primitives';
-import { loadJson, fmtDate, NR, REPO, blobUrl, type Ratchet, type Stats } from './data';
-import PaneVerus from './PaneVerus';
-import PaneWhyHard from './PaneWhyHard';
-import PaneEngine from './PaneEngine';
-
-const CHROME_H = 78; // 48px application header + 30px provenance footer
+import { IxToggle } from '@siemens/ix-react';
+import { loadJson, fmtDate, crateOk, trustedTotal, NR, REPO, blobUrl, type Ratchet, type Stats } from './data';
+import { Stat, ShimDiagram } from './parts';
+import SectionVerus from './SectionVerus';
+import SectionWhy from './SectionWhy';
+import SectionStatus from './SectionStatus';
+import SectionCoverage from './SectionCoverage';
 
 export default function App() {
   const [ratchet, setRatchet] = useState<Ratchet | null>(null);
@@ -21,9 +14,6 @@ export default function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() =>
     localStorage.getItem('conduit-theme') === 'light' ? 'light' : 'dark',
   );
-  const wide = window.matchMedia('(min-width: 1100px)').matches;
-  const [leftOpen, setLeftOpen] = useState(wide);
-  const [rightOpen, setRightOpen] = useState(wide);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-ix-theme', 'classic');
@@ -50,20 +40,25 @@ export default function App() {
     })();
   }, []);
 
+  const vurl = ratchet?.crates.find((c) => c.name === 'vurl');
+  const ok = crateOk(vurl);
+  const trusted = trustedTotal(vurl);
+  const z3 = stats?.toolchains?.z3;
+  const z3ver = z3 ? (z3.match(/version ([\d.]+)/) ?? [null, z3])[1] ?? z3 : null;
+
   return (
-    <IxApplication
-      data-ix-theme="classic"
-      data-ix-color-schema={theme}
-      style={{ height: '100vh', width: '100vw' }}
-    >
-      <IxApplicationHeader name="CONDUIT // VERIFIED BROWSER">
-        <div className="wb-header-links">
-          <IxDigestBadge
-            prefix="verus"
-            digest={ratchet?.verus ?? NR}
-            tone={ratchet ? 'verified' : 'neutral'}
-            statusLabel={ratchet ? 'upstream' : 'no data'}
-          />
+    <div className="wb-page">
+      <header className="wb-top">
+        <span className="wb-brand">CONDUIT // VERIFIED BROWSER</span>
+        <nav className="wb-nav" aria-label="Chapters">
+          <a href="#verus">01 Verus</a>
+          <a href="#why">02 Why hard</a>
+          <a href="#status">03 Status</a>
+          <a href="#coverage">Coverage</a>
+          <a href="#arch">Architecture</a>
+        </nav>
+        <span className="sp" />
+        <div className="wb-top-links">
           <a className="wb-link" href={blobUrl('docs/verified-browser-engine.md')} target="_blank" rel="noreferrer">
             Design doc
           </a>
@@ -76,7 +71,25 @@ export default function App() {
             onCheckedChange={(e) => setTheme(e.detail ? 'light' : 'dark')}
           />
         </div>
-      </IxApplicationHeader>
+      </header>
+
+      <div className="wb-scoreboard" data-testid="ratchet-stats">
+        <div className="wb-metrics">
+          <Stat value={vurl ? String(vurl.verified) : NR} label="verified functions" tone={ok ? 'verified' : 'critical'} />
+          <Stat value={trusted === null ? NR : String(trusted)} label="trusted items" tone={trusted === 0 ? 'verified' : 'critical'} />
+          <Stat value={vurl ? `${vurl.verify_seconds}s` : NR} label="re-verify time" />
+          <Stat
+            value={vurl ? `${vurl.tests_passed}/${vurl.tests_passed + vurl.tests_failed}` : NR}
+            label="WPT + diff tests"
+            tone={vurl && vurl.tests_failed === 0 ? 'verified' : 'critical'}
+          />
+        </div>
+        <div className="wb-chips">
+          <span className="wb-chip">whatwg/url @4f461b81 · pinned</span>
+          <span className="wb-chip">verus {ratchet?.verus ?? NR} · upstream</span>
+          {z3ver && <span className="wb-chip">z3 {z3ver} · arm64</span>}
+        </div>
+      </div>
 
       {error && (
         <div className="wb-load-error" role="alert" data-testid="load-error">
@@ -84,53 +97,21 @@ export default function App() {
         </div>
       )}
 
-      <IxPaneLayout
-        layout="full-vertical"
-        variant="inline"
-        borderless={false}
-        style={{ height: `calc(100vh - ${CHROME_H}px)`, width: '100%' }}
-      >
-        {/* Keep IxPane permanently mounted (toggle expanded) — siemens/ix #2904 */}
-        <IxPane
-          slot="left"
-          heading="01 · What Verus is"
-          size="33%"
-          expanded={leftOpen}
-          onExpandedChanged={(e) => setLeftOpen(e.detail.expanded)}
-        >
-          <div className="ix-slot-fill">
-            <div className="ix-scroll-pane wb-pane-body">
-              <PaneVerus ratchet={ratchet} />
-            </div>
+      <main className="wb-main">
+        <SectionVerus />
+        <SectionWhy ratchet={ratchet} />
+        <SectionStatus ratchet={ratchet} />
+        <SectionCoverage />
+        <section className="wb-row12" id="arch">
+          <div className="wb-c12 wb-col">
+            <div className="wb-chapter">03 · Architecture</div>
+            <h2 className="wb-h2">The verified shim</h2>
+            <ShimDiagram />
           </div>
-        </IxPane>
+        </section>
+      </main>
 
-        {/* Explicit slot="content" — siemens/ix #1302 */}
-        <div slot="content" className="ix-slot-fill">
-          <div className="wb-pane-head">
-            <b>02</b> Why no verified Linux
-          </div>
-          <div className="ix-scroll-pane wb-pane-body">
-            <PaneWhyHard ratchet={ratchet} />
-          </div>
-        </div>
-
-        <IxPane
-          slot="right"
-          heading="03 · Where we are"
-          size="33%"
-          expanded={rightOpen}
-          onExpandedChanged={(e) => setRightOpen(e.detail.expanded)}
-        >
-          <div className="ix-slot-fill">
-            <div className="ix-scroll-pane wb-pane-body">
-              <PaneEngine ratchet={ratchet} stats={stats} />
-            </div>
-          </div>
-        </IxPane>
-      </IxPaneLayout>
-
-      <div className="wb-footer" data-testid="provenance-footer">
+      <footer className="wb-footer" data-testid="provenance-footer">
         <span>
           Every metric loads from{' '}
           <a className="wb-link" href="browser/ratchet.json">browser/ratchet.json</a> +{' '}
@@ -139,7 +120,7 @@ export default function App() {
         <span data-testid="footer-generated">
           ratchet {fmtDate(ratchet?.generated_at)} · stats {fmtDate(stats?.generated_at)}
         </span>
-      </div>
-    </IxApplication>
+      </footer>
+    </div>
   );
 }

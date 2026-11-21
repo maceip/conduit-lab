@@ -1,18 +1,6 @@
 import React from 'react';
 import type { WorkbenchTone } from '@maceip/ix-workbench-primitives';
 
-export const SectionHead: React.FC<{
-  index: string;
-  title: string;
-  children?: React.ReactNode;
-}> = ({ index, title, children }) => (
-  <div className="wb-section-head">
-    <div className="wb-eyebrow">{index}</div>
-    <h2>{title}</h2>
-    {children && <p>{children}</p>}
-  </div>
-);
-
 export const Stat: React.FC<{ value: string; label: string; tone?: WorkbenchTone }> = ({
   value,
   label,
@@ -22,6 +10,32 @@ export const Stat: React.FC<{ value: string; label: string; tone?: WorkbenchTone
     <strong data-testid={`stat-${label}`}>{value}</strong>
     <span>{label}</span>
   </div>
+);
+
+export const Field: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
+  <div className="wb-field">
+    <dt>{label}</dt>
+    <dd>{children}</dd>
+  </div>
+);
+
+// Native disclosure row: summary wraps, body is full-width stacked fields.
+export const DetailsRow: React.FC<{
+  k: string;
+  v: string;
+  tone?: WorkbenchTone;
+  open?: boolean;
+  children: React.ReactNode;
+}> = ({ k, v, tone = 'neutral', open = false, children }) => (
+  <details className="wb-det" data-tone={tone} open={open}>
+    <summary>
+      <span className="wb-det-k">{k}</span>
+      <span className="wb-det-v">{v}</span>
+    </summary>
+    <div className="wb-det-body">
+      <dl className="wb-fields">{children}</dl>
+    </div>
+  </details>
 );
 
 export const ScaleCompare: React.FC<{
@@ -53,7 +67,7 @@ export const ScaleCompare: React.FC<{
           <div className="wb-scale-note">{item.note}</div>
         </div>
       ))}
-      <div className="wb-scale-axis">log₁₀ scale — each grid step is 10× more code</div>
+      <div className="wb-scale-axis">log scale — each step is 10× more code</div>
     </div>
   );
 };
@@ -94,18 +108,18 @@ export const ShimDiagram: React.FC = () => (
         <span>pixels · input</span>
       </div>
     </div>
-    <div className="wb-shim-ipc">typed IPC (Vest-encoded) — the only door between the two worlds</div>
+    <div className="wb-shim-ipc">typed IPC — the only door between the two worlds</div>
     <div className="wb-shim-row">
       {[1, 2, 3].map((n) => (
         <div key={n} className="wb-shim-box wb-shim-renderer" data-trust="untrusted">
           <b>renderer · site {n === 3 ? '…' : n}</b>
-          <span>html5ever · Stylo · JS · GPU — one Nanvix process per site</span>
+          <span>html5ever · Stylo · JS · GPU — one sandbox per site</span>
         </div>
       ))}
     </div>
     <div className="wb-shim-caption">
       A compromised renderer can only misrender its own origin. That is the theorem the kernel
-      proves — and the reason the browser is usable before most of it is verified.
+      proves, and the reason the browser is usable before most of it is verified.
     </div>
   </div>
 );

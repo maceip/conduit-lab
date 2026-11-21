@@ -47,3 +47,12 @@ export const COVERAGE_LABEL: Record<Coverage, string> = {
 
 export const coverageTone = (c: Coverage): 'verified' | 'warning' | 'critical' =>
   c === 'construction' ? 'verified' : c === 'containment' ? 'warning' : 'critical';
+
+export const COVERAGE_DETAIL: Record<Coverage, string> = {
+  construction:
+    'By construction, once vjs is built: no JIT in the verified core, a safe-Rust arena heap, and object-model invariant proofs target exactly this bug class. vjs is not built yet, so today this class is only contained by the renderer sandbox.',
+  containment:
+    'By containment, if the kernel theorems land: the bug lives in an untrusted renderer or in IPC, and the verified kernel plus per-site sandbox is supposed to make a compromise non-escapable. The kernel theorems are still design.',
+  graphics:
+    'Not covered by proofs. Dawn, Skia and ANGLE have no verified replacement planned; GPU work runs per-site inside the renderer sandbox. Containment limits the blast radius but does not remove the bug class.',
+};

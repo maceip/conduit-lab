@@ -119,6 +119,46 @@ export const VURL_DAG_NODES: Omit<ProofObligationNode, 'state'>[] = [
   { id: 'ipv6_serialize', label: 'ipv6_serialize', subsystem: 'ipv6 · exec' },
 ];
 
+// Module rows for the Built tab; names are the real functions and lemmas in each file.
+export interface VurlModule {
+  id: string;
+  summary: string;
+  exec: string[];
+  theorems: string[];
+  gaps: string;
+}
+
+export const VURL_MODULES: VurlModule[] = [
+  {
+    id: 'percent',
+    summary: 'encode/decode + 6 theorems',
+    exec: ['percent_encode', 'percent_decode', 'in_set', 'is_hex', 'hex_val', 'upper_hex'],
+    theorems: [
+      'lemma_form_urlencoded_note',
+      'lemma_query_not_superset_of_fragment',
+      'lemma_set_chain',
+      'lemma_decode_encode_roundtrip',
+      'lemma_sets_containing_percent',
+      'lemma_roundtrip_fails_without_percent',
+    ],
+    gaps: 'spaceAsPlus and non-UTF-8 encodings are out of scope for this module.',
+  },
+  {
+    id: 'ipv4',
+    summary: 'parser, number parser, host checker',
+    exec: ['split_dots', 'ipv4_number', 'ipv4_parse', 'ends_in_a_number'],
+    theorems: ['the spec note: checker step 5 == "0x/0X followed by hex digits"'],
+    gaps: 'Validation errors are not modeled; only return values are proved.',
+  },
+  {
+    id: 'ipv6',
+    summary: 'parser, serializer, compression index',
+    exec: ['ipv6_parse', 'compressed_index', 'ipv6_serialize'],
+    theorems: ['hex pieces are the shortest form (no leading zero)'],
+    gaps: 'serialize→parse roundtrip is tested on 200k random addresses, not proved.',
+  },
+];
+
 export const VURL_DAG_EDGES: ProofObligationEdge[] = [
   { from: 'spec_encode', to: 'exec_encode' },
   { from: 'spec_decode', to: 'exec_decode' },

@@ -1,0 +1,481 @@
+<style>
+  :root {
+    --ink: #1a1a1a; --line: #555; --soft: #888; --paper: #fafafa; --box: #fff;
+    --ph: #d9d9d9; --accent: #1a1a1a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink);
+         font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+  header.top { position: sticky; top: 0; z-index: 5; background: var(--box);
+    border-bottom: 2px solid var(--ink); padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  header.top h1 { font-size: 15px; margin: 0 16px 0 0; letter-spacing: .04em; }
+  .frameswitch { display: flex; flex-wrap: wrap; gap: 6px; }
+  .frameswitch button { font: inherit; font-size: 12px; padding: 5px 12px; background: var(--box);
+    border: 1px solid var(--line); cursor: pointer; }
+  .frameswitch button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  main { padding: 20px; max-width: 1500px; margin: 0 auto; }
+  .frame { display: none; }
+  .frame.on { display: block; }
+  .frame > h2 { font-size: 16px; margin: 0 0 4px; }
+  .frame > p.sub { color: var(--soft); margin: 0 0 16px; font-size: 13px; }
+
+  /* wireframe chrome */
+  .wf { border: 2px solid var(--ink); background: var(--box); }
+  .wf-header { display: flex; align-items: center; gap: 14px; padding: 8px 12px;
+    border-bottom: 2px solid var(--ink); font-size: 12px; font-weight: 700; letter-spacing: .06em; }
+  .wf-header .sp { flex: 1; }
+  .wf-header .lnk { color: var(--soft); font-weight: 400; }
+  .wf-cols { display: grid; grid-template-columns: 30fr 34fr 36fr; min-height: 620px; }
+  .pane { border-right: 1px solid var(--line); display: flex; flex-direction: column; min-width: 0; }
+  .pane:last-child { border-right: 0; }
+  .pane-head { padding: 8px 12px; border-bottom: 1px solid var(--line); font-weight: 700; font-size: 13px;
+    display: flex; gap: 8px; align-items: center; }
+  .pane-head .num { color: var(--soft); }
+  .tabs { display: flex; border-bottom: 1px solid var(--line); }
+  .tabs button { flex: 1; font: inherit; font-size: 11.5px; padding: 7px 4px; background: none;
+    border: 0; border-bottom: 2px solid transparent; cursor: pointer; color: var(--soft); }
+  .tabs button[aria-pressed="true"] { color: var(--ink); font-weight: 700; border-bottom-color: var(--ink); }
+  .pane-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+  .sec { display: none; flex-direction: column; gap: 12px; }
+  .sec.on { display: flex; }
+  .prose { font-size: 12.5px; color: #333; margin: 0; }
+  .prose b { color: var(--ink); }
+  .box { border: 1px solid var(--line); background: var(--box); padding: 8px 10px; font-size: 12px; }
+  .box.ph { border-style: dashed; color: var(--soft); background: repeating-linear-gradient(
+      45deg, #fff, #fff 6px, #f2f2f2 6px, #f2f2f2 7px); }
+  .box .t { font-weight: 700; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--soft);
+    display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+  .code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; line-height: 1.7; }
+  .code .ln { display: flex; gap: 8px; }
+  .code .g { width: 26px; text-align: right; color: var(--soft); flex: none; }
+  .code .tx { white-space: pre-wrap; word-break: break-word; }
+  .code .hang { padding-left: 34px; }
+  .row { display: flex; gap: 8px; align-items: baseline; padding: 6px 8px; border: 1px solid var(--line);
+    border-left-width: 4px; background: var(--box); font-size: 12px; cursor: pointer; }
+  .row:hover { background: #efefef; }
+  .row .k { font-family: ui-monospace, Menlo, monospace; font-size: 11px; flex: none; }
+  .row .v { color: #444; min-width: 0; }
+  .row .go { margin-left: auto; color: var(--soft); flex: none; }
+  .row[data-tone="ok"] { border-left-color: #2e7d32; }
+  .row[data-tone="warn"] { border-left-color: #b26a00; }
+  .row[data-tone="bad"] { border-left-color: #b3261e; }
+  .row[data-tone="none"] { border-left-color: var(--soft); }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .stats div { background: var(--box); padding: 8px 10px; }
+  .stats strong { display: block; font-family: ui-monospace, Menlo, monospace; font-size: 18px; }
+  .stats span { font-size: 10px; color: var(--soft); text-transform: uppercase; letter-spacing: .05em; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1px solid var(--line); padding: 2px 8px; font-family: ui-monospace, Menlo, monospace;
+    font-size: 10.5px; white-space: nowrap; }
+  .acc { border: 1px solid var(--line); }
+  .acc > button { width: 100%; text-align: left; font: inherit; font-size: 12px; font-weight: 600;
+    padding: 7px 10px; background: var(--box); border: 0; cursor: pointer; display: flex; gap: 8px; }
+  .acc > button::before { content: "▸"; color: var(--soft); }
+  .acc.open > button::before { content: "▾"; }
+  .acc .body { display: none; padding: 8px 10px; border-top: 1px solid var(--line); font-size: 12px; color: #333; }
+  .acc.open .body { display: block; }
+  .acc .body dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 4px 10px; }
+  .acc .body dt { color: var(--soft); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+  .acc .body dd { margin: 0; }
+  .bar { height: 12px; background: #eee; border: 1px solid var(--line); margin: 3px 0 2px; }
+  .bar i { display: block; height: 100%; background: #777; }
+  .barlab { display: flex; justify-content: space-between; font-size: 11.5px; }
+  .barlab strong { font-family: ui-monospace, Menlo, monospace; }
+  .note { font-size: 10.5px; color: var(--soft); }
+  .wf-footer { border-top: 2px solid var(--ink); padding: 6px 12px; font-size: 10.5px; color: var(--soft);
+    display: flex; justify-content: space-between; gap: 12px; }
+  .legend { margin: 14px 0 0; padding: 0; list-style: none; font-size: 12px; color: #333;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 6px 22px; }
+  .legend b { display: inline-block; min-width: 20px; }
+  .btn { font: inherit; font-size: 12px; padding: 6px 12px; border: 1px solid var(--ink); background: var(--box); cursor: pointer; }
+  .btn.solid { background: var(--ink); color: #fff; }
+
+  /* drill-in + overlay frames */
+  .stage { display: grid; grid-template-columns: minmax(320px, 460px) 1fr; gap: 24px; align-items: start; }
+  .detail .field { border-top: 1px solid var(--line); padding: 8px 2px; }
+  .detail .field:first-of-type { border-top: 0; }
+  .detail .field dt { font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--soft); }
+  .detail .field dd { margin: 2px 0 0; font-size: 12.5px; }
+  .dockbar { display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+    border-top: 2px solid var(--ink); background: #efefef; font-weight: 700; font-size: 12.5px; }
+  .dockbar .sp { flex: 1; }
+  .obody { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; padding: 14px; overflow: auto;
+    border-top: 1px solid var(--line); }
+  .dagph { border: 1px dashed var(--line); padding: 10px; }
+  .dagph svg { width: 100%; height: auto; display: block; }
+
+  /* mobile frame */
+  .phone { width: 390px; border: 2px solid var(--ink); background: var(--box); }
+  .phone .phead { padding: 8px 10px; border-bottom: 2px solid var(--ink); font-size: 12px; font-weight: 700;
+    display: flex; justify-content: space-between; }
+  .phone .pbar { padding: 9px 10px; border-bottom: 1px solid var(--line); font-size: 12.5px; font-weight: 600;
+    display: flex; justify-content: space-between; color: #333; }
+  .phone .pbody { padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+
+  /* copy table */
+  table.copy { width: 100%; border-collapse: collapse; font-size: 12.5px; background: var(--box); }
+  table.copy th, table.copy td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+  table.copy th { background: #eee; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+  table.copy td.old { color: #8a8a8a; text-decoration: line-through; text-decoration-color: #bbb; }
+  .rules { font-size: 13px; }
+  .rules li { margin: 6px 0; }
+  @media (max-width: 900px) {
+    .wf-cols { grid-template-columns: 1fr; }
+    .pane { border-right: 0; border-bottom: 1px solid var(--line); }
+    .stage { grid-template-columns: 1fr; }
+    .obody { grid-template-columns: 1fr; }
+  }
+</style>
+<header class="top">
+  <h1>CONDUIT SHOWCASE · WIREFRAMES v2</h1>
+  <div class="frameswitch" role="group" aria-label="Wireframe frames">
+    <button data-f="desktop" aria-pressed="true">1 · Desktop default</button>
+    <button data-f="drill" aria-pressed="false">2 · Row drill-in</button>
+    <button data-f="overlay" aria-pressed="false">3 · Inspect dock</button>
+    <button data-f="mobile" aria-pressed="false">4 · Mobile</button>
+    <button data-f="copy" aria-pressed="false">5 · Copy pass &amp; rules</button>
+  </div>
+</header>
+<main>
+
+<!-- ============ FRAME 1 : DESKTOP ============ -->
+<section class="frame on" id="f-desktop">
+  <h2>Desktop default — one section per pane, three blocks max above the fold</h2>
+  <p class="sub">Click the tabs and rows: this wireframe behaves like the proposed UI. Grey dashed boxes are live-data regions; nothing ships hand-typed.</p>
+  <div class="wf">
+    <div class="wf-header">CONDUIT // VERIFIED BROWSER <span class="sp"></span>
+      <span class="lnk">Design doc</span><span class="lnk">Irrigation</span><span class="lnk">GitHub</span><span class="lnk">[theme]</span></div>
+    <div class="wf-cols">
+
+      <div class="pane">
+        <div class="pane-head"><span class="num">01</span> Verus</div>
+        <div class="tabs" data-pane="p1">
+          <button aria-pressed="true" data-s="basics">Basics</button>
+          <button aria-pressed="false" data-s="fail">Failures</button>
+        </div>
+        <div class="pane-body">
+          <div class="sec on" data-s="basics">
+            <p class="prose">Verus checks Rust code against a written specification. The Z3 solver proves the code matches the spec <b>for every input</b>, not for a sample of test cases.</p>
+            <div class="box">
+              <div class="t"><span>percent.rs — real code</span><span>✓6 ✗0 !0 ⏱0</span></div>
+              <div class="code">
+                <div class="ln"><span class="g">9 ✓</span><span class="tx">requires n &lt; 16,</span></div>
+                <div class="ln"><span class="g">10 ✓</span><span class="tx">ensures r == upper_hex_digit(n as nat),</span></div>
+                <div class="ln"><span class="g">14 ✓</span><span class="tx">ensures out@ == spec_percent_encode(input@, set),</span></div>
+                <div class="ln"><span class="g">17 ✓</span><span class="tx">invariant spec_percent_encode(input@, set) == out@ +</span></div>
+                <div class="ln"><span class="g"></span><span class="tx hang">spec_percent_encode(input@.subrange(i, n), set),</span></div>
+                <div class="ln"><span class="g">18 ✓</span><span class="tx">decreases n - i,</span></div>
+              </div>
+              <p class="note">Lines wrap with a hanging indent — no horizontal scrollbar. Click a glyph for the inlay.</p>
+            </div>
+            <div class="box ph"><div class="t"><span>live strip</span></div>0 trusted items in vurl · re-verify 2.17 s · ratchet.json</div>
+          </div>
+          <div class="sec" data-s="fail">
+            <p class="prose">An obligation has four states. Only <b>verified</b> is a proof.</p>
+            <div class="box">
+              <div class="t"><span>example failure — not from vurl</span><span>✗1</span></div>
+              <div class="code">
+                <div class="ln"><span class="g">4 ✗</span><span class="tx">ensures r &lt; 15,  // typo: real code says r &lt; 16</span></div>
+              </div>
+              <div class="box" style="margin-top:6px">
+                <div class="t"><span>Z3 counterexample</span></div>
+                b = 0x46 ("F") → r = 15, which breaks r &lt; 15
+              </div>
+            </div>
+            <div class="row" data-tone="warn"><span class="k">⏱ timeout</span><span class="v">solver budget ran out; unfinished is not passed</span></div>
+            <div class="row" data-tone="warn"><span class="k">! admit</span><span class="v">human bypass; counted as trusted, never verified</span></div>
+            <div class="row" data-tone="none"><span class="k">proved negative</span><span class="v">vurl proves decode(encode("%41")) ≠ "%41" for six sets</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane">
+        <div class="pane-head"><span class="num">02</span> Why kernels are hard</div>
+        <div class="tabs" data-pane="p2">
+          <button aria-pressed="true" data-s="scale">Scale</button>
+          <button aria-pressed="false" data-s="reasons">Reasons</button>
+          <button aria-pressed="false" data-s="precedents">Precedents</button>
+        </div>
+        <div class="pane-body">
+          <div class="sec on" data-s="scale">
+            <p class="prose">seL4 proved a whole kernel correct in 2009. Linux is about <b>4,000× larger</b> and still unverified. Size is not the only reason.</p>
+            <div>
+              <div class="barlab"><span>seL4 — verified</span><strong>8,700 LOC</strong></div>
+              <div class="bar"><i style="width:52%"></i></div>
+              <div class="barlab"><span>Linux — unverified</span><strong>≈36,000,000 LOC</strong></div>
+              <div class="bar"><i style="width:100%"></i></div>
+              <div class="barlab"><span>vurl — this project</span><strong>[live] LOC</strong></div>
+              <div class="bar"><i style="width:44%"></i></div>
+              <p class="note">log scale · sources: seL4 SOSP'09, Linux Foundation 2023 report, ratchet.json</p>
+            </div>
+            <div class="box ph">One line: what the ratchet means — verified coverage only increases between releases.</div>
+          </div>
+          <div class="sec" data-s="reasons">
+            <div class="acc open"><button>Proofs cost more than the code</button>
+              <div class="body">≈20 person-years for 8,700 lines of C. The proof is an order of magnitude larger than the code, and the ratio worsens with concurrency and driver state machines.</div></div>
+            <div class="acc"><button>The specification keeps changing</button>
+              <div class="body">A proof binds one code version to one spec version. Linux merges changes hourly. This project pins spec commits and re-verifies against upstream Verus weekly.</div></div>
+            <div class="acc"><button>Drivers and hardware are not provable</button>
+              <div class="body">Drivers are most of Linux's code and bugs, and talk to hardware nobody has formalized. Even seL4's theorem excludes boot code, assembly and hardware.</div></div>
+            <div class="acc"><button>Verify the boundary, contain the rest</button>
+              <div class="body">Shipped verification picks small stable targets: crypto, compilers, microkernels. Quark proved a browser kernel and ran untrusted WebKit tabs behind it. Same approach here.</div></div>
+            <p class="note">One accordion open at a time.</p>
+          </div>
+          <div class="sec" data-s="precedents">
+            <p class="prose">What verification has shipped. Click a row for scope, effort and source.</p>
+            <div class="row" data-tone="ok"><span class="k">seL4</span><span class="v">kernel correctness · high-assurance platforms</span><span class="go">→</span></div>
+            <div class="row" data-tone="ok"><span class="k">fiat-crypto</span><span class="v">field arithmetic · BoringSSL / Chrome</span><span class="go">→</span></div>
+            <div class="row" data-tone="ok"><span class="k">HACL*</span><span class="v">crypto · Firefox NSS</span><span class="go">→</span></div>
+            <div class="row" data-tone="ok"><span class="k">CompCert</span><span class="v">C compiler · avionics toolchains</span><span class="go">→</span></div>
+            <div class="row" data-tone="none"><span class="k">Verdict</span><span class="v">X.509 validation · this project's TLS layer</span><span class="go">→</span></div>
+            <div class="row" data-tone="none"><span class="k">Quark</span><span class="v">browser kernel · the pattern copied here</span><span class="go">→</span></div>
+            <div class="row" data-tone="none"><span class="k">JSCert / Warblre / WasmCert</span><span class="v">JS, regex, Wasm semantics · research</span><span class="go">→</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane">
+        <div class="pane-head"><span class="num">03</span> Project status</div>
+        <div class="tabs" data-pane="p3">
+          <button aria-pressed="true" data-s="built">Built</button>
+          <button aria-pressed="false" data-s="coverage">Coverage</button>
+          <button aria-pressed="false" data-s="plan">Plan</button>
+          <button aria-pressed="false" data-s="trade">Tradeoffs</button>
+        </div>
+        <div class="pane-body">
+          <div class="sec on" data-s="built">
+            <div class="stats">
+              <div><strong>[65]</strong><span>verified fns</span></div>
+              <div><strong>[0]</strong><span>trusted items</span></div>
+              <div><strong>[2.17s]</strong><span>re-verify</span></div>
+              <div><strong>[9/9]</strong><span>WPT + diff tests</span></div>
+            </div>
+            <p class="prose"><b>Only vurl is implemented.</b> The JS engine, kernel theorems and sandbox isolation are design documents, not code.</p>
+            <div class="chips"><span class="chip">whatwg/url @4f461b81</span><span class="chip">verus [live]</span><span class="chip">z3 [live]</span></div>
+            <button class="btn" data-open-overlay>Inspect proof graph + architecture</button>
+            <div class="row" data-tone="ok"><span class="k">percent</span><span class="v">encode/decode + 5 theorems</span><span class="go">→</span></div>
+            <div class="row" data-tone="ok"><span class="k">ipv4</span><span class="v">parser, number parser, host checker</span><span class="go">→</span></div>
+            <div class="row" data-tone="ok"><span class="k">ipv6</span><span class="v">parser, serializer, compression index</span><span class="go">→</span></div>
+          </div>
+          <div class="sec" data-s="coverage">
+            <p class="prose">Last 20 Chrome bugs confirmed exploited in the wild. <b>13</b> answered by construction once vjs exists · <b>3</b> by containment · <b>4</b> graphics, contained only.</p>
+            <div class="row" data-tone="ok"><span class="k">CVE-2026-85046</span><span class="v">V8 · type confusion</span><span class="go">→</span></div>
+            <div class="row" data-tone="ok"><span class="k">CVE-2026-87491</span><span class="v">V8 · OOB write</span><span class="go">→</span></div>
+            <div class="row" data-tone="warn"><span class="k">CVE-2025-2783</span><span class="v">Mojo · sandbox escape</span><span class="go">→</span></div>
+            <div class="row" data-tone="bad"><span class="k">CVE-2026-3909</span><span class="v">Skia · OOB write</span><span class="go">→</span></div>
+            <div class="row" data-tone="bad"><span class="k">CVE-2025-6558</span><span class="v">ANGLE · validation → escape</span><span class="go">→</span></div>
+            <p class="note">20 rows, virtualized, two columns + tone rail. Class, date and coverage explanation live in the drill-in. Tone also carries a text label there — never color alone.</p>
+          </div>
+          <div class="sec" data-s="plan">
+            <div class="box"><div class="t"><span>what vjs must guarantee</span></div>
+              <div class="code"><div class="ln"><span class="tx">run(p, n) → Done(v) | OutOfFuel | Unsupported(f)</span></div>
+              <div class="ln"><span class="tx hang">Done means v equals the spec; Unsupported is a refusal, never a wrong answer.</span></div></div>
+            </div>
+            <div class="row" data-tone="none"><span class="k">J0</span><span class="v">spec generator from ECMA-262</span><span class="go">design →</span></div>
+            <div class="row" data-tone="none"><span class="k">J1–J3</span><span class="v">types, object model, parser</span><span class="go">design →</span></div>
+            <div class="row" data-tone="none"><span class="k">J4/J4b</span><span class="v">interpreter core; host boundary</span><span class="go">design →</span></div>
+            <div class="row" data-tone="none"><span class="k">J5–J7</span><span class="v">built-ins, async + GC, bytecode</span><span class="go">design →</span></div>
+            <p class="note">Every row opens its measured exit criterion. No dates, no percentages invented.</p>
+          </div>
+          <div class="sec" data-s="trade">
+            <div class="acc open"><button>No JIT inside the verified core</button>
+              <div class="body"><dl><dt>given up</dt><dd>~10–100× speed vs TurboFan</dd><dt>gained</dt><dd>the JIT bug class becomes inexpressible</dd><dt>risk</dt><dd>bytecode compiler proof is unsized (J7)</dd></dl></div></div>
+            <div class="acc"><button>Safe Rust, arena heap</button><div class="body"><dl><dt>given up</dt><dd>FFI convenience, raw speed</dd><dt>gained</dt><dd>UAF / OOB write impossible by construction</dd><dt>risk</dt><dd>logical type confusion still needs invariant proofs</dd></dl></div></div>
+            <div class="acc"><button>Untrusted engine until parity</button><div class="body"><dl><dt>given up</dt><dd>web compatibility for years</dd><dt>gained</dt><dd>usable browser now; coverage published per section</dd><dt>risk</dt><dd>fallback could become permanent</dd></dl></div></div>
+            <div class="acc"><button>Contain graphics, don't verify it</button><div class="body"><dl><dt>given up</dt><dd>whole-stack ambition</dd><dt>gained</dt><dd>tractable trusted base</dd><dt>risk</dt><dd>4/20 recent exploited bugs stay outside proofs</dd></dl></div></div>
+            <p class="note">9 rows total, one open at a time; full text in the drill-in.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wf-footer"><span>Metrics load from browser/ratchet.json + data/stats.json; missing data shows an error, not numbers.</span><span>ratchet [date] · stats [date]</span></div>
+  </div>
+  <ul class="legend">
+    <li><b>①</b> Tabs replace the endless stack: one section per pane, ≤3 blocks above the fold.</li>
+    <li><b>②</b> No multi-column tables in a pane. Rows = key + one-line summary + tone rail; details open in place (frame 2).</li>
+    <li><b>③</b> Wide visuals (proof DAG, architecture) live in the collapsible full-width bottom dock (frame 3) — never in a column, never in a modal.</li>
+    <li><b>④</b> Code wraps with hanging indents; chips are nowrap; nothing truncates mid-token.</li>
+    <li><b>⑤</b> Accordions: one open at a time. Default open = the most load-bearing item.</li>
+    <li><b>⑥</b> [live] marks every number fetched at runtime; the no-hand-typed-numbers rule is unchanged.</li>
+  </ul>
+</section>
+
+<!-- ============ FRAME 2 : DRILL-IN ============ -->
+<section class="frame" id="f-drill">
+  <h2>Row drill-in — the pane swaps list for detail, full pane width</h2>
+  <p class="sub">Same pane, same scroll position context. Back returns to the list with selection kept. This is where the old 4-column tables' content goes, stacked.</p>
+  <div class="stage">
+    <div class="wf">
+      <div class="pane-head"><span class="num">03</span> Project status · Coverage <span class="sp" style="flex:1"></span><button class="btn">← Back to list</button></div>
+      <div class="pane-body detail">
+        <div class="box"><div class="t"><span>CVE-2026-85046</span><span>by construction</span></div>
+          V8 type confusion, exploited in the wild; fixed 152.0.7977.82 on 2026-09-03.</div>
+        <dl>
+          <div class="field"><dt>Component</dt><dd>V8</dd></div>
+          <div class="field"><dt>Bug class</dt><dd>Type confusion</dd></div>
+          <div class="field"><dt>This engine's answer</dt><dd>By construction: no JIT in the verified core, safe-Rust arena heap, object-model invariant proofs. <b>Not built yet</b> — vjs is design, so today this bug class is only contained by the sandbox.</dd></div>
+          <div class="field"><dt>Source</dt><dd>Chrome Releases blog 2026-09-03; CISA KEV 2026-09-04; row verified in docs/vjs-plan-review.md §2.</dd></div>
+        </dl>
+        <div class="chips"><span class="chip">← prev CVE</span><span class="chip">next CVE →</span></div>
+      </div>
+    </div>
+    <div>
+      <h2 style="font-size:14px">Why this shape</h2>
+      <ul class="rules">
+        <li>A third-width pane is ~450–550 px. Four columns of prose cannot fit; stacked label/value fields can.</li>
+        <li>The list stays scannable (20 rows × 22 px); the detail gets the whole pane for one item.</li>
+        <li>Prev/next chips let an expert walk all 20 CVEs without returning to the list.</li>
+        <li>Same pattern for precedents, vjs steps, tradeoffs and proved modules — one interaction model everywhere.</li>
+        <li>Implementation: pane-local state swap, not a modal — keeps the three-pane context visible and avoids overlay stacking on mobile.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FRAME 3 : OVERLAY ============ -->
+<section class="frame" id="f-overlay">
+  <h2>Inspect dock — a collapsible bottom pane, not a modal</h2>
+  <p class="sub">Opened from the Built tab or its own header bar. Spans the full window under all three columns; the panes stay visible and keep their state. Collapsing returns it to a single bar. No overlay, no context switch.</p>
+  <div>
+    <div class="wf">
+      <div class="wf-header">CONDUIT // VERIFIED BROWSER</div>
+      <div class="wf-cols" style="min-height:300px">
+        <div class="pane"><div class="pane-head">01 Verus</div><div class="pane-body"><div class="box ph">basics</div></div></div>
+        <div class="pane"><div class="pane-head">02 Why kernels are hard</div><div class="pane-body"><div class="box ph">scale</div></div></div>
+        <div class="pane"><div class="pane-head">03 Project status</div><div class="pane-body"><div class="box ph">built</div></div></div>
+      </div>
+      <div class="dockbar">Inspect · proof graph and architecture <span class="sp"></span><button class="btn">Collapse ▾</button></div>
+      <div class="obody">
+        <div class="dagph">
+          <div class="t" style="font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#888;margin-bottom:6px">vurl obligations — 13 nodes, states from ratchet.json</div>
+          <svg viewBox="0 0 420 220" aria-label="proof graph placeholder">
+            <g stroke="#555" fill="#fff">
+              <rect x="20" y="10" width="110" height="26"/><rect x="160" y="10" width="110" height="26"/><rect x="300" y="10" width="100" height="26"/>
+              <rect x="20" y="90" width="110" height="26"/><rect x="160" y="90" width="110" height="26"/><rect x="300" y="90" width="100" height="26"/>
+              <rect x="90" y="170" width="120" height="26"/><rect x="250" y="170" width="120" height="26"/>
+            </g>
+            <g stroke="#888" fill="none">
+              <path d="M75 36 V90"/><path d="M215 36 V90"/><path d="M350 36 V90"/>
+              <path d="M75 116 C75 150 150 150 150 170"/><path d="M215 116 C215 150 150 150 150 170"/>
+              <path d="M215 116 C215 150 310 150 310 170"/><path d="M350 116 C350 150 310 150 310 170"/>
+            </g>
+            <g font-size="9" font-family="Menlo, monospace" fill="#1a1a1a">
+              <text x="28" y="27">spec_encode</text><text x="168" y="27">spec_decode</text><text x="308" y="27">set_chain</text>
+              <text x="28" y="107">exec_encode</text><text x="168" y="107">exec_decode</text><text x="308" y="107">ipv4_parse</text>
+              <text x="98" y="187">roundtrip thm</text><text x="258" y="187">counterexample thm</text>
+            </g>
+          </svg>
+          <p class="note">Click a node → downstream impact highlights; counts and states are live, never drawn without ratchet data.</p>
+        </div>
+        <div class="dagph">
+          <div class="t" style="font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#888;margin-bottom:6px">architecture — verified shim</div>
+          <svg viewBox="0 0 320 220" aria-label="architecture placeholder">
+            <g stroke="#2e7d32" fill="#fff"><rect x="10" y="10" width="300" height="70"/></g>
+            <g stroke="#555" fill="#fff" stroke-dasharray="4 3"><rect x="10" y="130" width="90" height="60"/><rect x="115" y="130" width="90" height="60"/><rect x="220" y="130" width="90" height="60"/></g>
+            <g stroke="#888"><path d="M160 80 V130" fill="none"/></g>
+            <g font-size="9" font-family="Menlo, monospace" fill="#1a1a1a">
+              <text x="20" y="30">VERIFIED KERNEL (Verus)</text>
+              <text x="20" y="48">parsers · origin/policy · tabs/IPC</text>
+              <text x="20" y="66">TLS via Verdict</text>
+              <text x="18" y="155">renderer 1</text><text x="123" y="155">renderer 2</text><text x="228" y="155">renderer …</text>
+              <text x="18" y="172">untrusted,</text><text x="123" y="172">untrusted,</text><text x="228" y="172">untrusted,</text>
+              <text x="18" y="184">per-site sandbox</text><text x="123" y="184">per-site sandbox</text><text x="228" y="184">per-site sandbox</text>
+              <text x="170" y="105">typed IPC</text>
+            </g>
+          </svg>
+          <p class="note">A compromised renderer can only misrender its own origin — the theorem the kernel proves.</p>
+        </div>
+      </div>
+      <div class="wf-footer"><span>dock collapsed by default · expands in place · panes keep state</span><span>IxPane slot="bottom"</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FRAME 4 : MOBILE ============ -->
+<section class="frame" id="f-mobile">
+  <h2>Mobile — panes stack, same tabs, same drill-in</h2>
+  <p class="sub">Side panes become collapsible bars; the active pane owns the viewport. Drill-in and the inspect dock behave identically at full width.</p>
+  <div class="phone">
+    <div class="phead"><span>CONDUIT // VERIFIED BROWSER</span><span>☰ [theme]</span></div>
+    <div class="pbar"><span>01 · Verus</span><span>▾</span></div>
+    <div class="pbar" style="background:#efefef"><span>02 · Why kernels are hard</span><span>▴</span></div>
+    <div class="tabs"><button aria-pressed="true">Scale</button><button aria-pressed="false">Reasons</button><button aria-pressed="false">Precedents</button></div>
+    <div class="pbody">
+      <p class="prose">seL4 proved a whole kernel correct in 2009. Linux is about <b>4,000× larger</b> and still unverified.</p>
+      <div>
+        <div class="barlab"><span>seL4 — verified</span><strong>8,700 LOC</strong></div><div class="bar"><i style="width:52%"></i></div>
+        <div class="barlab"><span>Linux — unverified</span><strong>≈36M LOC</strong></div><div class="bar"><i style="width:100%"></i></div>
+        <div class="barlab"><span>vurl — this project</span><strong>[live]</strong></div><div class="bar"><i style="width:44%"></i></div>
+      </div>
+      <div class="row" data-tone="ok"><span class="k">seL4</span><span class="v">kernel correctness</span><span class="go">→</span></div>
+      <div class="row" data-tone="ok"><span class="k">fiat-crypto</span><span class="v">BoringSSL / Chrome</span><span class="go">→</span></div>
+    </div>
+    <div class="pbar"><span>03 · Project status</span><span>▾</span></div>
+    <div class="wf-footer"><span>metrics: ratchet.json + stats.json</span></div>
+  </div>
+</section>
+
+<!-- ============ FRAME 5 : COPY ============ -->
+<section class="frame" id="f-copy">
+  <h2>Copy pass — every replaced phrase</h2>
+  <p class="sub">Plain, declarative, no marketing voice. Domain terms (ratchet, obligation, spec) stay, but are explained on first use.</p>
+  <table class="copy">
+    <thead><tr><th style="width:44%">Current (removed)</th><th>Replacement</th></tr></thead>
+    <tbody>
+      <tr><td class="old">01 · FIRST CONTACT — "Verus: Rust that proves itself"</td><td>Tab "Basics" · heading "What Verus does"</td></tr>
+      <tr><td class="old">01 · THE OTHER HALF — "How it breaks"</td><td>Tab "Failures" · heading "How a proof fails"</td></tr>
+      <tr><td class="old">"Anatomy of one proof"</td><td>"Parts of a proof" (folded into editor inlays; block removed)</td></tr>
+      <tr><td class="old">"Verification also proves negative facts"</td><td>"A proof can show something is impossible"</td></tr>
+      <tr><td class="old">"The escape hatches are counted."</td><td>"Bypasses count as trusted, not verified."</td></tr>
+      <tr><td class="old">02 · THE HARD PART — "We have verified kernels. Just not Linux."</td><td>Pane "Why kernels are hard" · "Verified kernels exist. Linux is not one."</td></tr>
+      <tr><td class="old">"That is exactly this project's bet."</td><td>"This project uses the same approach."</td></tr>
+      <tr><td class="old">03 · THE RATCHET — "Where this engine actually stands"</td><td>Pane "Project status" · tab "Built" · "What is built today"</td></tr>
+      <tr><td class="old">"Honesty clause: only vurl exists"</td><td>"Only vurl is implemented" (plain sentence, not a blind header)</td></tr>
+      <tr><td class="old">"The ratchet never lets the verified share go down."</td><td>"Verified coverage only increases between releases."</td></tr>
+      <tr><td class="old">"Does it cover the bugs that actually get exploited?"</td><td>"Coverage of recent exploited Chrome bugs"</td></tr>
+      <tr><td class="old">"vjs — the end-to-end theorem"</td><td>"What vjs must guarantee"</td></tr>
+      <tr><td class="old">"The tradeoffs, stated plainly"</td><td>"Tradeoffs"</td></tr>
+      <tr><td class="old">"The architecture the tradeoffs buy"</td><td>"Architecture" (in inspect overlay)</td></tr>
+      <tr><td class="old">statusLabel "upstream, not forked" / "spec pinned"</td><td>chips "upstream" / "pinned" (nowrap, never wrap mid-token)</td></tr>
+    </tbody>
+  </table>
+  <h2 style="font-size:14px;margin-top:22px">Layout rules this redesign commits to</h2>
+  <ul class="rules">
+    <li><b>Density budget:</b> at most three blocks above the fold per pane; everything else behind a tab, accordion or drill-in.</li>
+    <li><b>No table wider than two columns inside a pane.</b> Multi-field records use stacked label/value in the drill-in.</li>
+    <li><b>Wide visuals only in the collapsible full-width bottom dock</b> (proof DAG, architecture). Never squeezed into a column, never in a modal.</li>
+    <li><b>Code wraps</b> with hanging indents; horizontal scroll is a bug, not a feature.</li>
+    <li><b>Chips and badges are nowrap;</b> wrapping happens between chips, never inside one.</li>
+    <li><b>One accordion open at a time;</b> the default open item is the most load-bearing one.</li>
+    <li><b>Tone is never color-only:</b> every tone rail carries a text label in the drill-in and a legend in the list.</li>
+    <li><b>Live-data rule unchanged:</b> every metric fetches from ratchet.json / stats.json; missing data renders an error and "not recorded".</li>
+    <li><b>iX components kept:</b> IxVerusEditor (wrapped lines), IxPacketGrid (2-column CVE list), IxProofDag + IxBlind + IxToggle inside the new structure; pane layout keeps the #1302/#2904 fixes.</li>
+  </ul>
+</section>
+</main>
+<script>
+  const switchFrame = (id) => {
+    document.querySelectorAll('.frame').forEach(f => f.classList.toggle('on', f.id === 'f-' + id));
+    document.querySelectorAll('.frameswitch button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === id)));
+    window.scrollTo(0, 0);
+  };
+  document.querySelectorAll('.frameswitch button').forEach(b => b.addEventListener('click', () => switchFrame(b.dataset.f)));
+  document.querySelectorAll('.tabs').forEach(tabs => {
+    tabs.addEventListener('click', (e) => {
+      const btn = e.target.closest('button'); if (!btn) return;
+      tabs.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+      const body = tabs.nextElementSibling;
+      body.querySelectorAll(':scope > .sec').forEach(s => s.classList.toggle('on', s.dataset.s === btn.dataset.s));
+    });
+  });
+  document.querySelectorAll('.acc > button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const acc = btn.parentElement;
+      const wasOpen = acc.classList.contains('open');
+      acc.parentElement.querySelectorAll(':scope > .acc').forEach(a => a.classList.remove('open'));
+      if (!wasOpen) acc.classList.add('open');
+    });
+  });
+  document.querySelectorAll('.row').forEach(r => r.addEventListener('click', () => switchFrame('drill')));
+  document.querySelectorAll('[data-open-overlay]').forEach(b => b.addEventListener('click', () => switchFrame('overlay')));
+</script>
