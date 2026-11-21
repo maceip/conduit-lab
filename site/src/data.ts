@@ -77,6 +77,19 @@ export interface VmBenchmark {
   result_verified_equal: boolean;
 }
 
+export interface ProofShowcaseItem {
+  label: string;
+  crate: string;
+  step: string;
+  file: string;
+  source: string;
+  verified: number;
+  errors: number;
+  seconds: number;
+  log: string;
+  exit_code: number;
+}
+
 export interface Ratchet {
   generated_at: string;
   generator: string;
@@ -87,6 +100,7 @@ export interface Ratchet {
   test262_suites?: RatchetSuite[];
   vm_benchmarks?: VmBenchmark[];
   vm_benchmarks_geomean_speedup?: number;
+  proof_showcase?: ProofShowcaseItem[];
 }
 
 export interface Stats {
@@ -102,6 +116,12 @@ export async function loadJson<T>(url: string): Promise<T> {
   return (await r.json()) as T;
 }
 
+export async function loadText(url: string): Promise<string> {
+  const r = await fetch(url, { cache: 'no-cache' });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return await r.text();
+}
+
 export const sumTrusted = (t: TrustedCounts | undefined): number | null =>
   t ? Object.values(t).reduce((a, b) => a + b, 0) : null;
 
@@ -113,6 +133,15 @@ export const allCratesOk = (r: Ratchet | null): boolean =>
 
 export const trustedTotal = (c: RatchetCrate | undefined): number | null =>
   sumTrusted(c?.trusted);
+
+export const sumDifferentialCases = (suites: RatchetSuite[] | undefined): number | null => {
+  if (!suites || suites.length === 0) return null;
+  let total = 0;
+  for (const s of suites) {
+    if (typeof s.differential_cases === 'number') total += s.differential_cases;
+  }
+  return total;
+};
 
 export const ratchetTotals = (r: Ratchet | null): RatchetTotals | null => {
   if (!r) return null;

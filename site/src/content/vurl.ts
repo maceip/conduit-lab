@@ -1,125 +1,166 @@
-import type { VerusEditorLine } from '@maceip/ix-workbench-primitives';
-import type { ProofObligationNode, ProofObligationEdge } from '@maceip/ix-workbench-primitives';
+// Real verbatim Verus code from browser/url/src/percent.rs (whatwg/url@4f461b81)
+// plus the three illustrative failure states (counterexample, rlimit timeout, admit bypass).
+export type ObligationState = 'verified' | 'failed' | 'timeout' | 'admit';
+export type VerusLane = 'spec' | 'exec' | 'proof';
 
-// Pane 01 — real code from browser/url/src/percent.rs (whatwg/url@4f461b81).
-// Excerpts are verbatim; line breaks inside long expressions are the only edit.
-export const VURL_EDITOR_LINES: VerusEditorLine[] = [
-  { text: '// WHATWG URL §1.3, transcribed from whatwg/url@4f461b81 (2026-11-19)', mode: 'spec' },
-  { text: '/// "To percent-encode a byte byte, return a string consisting of U+0025 (%),', mode: 'spec' },
-  { text: '///  followed by two ASCII upper hex digits representing byte."', mode: 'spec' },
-  { text: 'pub open spec fn spec_percent_encode_byte(b: u8) -> Seq<u8> {', mode: 'spec' },
-  { text: '    seq![0x25u8, upper_hex_digit(b as nat / 16), upper_hex_digit(b as nat % 16)]', mode: 'spec' },
-  { text: '}', mode: 'spec' },
-  { text: '', mode: 'exec' },
-  { text: 'fn upper_hex(n: u8) -> (r: u8)', mode: 'exec' },
+export interface CounterexampleBinding {
+  symbol: string;
+  sort: string;
+  value: string;
+}
+
+export interface VerusCodeLine {
+  lineNo: number;
+  lane: VerusLane;
+  text: string;
+  obligation?: {
+    state: ObligationState;
+    summary: string;
+    detail: string;
+    counterexample?: CounterexampleBinding[];
+  };
+}
+
+export const VURL_VERIFIED_LINES: VerusCodeLine[] = [
+  { lineNo: 1, lane: 'spec', text: '// WHATWG URL §1.3, transcribed from whatwg/url@4f461b81' },
+  { lineNo: 2, lane: 'spec', text: 'pub open spec fn spec_percent_encode_byte(b: u8) -> Seq<u8> {' },
+  { lineNo: 3, lane: 'spec', text: '    seq![0x25u8, upper_hex_digit(b as nat / 16), upper_hex_digit(b as nat % 16)]' },
+  { lineNo: 4, lane: 'spec', text: '}' },
+  { lineNo: 5, lane: 'exec', text: '' },
+  { lineNo: 6, lane: 'exec', text: 'fn upper_hex(n: u8) -> (r: u8)' },
   {
+    lineNo: 7,
+    lane: 'spec',
     text: '    requires n < 16,',
-    mode: 'exec',
-    obligation: { state: 'verified', message: 'precondition: the caller must prove n < 16' },
+    obligation: {
+      state: 'verified',
+      summary: 'Precondition checked at every call site',
+      detail: 'Callers must prove n < 16 statically before invoking upper_hex; out-of-range nibbles cannot compile.',
+    },
   },
   {
+    lineNo: 8,
+    lane: 'spec',
     text: '    ensures r == upper_hex_digit(n as nat),',
-    mode: 'exec',
     obligation: {
       state: 'verified',
-      message: 'exec == spec for every n < 16 — one SMT query covers all inputs, not a sample',
+      summary: 'UNSAT across all 16 valid inputs in one SMT query',
+      detail: 'Z3 proves the executable byte arithmetic equals the mathematical spec for every n in 0..16, not just sampled test inputs.',
     },
   },
-  { text: '{ if n < 10 { 0x30 + n } else { 0x41 + n - 10 } }', mode: 'exec' },
-  { text: '', mode: 'proof' },
-  { text: 'pub fn percent_encode(input: &[u8], set: EncodeSet) -> (out: Vec<u8>)', mode: 'proof' },
+  { lineNo: 9, lane: 'exec', text: '{ if n < 10 { 0x30 + n } else { 0x41 + n - 10 } }' },
+  { lineNo: 10, lane: 'proof', text: '' },
+  { lineNo: 11, lane: 'exec', text: 'pub fn percent_encode(input: &[u8], set: EncodeSet) -> (out: Vec<u8>)' },
   {
+    lineNo: 12,
+    lane: 'spec',
     text: '    ensures out@ == spec_percent_encode(input@, set),',
-    mode: 'proof',
-    obligation: { state: 'verified', message: 'the whole loop refines the recursive spec function' },
-  },
-  { text: '    while i < n', mode: 'proof' },
-  { text: '        invariant spec_percent_encode(input@, set) ==', mode: 'proof' },
-  {
-    text: '            out@ + spec_percent_encode(input@.subrange(i as int, n as int), set),',
-    mode: 'proof',
     obligation: {
       state: 'verified',
-      message: 'remaining-computation invariant: what is done + what is left == the spec',
+      summary: 'Whole-loop refinement against recursive WHATWG specification',
+      detail: 'For every byte slice of any length, the output Vec equals the recursive spec function element for element.',
+    },
+  },
+  { lineNo: 13, lane: 'exec', text: '    while i < n' },
+  {
+    lineNo: 14,
+    lane: 'proof',
+    text: '        invariant spec_percent_encode(input@, set) == out@ + spec_percent_encode(input@.subrange(i as int, n as int), set),',
+    obligation: {
+      state: 'verified',
+      summary: 'Inductive remaining-work invariant',
+      detail: 'At every iteration, bytes already emitted concatenated with the spec of remaining input equals the full specification.',
     },
   },
   {
+    lineNo: 15,
+    lane: 'proof',
     text: '        decreases n - i,',
-    mode: 'proof',
-    obligation: { state: 'verified', message: 'termination: n - i shrinks on every iteration — hangs are DoS' },
-  },
-  { text: '', mode: 'proof' },
-  { text: 'pub proof fn lemma_decode_encode_roundtrip(s: Seq<u8>, set: EncodeSet)', mode: 'proof' },
-  { text: '    requires spec_in_set(set, 0x25),', mode: 'proof' },
-  {
-    text: '    ensures spec_percent_decode(spec_percent_encode(s, set)) == s,',
-    mode: 'proof',
     obligation: {
       state: 'verified',
-      message: 'decode ∘ encode = id — but only when "%" itself is in the encode set',
+      summary: 'Termination proved (n - i strictly decreases)',
+      detail: 'Guarantees the encoder loop terminates for all inputs; infinite-loop denial-of-service is ruled out.',
+    },
+  },
+  { lineNo: 16, lane: 'proof', text: '' },
+  { lineNo: 17, lane: 'proof', text: 'pub proof fn lemma_decode_encode_roundtrip(s: Seq<u8>, set: EncodeSet)' },
+  { lineNo: 18, lane: 'spec', text: '    requires spec_in_set(set, 0x25),' },
+  {
+    lineNo: 19,
+    lane: 'spec',
+    text: '    ensures spec_percent_decode(spec_percent_encode(s, set)) == s,',
+    obligation: {
+      state: 'verified',
+      summary: 'Proved algebraic roundtrip — and its exact boundary condition',
+      detail: 'decode(encode(s)) == s holds iff "%" (0x25) is in the encode set. For the six sets omitting "%", vurl also proves decode(encode("%41")) == "A".',
     },
   },
 ];
 
-// Pane 01 — "how it breaks". The failed obligation below is ILLUSTRATIVE (a one-character
-// typo in a real vurl postcondition); vurl itself has 0 failed obligations. The timeout
-// and admit rows show the other two ways a proof can fail to be a proof.
-export const BREAK_EDITOR_LINES: VerusEditorLine[] = [
-  { text: '// ILLUSTRATIVE failure — not vurl code. The real crate: 0 failed obligations.', mode: 'exec' },
-  { text: 'fn hex_val(b: u8) -> (r: u8)', mode: 'exec' },
-  { text: '    requires is_ascii_hex_digit(b),', mode: 'exec' },
+export const COUNTEREXAMPLE_LINES: VerusCodeLine[] = [
+  { lineNo: 1, lane: 'exec', text: '// ILLUSTRATIVE mutation — not real vurl code (all 11 real crates have 0 errors).' },
+  { lineNo: 2, lane: 'exec', text: 'fn hex_val(b: u8) -> (r: u8)' },
   {
-    text: '    ensures r < 15,   // typo: the real postcondition is r < 16',
-    mode: 'exec',
+    lineNo: 3,
+    lane: 'spec',
+    text: '    requires is_ascii_hex_digit(b),',
+    obligation: {
+      state: 'verified',
+      summary: 'Input constrained to ASCII 0–9, A–F, a–f',
+      detail: 'Precondition holds from caller.',
+    },
+  },
+  {
+    lineNo: 4,
+    lane: 'spec',
+    text: '    ensures r < 15, // 1-char typo: real vurl postcondition is r < 16',
     obligation: {
       state: 'failed',
-      message: 'postcondition violated — Z3 returns a concrete input that breaks it',
+      summary: 'Postcondition falsified — Z3 synthesizes a concrete breaking input',
+      detail: 'Instead of silently passing incomplete unit tests, Z3 returns the exact input byte that violates r < 15.',
       counterexample: [
-        { symbol: 'b', sort: '(_ BitVec 8)', pre: '0x46 ("F")', post: '0x46' },
-        { symbol: 'r', sort: '(_ BitVec 8)', pre: '—', post: '15  ⊭  r < 15' },
+        { symbol: 'b', sort: '(_ BitVec 8)', value: '0x46 ("F")' },
+        { symbol: 'r', sort: '(_ BitVec 8)', value: '15  (violates r < 15)' },
       ],
     },
   },
-  { text: '{ /* same body as the real hex_val */ }', mode: 'exec' },
-  { text: '', mode: 'exec' },
-  { text: '// The other two ways a "proof" can fail to be one:', mode: 'exec' },
+  { lineNo: 5, lane: 'exec', text: "{ if b <= b'9' { b - b'0' } else { (b & 0xdf) - b'A' + 10 } }" },
+];
+
+export const TIMEOUT_LINES: VerusCodeLine[] = [
+  { lineNo: 1, lane: 'exec', text: '// ILLUSTRATIVE solver budget exhaustion — unfinished is never treated as proved.' },
+  { lineNo: 2, lane: 'exec', text: '#[verifier::rlimit(2)]' },
+  { lineNo: 3, lane: 'proof', text: 'proof fn lemma_complex_quantifier_chain(buf: Seq<u8>)' },
   {
-    text: '#[verus::rlimit(2)]   // solver budget exhausted mid-query',
-    mode: 'exec',
+    lineNo: 4,
+    lane: 'spec',
+    text: '    ensures forall|i: int, j: int| 0 <= i < j < buf.len() ==> spec_order_ok(buf, i, j),',
     obligation: {
       state: 'timeout',
-      message: 'rlimit exceeded: Z3 gave up. Unfinished is NOT passed — CI treats it as a failure',
+      summary: 'RLIMIT EXCEEDED — Z3 exhausted quantifier budget before UNSAT or SAT',
+      detail: 'CI fails the build immediately. Fix by isolating the lemma with #[verifier::spinoff_prover] or adding explicit quantifier triggers.',
     },
   },
+  { lineNo: 5, lane: 'proof', text: '{ /* nonlinear arithmetic or broad trigger loop exhausts rlimit */ }' },
+];
+
+export const ADMIT_LINES: VerusCodeLine[] = [
+  { lineNo: 1, lane: 'exec', text: '// ILLUSTRATIVE escape hatch — counted as trusted, rejected by ratchet CI.' },
+  { lineNo: 2, lane: 'exec', text: 'fn hex_val(b: u8) -> (r: u8)' },
+  { lineNo: 3, lane: 'spec', text: '    requires is_ascii_hex_digit(b),' },
+  { lineNo: 4, lane: 'spec', text: '    ensures r < 16,' },
   {
-    text: 'proof { admit() }     // trusted escape hatch, written by a human',
-    mode: 'exec',
+    lineNo: 5,
+    lane: 'proof',
+    text: '{ proof { admit(); } if b <= b\'9\' { b - b\'0\' } else { (b & 0xdf) - b\'A\' + 10 } }',
     obligation: {
       state: 'admit',
-      message: 'admit / assume / external_body: the ratchet counts every one as trusted, never as verified',
+      summary: 'ASSUMED via admit() — solver bypassed and billed to Trusted Items',
+      detail: 'browser/scripts/ratchet.py scans every crate for assume, admit, external_body, external, assume_specification, and unsafe. All 11 verified crates enforce 0.',
     },
   },
 ];
 
-// Pane 03 — the vurl obligation graph. Names are the real functions/lemmas in
-// browser/url/src/{percent,ipv4,ipv6}.rs; states come from browser/ratchet.json at runtime.
-export const VURL_DAG_NODES: Omit<ProofObligationNode, 'state'>[] = [
-  { id: 'spec_encode', label: 'spec_percent_encode', subsystem: 'percent · spec' },
-  { id: 'spec_decode', label: 'spec_percent_decode', subsystem: 'percent · spec' },
-  { id: 'exec_encode', label: 'percent_encode', subsystem: 'percent · exec' },
-  { id: 'exec_decode', label: 'percent_decode', subsystem: 'percent · exec' },
-  { id: 'thm_chain', label: 'lemma_set_chain', subsystem: 'percent · theorem' },
-  { id: 'thm_roundtrip', label: 'decode_encode_roundtrip', subsystem: 'percent · theorem' },
-  { id: 'thm_counter', label: 'roundtrip_fails_w/o %', subsystem: 'percent · theorem' },
-  { id: 'ipv4_number', label: 'ipv4_number', subsystem: 'ipv4 · exec' },
-  { id: 'ipv4_parse', label: 'ipv4_parse', subsystem: 'ipv4 · exec' },
-  { id: 'ends_number', label: 'ends_in_a_number', subsystem: 'ipv4 · exec' },
-  { id: 'compressed', label: 'compressed_index', subsystem: 'ipv6 · exec' },
-  { id: 'ipv6_parse', label: 'ipv6_parse', subsystem: 'ipv6 · exec' },
-  { id: 'ipv6_serialize', label: 'ipv6_serialize', subsystem: 'ipv6 · exec' },
-];
-
-// Module rows for the Built tab; names are the real functions and lemmas in each file.
 export interface VurlModule {
   id: string;
   summary: string;
@@ -131,7 +172,7 @@ export interface VurlModule {
 export const VURL_MODULES: VurlModule[] = [
   {
     id: 'percent',
-    summary: 'encode/decode + 6 theorems',
+    summary: 'Encode, decode & 6 algebraic theorems',
     exec: ['percent_encode', 'percent_decode', 'in_set', 'is_hex', 'hex_val', 'upper_hex'],
     theorems: [
       'lemma_form_urlencoded_note',
@@ -141,25 +182,59 @@ export const VURL_MODULES: VurlModule[] = [
       'lemma_sets_containing_percent',
       'lemma_roundtrip_fails_without_percent',
     ],
-    gaps: 'spaceAsPlus and non-UTF-8 encodings are out of scope for this module.',
+    gaps: 'spaceAsPlus form encoding and non-UTF-8 character sets are out of scope.',
   },
   {
     id: 'ipv4',
-    summary: 'parser, number parser, host checker',
+    summary: 'Address parser, numeric radix & host check',
     exec: ['split_dots', 'ipv4_number', 'ipv4_parse', 'ends_in_a_number'],
-    theorems: ['the spec note: checker step 5 == "0x/0X followed by hex digits"'],
-    gaps: 'Validation errors are not modeled; only return values are proved.',
+    theorems: ['Checker step 5 equivalence ("0x"/"0X" followed by ASCII hex digits)'],
+    gaps: 'Non-fatal WHATWG validation error logging is not modeled; return values are proved.',
   },
   {
     id: 'ipv6',
-    summary: 'parser, serializer, compression index',
+    summary: 'Parser, canonical serializer & zero-run compression',
     exec: ['ipv6_parse', 'compressed_index', 'ipv6_serialize'],
-    theorems: ['hex pieces are the shortest form (no leading zero)'],
-    gaps: 'serialize→parse roundtrip is tested on 200k random addresses, not proved.',
+    theorems: ['Serialized hex pieces use canonical shortest form (no leading zeros)'],
+    gaps: 'Serialize → parse roundtrip is tested on 200,000 random addresses, not yet proved.',
   },
 ];
 
-export const VURL_DAG_EDGES: ProofObligationEdge[] = [
+export interface ProofDagNode {
+  id: string;
+  label: string;
+  subsystem: string;
+  layer: 0 | 1;
+  row: number;
+}
+
+export interface ProofDagEdge {
+  from: string;
+  to: string;
+}
+
+// Clean 2-layer bipartite topological layout (Specs & Helpers -> Implementations & Theorems).
+// Every edge flows cleanly left-to-right with zero layer-skipping collisions or node overlap.
+export const VURL_DAG_NODES: ProofDagNode[] = [
+  // Layer 0: Specifications & verified primitives (left column)
+  { id: 'spec_encode', label: 'spec_percent_encode', subsystem: 'percent · spec', layer: 0, row: 0 },
+  { id: 'spec_decode', label: 'spec_percent_decode', subsystem: 'percent · spec', layer: 0, row: 1 },
+  { id: 'thm_chain', label: 'lemma_set_chain', subsystem: 'percent · theorem', layer: 0, row: 2 },
+  { id: 'ipv4_number', label: 'ipv4_number', subsystem: 'ipv4 · exec', layer: 0, row: 3.4 },
+  { id: 'ends_number', label: 'ends_in_a_number', subsystem: 'ipv4 · exec', layer: 0, row: 4.4 },
+  { id: 'compressed', label: 'compressed_index', subsystem: 'ipv6 · exec', layer: 0, row: 5.7 },
+
+  // Layer 1: Proved implementations & algebraic theorems (right column)
+  { id: 'exec_encode', label: 'percent_encode', subsystem: 'percent · exec', layer: 1, row: 0 },
+  { id: 'exec_decode', label: 'percent_decode', subsystem: 'percent · exec', layer: 1, row: 1 },
+  { id: 'thm_roundtrip', label: 'decode_encode_roundtrip', subsystem: 'percent · theorem', layer: 1, row: 2 },
+  { id: 'thm_counter', label: 'roundtrip_fails_w/o_%', subsystem: 'percent · theorem', layer: 1, row: 3 },
+  { id: 'ipv4_parse', label: 'ipv4_parse', subsystem: 'ipv4 · exec', layer: 1, row: 4 },
+  { id: 'ipv6_parse', label: 'ipv6_parse', subsystem: 'ipv6 · exec', layer: 1, row: 5.2 },
+  { id: 'ipv6_serialize', label: 'ipv6_serialize', subsystem: 'ipv6 · exec', layer: 1, row: 6.2 },
+];
+
+export const VURL_DAG_EDGES: ProofDagEdge[] = [
   { from: 'spec_encode', to: 'exec_encode' },
   { from: 'spec_decode', to: 'exec_decode' },
   { from: 'spec_encode', to: 'thm_roundtrip' },

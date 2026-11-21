@@ -1,6 +1,6 @@
-// End-to-end checks for the verified-browser showcase (single-scroll layout).
-// Every metric on the page must equal what is in browser/ratchet.json and
-// data/stats.json — nothing hand-typed, errors instead of guesses.
+// End-to-end checks for the CONDUIT verified-browser GitHub Pages site.
+// Every live metric must equal browser/ratchet.json and data/stats.json — zero hand-typed
+// numbers, explicit errors on missing telemetry, verified interactive controls and layout geometry.
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const path = require("path");
@@ -10,31 +10,45 @@ const ratchet = JSON.parse(fs.readFileSync(path.join(root, "browser", "ratchet.j
 const stats = JSON.parse(fs.readFileSync(path.join(root, "data", "stats.json"), "utf8"));
 const totals = ratchet.totals;
 const totalTrusted = Object.values(totals.trusted).reduce((a, b) => a + b, 0);
+const totalDiffCases = ratchet.test262_suites.reduce(
+  (acc, s) => acc + (typeof s.differential_cases === "number" ? s.differential_cases : 0),
+  0
+);
 
-test("built HTML and JS contain no hard-coded ratchet results", async () => {
+test("built HTML, app JS, and site source contain no hard-coded ratchet results", async () => {
   const html = fs.readFileSync(path.join(root, "dist", "index.html"), "utf8");
   const assetsDir = path.join(root, "dist", "assets");
-  const jsFiles = fs
+  const appJsFiles = fs
     .readdirSync(assetsDir)
-    .filter((f) => f.endsWith(".js"))
-    .map((f) => ({ name: f, text: fs.readFileSync(path.join(assetsDir, f), "utf8") }));
+    .filter((f) => f.endsWith(".js") && !f.startsWith("vendor-"))
+    .map((f) => ({ name: `dist/assets/${f}`, text: fs.readFileSync(path.join(assetsDir, f), "utf8") }));
+  expect(appJsFiles.length, "app JS bundle must exist").toBeGreaterThan(0);
+
+  const srcDir = path.join(root, "site", "src");
+  const walkSrc = (dir) =>
+    fs.readdirSync(dir, { withFileTypes: true }).flatMap((ent) => {
+      const full = path.join(dir, ent.name);
+      return ent.isDirectory() ? walkSrc(full) : [{ name: path.relative(root, full), text: fs.readFileSync(full, "utf8") }];
+    });
+  const checkedFiles = [{ name: "dist/index.html", text: html }, ...appJsFiles, ...walkSrc(srcDir)];
 
   const forbidden = [
     String(totals.verified),
+    totals.verified.toLocaleString("en-US"),
     String(totals.verify_seconds),
     String(totals.source_lines),
+    totals.source_lines.toLocaleString("en-US"),
   ];
   for (const v of forbidden) {
-    expect(html, `dist/index.html must not contain ${v}`).not.toContain(v);
-    for (const jf of jsFiles) {
-      expect(jf.text, `dist/assets/${jf.name} must not contain ${v}`).not.toContain(v);
+    for (const file of checkedFiles) {
+      expect(file.text, `${file.name} must not contain hard-coded ${v}`).not.toContain(v);
     }
   }
 });
 
-test("scoreboard renders live 11-crate totals and respects chip density <= 2", async ({ page }) => {
+test("scoreboard renders live 11-crate totals and enforces adjacent pill density <= 2", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByTestId("stat-verified functions")).toHaveText(String(totals.verified));
+  await expect(page.getByTestId("stat-verified functions")).toHaveText(totals.verified.toLocaleString("en-US"));
   await expect(page.getByTestId("stat-trusted items")).toHaveText(String(totalTrusted));
   await expect(page.getByTestId("stat-re-verify time")).toHaveText(`${totals.verify_seconds}s`);
   await expect(page.getByTestId("stat-crate tests")).toHaveText(
@@ -44,22 +58,23 @@ test("scoreboard renders live 11-crate totals and respects chip density <= 2", a
   await expect(page.getByTestId("ratchet-stats")).toContainText(`${totals.crates} crates`);
   await expect(page.getByTestId("load-error")).toHaveCount(0);
 
-  // Label density check: no container may stack 3+ adjacent .wb-chip or .pill badges
-  const maxChipsInContainer = await page.evaluate(() => {
-    const containers = Array.from(document.querySelectorAll(".wb-chips, .pills"));
-    return containers.reduce((max, el) => {
-      const count = el.querySelectorAll(".wb-chip, .pill").length;
-      return Math.max(max, count);
-    }, 0);
-  });
-  expect(maxChipsInContainer, "adjacent chips/badges must be <= 2").toBeLessThanOrEqual(2);
+  // Label density check: provenance pill stack must stay <= 2 adjacent pills
+  const pillCount = await page.getByTestId("provenance-pills").locator(".ch-digest-pill").count();
+  expect(pillCount, "adjacent provenance pills must be <= 2").toBeLessThanOrEqual(2);
+
+  // Verify verus revision text is not clipped horizontally inside its digest pill
+  const verusClipped = await page
+    .getByTestId("provenance-pills")
+    .locator(".ch-digest-left")
+    .first()
+    .evaluate((el) => el.scrollWidth - el.clientWidth);
+  expect(verusClipped, "verus revision pill must not clip").toBeLessThanOrEqual(2);
 });
 
-test("all illustrations and icons load cleanly with naturalWidth > 0", async ({ page }) => {
+test("all modified illustrations and emblems load cleanly with naturalWidth > 0", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByTestId("hero-banner").locator("img")).toBeVisible();
+  await expect(page.getByTestId("hero-visual").locator("img")).toBeVisible();
   await expect(page.getByTestId("iso-architecture").locator("img")).toBeVisible();
-  await expect(page.getByTestId("arch-cards").locator("article")).toHaveCount(4);
 
   const imgStates = await page.locator("img").evaluateAll((imgs) =>
     imgs.map((img) => ({
@@ -68,58 +83,111 @@ test("all illustrations and icons load cleanly with naturalWidth > 0", async ({ 
       naturalWidth: img.naturalWidth,
     }))
   );
-  expect(imgStates.length).toBeGreaterThanOrEqual(7);
+  expect(imgStates.length).toBeGreaterThanOrEqual(8);
   for (const img of imgStates) {
     expect(img.complete, `${img.src} must finish loading`).toBe(true);
     expect(img.naturalWidth, `${img.src} must have naturalWidth > 0`).toBeGreaterThan(0);
   }
 });
 
-test("single scroll: no pane layout, chapters in familiarity order, plain copy", async ({ page }) => {
+test("chapters, navigation, and upgraded copy are consistent and free of stale claims", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator("ix-pane-layout")).toHaveCount(0);
-  await expect(page.locator("ix-blind")).toHaveCount(0);
   const ids = await page.locator("main section").evaluateAll((ss) => ss.map((s) => s.id));
-  expect(ids).toEqual(["coverage", "verus", "why", "arch", "status"]);
-  const navTargets = await page.locator(".wb-nav a").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
+  expect(ids).toEqual(["coverage", "proofs", "scope", "arch", "ratchet"]);
+  const navTargets = await page.locator(".ch-nav a").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
   expect(navTargets).toEqual(ids.map((id) => `#${id}`));
+
   const lede = page.getByTestId("lede");
-  await expect(lede).toContainText("Of the last 20 Chrome bugs");
+  await expect(lede).toContainText("last 20 Chrome vulnerabilities");
   await expect(lede).toContainText("13 were in V8");
   await expect(lede).toContainText(`${totals.crates} crates`);
+
   const body = await page.locator("body").innerText();
-  for (const phrase of ["Honesty clause", "First contact", "The other half", "project's bet", "Only vurl is implemented"]) {
-    expect(body, `stale/marketing phrase removed: ${phrase}`).not.toContain(phrase);
+  for (const stale of [
+    "vjs is 0% built",
+    "Only vurl is implemented",
+    "Bytecode + simulation proof deferred to J7",
+    "Honesty clause",
+    "Apple Silicon",
+  ]) {
+    expect(body, `stale phrase must not appear: ${stale}`).not.toContain(stale);
   }
 });
 
-test("section 02: state cards switch the editor; wide column does not clip code", async ({ page }) => {
+test("section 1: interactive 20-CVE filters and primary-source detail inspector", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByTestId("verus-file")).toHaveText("browser/url/src/percent.rs");
-  await expect(page.getByTestId("inlay-state-10")).toHaveText("verified");
-  const overflow = await page.locator(".ix-verus-body").evaluate((el) => el.scrollWidth - el.clientWidth);
-  expect(overflow, "code column must not scroll horizontally").toBeLessThanOrEqual(2);
-  await page.getByTestId("state-failed").click();
-  await expect(page.getByTestId("inlay-state-4")).toHaveText("failed");
-  await expect(page.getByTestId("inlay-4")).toContainText("0x46");
-  await page.getByTestId("state-timeout").click();
-  await expect(page.getByTestId("inlay-state-8")).toHaveText("timeout");
-  await page.getByTestId("state-admit").click();
-  await expect(page.getByTestId("inlay-state-9")).toHaveText("admit");
+  await expect(page.getByTestId("packet-count")).toHaveText("20 CVEs");
+  await expect(page.locator("#coverage")).toContainText("13/20");
+  await expect(page.locator("#coverage")).toContainText("3/20");
+  await expect(page.locator("#coverage")).toContainText("4/20");
+
+  // Default selected CVE is first row
+  const detail = page.getByTestId("cve-detail");
+  await expect(detail).toContainText("CVE-2026-125350");
+  await expect(detail).toContainText("157.0.8103.50");
+
+  // Filter to graphics gap (4 CVEs) and inspect Skia CVE
+  await page.getByTestId("cve-filter-graphics").click();
+  await expect(page.getByTestId("packet-count")).toHaveText("4 CVEs");
+  await expect(page.getByTestId("cve-table").locator("tbody tr")).toHaveCount(4);
+  await page.getByTestId("cve-row-CVE-2026-3909").click();
+  await expect(detail).toContainText("CVE-2026-3909");
+  await expect(detail).toContainText("Explicitly outside formal verification");
+
+  // Filter back to all
+  await page.getByTestId("cve-filter-all").click();
+  await expect(page.getByTestId("cve-table").locator("tbody tr")).toHaveCount(20);
 });
 
-test("section 03: live scale bars, reasons disclosures, prior-art table without inner scroll", async ({ page }) => {
+test("section 2: 4-state Verus workbench, fix-typo action, and live 11-crate proof explorer", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByTestId("verus-file")).toHaveText("browser/url/src/percent.rs");
+  await expect(page.getByTestId("inlay-state-8")).toHaveText("verified");
+
+  const overflow = await page
+    .getByTestId("verus-code-workbench")
+    .evaluate((el) => el.scrollWidth - el.clientWidth);
+  expect(overflow, "Verus code workbench must not overflow horizontally").toBeLessThanOrEqual(2);
+
+  // Switch to Counterexample -> verify Z3 model -> click Fix Typo button back to Verified
+  await page.getByTestId("state-failed").click();
+  await expect(page.getByTestId("inlay-state-4")).toHaveText("failed");
+  await expect(page.getByTestId("z3-counterexample")).toContainText('0x46 ("F")');
+  await page.getByTestId("btn-fix-typo").click();
+  await expect(page.getByTestId("verus-file")).toHaveText("browser/url/src/percent.rs");
+  await expect(page.getByTestId("inlay-state-8")).toHaveText("verified");
+
+  // Switch to Timeout & Admit states
+  await page.getByTestId("state-timeout").click();
+  await expect(page.getByTestId("inlay-state-4")).toHaveText("timeout");
+  await page.getByTestId("state-admit").click();
+  await expect(page.getByTestId("inlay-state-5")).toHaveText("admit");
+
+  // Live 11-crate proof source explorer fetches real .rs files
+  await page.getByTestId("tab-live-proofs").click();
+  await expect(page.getByTestId("live-proof-file")).toHaveText("browser/url/src/ipv6.rs");
+  await expect(page.getByTestId("live-proof-source")).toContainText("spec_hex_run");
+
+  await page.getByTestId("proof-crate-vjs_vm").click();
+  await expect(page.getByTestId("live-proof-file")).toHaveText("browser/vjs-vm/src/compiler_proof.rs");
+  await expect(page.getByTestId("live-proof-source")).toContainText("CompCert");
+});
+
+test("section 3: live scale bars, constraints, and prior-art table fit cleanly", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByTestId("scale-sel4")).toHaveText("8,700 LOC");
   await expect(page.getByTestId("scale-conduit")).toHaveText(`${totals.source_lines.toLocaleString("en-US")} LOC`);
   await expect(page.getByTestId("reasons").locator("details")).toHaveCount(4);
+
   const table = page.getByTestId("systems-table");
   await expect(table.locator("tbody tr")).toHaveCount(9);
   const wrapOverflow = await table.locator("..").evaluate((el) => el.scrollWidth - el.clientWidth);
   expect(wrapOverflow, "prior-art table must fit its column").toBeLessThanOrEqual(2);
 });
 
-test("section 05: 11-crate table, J0-J7 live rows, VM benchmarks, conformance suites, DAG and honesty card", async ({ page }) => {
+test("section 5: 11-crate ledger, J0-J7 rows, VM benchmarks, suites, tradeoffs, and zero-overlap DAG", async ({
+  page,
+}) => {
   await page.goto("/");
   const cratesTable = page.getByTestId("crates-table");
   await expect(cratesTable.locator("tbody tr")).toHaveCount(ratchet.crates.length);
@@ -133,46 +201,64 @@ test("section 05: 11-crate table, J0-J7 live rows, VM benchmarks, conformance su
     await expect(vjsRows).toContainText(`${step.test262_passed}/${step.test262_total}`);
   }
 
-  await expect(page.getByTestId("vm-benchmarks")).toContainText(`${ratchet.vm_benchmarks_geomean_speedup}×`);
-  await expect(page.getByTestId("suites-table").locator("tbody tr")).toHaveCount(ratchet.test262_suites.length);
+  const benchCard = page.getByTestId("vm-benchmarks");
+  await expect(benchCard).toContainText(`${ratchet.vm_benchmarks_geomean_speedup}×`);
+  const benchOverflow = await benchCard
+    .locator(".ch-table-card")
+    .evaluate((el) => el.scrollWidth - el.clientWidth);
+  expect(benchOverflow, "VM benchmark table must fit without horizontal clipping").toBeLessThanOrEqual(2);
+
+  const suites = page.getByTestId("suites-table");
+  await expect(suites.locator("tbody tr")).toHaveCount(ratchet.test262_suites.length);
+  await expect(suites).toContainText(totalDiffCases.toLocaleString("en-US"));
+
   await expect(page.getByTestId("modules").locator("details")).toHaveCount(3);
   await expect(page.getByTestId("tradeoffs").locator("details")).toHaveCount(9);
   await expect(page.getByTestId("fuel-theorem")).toContainText("Unsupported(f)");
   await expect(page.getByTestId("dag-summary")).toContainText("13 obligations");
 
+  // Verify ZERO overlapping nodes in the Proof Dependency DAG
+  const dagOverlap = await page.locator(".ch-dag-node").evaluateAll((nodes) => {
+    const rects = nodes.map((n) => n.getBoundingClientRect());
+    for (let i = 0; i < rects.length; i++) {
+      for (let j = i + 1; j < rects.length; j++) {
+        const a = rects[i];
+        const b = rects[j];
+        const overlaps = !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top);
+        if (overlaps) return { i, j, a, b };
+      }
+    }
+    return null;
+  });
+  expect(dagOverlap, "Proof DAG nodes must never overlap").toBeNull();
+
+  // Clicking a DAG node updates the dependency inspector
+  await page.getByTestId("dag-node-ipv4_parse").click();
+  await expect(page.getByTestId("dag-inspector")).toContainText("ipv4_parse");
+  await expect(page.getByTestId("dag-inspector")).toContainText("ipv4_number");
+
+  // Disclosure card stays accurate and never truncates
   const card = page.getByTestId("honesty-card");
   await expect(card).toContainText(`${totals.crates} crates`);
-  await expect(card).toContainText("kernel theorems");
+  await expect(card).toContainText("non-interference theorems");
   const clipped = await card.evaluate((el) => el.scrollWidth - el.clientWidth);
-  expect(clipped, "honesty card must not truncate").toBeLessThanOrEqual(2);
+  expect(clipped, "scope disclosure card must not truncate").toBeLessThanOrEqual(2);
 
+  // Expanding a tradeoff shows real updated engineering tradeoff copy
   await page.getByTestId("tradeoffs").locator("details").nth(1).locator("summary").click();
   await expect(page.getByTestId("tradeoffs").locator("details").nth(1)).toContainText("Given up");
 });
 
-test("coverage: full-width grid, tally, in-place CVE detail", async ({ page }) => {
+test("theme switch toggles dark/light mode cleanly and persists", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByTestId("packet-count")).toHaveText("20 CVEs");
-  await expect(page.getByTestId("coverage-tally")).toContainText("13/20");
-  await expect(page.getByTestId("coverage-tally")).toContainText("3/20");
-  await expect(page.getByTestId("coverage-tally")).toContainText("4/20");
-  await page.locator('[role="row"][aria-rowindex="1"]').click();
-  const detail = page.getByTestId("cve-detail");
-  await expect(detail).toContainText("CVE-2026-125350");
-  await expect(detail).toContainText("This engine's answer");
-  await page.locator('[role="row"][aria-rowindex="6"]').click();
-  await expect(detail).toContainText("CVE-2026-3909");
-  await expect(detail).toContainText("Not covered by proofs");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.getByTestId("theme-switch").click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
 });
 
-test("theme toggle switches the iX color schema", async ({ page }) => {
-  await page.goto("/");
-  await expect(page.locator("html")).toHaveAttribute("data-ix-color-schema", "dark");
-  await page.locator("ix-toggle").click();
-  await expect(page.locator("html")).toHaveAttribute("data-ix-color-schema", "light");
-});
-
-test("provenance footer and local data links resolve", async ({ page, request }) => {
+test("provenance footer and staged local assets resolve with HTTP 200", async ({ page, request }) => {
   await page.goto("/");
   const footer = page.getByTestId("provenance-footer");
   await expect(footer).toContainText("browser/ratchet.json");
@@ -183,8 +269,20 @@ test("provenance footer and local data links resolve", async ({ page, request })
     "irrigation.html",
     "styles.css",
     "assets/conduit-favicon.png",
+    "assets/conduit-mark.png",
+    "assets/hero-conduit-core.webp",
+    "assets/flair-prover.webp",
+    "assets/flair-synthesis.webp",
+    "assets/flair-kernel.webp",
+    "assets/flair-ratchet.webp",
+    "assets/flair-differential.webp",
+    "assets/conduit-arch-iso.webp",
     "assets/conduit-banner-wide.jpg",
-    "assets/conduit-iso-architecture.jpg",
+    "assets/fonts/archivo-latin.woff2",
+    "assets/fonts/manrope-latin.woff2",
+    "assets/fonts/jetbrains-mono-latin.woff2",
+    "data/examples/browser-vjs_vm-compiler_proof.rs",
+    "data/logs/browser-vjs_vm.log",
   ]) {
     expect((await request.get(`/${h}`)).status(), h).toBe(200);
   }

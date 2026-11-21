@@ -11,18 +11,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "types": ["vite/client"],
-    "baseUrl": ".",
-    "paths": {
-      "@maceip/ix-workbench-primitives": [
-        "../../ix-workbench-primitives/src/index.ts",
-        "../ix-workbench-primitives/src/index.ts"
-      ],
-      "@maceip/ix-workbench-primitives/styles.css": [
-        "../../ix-workbench-primitives/src/ix-workbench.css",
-        "../ix-workbench-primitives/src/ix-workbench.css"
-      ]
-    }
+    "types": ["vite/client"]
   },
   "include": ["src"]
 }

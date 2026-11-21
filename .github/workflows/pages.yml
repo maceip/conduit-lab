@@ -19,28 +19,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # The showcase consumes @maceip/ix-workbench-primitives from source (unpublished
-      # on npm). site/vite.config.ts resolves this checkout at ../ix-workbench-primitives.
-      - uses: actions/checkout@v4
-        with:
-          repository: maceip/ix-workbench-primitives
-          path: ix-workbench-primitives
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: |
-            site/package-lock.json
-            ix-workbench-primitives/package-lock.json
-      # The primitives are consumed from source, so their own node_modules must exist:
-      # tsc and postcss resolve react / @siemens/ix relative to the primitives' files.
-      - name: Install primitives dependencies
-        working-directory: ix-workbench-primitives
-        run: npm ci --no-audit --no-fund
-      - name: Build showcase (vite + stage runtime data)
+          cache-dependency-path: site/package-lock.json
+      - name: Build site (vite + stage runtime data)
         working-directory: site
         run: |
-          npm ci
+          npm ci --no-audit --no-fund
           npm run typecheck
           npm run build
       - uses: actions/configure-pages@v5

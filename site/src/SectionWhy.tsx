@@ -1,28 +1,28 @@
 import React from 'react';
 import { NR, ratchetTotals, type Ratchet } from './data';
-import { SYSTEMS, SCALE_ITEMS } from './content/systems';
+import { SCALE_ITEMS, SYSTEMS } from './content/systems';
 import { DetailsRow, Field, ScaleCompare, Source } from './parts';
 
-const REASONS = [
+const CONSTRAINTS = [
   {
-    k: '1',
-    v: 'Proofs cost more than the code',
-    body: 'seL4 took ≈20 person-years for 8,700 lines of C. The Isabelle proof is an order of magnitude larger than the code it covers, and the ratio worsens with concurrency and driver state machines. Extrapolating it to ≈36M lines of Linux is not a plan.',
+    k: '01',
+    v: 'Proofs grow faster than the code they certify',
+    body: 'seL4 required roughly 20 person-years to verify 8,700 lines of C. The Isabelle proof is an order of magnitude larger than the kernel itself, and complexity compounds with concurrency and mutable state machines. Scaling that directly to ~36 million lines of Linux or Chromium is not a viable plan.',
   },
   {
-    k: '2',
-    v: 'The specification keeps changing',
-    body: 'A proof binds one code version to one spec version. Linux merges changes hourly and rewrites subsystems every release; a full-kernel proof would be obsolete before it finished. seL4 survives by keeping its API tiny and stable. This project pins spec commits and re-verifies against upstream Verus weekly.',
+    k: '02',
+    v: 'Moving specifications break proofs continuously',
+    body: 'A formal theorem binds one exact code snapshot to one exact specification. General-purpose kernels and browsers merge thousands of changes monthly. seL4 stays verifiable by keeping its API tiny and fixed; CONDUIT pins standard commits and tracks upstream Verus weekly.',
   },
   {
-    k: '3',
-    v: 'Drivers and hardware are not provable',
-    body: "Drivers are most of Linux's code and most of its bugs, and they talk to hardware nobody has formalized. Even seL4's theorem excludes boot code, assembly and the hardware itself. That code has to be isolated and labeled unproved.",
+    k: '03',
+    v: 'Hardware and device drivers resist formalization',
+    body: 'Drivers account for the majority of Linux source lines and vulnerabilities, yet talk to undocumented silicon nobody has formalized. Even seL4 excludes boot assembly and hardware semantics from its theorem. Unformalized code must be isolated and labeled untrusted.',
   },
   {
-    k: '4',
-    v: 'Verify the boundary, contain the rest',
-    body: 'Shipped verification picks small, stable targets: crypto arithmetic, compilers, microkernels, certificate validation. Quark proved a browser kernel in Coq in 2012 and ran unmodified WebKit as untrusted sandboxed tabs behind it. Its theorems covered tab isolation, cookie integrity and the address bar, with no proof about WebKit at all.',
+    k: '04',
+    v: 'Prove the security boundary, isolate everything else',
+    body: 'Every shipped formal-verification success targets compact, high-leverage surfaces: cryptographic arithmetic, compilers, microkernels, and certificate policy. Quark proved a Coq browser kernel in 2012 while running unmodified WebKit in sandboxed tabs. CONDUIT extends that boundary inward one crate at a time.',
   },
 ];
 
@@ -32,62 +32,79 @@ const SectionWhy: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
     ...SCALE_ITEMS,
     {
       id: 'conduit',
-      label: 'conduit — verified crates',
+      label: 'CONDUIT — verified browser crates',
       lines: totals?.source_lines ?? 1,
       display: totals ? `${totals.source_lines.toLocaleString('en-US')} LOC` : NR,
-      tone: 'verified' as const,
+      tone: 'proved' as const,
       note: totals
-        ? `${totals.verified.toLocaleString('en-US')} verified functions across ${totals.crates} crates · ${totals.verify_seconds}s to re-verify`
-        : 'load browser/ratchet.json for the live numbers',
+        ? `${totals.verified.toLocaleString('en-US')} verified functions across ${totals.crates} crates · ${totals.verify_seconds}s full re-verify`
+        : 'Load browser/ratchet.json for live workspace scale',
     },
   ];
 
   return (
-    <section className="wb-row12" id="why">
-      <div className="wb-c5 wb-col">
-        <div className="wb-chapter">03 · Scope</div>
-        <h2 className="wb-h2">Why nobody proves a whole browser, or a whole Linux</h2>
-        <p className="wb-prose">
-          seL4's proof of an operating-system kernel landed in 2009. Linux is about 4,000 times
-          larger and has no such proof. A modern browser faces the same four obstacles, so this
-          project does what every shipped verification effort did and picks the target small.
+    <section className="ch-spec-row" id="scope">
+      <div className="ch-prose-col">
+        <div className="ch-section-lead">
+          <img
+            src="assets/flair-synthesis.webp"
+            alt="Neuro-symbolic specification synthesis orbital core"
+            className="ch-flair-medallion"
+            width={76}
+            height={76}
+          />
+          <h2 className="ch-section-title">
+            Why verification targets boundaries instead of 36 million lines
+          </h2>
+        </div>
+
+        <p className="ch-prose-text">
+          seL4 proved an operating-system microkernel correct in 2009. Modern Linux is four thousand
+          times larger and still carries no end-to-end proof. A full web browser hits the same four
+          constraints, so CONDUIT follows the proven strategy: verify the security kernel and
+          highest-risk engines, sandbox the rest, and never let the trusted base grow.
         </p>
+
         <ScaleCompare items={scaleItems} />
-        <div data-testid="reasons">
-          {REASONS.map((r, i) => (
-            <DetailsRow key={r.k} k={r.k} v={r.v} open={i === 0}>
-              <Field label="Why it blocks a verified Linux">{r.body}</Field>
+
+        <div className="ch-accordion-group" data-testid="reasons">
+          {CONSTRAINTS.map((c, idx) => (
+            <DetailsRow key={c.k} k={c.k} v={c.v} open={idx === 0}>
+              <Field label="Engineering constraint">{c.body}</Field>
             </DetailsRow>
           ))}
         </div>
-        <p className="wb-prose">
-          This project follows Quark. It proves the security kernel, runs real unverified engines
-          in per-site sandboxes behind it, and then replaces renderer components with verified
-          ones, one at a time. Section 05 lists what exists and what is still design.
-        </p>
-        <p className="wb-prose wb-note">
-          Sources: seL4 SOSP'09; Linux Foundation 2023 kernel report; browser/ratchet.json.
+
+        <p className="ch-prose-note">
+          Sources: seL4 SOSP &apos;09 · Linux Foundation 2023 Kernel Report · live{' '}
+          <code>browser/ratchet.json</code>.
         </p>
       </div>
-      <div className="wb-c7 wb-col">
-        <div className="wb-box-t">What verification has actually shipped</div>
-        <div className="wb-table-wrap">
-          <table className="wb-table" data-testid="systems-table">
+
+      <div className="ch-artifact-col">
+        <div className="ch-table-card">
+          <div className="ch-table-meta">
+            <span>Prior art · What formal verification has shipped</span>
+            <span>9 landmark systems</span>
+          </div>
+          <table className="ch-table" data-testid="systems-table">
             <thead>
               <tr>
                 <th>System</th>
-                <th>What is proved</th>
+                <th>What was proved</th>
                 <th>Scale / effort</th>
-                <th>Where it ships</th>
+                <th>Role in CONDUIT</th>
               </tr>
             </thead>
             <tbody>
               {SYSTEMS.map((s) => (
                 <tr key={s.name}>
-                  <td className="mono"><Source href={s.href}>{s.name}</Source></td>
+                  <td className="ch-mono ch-nowrap">
+                    <Source href={s.href}>{s.name}</Source>
+                  </td>
                   <td>{s.proved}</td>
-                  <td>{s.scale}</td>
-                  <td>{s.ships}</td>
+                  <td className="ch-mono-sm">{s.scale}</td>
+                  <td>{s.role}</td>
                 </tr>
               ))}
             </tbody>

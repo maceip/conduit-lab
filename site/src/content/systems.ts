@@ -1,94 +1,93 @@
-// Pane 02 — what formal verification has actually shipped, with sources.
-// Figures are the published ones; where a number is approximate it is marked ≈.
+// Landmark shipped and research formal verification systems, with primary sources.
 export interface VerifiedSystem {
   name: string;
   href: string;
   proved: string;
   scale: string;
-  ships: string;
+  role: string;
 }
 
 export const SYSTEMS: VerifiedSystem[] = [
   {
     name: 'seL4 (2009)',
     href: 'https://sel4.systems/',
-    proved: 'Functional correctness of the kernel against an abstract spec; later integrity + confidentiality',
-    scale: '8,700 LOC C · ≈20 person-years of proof',
-    ships: 'High-assurance platforms (HACMS and successors)',
+    proved: 'End-to-end functional correctness, integrity, and confidentiality of an OS microkernel',
+    scale: '8,700 LOC C · ≈20 person-years (Isabelle/HOL)',
+    role: 'Benchmark for small-kernel proof discipline',
   },
   {
     name: 'CompCert (2009–)',
     href: 'https://compcert.org/',
-    proved: 'Semantics preservation of C compilation, end to end',
+    proved: 'Semantics preservation across an optimizing C compiler pipeline',
     scale: 'Tens of thousands of lines of Coq',
-    ships: 'Avionics / nuclear / railway toolchains',
+    role: 'Simulation-proof pattern used in J7 vjs_vm',
   },
   {
     name: 'fiat-crypto (2017)',
     href: 'https://github.com/mit-plv/fiat-crypto',
-    proved: 'Correctness of cryptographic field arithmetic',
-    scale: 'Generated C/asm with machine-checked proofs',
-    ships: 'BoringSSL → Chrome',
+    proved: 'Correctness of generated elliptic-curve field arithmetic',
+    scale: 'Verified C & assembly generation (Coq)',
+    role: 'Ships inside BoringSSL → Chrome',
   },
   {
     name: 'HACL* / EverCrypt',
     href: 'https://github.com/hacl-star/hacl-star',
-    proved: 'Memory safety, functional correctness, secret independence',
-    scale: 'F* → verified C/asm',
-    ships: 'Firefox (NSS)',
+    proved: 'Memory safety, functional correctness, and secret independence',
+    scale: 'F* extracted to verified C & assembly',
+    role: 'Ships inside Firefox (NSS)',
   },
   {
     name: 'Verdict (2025)',
     href: 'https://github.com/secure-foundations/verdict',
-    proved: 'X.509 path validation == a readable policy spec',
-    scale: 'Policies 372–405 lines · whole project verifies in 57 s',
-    ships: 'Research (USENIX Security ’25) — this project’s TLS layer',
+    proved: 'X.509 certificate path validation equivalent to a readable policy spec',
+    scale: '372–405 LOC policies · 57s full Verus verify',
+    role: 'CONDUIT’s planned TLS validation layer & Vest/rspec! model',
   },
   {
     name: 'Quark (2012)',
     href: 'https://www.usenix.org/conference/usenixsecurity12/technical-sessions/presentation/jang',
-    proved: 'Tab non-interference, cookie integrity, address-bar correctness',
-    scale: 'Coq kernel; unmodified WebKit as untrusted tabs',
-    ships: 'Research browser — the pattern this engine copies',
+    proved: 'Tab non-interference, cookie integrity, and address-bar authenticity',
+    scale: 'Coq kernel gating unmodified WebKit renderers',
+    role: 'Kernel-and-sandbox shim pattern CONDUIT adapts',
   },
   {
     name: 'JSCert / JSRef (2014)',
     href: 'https://github.com/jscert/jscert',
-    proved: 'ES5 semantics in Coq; extracted interpreter proved correct',
-    scale: 'ES5 chapters 8–14; found bugs in browsers, the spec, test262',
-    ships: 'Research — the cautionary tale vjs answers',
+    proved: 'Mechanized ES5 semantics and verified extracted reference interpreter',
+    scale: 'ES5 ch. 8–14 in Coq; surfaced spec & test262 bugs',
+    role: 'Cautionary lesson: left parsing unverified (vjs verifies J3)',
   },
   {
     name: 'Warblre (2024)',
     href: 'https://arxiv.org/abs/2403.11919',
-    proved: 'ES2023 regex matching terminates and matches the spec',
-    scale: 'Coq, spec text interleaved line by line · 495/498 test262',
-    ships: 'Research — vjs ports its semantics (J5)',
+    proved: 'ECMAScript 2023 RegExp compilation and matching always terminate cleanly',
+    scale: 'Coq spec interleaved line by line · 495/498 test262',
+    role: 'Terminating RegExp model ported into J5 vjs_builtins',
   },
   {
     name: 'WasmCert / vWasm',
     href: 'https://github.com/WasmCert/WasmCert-Coq',
-    proved: 'Wasm semantics; provably safe sandboxing of compiled code',
-    scale: 'Coq / Isabelle',
-    ships: 'Research — the route to containing an untrusted JIT',
+    proved: 'WebAssembly type soundness and provably safe linear-memory sandboxing',
+    scale: 'Coq / Isabelle mechanized semantics & SFI',
+    role: 'Linear-memory containment model proved in J7 vwasm',
   },
 ];
 
 export const SCALE_ITEMS = [
   {
     id: 'sel4',
-    label: 'seL4 kernel — verified (2009)',
+    label: 'seL4 microkernel — proved (2009)',
     lines: 8_700,
     display: '8,700 LOC',
-    tone: 'verified' as const,
-    note: '≈20 person-years of Isabelle proof for this much C',
+    tone: 'proved' as const,
+    note: '≈20 person-years of Isabelle proof for a minimal, fixed C API',
   },
   {
     id: 'linux',
     label: 'Linux kernel — unverified (2023)',
     lines: 36_000_000,
     display: '≈36,000,000 LOC',
-    tone: 'critical' as const,
-    note: 'Linux Foundation 2023 kernel report; drivers are the majority of the code',
+    tone: 'fail' as const,
+    note: 'Linux Foundation 2023 report; device drivers dominate both size and bug counts',
   },
 ];

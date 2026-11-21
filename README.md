@@ -58,21 +58,19 @@ domain hosts, IDNA, or the full URL parser state machine.
 
 ## The site
 
-The GitHub Pages site (`site/`, React 19 on
-[`@maceip/ix-workbench-primitives`](https://github.com/maceip/ix-workbench-primitives), Siemens iX v5)
-tells the same story in five sections: the exploited CVEs and the answer to each, what a Verus
-proof checks (shown on real `vurl` code), why nobody proves a whole browser or a whole Linux, the
-kernel-and-renderers design, and live 11-crate status. It reads every number at load time from
-`browser/ratchet.json` and `data/stats.json`. If either file is missing, it shows an error and
-`not recorded`. Playwright checks the rendered page against both files.
+The GitHub Pages site (`site/`, React 19 + TypeScript on [`@clickhouse/click-ui`](https://github.com/ClickHouse/click-ui))
+uses a Tufte two-column executable specification layout with a live top ratchet scoreboard across
+five sections: the last 20 exploited Chrome CVEs and architectural coverage, what a Verus proof
+checks (including all four obligation states and a live 11-crate proof source explorer), why
+verification targets security boundaries instead of 36 million lines, the verified-kernel and
+per-site renderer architecture, and the live 11-crate verification ratchet, J0–J7 track, bytecode VM
+benchmarks, conformance suites, engineering tradeoffs, and `vurl` dependency DAG. Every metric loads
+at runtime from `browser/ratchet.json` and `data/stats.json`; missing data surfaces an explicit
+error and `not recorded`. Playwright verifies the rendered page against both JSON files.
 
 ### Build
 
-The primitives are used from source because the package is not on npm. Clone them next to this
-repo. `site/vite.config.ts` also accepts a checkout inside the repo, which is what CI uses.
-
 ```sh
-git clone https://github.com/maceip/ix-workbench-primitives ../ix-workbench-primitives
 npm --prefix site install
 npm run build          # vite build -> dist/, then stages data/, ratchet, assets/, irrigation demo
 ```
@@ -113,10 +111,8 @@ python3 -m http.server 8000 --directory dist   # open http://localhost:8000
 
 ### Deployment
 
-On push to `main`, `.github/workflows/pages.yml` checks out this repo and
-`maceip/ix-workbench-primitives`, builds `site/` with Node 20, and uploads `dist/` to GitHub Pages.
-Design-system changes only reach the deployed site after they are pushed to
-`maceip/ix-workbench-primitives`.
+On push to `main`, `.github/workflows/pages.yml` builds `site/` with Node 20 (running TypeScript
+typechecking, Vite bundling, and `site/scripts/stage.mjs`) and deploys `dist/` to GitHub Pages.
 
 ## Irrigation console
 
