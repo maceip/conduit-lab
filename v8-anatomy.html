@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>V8 Engine Isometric Anatomy — CONDUIT Lab</title>
+  <title>V8 Tier-1 Mandatory Core Isometric Anatomy — CONDUIT Lab</title>
   <link rel="icon" type="image/png" href="assets/conduit-favicon.png" />
   <style>
     @font-face {
@@ -76,7 +76,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 14px;
       padding: 12px 28px;
       background: color-mix(in srgb, var(--bg-elev) 88%, transparent);
       backdrop-filter: blur(12px);
@@ -101,21 +101,22 @@
     .jump-nav {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       flex-wrap: wrap;
     }
     .jump-nav a {
       color: var(--text-sec);
       text-decoration: none;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 500;
+      font-family: var(--font-mono);
     }
     .jump-nav a:hover { color: var(--accent); }
 
     .controls {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
     .seg-group {
@@ -154,18 +155,26 @@
     .theme-btn:hover { border-color: var(--accent); }
 
     .container {
-      max-width: 1380px;
+      max-width: 1420px;
       margin: 0 auto;
       padding: 36px 28px 80px;
     }
     .intro {
       display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
       gap: 28px;
       align-items: end;
       padding-bottom: 28px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 36px;
+      margin-bottom: 32px;
+    }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 8px;
     }
     .intro h1 {
       margin: 0 0 12px;
@@ -177,7 +186,7 @@
     .intro p {
       margin: 0;
       color: var(--text-sec);
-      max-width: 68ch;
+      max-width: 70ch;
     }
     .ratchet-box {
       border: 1px solid var(--border);
@@ -209,333 +218,447 @@
       background: rgba(217, 83, 79, 0.12);
     }
 
-    .comp-section {
-      padding: 32px 0;
-      border-bottom: 1px solid var(--border);
+    .machines-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+      align-items: start;
     }
-    .comp-header {
+    body[data-cols="1"] .machines-grid {
+      grid-template-columns: minmax(0, 900px);
+      justify-content: center;
+    }
+
+    .machine-card {
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .machine-top {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 20px;
-      margin-bottom: 18px;
+      gap: 12px;
       flex-wrap: wrap;
     }
-    .comp-title-block h2 {
-      margin: 0 0 6px;
+    .machine-title-group h2 {
+      margin: 0 0 4px;
       font-family: var(--font-display);
-      font-size: 1.45rem;
+      font-size: 1.25rem;
       letter-spacing: -0.015em;
     }
-    .comp-title-block p {
+    .machine-metaphor {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .machine-desc {
       margin: 0;
       color: var(--text-sec);
-      max-width: 72ch;
-      font-size: 14.5px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .machine-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-top: 2px;
     }
     .counterpart-pill {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 7px 12px;
+      padding: 5px 10px;
       border: 1px solid var(--border);
       border-radius: 6px;
-      background: var(--bg-card);
+      background: var(--bg);
       font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-sec);
-      white-space: nowrap;
     }
     .counterpart-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
       background: var(--proved);
+      flex-shrink: 0;
     }
-
-    .pair-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 22px;
-      align-items: start;
-    }
-    body[data-view="anatomy"] .pair-grid,
-    body[data-view="iso"] .pair-grid {
-      grid-template-columns: minmax(0, 860px);
-    }
-    body[data-view="anatomy"] .fig-col[data-kind="iso"],
-    body[data-view="iso"] .fig-col[data-kind="anatomy"] {
-      display: none;
-    }
-
-    .fig-col {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .fig-meta-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
+    .standalone-link {
       font-family: var(--font-mono);
-      font-size: 11.5px;
-      color: var(--text-muted);
-      padding: 0 2px;
-    }
-    .fig-meta-bar a {
+      font-size: 12px;
       color: var(--text-sec);
       text-decoration: none;
     }
-    .fig-meta-bar a:hover { color: var(--accent); }
+    .standalone-link:hover { color: var(--accent); }
+
     .fig-frame {
       width: 100%;
       border: 0;
       display: block;
       background: transparent;
-      min-height: 440px;
+      min-height: 300px;
       border-radius: 12px;
     }
 
     .footer {
-      margin-top: 40px;
+      margin-top: 48px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       gap: 16px;
       flex-wrap: wrap;
-      font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: 13px;
       color: var(--text-muted);
     }
-    .footer a { color: var(--text-sec); text-decoration: none; }
-    .footer a:hover { color: var(--accent); }
+    .footer a { color: var(--text-sec); }
 
-    @media (max-width: 1024px) {
-      .intro, .pair-grid { grid-template-columns: 1fr; }
+    @media (max-width: 1040px) {
+      .intro { grid-template-columns: 1fr; }
+      .machines-grid { grid-template-columns: 1fr; }
+      .topbar { padding: 12px 16px; }
+      .container { padding: 24px 16px 64px; }
     }
   </style>
 </head>
-<body data-view="both">
+<body data-cols="2">
   <header class="topbar">
-    <a class="brand" href="index.html" data-testid="back-to-conduit">
-      <img src="assets/conduit-mark.png" alt="CONDUIT mark" width="24" height="24" />
-      <span>CONDUIT · V8 Anatomy</span>
+    <a class="brand" href="./">
+      <img src="assets/conduit-mark.png" alt="CONDUIT" width="26" height="26" />
+      <span>CONDUIT · V8 Mandatory Core</span>
     </a>
 
-    <nav class="jump-nav" aria-label="V8 subsystems">
-      <a href="#parser">01 Parser</a>
-      <a href="#ignition">02 Ignition &amp; IC</a>
-      <a href="#turbofan">03 TurboFan JIT</a>
-      <a href="#orinoco">04 Maps &amp; Orinoco</a>
-      <a href="#liftoff">05 Liftoff Wasm</a>
+    <nav class="jump-nav" aria-label="Tier-1 V8 components">
+      <a href="#isolate">01 Isolate</a>
+      <a href="#pointer-tagging">02 Tagging</a>
+      <a href="#hidden-classes">03 Maps</a>
+      <a href="#parser">04 Parser</a>
+      <a href="#ignition">05 Ignition</a>
+      <a href="#torque-csa">06 Torque</a>
+      <a href="#old-space">07 Old Space</a>
+      <a href="#new-space">08 New Space</a>
     </nav>
 
     <div class="controls">
-      <div class="seg-group" role="group" aria-label="Filter figure methodology">
-        <button type="button" class="seg-btn" data-filter="both" aria-pressed="true" data-testid="filter-both">Side-by-side (10)</button>
-        <button type="button" class="seg-btn" data-filter="anatomy" aria-pressed="false" data-testid="filter-anatomy">Anatomy rigs (5)</button>
-        <button type="button" class="seg-btn" data-filter="iso" aria-pressed="false" data-testid="filter-iso">Pressable consoles (5)</button>
+      <div class="seg-group" role="group" aria-label="Gallery column density">
+        <button type="button" class="seg-btn" data-cols-btn="2" aria-pressed="true" data-testid="layout-2col">2-up grid</button>
+        <button type="button" class="seg-btn" data-cols-btn="1" aria-pressed="false" data-testid="layout-1col">1-up focus</button>
       </div>
       <button type="button" class="theme-btn" id="themeToggle" data-testid="gallery-theme-toggle">Light theme</button>
     </div>
   </header>
 
   <main class="container">
-    <div id="ratchetError" class="load-error" role="alert" hidden data-testid="gallery-load-error"></div>
+    <div id="loadError" class="load-error" hidden data-testid="gallery-load-error"></div>
 
     <section class="intro">
       <div>
-        <h1>Isometric anatomy of V8’s five core execution components</h1>
+        <div class="eyebrow">Tier 1 · Engine Cannot Run JavaScript Without These</div>
+        <h1>8 Isometric Machines of the V8 Mandatory Core</h1>
         <p>
-          Each subsystem below is built twice: on the left as a four-tone solid benchtop instrument
-          with audited 3D clearance and painter’s order (<code>wheresryan22/anatomy</code>), and on
-          the right as a self-contained hairline console whose 3D keys execute a live state model
-          (<code>MrBongoC/ai-iso-skill</code>).
+          Built with the 15-line SVG <code>matrix()</code> plane projection kernel from
+          <code>MrBongoC/ai-iso-skill</code>. Each industrial apparatus models one mandatory V8
+          execution or memory subsystem—press buttons directly on the isometric deck or focus a
+          figure to operate it by keyboard, paired with live verification counts from CONDUIT’s
+          Verus-proved Rust crates.
         </p>
       </div>
-      <div class="ratchet-box" data-testid="gallery-ratchet-summary">
+      <aside class="ratchet-box" data-testid="gallery-ratchet-summary">
         <div class="ratchet-head">
-          <span>CONDUIT VERIFIED COUNTERPARTS</span>
+          <span>CONDUIT Live Ratchet</span>
           <span class="ratchet-status" id="ratchetHeadline">loading…</span>
         </div>
-        <p class="ratchet-note" id="ratchetSub">
-          Live verification counts load at runtime from <code>browser/ratchet.json</code>.
+        <p class="ratchet-note" id="ratchetSubline">
+          Fetching live crate proof telemetry from <code>browser/ratchet.json</code>…
         </p>
-      </div>
+      </aside>
     </section>
 
-    <div id="sectionsRoot"></div>
+    <div class="machines-grid" data-testid="machines-grid">
+      <!-- 01: v8::Isolate -->
+      <article class="machine-card" id="isolate" data-testid="card-isolate">
+        <div class="machine-top">
+          <div class="machine-title-group">
+            <h2>01 · v8::Isolate</h2>
+            <div class="machine-metaphor">Self-Contained Modular Factory Skid</div>
+          </div>
+        </div>
+        <p class="machine-desc">
+          Top-level VM instance owning a 4 GiB pointer-compression cage, twin heap reservation silos,
+          <code>v8::Locker</code> mutual-exclusion thread boundary, and the FIFO microtask pump.
+        </p>
+        <div class="machine-bar">
+          <div class="counterpart-pill" data-crates="vjs,vjs_webidl" data-testid="counterpart-isolate">
+            <span class="counterpart-dot"></span>
+            <span class="counterpart-text">vjs + vjs_webidl: loading…</span>
+          </div>
+          <a class="standalone-link" href="v8-iso/pages/fig-01-isolate.html" target="_blank" rel="noreferrer">Open standalone ↗</a>
+        </div>
+        <iframe class="fig-frame" id="frame-fig-01" title="v8::Isolate Modular Factory Skid" scrolling="no" src="v8-iso/pages/fig-01-isolate.html?embed=1&amp;id=frame-fig-01"></iframe>
+      </article>
+
+      <!-- 02: Pointer Tagging -->
+      <article class="machine-card" id="pointer-tagging" data-testid="card-pointer-tagging">
+        <div class="machine-top">
+          <div class="machine-title-group">
+            <h2>02 · Pointer Tagging (Smi vs. HeapObject)</h2>
+            <div class="machine-metaphor">On-Carrier Stamped Part vs. RFID Pallet Manifest</div>
+          </div>
+        </div>
+        <p class="machine-desc">
+          Fundamental 32/64-bit tagged word representation for every value in V8: <code>bit0 = 0</code>
+          fast-paths unboxed 31-bit signed integers, while <code>bit0 = 1</code> dereferences a compressed
+          <code>CageBase + offset</code> heap pointer.
+        </p>
+        <div class="machine-bar">
+          <div class="counterpart-pill" data-crates="vjs_types" data-testid="counterpart-pointer-tagging">
+            <span class="counterpart-dot"></span>
+            <span class="counterpart-text">vjs_types: loading…</span>
+          </div>
+          <a class="standalone-link" href="v8-iso/pages/fig-02-pointer-tagging.html" target="_blank" rel="noreferrer">Open standalone ↗</a>
+        </div>
+        <iframe class="fig-frame" id="frame-fig-02" title="Pointer Tagging Smi vs HeapObject" scrolling="no" src="v8-iso/pages/fig-02-pointer-tagging.html?embed=1&amp;id=frame-fig-02"></iframe>
+      </article>
+
+      <!-- 03: Hidden Classes (Map) & Transitions -->
+      <article class="machine-card" id="hidden-classes" data-testid="card-hidden-classes">
+        <div class="machine-top">
+          <div class="machine-title-group">
+            <h2>03 · Hidden Classes (Map) &amp; Transitions</h2>
+            <div class="machine-metaphor">Automated Turret Punch Press &amp; Indexed Die Sets</div>
+          </div>
+        </div>
+        <p class="machine-desc">
+          Core object layout engine—every <code>HeapObject</code> begins with a <code>Map</code> word
+          indexing hidden-class transition dies (<code>M0 → M1 → M2 → M3</code>) for fixed-offset field loads,
+          degrading to a hash dictionary on <code>delete</code>.
+        </p>
+        <div class="machine-bar">
+          <div class="counterpart-pill" data-crates="vjs_object" data-testid="counterpart-hidden-classes">
+            <span class="counterpart-dot"></span>
+            <span class="counterpart-text">vjs_object: loading…</span>
+          </div>
+          <a class="standalone-link" href="v8-iso/pages/fig-03-hidden-classes.html" target="_blank" rel="noreferrer">Open standalone ↗</a>
+        </div>
+        <iframe class="fig-frame" id="frame-fig-03" title="Hidden Classes Turret Punch Press" scrolling="no" src="v8-iso/pages/fig-03-hidden-classes.html?embed=1&amp;id=frame-fig-03"></iframe>
+      </article>
+
+      <!-- 04: Parser & Pre-Parser -->
+      <article class="machine-card" id="parser" data-testid="card-parser">
+        <div class="machine-top">
+          <div class="machine-title-group">
+            <h2>04 · Parser &amp; Pre-Parser</h2>
+            <div class="machine-metaphor">Vibration Feeder Bowl &amp; Optical Sorting Gate</div>
+          </div>
+        </div>
+        <p class="machine-desc">
+          Lexical entry gate converting raw UTF-8 / UTF-16 source streams: invoked functions divert into full
+          <code>AstNode</code> allocation while cold declarations fast-skip into compact <code>ScopeInfo</code> shells.
+        </p>
+        <div class="machine-bar">
+          <div class="counterpart-pill" data-crates="vjs_syntax" data-testid="counterpart-parser">
+            <span class="counterpart-dot"></span>
+            <span class="counterpart-text">vjs_syntax: loading…</span>
+          </div>
+          <a class="standalone-link" href="v8-iso/pages/fig-04-parser.html" target="_blank" rel="noreferrer">Open standalone ↗</a>
+        </div>
+        <iframe class="fig-frame" id="frame-fig-04" title="Parser and Pre-Parser Feeder Bowl" scrolling="no" src="v8-iso/pages/fig-04-parser.html?embed=1&amp;id=frame-fig-04"></iframe>
+      </article>
+
+      <!-- 05: Ignition (Bytecode Interpreter) -->
+      <article class="machine-card" id="ignition" data-testid="card-ignition">
+        <div class="machine-top">
+          <div class="machine-title-group">
+            <h2>05 · Ignition (Bytecode Interpreter)</h2>
+            <div class="machine-metaphor">24V Electric Starter Motor &amp; Fuel-Injection Rail</div>
+          </div>
+        </div>
+        <p class="machine-desc">
+          Sole baseline executor (<code>Ldar</code> → <code>AddSmi</code> → <code>Star</code> → <code>Return</code>
+          accumulator cycle). V8 cannot skip straight to JIT compilation without producing and cranking Ignition bytecode first.
+        </p>
+        <div class="machine-bar">
+          <div class="counterpart-pill" data-crates="vjs_vm" data-testid="counterpart-ignition">
+            <span class="counterpart-dot"></span>
+            <span class="counterpart-text">vjs_vm: loading…</span>
+          </div>
+          <a class="standalone-link" href="v8-iso/pages/fig-05-ignition.html" target="_blank" rel="noreferrer">Open standalone ↗</a>
+        </div>
+        <iframe class="fig-frame" id="frame-fig-05" title="Ignition 24V Starter Motor and Bytecode Rail" scrolling="no" src="v8-iso/pages/fig-05-ignition.html?embed=1&amp;id=frame-fig-05"></iframe>
+      </article>
+
+      <!-- 06: Torque & CodeStubAssembler (CSA) -->
+      <article class="machine-card" id="torque-csa" data-testid="card-torque-csa">
+        <div class="machine-top">
+          <div class="machine-title-group">
+            <h2>06 · Torque &amp; CodeStubAssembler (CSA)</h2>
+            <div class="machine-metaphor">Progressive Stamping Dies &amp; Hardened Jig Tooling</div>
+          </div>
+        </div>
+        <p class="machine-desc">
+          Build-time 4-station progressive die press (<code>.tq</code> AST → CSA IR → machine graph → snapshot
+          binary) generating every Ignition bytecode handler and mandatory ECMA-262 built-in before V8 boots.
+        </p>
+        <div class="machine-bar">
+          <div class="counterpart-pill" data-crates="vjs_spec,vjs_builtins" data-testid="counterpart-torque-csa">
+            <span class="counterpart-dot"></span>
+            <span class="counterpart-text">vjs_spec + vjs_builtins: loading…</span>
+          </div>
+          <a class="standalone-link" href="v8-iso/pages/fig-06-torque-csa.html" target="_blank" rel="noreferrer">Open standalone ↗</a>
+        </div>
+        <iframe class="fig-frame" id="frame-fig-06" title="Torque and CSA Progressive Stamping Dies" scrolling="no" src="v8-iso/pages/fig-06-torque-csa.html?embed=1&amp;id=frame-fig-06"></iframe>
+      </article>
+
+      <!-- 07: Orinoco Old Space (Mark-Sweep-Compact) -->
+      <article class="machine-card" id="old-space" data-testid="card-old-space">
+        <div class="machine-top">
+          <div class="machine-title-group">
+            <h2>07 · Orinoco Old Space (Mark-Sweep-Compact)</h2>
+            <div class="machine-metaphor">Automated AS/RS High-Bay Warehouse with Laser Inventory</div>
+          </div>
+        </div>
+        <p class="machine-desc">
+          Primary long-lived heap allocator with a traveling laser stacker crane that tricolor-marks live bays,
+          sweeps unreachable white bays into free-lists, and compacts fragmented shelves.
+        </p>
+        <div class="machine-bar">
+          <div class="counterpart-pill" data-crates="vjs_gc" data-testid="counterpart-old-space">
+            <span class="counterpart-dot"></span>
+            <span class="counterpart-text">vjs_gc: loading…</span>
+          </div>
+          <a class="standalone-link" href="v8-iso/pages/fig-07-old-space.html" target="_blank" rel="noreferrer">Open standalone ↗</a>
+        </div>
+        <iframe class="fig-frame" id="frame-fig-07" title="Orinoco Old Space AS/RS High-Bay Warehouse" scrolling="no" src="v8-iso/pages/fig-07-old-space.html?embed=1&amp;id=frame-fig-07"></iframe>
+      </article>
+
+      <!-- 08: Orinoco New Space (Scavenger) -->
+      <article class="machine-card" id="new-space" data-testid="card-new-space">
+        <div class="machine-top">
+          <div class="machine-title-group">
+            <h2>08 · Orinoco New Space (Scavenger)</h2>
+            <div class="machine-metaphor">Dual-Belt Eddy-Current Chip Separator</div>
+          </div>
+        </div>
+        <p class="machine-desc">
+          High-throughput Cheney semi-space nursery collector: dead young allocations drop straight into the
+          zero-cost chute while live objects leap across the eddy rotor to To-Space and promote to Old Space at age 2.
+        </p>
+        <div class="machine-bar">
+          <div class="counterpart-pill" data-crates="vjs_gc,vjs_object" data-testid="counterpart-new-space">
+            <span class="counterpart-dot"></span>
+            <span class="counterpart-text">vjs_gc + vjs_object: loading…</span>
+          </div>
+          <a class="standalone-link" href="v8-iso/pages/fig-08-new-space.html" target="_blank" rel="noreferrer">Open standalone ↗</a>
+        </div>
+        <iframe class="fig-frame" id="frame-fig-08" title="Orinoco New Space Eddy-Current Chip Separator" scrolling="no" src="v8-iso/pages/fig-08-new-space.html?embed=1&amp;id=frame-fig-08"></iframe>
+      </article>
+    </div>
 
     <footer class="footer">
-      <span>
-        Built with <a href="https://github.com/wheresryan22/anatomy" target="_blank" rel="noreferrer">wheresryan22/anatomy</a>
-        and <a href="https://github.com/MrBongoC/ai-iso-skill" target="_blank" rel="noreferrer">MrBongoC/ai-iso-skill</a>.
-      </span>
-      <span>
-        <a href="index.html">← Return to CONDUIT specification</a> · <a href="browser/ratchet.json">browser/ratchet.json</a>
-      </span>
+      <div>
+        Built with <a href="https://github.com/MrBongoC/ai-iso-skill" target="_blank" rel="noreferrer">MrBongoC/ai-iso-skill</a> (MIT).
+        Live telemetry read from <code>browser/ratchet.json</code>.
+      </div>
+      <div>
+        <a href="./">← Back to CONDUIT main specification</a>
+      </div>
     </footer>
   </main>
 
   <script>
-    const NR = 'not recorded';
-    const COMPONENTS = [
-      {
-        id: 'parser',
-        num: '01',
-        title: 'Scanner, PreParser & Eager AST Builder',
-        desc: 'V8 decodes UTF-16 streams into single-lookahead tokens and skips cold inner function bodies with PreParser scope shells until execution demands full AST zone allocation.',
-        crates: ['vjs_syntax'],
-        anatomySlug: 'anatomy-01-parser',
-        isoSlug: 'iso-01-parser',
-      },
-      {
-        id: 'ignition',
-        num: '02',
-        title: 'Ignition Register Interpreter & FeedbackVector Inline Caches',
-        desc: 'Ignition executes register bytecodes against an implicit accumulator while recording observed object Maps inside four-slot FeedbackVectors (monomorphic → polymorphic → megamorphic).',
-        crates: ['vjs_vm', 'vjs'],
-        anatomySlug: 'anatomy-02-ignition',
-        isoSlug: 'iso-02-ignition',
-      },
-      {
-        id: 'turbofan',
-        num: '03',
-        title: 'Maglev / TurboFan Speculative JIT & Deoptimization Bailout',
-        desc: 'Hot loops compile to native machine code guarded by CheckSmi and CheckMaps assumptions. Any unexpected shape triggers eager deoptimization back to reconstructed Ignition stack frames.',
-        crates: ['vjs', 'vjs_vm'],
-        anatomySlug: 'anatomy-03-turbofan',
-        isoSlug: 'iso-03-turbofan',
-      },
-      {
-        id: 'orinoco',
-        num: '04',
-        title: 'HiddenClasses (Maps) & Orinoco Tricolor Garbage Collector',
-        desc: 'HiddenClass transitions assign deterministic in-object byte offsets while Orinoco’s concurrent tricolor collector and Young-Generation scavenger evacuate live objects into contiguous To-Space.',
-        crates: ['vjs_object', 'vjs_gc'],
-        anatomySlug: 'anatomy-04-orinoco',
-        isoSlug: 'iso-04-orinoco',
-      },
-      {
-        id: 'liftoff',
-        num: '05',
-        title: 'Liftoff WebAssembly Baseline Compiler & Guard-Zone Sandbox',
-        desc: 'Liftoff emits machine code in a single pass over LEB128 Wasm opcodes while confining every linear-memory load and store inside 64 KiB pages and a hardware virtual guard zone.',
-        crates: ['vwasm'],
-        anatomySlug: 'anatomy-05-liftoff',
-        isoSlug: 'iso-05-liftoff',
-      },
-    ];
+    (() => {
+      const NR = "not recorded";
+      const root = document.documentElement;
+      const themeBtn = document.getElementById("themeToggle");
 
-    let theme = localStorage.getItem('conduit-theme') === 'light' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', theme);
-
-    const root = document.getElementById('sectionsRoot');
-    root.innerHTML = COMPONENTS.map((c) => `
-      <section class="comp-section" id="${c.id}" data-testid="v8-section-${c.id}">
-        <div class="comp-header">
-          <div class="comp-title-block">
-            <h2>${c.num} · ${c.title}</h2>
-            <p>${c.desc}</p>
-          </div>
-          <div class="counterpart-pill" data-crates="${c.crates.join(',')}" data-testid="counterpart-${c.id}">
-            <span class="counterpart-dot" aria-hidden="true"></span>
-            <span class="counterpart-text">${c.crates.join(' + ')} · ${NR}</span>
-          </div>
-        </div>
-        <div class="pair-grid">
-          <div class="fig-col" data-kind="anatomy">
-            <div class="fig-meta-bar">
-              <span>ANATOMY BENCHTOP RIG</span>
-              <a href="v8-iso/pages/${c.anatomySlug}.html" target="_blank" rel="noreferrer">Open standalone ↗</a>
-            </div>
-            <iframe
-              class="fig-frame"
-              id="frame-${c.anatomySlug}"
-              title="${c.title} — Anatomy mechanical rig"
-              src="v8-iso/pages/${c.anatomySlug}.html?embed=1&theme=${theme}&id=${c.anatomySlug}"
-              loading="eager"
-            ></iframe>
-          </div>
-          <div class="fig-col" data-kind="iso">
-            <div class="fig-meta-bar">
-              <span>AI-ISO-SKILL CONSOLE</span>
-              <a href="v8-iso/pages/${c.isoSlug}.html" target="_blank" rel="noreferrer">Open standalone ↗</a>
-            </div>
-            <iframe
-              class="fig-frame"
-              id="frame-${c.isoSlug}"
-              title="${c.title} — ai-iso-skill interactive console"
-              src="v8-iso/pages/${c.isoSlug}.html?embed=1&theme=${theme}&id=${c.isoSlug}"
-              loading="eager"
-            ></iframe>
-          </div>
-        </div>
-      </section>
-    `).join('');
-
-    window.addEventListener('message', (ev) => {
-      if (ev.data && ev.data.type === 'v8-iso-height' && ev.data.id && ev.data.height > 120) {
-        const iframe = document.getElementById('frame-' + ev.data.id);
-        if (iframe) iframe.style.height = (ev.data.height + 6) + 'px';
-      }
-    });
-
-    const themeBtn = document.getElementById('themeToggle');
-    function syncThemeUi() {
-      document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem('conduit-theme', theme);
-      themeBtn.textContent = theme === 'dark' ? 'Light theme' : 'Dark theme';
-      document.querySelectorAll('iframe.fig-frame').forEach((fr) => {
-        fr.contentWindow?.postMessage({ type: 'v8-iso-theme', theme }, '*');
-      });
-    }
-    themeBtn.addEventListener('click', () => {
-      theme = theme === 'dark' ? 'light' : 'dark';
-      syncThemeUi();
-    });
-    syncThemeUi();
-
-    document.querySelectorAll('.seg-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const mode = btn.dataset.filter;
-        document.body.setAttribute('data-view', mode);
-        document.querySelectorAll('.seg-btn').forEach((b) =>
-          b.setAttribute('aria-pressed', String(b === btn))
-        );
-      });
-    });
-
-    (async () => {
-      try {
-        const res = await fetch('browser/ratchet.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const ratchet = await res.json();
-        const byName = new Map((ratchet.crates || []).map((c) => [c.name, c]));
-        const totals = ratchet.totals;
-        const trustedSum = totals && totals.trusted
-          ? Object.values(totals.trusted).reduce((a, b) => a + b, 0)
-          : null;
-        document.getElementById('ratchetHeadline').textContent = totals
-          ? totals.verified.toLocaleString('en-US') + ' verified · ' + trustedSum + ' trusted'
-          : NR;
-        document.getElementById('ratchetSub').textContent = totals
-          ? 'Live across ' + totals.crates + ' safe-Rust crates in browser/ratchet.json (zero JIT in TCB).'
-          : NR;
-        document.querySelectorAll('.counterpart-pill').forEach((pill) => {
-          const names = (pill.dataset.crates || '').split(',').filter(Boolean);
-          const found = names.map((n) => byName.get(n)).filter(Boolean);
-          const sumVer = found.reduce((acc, c) => acc + (c.verified || 0), 0);
-          pill.querySelector('.counterpart-text').textContent = found.length
-            ? names.join(' + ') + ' · ' + sumVer.toLocaleString('en-US') + ' proved'
-            : names.join(' + ') + ' · ' + NR;
+      function applyTheme(theme) {
+        root.setAttribute("data-theme", theme);
+        localStorage.setItem("conduit-theme", theme);
+        themeBtn.textContent = theme === "dark" ? "Light theme" : "Dark theme";
+        document.querySelectorAll("iframe.fig-frame").forEach((fr) => {
+          if (fr.contentWindow) {
+            fr.contentWindow.postMessage({ type: "v8-iso-theme", theme }, "*");
+          }
         });
-      } catch (err) {
-        const errBox = document.getElementById('ratchetError');
-        errBox.hidden = false;
-        errBox.textContent = 'Could not load browser/ratchet.json (' + (err.message || err) + '). Showing "' + NR + '" instead of fallback numbers.';
-        document.getElementById('ratchetHeadline').textContent = NR;
       }
+
+      const savedTheme = localStorage.getItem("conduit-theme") === "light" ? "light" : "dark";
+      document.querySelectorAll("iframe.fig-frame").forEach((fr) => {
+        const u = new URL(fr.getAttribute("src"), location.href);
+        u.searchParams.set("theme", savedTheme);
+        fr.setAttribute("src", u.pathname + u.search);
+      });
+      applyTheme(savedTheme);
+
+      themeBtn.addEventListener("click", () => {
+        applyTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+      });
+
+      // Column density toggle (2-up grid vs 1-up focus), persisted in localStorage
+      const savedCols = localStorage.getItem("conduit-v8-cols") === "1" ? "1" : "2";
+      function applyCols(cols) {
+        document.body.setAttribute("data-cols", cols);
+        localStorage.setItem("conduit-v8-cols", cols);
+        document.querySelectorAll("[data-cols-btn]").forEach((b) => {
+          b.setAttribute("aria-pressed", String(b.dataset.colsBtn === cols));
+        });
+      }
+      applyCols(savedCols);
+      document.querySelectorAll("[data-cols-btn]").forEach((btn) => {
+        btn.addEventListener("click", () => applyCols(btn.dataset.colsBtn));
+      });
+
+      // Dynamic iframe height resizing from embedded iso-shell figures
+      window.addEventListener("message", (ev) => {
+        if (ev.data && ev.data.type === "v8-iso-height" && ev.data.id && typeof ev.data.height === "number") {
+          const el = document.getElementById(ev.data.id);
+          if (el && ev.data.height > 160) {
+            el.style.height = `${ev.data.height + 4}px`;
+          }
+        }
+      });
+
+      // Runtime load of browser/ratchet.json (zero hard-coded numbers)
+      fetch("browser/ratchet.json", { cache: "no-store" })
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
+        .then((ratchet) => {
+          const totals = ratchet && ratchet.totals ? ratchet.totals : null;
+          if (!totals) throw new Error("missing totals");
+          const trusted = Object.values(totals.trusted || {}).reduce((a, b) => a + b, 0);
+          document.getElementById("ratchetHeadline").textContent =
+            `${totals.verified.toLocaleString("en-US")} verified · ${trusted} trusted`;
+          document.getElementById("ratchetSubline").textContent =
+            `${totals.crates} Rust crates verified in ${totals.verify_seconds}s (${totals.tests_passed}/${totals.tests_passed + totals.tests_failed} crate tests passing · verus ${ratchet.verus}).`;
+
+          const byName = new Map((ratchet.crates || []).map((c) => [c.name, c]));
+          document.querySelectorAll(".counterpart-pill").forEach((pill) => {
+            const names = (pill.dataset.crates || "").split(",").filter(Boolean);
+            const parts = names.map((n) => {
+              const c = byName.get(n);
+              return c ? `${n} (${c.verified} proved)` : `${n} (${NR})`;
+            });
+            pill.querySelector(".counterpart-text").textContent = parts.join(" · ");
+          });
+        })
+        .catch((err) => {
+          const errEl = document.getElementById("loadError");
+          errEl.hidden = false;
+          errEl.textContent = `Could not load browser/ratchet.json (${err.message}). Showing "${NR}" instead of placeholder numbers.`;
+          document.getElementById("ratchetHeadline").textContent = NR;
+          document.getElementById("ratchetSubline").textContent = `Live verification telemetry ${NR}.`;
+          document.querySelectorAll(".counterpart-pill").forEach((pill) => {
+            pill.querySelector(".counterpart-text").textContent = `${pill.dataset.crates}: ${NR}`;
+          });
+        });
     })();
   </script>
 </body>

@@ -60,8 +60,8 @@ domain hosts, IDNA, or the full URL parser state machine.
 
 The GitHub Pages site (`site/`, React 19 + TypeScript on [`@clickhouse/click-ui`](https://github.com/ClickHouse/click-ui))
 uses a Tufte two-column executable specification layout with a live top ratchet scoreboard across
-five sections, a frosted-glass hero band showcasing interactive isometric V8 subsystem figures, and
-a standalone 10-figure V8 anatomy gallery ([`v8-anatomy.html`](v8-anatomy.html), built from `v8-iso/`):
+five sections, a frosted-glass hero band showcasing 3 interactive isometric V8 Mandatory Core machines, and
+a standalone 8-figure V8 Mandatory Core gallery ([`v8-anatomy.html`](v8-anatomy.html), built from `v8-iso/`):
 the last 20 exploited Chrome CVEs and architectural coverage, what a Verus proof
 checks (including all four obligation states and a live 11-crate proof source explorer), why
 verification targets security boundaries instead of 36 million lines, the verified-kernel and

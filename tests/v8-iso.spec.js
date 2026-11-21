@@ -1,6 +1,6 @@
-// End-to-end Playwright verification for the 10 interactive isometric V8 figures
-// (5 wheresryan22/anatomy benchtop rigs + 5 MrBongoC/ai-iso-skill consoles),
-// the standalone side-by-side gallery (v8-anatomy.html), and the Hero frosted-glass band.
+// End-to-end Playwright verification for the 8 unique V8 Tier-1 Mandatory Core
+// isometric figures (built with MrBongoC/ai-iso-skill), the standalone 8-machine
+// gallery (v8-anatomy.html), and the central Hero frosted-glass band.
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const path = require("path");
@@ -9,7 +9,7 @@ const root = path.join(__dirname, "..");
 const ratchet = JSON.parse(fs.readFileSync(path.join(root, "browser", "ratchet.json"), "utf8"));
 const totals = ratchet.totals;
 
-test("hero places 3 interactive V8 isometric figures on a central frosted-glass band framed by text", async ({
+test("hero places 3 interactive Tier-1 V8 isometric machines on a central frosted-glass band framed by text", async ({
   page,
 }) => {
   await page.goto("/");
@@ -29,29 +29,22 @@ test("hero places 3 interactive V8 isometric figures on a central frosted-glass 
 
   const frames = page.getByTestId("hero-v8-trio").locator("iframe");
   await expect(frames).toHaveCount(3);
-  await expect(frames.nth(0)).toHaveAttribute("src", /anatomy-03-turbofan/);
-  await expect(frames.nth(1)).toHaveAttribute("src", /anatomy-02-ignition/);
-  await expect(frames.nth(2)).toHaveAttribute("src", /anatomy-04-orinoco/);
+  await expect(frames.nth(0)).toHaveAttribute("src", /fig-03-hidden-classes/);
+  await expect(frames.nth(1)).toHaveAttribute("src", /fig-05-ignition/);
+  await expect(frames.nth(2)).toHaveAttribute("src", /fig-07-old-space/);
 
-  // Switch hero band to ai-iso-skill pressable consoles and interact inside the TurboFan console
-  await page.getByTestId("hero-iso-mode-iso").click();
-  await expect(frames.nth(0)).toHaveAttribute("src", /iso-03-turbofan/);
+  // Interact directly inside the embedded Hidden Classes Turret Punch Press iframe
+  const mapFrame = page.frameLocator('[data-testid="hero-v8-trio"] iframe').first();
+  await expect(mapFrame.locator("#readout")).toContainText("map#2");
+  await mapFrame.locator('[data-k="del"]').dispatchEvent("pointerdown");
+  await expect(mapFrame.locator("#readout")).toContainText("dictionary map");
 
-  const tfFrame = page.frameLocator('[data-testid="hero-v8-trio"] iframe').first();
-  await expect(tfFrame.locator("#readout")).toContainText("turbofan");
-  await tfFrame.locator('[data-k="flt"]').dispatchEvent("pointerdown");
-  await expect(tfFrame.locator("#readout")).toContainText("ignition");
-
-  // Theme switch propagates to embedded hero iframes
+  // Theme switch propagates to all embedded hero iframes
   await page.getByTestId("theme-switch").click();
-  await expect(tfFrame.locator("html")).toHaveAttribute("data-theme", "light");
-
-  // Switch back to Anatomy benchtop rigs
-  await page.getByTestId("hero-iso-mode-anatomy").click();
-  await expect(frames.nth(0)).toHaveAttribute("src", /anatomy-03-turbofan/);
+  await expect(mapFrame.locator("html")).toHaveAttribute("data-theme", "light");
 });
 
-test("v8-anatomy.html loads live ratchet telemetry, filters both styles, and handles missing data", async ({
+test("v8-anatomy.html renders all 8 unique Tier-1 machines, loads live ratchet data, toggles layout/theme, and handles missing telemetry", async ({
   page,
 }) => {
   const rawGallery = fs.readFileSync(path.join(root, "v8-anatomy.html"), "utf8");
@@ -62,72 +55,131 @@ test("v8-anatomy.html loads live ratchet telemetry, filters both styles, and han
   await expect(page.getByTestId("gallery-ratchet-summary")).toContainText(
     totals.verified.toLocaleString("en-US")
   );
-  await expect(page.getByTestId("counterpart-parser")).toContainText("proved");
-  await expect(page.getByTestId("counterpart-liftoff")).toContainText("vwasm");
 
-  // Filter controls toggle visibility between Anatomy rigs and ai-iso-skill consoles
-  await page.getByTestId("filter-anatomy").click();
-  await expect(page.locator('.fig-col[data-kind="anatomy"]').first()).toBeVisible();
-  await expect(page.locator('.fig-col[data-kind="iso"]').first()).toBeHidden();
+  // All 8 unique Tier-1 cards & distinct iframes exist and resolve live crate proof counts
+  const cards = page.locator(".machine-card");
+  await expect(cards).toHaveCount(8);
+  const frameSrcs = await page
+    .locator("iframe.fig-frame")
+    .evaluateAll((els) => els.map((el) => el.getAttribute("src")));
+  expect(new Set(frameSrcs).size).toBe(8);
 
-  await page.getByTestId("filter-iso").click();
-  await expect(page.locator('.fig-col[data-kind="iso"]').first()).toBeVisible();
-  await expect(page.locator('.fig-col[data-kind="anatomy"]').first()).toBeHidden();
+  await expect(page.getByTestId("counterpart-isolate")).toContainText("proved");
+  await expect(page.getByTestId("counterpart-pointer-tagging")).toContainText("vjs_types");
+  await expect(page.getByTestId("counterpart-hidden-classes")).toContainText("vjs_object");
+  await expect(page.getByTestId("counterpart-parser")).toContainText("vjs_syntax");
+  await expect(page.getByTestId("counterpart-ignition")).toContainText("vjs_vm");
+  await expect(page.getByTestId("counterpart-torque-csa")).toContainText("vjs_builtins");
+  await expect(page.getByTestId("counterpart-old-space")).toContainText("vjs_gc");
+  await expect(page.getByTestId("counterpart-new-space")).toContainText("vjs_gc");
 
-  await page.getByTestId("filter-both").click();
-  await expect(page.locator('.fig-col[data-kind="anatomy"]').first()).toBeVisible();
-  await expect(page.locator('.fig-col[data-kind="iso"]').first()).toBeVisible();
+  // Column density toggle (2-up grid vs 1-up focus) updates body attribute and persists
+  await expect(page.locator("body")).toHaveAttribute("data-cols", "2");
+  await page.getByTestId("layout-1col").click();
+  await expect(page.locator("body")).toHaveAttribute("data-cols", "1");
+  await page.reload();
+  await expect(page.locator("body")).toHaveAttribute("data-cols", "1");
+  await page.getByTestId("layout-2col").click();
+  await expect(page.locator("body")).toHaveAttribute("data-cols", "2");
 
-  // Theme toggle propagates to embedded frames
+  // Theme toggle updates page and propagates to embedded frames
   await page.getByTestId("gallery-theme-toggle").click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  const firstFrame = page.frameLocator("iframe.fig-frame").first();
+  await expect(firstFrame.locator("html")).toHaveAttribute("data-theme", "light");
 
-  // Missing ratchet.json surfaces explicit error and not recorded
+  // Missing ratchet.json surfaces explicit error banner and "not recorded"
   await page.route("**/browser/ratchet.json", (r) => r.fulfill({ status: 404, body: "" }));
   await page.reload();
   await expect(page.getByTestId("gallery-load-error")).toBeVisible();
   await expect(page.getByTestId("gallery-ratchet-summary")).toContainText("not recorded");
+  await expect(page.getByTestId("counterpart-ignition")).toContainText("not recorded");
 });
 
-test("all 10 standalone V8 isometric pages render cleanly and update state on interaction", async ({
+test("all 8 standalone Tier-1 ai-iso-skill pages render unique geometry and transition state on click and keyboard", async ({
   page,
 }) => {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
 
-  const anatomySlugs = [
-    "anatomy-01-parser",
-    "anatomy-02-ignition",
-    "anatomy-03-turbofan",
-    "anatomy-04-orinoco",
-    "anatomy-05-liftoff",
+  const checks = [
+    {
+      slug: "fig-01-isolate",
+      btn: "t2",
+      afterBtn: "contended · thread #1 locked",
+      key: "d",
+      afterKey: "0 tasks",
+    },
+    {
+      slug: "fig-02-pointer-tagging",
+      btn: "heap",
+      afterBtn: "heapobj",
+      key: "s",
+      afterKey: "smi ·",
+    },
+    {
+      slug: "fig-03-hidden-classes",
+      btn: "z",
+      afterBtn: "map#3 {x@+4, y@+8, z@+12}",
+      key: "d",
+      afterKey: "dictionary map",
+    },
+    {
+      slug: "fig-04-parser",
+      btn: "hot",
+      afterBtn: "eager sort · 3 scopeinfo / 3 ast",
+      key: "e",
+      afterKey: "early syntax error",
+    },
+    {
+      slug: "fig-05-ignition",
+      btn: "cut",
+      afterBtn: "ignition off · 0 kPa",
+      key: "c",
+      afterKey: "24v on",
+    },
+    {
+      slug: "fig-06-torque-csa",
+      btn: "strike",
+      afterBtn: "station 1/4 · LoadIC_BytecodeHandler · 4 built-ins",
+      key: "r",
+      afterKey: "station 0/4",
+    },
+    {
+      slug: "fig-07-old-space",
+      btn: "sweep",
+      afterBtn: "6 live / 0 dead",
+      key: "c",
+      afterKey: "0% frag",
+    },
+    {
+      slug: "fig-08-new-space",
+      btn: "scav",
+      afterBtn: "5 dropped",
+      key: "Escape",
+      afterKey: "0 to-space / 0 dropped · 0 promoted",
+    },
   ];
-  for (const slug of anatomySlugs) {
-    await page.goto(`/v8-iso/pages/${slug}.html`);
-    const stage = page.locator(".iso-stage");
-    const readout = page.locator("[data-readout]");
-    await expect(stage).toBeVisible();
-    const before = await readout.textContent();
-    await stage.focus();
-    await page.keyboard.press("Space");
-    await expect
-      .poll(async () => await readout.textContent(), { timeout: 3000 })
-      .not.toBe(before);
-  }
 
-  const isoChecks = [
-    { slug: "iso-01-parser", key: "mode", expectText: "lazy" },
-    { slug: "iso-02-ignition", key: "M2", expectText: "poly-2" },
-    { slug: "iso-03-turbofan", key: "flt", expectText: "ignition" },
-    { slug: "iso-04-orinoco", key: "sweep", expectText: "0 dead" },
-    { slug: "iso-05-liftoff", key: "oob", expectText: "trap: oob contained" },
-  ];
-  for (const item of isoChecks) {
+  const svgSignatures = new Set();
+  for (const item of checks) {
     await page.goto(`/v8-iso/pages/${item.slug}.html`);
-    await expect(page.locator("#stage")).toBeVisible();
-    await page.locator(`[data-k="${item.key}"]`).dispatchEvent("pointerdown");
-    await expect(page.locator("#readout")).toContainText(item.expectText);
+    const stage = page.locator("#stage");
+    const readout = page.locator("#readout");
+    await expect(stage).toBeVisible();
+
+    // Ensure every single machine has completely distinct SVG markup
+    const svgHtml = await stage.innerHTML();
+    svgSignatures.add(svgHtml);
+
+    await page.locator(`[data-k="${item.btn}"]`).dispatchEvent("pointerdown");
+    await expect(readout).toContainText(item.afterBtn);
+
+    await stage.focus();
+    await page.keyboard.press(item.key);
+    await expect(readout).toContainText(item.afterKey);
   }
 
+  expect(svgSignatures.size).toBe(8);
   expect(errors).toEqual([]);
 });

@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fig 2 — Pointer Tagging · Carrier Stamp vs. RFID Pallet</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg:#0c0d0e; --panel:#141516; --edge:#222426;
+    --line:#3e4347; --detail:#2a2d30; --body:#17181a; --deck:#1c1e21;
+    --ink:#868b8f; --ink-hi:#e6e8e9; --live:#f4f5f5;
+    --kn:#232629; --kn-line:#565b5f; --ko:#d9dcde; --ko-line:#5a5f63; --ko-ink:#141618;
+    --glass:#0a0b0c;
+    --mono:"JetBrains Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg:#e9eaea; --panel:#f6f6f5; --edge:#d6d8d8;
+    --line:#8b9095; --detail:#c3c6c8; --body:#ececeb; --deck:#f3f3f2;
+    --ink:#5f6468; --ink-hi:#16181a; --live:#0c0d0e;
+    --kn:#ffffff; --kn-line:#7b8084; --ko:#242628; --ko-line:#0c0d0e; --ko-ink:#f4f5f5;
+    --glass:#e1e3e3;
+  } }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --bg:#e9eaea; --panel:#f6f6f5; --edge:#d6d8d8;
+    --line:#8b9095; --detail:#c3c6c8; --body:#ececeb; --deck:#f3f3f2;
+    --ink:#5f6468; --ink-hi:#16181a; --live:#0c0d0e;
+    --kn:#ffffff; --kn-line:#7b8084; --ko:#242628; --ko-line:#0c0d0e; --ko-ink:#f4f5f5;
+    --glass:#e1e3e3;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--mono); font-size:13px; padding:20px 16px; }
+  html[data-embed="1"] body { background:transparent; padding:0; }
+  html[data-embed="1"] main { max-width:none; }
+  html[data-embed="1"] .foot-help { display:none; }
+  html[data-embed="1"] svg { aspect-ratio: 6 / 5; }
+  html[data-compact="1"] figure { padding:12px 14px; border-radius:12px; }
+  html[data-compact="1"] .cap { font-size:10.5px; letter-spacing:.09em; }
+  main { max-width:820px; margin-inline:auto; display:grid; gap:12px; }
+  figure { margin:0; background:var(--panel); border:1px solid var(--edge); border-radius:20px; padding:20px 24px; display:grid; gap:6px; }
+  .cap { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 16px; font-size:12px; text-transform:uppercase; letter-spacing:.13em; }
+  .cap .hi { color:var(--ink-hi); text-transform:none; letter-spacing:.04em; }
+  svg { width:100%; height:auto; display:block; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  svg:focus-visible { outline:2px solid var(--live); outline-offset:4px; border-radius:8px; }
+  .face { fill:var(--body); stroke:var(--line); stroke-width:1; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .face.top { fill:var(--deck); }
+  .detail { fill:none; stroke:var(--detail); stroke-width:1; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .struct { fill:none; stroke:var(--line); stroke-width:1; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .live-stroke { fill:none; stroke:var(--live); stroke-width:1.25; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .glass { fill:var(--glass); }
+  .lcd { fill:var(--live); font-family:var(--mono); }
+  .lcd-dim { fill:var(--ink); font-family:var(--mono); }
+  .lbl { fill:var(--ink); font-family:var(--mono); text-anchor:middle; pointer-events:none; }
+  .lbl-hi { fill:var(--ink-hi); font-family:var(--mono); text-anchor:middle; pointer-events:none; }
+  .press { cursor:pointer; transition:transform 60ms ease-out; }
+  .press .face { fill:var(--kn); stroke:var(--kn-line); transition:stroke 90ms, fill 90ms; }
+  .press.op .face { fill:var(--ko); stroke:var(--ko-line); }
+  .press text { fill:var(--ink-hi); font-family:var(--mono); text-anchor:middle; pointer-events:none; }
+  .press.op text { fill:var(--ko-ink); }
+  .press.down { transform:translateY(4px); }
+  .press.down .face, .press:hover .face.top, .press.sel .face { stroke:var(--live); }
+  .press.sel text { fill:var(--live); }
+  .press.op.sel text { fill:var(--ko-ink); }
+  .unit { transition:transform 160ms cubic-bezier(.22,.8,.24,1); }
+  .unit .face { transition:stroke 120ms, fill 120ms; }
+  .unit.lit .face { stroke:var(--live); }
+  .unit.lit .face.top { fill:var(--ko); }
+  .unit.lit .lbl-hi { fill:var(--live); }
+  .unit.lit .top-lbl { fill:var(--ko-ink); }
+  .top-lbl { fill:var(--ink-hi); font-family:var(--mono); text-anchor:middle; pointer-events:none; }
+  .unit.mid .face { stroke:var(--kn-line); }
+  .foot-help { margin:0; max-width:68ch; line-height:1.6; font-size:12px; }
+  kbd { font:inherit; color:var(--ink-hi); border:1px solid var(--edge); border-radius:4px; padding:0 4px; }
+  @media (prefers-reduced-motion:reduce){ .press, .unit { transition:none !important; } }
+  
+</style>
+</head>
+<body>
+<main>
+  <figure class="iso-plate">
+    <div class="cap"><span class="hi">Fig 2</span><span>Pointer Tagging · Carrier Stamp vs. RFID Pallet</span></div>
+    <svg id="stage" viewBox="0 0 628 507" tabindex="0" role="img" aria-label="Isometric pointer-tagging roller conveyor station with overhead bit-0 laser scanner gantry, carrier pallet switching between an on-carrier stamped Smi casting and an RFID manifest linked to a rear HeapObject bay."></svg>
+    <div class="cap"><span>toggle bit 0 · stamp smi or deref rfid</span><span class="hi" id="readout" data-readout>smi · 0x00000054 (bit0=0) · val 42 · 0 derefs</span></div>
+  </figure>
+  <p class="foot-help">Keys: <kbd>S</kbd> stamp immediate Smi (<kbd>bit0=0</kbd>) · <kbd>D</kbd> double Smi (<kbd>&lt;&lt;1</kbd>) · <kbd>H</kbd> RFID HeapObject pallet (<kbd>bit0=1</kbd>) · <kbd>F</kbd> mutate heap field · <kbd>N</kbd> advance carrier.</p>
+</main>
+<script>
+(() => {
+  const params = new URLSearchParams(location.search);
+  if (params.get("embed") === "1") document.documentElement.setAttribute("data-embed", "1");
+  if (params.get("compact") === "1") document.documentElement.setAttribute("data-compact", "1");
+  const qt = params.get("theme");
+  if (qt === "light" || qt === "dark") document.documentElement.setAttribute("data-theme", qt);
+  else document.documentElement.setAttribute("data-theme", "dark");
+  window.addEventListener("message", (ev) => {
+    if (ev.data && ev.data.type === "v8-iso-theme" && (ev.data.theme === "light" || ev.data.theme === "dark")) {
+      document.documentElement.setAttribute("data-theme", ev.data.theme);
+    }
+  });
+  if (params.get("embed") === "1" && window.parent && window.parent !== window) {
+    const postH = () => {
+      const f = document.querySelector("figure");
+      if (f) window.parent.postMessage({ type: "v8-iso-height", id: params.get("id") || "fig-02-pointer-tagging", height: Math.ceil(f.getBoundingClientRect().height) }, "*");
+    };
+    new ResizeObserver(postH).observe(document.body);
+    window.addEventListener("load", postH);
+    setTimeout(postH, 60);
+  }
+})();
+
+// ---- iso kernel (verbatim MrBongoC/ai-iso-skill) ----
+const C = Math.cos(Math.PI/6), S = Math.sin(Math.PI/6), OX = 238, OY = 162;
+const P = (x,y,z) => [(x-y)*C + OX, (x+y)*S - z + OY];
+const D = (x,y,z) => [(x-y)*C, (x+y)*S - z];
+const plane = (O,U,V) => { const o=P(...O), u=D(...U), v=D(...V); return `matrix(${u[0]} ${u[1]} ${v[0]} ${v[1]} ${o[0]} ${o[1]})`; };
+const TOP = (x,y,z) => plane([x,y,z],[1,0,0],[0,1,0]);
+const FRONT = (x,y,z) => plane([x,y,z],[1,0,0],[0,0,-1]);
+const SIDE = (x,y,z) => plane([x,y,z],[0,-1,0],[0,0,-1]);
+const rect = (t,w,h,r=0,cls='face') => `<g transform="${t}"><rect class="${cls}" width="${w}" height="${h}" rx="${r}"/></g>`;
+const box = (x,y,z,w,d,h,r=0) => rect(SIDE(x+w,y+d,z+h),d,h,Math.min(r,h/4)) + rect(FRONT(x,y+d,z+h),w,h,Math.min(r,h/4)) + rect(TOP(x,y,z+h),w,d,r,'face top');
+
+
+let svg = '';
+// 1. Rear Off-Belt Heap Storage Vault (only touched when bit0 == 1!)
+svg += box(210, 0, 0, 174, 56, 96, 5);
+svg += `<g transform="${FRONT(210, 56, 96)}">
+  <defs><clipPath id="ptScr"><rect x="10" y="9" width="154" height="52" rx="4"/></clipPath></defs>
+  <rect class="face glass" x="10" y="9" width="154" height="52" rx="4"/>
+  <g clip-path="url(#ptScr)">
+    <text id="ptWord" class="lcd" x="16" y="22" font-size="8.5">WORD: 0x0000_0054 [bit0=0]</text>
+    <text id="ptKind" class="lcd-dim" x="16" y="35" font-size="8">KIND: 31-BIT IMMEDIATE SMI</text>
+    <text id="ptTarget" class="lcd" x="16" y="49" font-size="8.2">CARRIER VALUE = 42 (0 HOPS)</text>
+  </g>
+  <text class="lbl" x="87" y="69" font-size="6.8">COMPRESSED HEAP BAY [0x0018_4200]</text>
+</g>`;
+// Physical HeapObject Cell sitting on top of the rear Heap Vault
+svg += `<g class="unit" id="heapVaultCell">${box(254, 10, 96, 88, 36, 16, 3)}<g transform="${TOP(254, 10, 112)}"><text id="heapVaultTxt" x="44" y="21" font-size="7.6" class="top-lbl">IDLE (UNREAD)</text></g></g>`;
+
+// 2. Three Conveyor Trestle Legs + Long Roller-Conveyor Transfer Bed (y = 70..154)
+[22, 176, 330].forEach(lx => { svg += box(lx, 74, 0, 26, 72, 18, 2); });
+svg += box(0, 68, 18, 386, 84, 14, 4);
+// 17 transverse steel conveyor rollers on TOP
+svg += `<g transform="${TOP(0, 68, 32)}">
+  ${Array.from({length:17},(_,i)=>`<rect class="detail" x="${12+i*22}" y="6" width="14" height="72" rx="3"/>`).join('')}
+</g>`;
+
+// 3. Back Post of Bit-0 Laser Scanner Gantry (x = 136, y = 58)
+svg += box(136, 58, 0, 18, 12, 104, 2);
+
+// 4. Moving Carrier Pallet in Inspection Zone (id="carrierGroup")
+svg += `<g class="unit" id="carrierGroup">
+  ${box(144, 78, 32, 98, 64, 8, 3)}
+  <!-- On-carrier Raised Stamped Metal Casting (shown for Smi bit0=0) -->
+  <g id="smiPart">
+    ${box(160, 90, 40, 66, 40, 18, 4)}
+    <g transform="${TOP(160, 90, 58)}"><text id="smiStampTxt" x="33" y="24" font-size="11" class="top-lbl">#42</text></g>
+  </g>
+  <!-- Flat RFID Pallet Manifest Card (shown for HeapObject bit0=1) -->
+  <g id="rfidPart" style="display:none">
+    ${box(156, 88, 40, 74, 44, 3, 2)}
+    <g transform="${TOP(156, 88, 43)}">
+      <rect class="struct" x="6" y="6" width="62" height="32" rx="2"/>
+      <path class="detail" d="M12 14h28M12 21h42M12 28h34"/>
+      <text x="54" y="17" font-size="7.5" class="lcd">…01</text>
+    </g>
+  </g>
+</g>`;
+
+// 5. Front Post & Overhead Cross-Arm of Bit-0 Laser Gantry (painted AFTER carrier for true occlusion!)
+svg += box(136, 150, 0, 18, 12, 104, 2);
+svg += box(132, 56, 104, 26, 108, 12, 3);
+svg += `<g transform="${FRONT(132, 164, 116)}"><text class="lbl-hi" x="13" y="9" font-size="6.5">BIT0</text></g>`;
+
+// 6. Front Control Rail (y = 168..210)
+svg += box(18, 168, 0, 350, 44, 12, 4);
+const BTNS = [
+  ['smi', 'SMI (…0)', 28, 62, true],
+  ['shl', 'SMI × 2', 96, 56, false],
+  ['heap', 'RFID (…1)', 158, 66, true],
+  ['field', '+FIELD', 230, 56, false],
+  ['next', 'ADVANCE', 292, 66, false]
+];
+BTNS.forEach(([id, lbl, bx, bw, op]) => {
+  svg += `<g class="press${op?' op':''}" data-k="${id}">${box(bx, 174, 12, bw, 32, 8, 3)}<g transform="${TOP(bx, 174, 20)}"><text x="${bw/2}" y="19.5" font-size="8.2">${lbl}</text></g></g>`;
+});
+
+const stage = document.getElementById('stage');
+stage.innerHTML = svg;
+
+const st = { isHeap: false, smiVal: 42, propVal: 108, slotOffset: 0 };
+const $ = id => document.getElementById(id);
+const keys = new Map([...stage.querySelectorAll('.press')].map(k => [k.dataset.k, k]));
+
+function render() {
+  const cg = $('carrierGroup');
+  cg.style.transform = `translate(${st.slotOffset * 14}px, ${st.slotOffset * 8}px)`;
+  $('smiPart').style.display = st.isHeap ? 'none' : '';
+  $('rfidPart').style.display = st.isHeap ? '' : 'none';
+  cg.classList.toggle('lit', !st.isHeap);
+  $('heapVaultCell').classList.toggle('lit', st.isHeap);
+
+  if (!st.isHeap) {
+    const raw = ((st.smiVal << 1) >>> 0).toString(16).toUpperCase().padStart(8, '0');
+    $('smiStampTxt').textContent = '#' + st.smiVal;
+    $('ptWord').textContent = 'WORD: 0x' + raw + ' [bit0 = 0]';
+    $('ptKind').textContent = 'KIND: ON-CARRIER 31-BIT SMI';
+    $('ptTarget').textContent = 'IMMEDIATE = ' + st.smiVal + ' (0 HEAP HOPS)';
+    $('heapVaultTxt').textContent = 'BYPASSED (0 READS)';
+    $('readout').textContent = 'smi · 0x' + raw.toLowerCase() + ' (bit0=0) · val ' + st.smiVal + ' · 0 derefs';
+  } else {
+    const addr = (0x00184201 + st.slotOffset * 16) >>> 0;
+    const hex = addr.toString(16).toUpperCase().padStart(8, '0');
+    $('ptWord').textContent = 'WORD: 0x' + hex + ' [bit0 = 1]';
+    $('ptKind').textContent = 'KIND: RFID HEAPOBJECT MANIFEST';
+    $('ptTarget').textContent = 'DEREF [addr-1] -> {x: ' + st.propVal + '}';
+    $('heapVaultTxt').textContent = 'MAP#1 {x:' + st.propVal + '}';
+    $('readout').textContent = 'heapobj · 0x' + hex.toLowerCase() + ' (bit0=1) · {x:' + st.propVal + '} · 1 deref';
+  }
+  keys.get('smi').classList.toggle('sel', !st.isHeap);
+  keys.get('heap').classList.toggle('sel', st.isHeap);
+}
+
+function act(k) {
+  const el = keys.get(k);
+  if (el) { el.classList.add('down'); setTimeout(() => el.classList.remove('down'), 110); }
+  if (k === 'smi') st.isHeap = false;
+  else if (k === 'shl') { st.isHeap = false; st.smiVal = st.smiVal >= 512 ? 7 : st.smiVal * 2; }
+  else if (k === 'heap') st.isHeap = true;
+  else if (k === 'field') { st.isHeap = true; st.propVal += 12; }
+  else if (k === 'next') { st.slotOffset = ((st.slotOffset + 2) % 3) - 1; st.smiVal = st.smiVal === 42 ? 99 : 42; }
+  render();
+}
+
+stage.addEventListener('pointerdown', e => { const el = e.target.closest('.press'); if (el) { e.preventDefault(); act(el.dataset.k); } });
+const KM = { 's':'smi', 'd':'shl', 'h':'heap', 'f':'field', 'n':'next', ' ':'heap' };
+window.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = KM[e.key] || KM[e.key.toLowerCase()];
+  if (k) { e.preventDefault(); act(k); }
+});
+render();
+
+</script>
+</body>
+</html>

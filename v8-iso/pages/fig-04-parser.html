@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fig 4 — Parser & Pre-Parser · Vibration Bowl & Optical Gate</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg:#0c0d0e; --panel:#141516; --edge:#222426;
+    --line:#3e4347; --detail:#2a2d30; --body:#17181a; --deck:#1c1e21;
+    --ink:#868b8f; --ink-hi:#e6e8e9; --live:#f4f5f5;
+    --kn:#232629; --kn-line:#565b5f; --ko:#d9dcde; --ko-line:#5a5f63; --ko-ink:#141618;
+    --glass:#0a0b0c;
+    --mono:"JetBrains Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg:#e9eaea; --panel:#f6f6f5; --edge:#d6d8d8;
+    --line:#8b9095; --detail:#c3c6c8; --body:#ececeb; --deck:#f3f3f2;
+    --ink:#5f6468; --ink-hi:#16181a; --live:#0c0d0e;
+    --kn:#ffffff; --kn-line:#7b8084; --ko:#242628; --ko-line:#0c0d0e; --ko-ink:#f4f5f5;
+    --glass:#e1e3e3;
+  } }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --bg:#e9eaea; --panel:#f6f6f5; --edge:#d6d8d8;
+    --line:#8b9095; --detail:#c3c6c8; --body:#ececeb; --deck:#f3f3f2;
+    --ink:#5f6468; --ink-hi:#16181a; --live:#0c0d0e;
+    --kn:#ffffff; --kn-line:#7b8084; --ko:#242628; --ko-line:#0c0d0e; --ko-ink:#f4f5f5;
+    --glass:#e1e3e3;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--mono); font-size:13px; padding:20px 16px; }
+  html[data-embed="1"] body { background:transparent; padding:0; }
+  html[data-embed="1"] main { max-width:none; }
+  html[data-embed="1"] .foot-help { display:none; }
+  html[data-embed="1"] svg { aspect-ratio: 6 / 5; }
+  html[data-compact="1"] figure { padding:12px 14px; border-radius:12px; }
+  html[data-compact="1"] .cap { font-size:10.5px; letter-spacing:.09em; }
+  main { max-width:820px; margin-inline:auto; display:grid; gap:12px; }
+  figure { margin:0; background:var(--panel); border:1px solid var(--edge); border-radius:20px; padding:20px 24px; display:grid; gap:6px; }
+  .cap { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 16px; font-size:12px; text-transform:uppercase; letter-spacing:.13em; }
+  .cap .hi { color:var(--ink-hi); text-transform:none; letter-spacing:.04em; }
+  svg { width:100%; height:auto; display:block; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  svg:focus-visible { outline:2px solid var(--live); outline-offset:4px; border-radius:8px; }
+  .face { fill:var(--body); stroke:var(--line); stroke-width:1; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .face.top { fill:var(--deck); }
+  .detail { fill:none; stroke:var(--detail); stroke-width:1; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .struct { fill:none; stroke:var(--line); stroke-width:1; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .live-stroke { fill:none; stroke:var(--live); stroke-width:1.25; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+  .glass { fill:var(--glass); }
+  .lcd { fill:var(--live); font-family:var(--mono); }
+  .lcd-dim { fill:var(--ink); font-family:var(--mono); }
+  .lbl { fill:var(--ink); font-family:var(--mono); text-anchor:middle; pointer-events:none; }
+  .lbl-hi { fill:var(--ink-hi); font-family:var(--mono); text-anchor:middle; pointer-events:none; }
+  .press { cursor:pointer; transition:transform 60ms ease-out; }
+  .press .face { fill:var(--kn); stroke:var(--kn-line); transition:stroke 90ms, fill 90ms; }
+  .press.op .face { fill:var(--ko); stroke:var(--ko-line); }
+  .press text { fill:var(--ink-hi); font-family:var(--mono); text-anchor:middle; pointer-events:none; }
+  .press.op text { fill:var(--ko-ink); }
+  .press.down { transform:translateY(4px); }
+  .press.down .face, .press:hover .face.top, .press.sel .face { stroke:var(--live); }
+  .press.sel text { fill:var(--live); }
+  .press.op.sel text { fill:var(--ko-ink); }
+  .unit { transition:transform 160ms cubic-bezier(.22,.8,.24,1); }
+  .unit .face { transition:stroke 120ms, fill 120ms; }
+  .unit.lit .face { stroke:var(--live); }
+  .unit.lit .face.top { fill:var(--ko); }
+  .unit.lit .lbl-hi { fill:var(--live); }
+  .unit.lit .top-lbl { fill:var(--ko-ink); }
+  .top-lbl { fill:var(--ink-hi); font-family:var(--mono); text-anchor:middle; pointer-events:none; }
+  .unit.mid .face { stroke:var(--kn-line); }
+  .foot-help { margin:0; max-width:68ch; line-height:1.6; font-size:12px; }
+  kbd { font:inherit; color:var(--ink-hi); border:1px solid var(--edge); border-radius:4px; padding:0 4px; }
+  @media (prefers-reduced-motion:reduce){ .press, .unit { transition:none !important; } }
+  
+</style>
+</head>
+<body>
+<main>
+  <figure class="iso-plate">
+    <div class="cap"><span class="hi">Fig 4</span><span>Parser & Pre-Parser · Vibration Bowl & Optical Gate</span></div>
+    <svg id="stage" viewBox="0 0 632 507" tabindex="0" role="img" aria-label="Isometric vibration feeder bowl shaking UTF-16 tokens along a linear optical sorting chute that diverts cold functions into a ScopeInfo bin and eager functions into a full AST bin."></svg>
+    <div class="cap"><span>vibrate utf-16 bowl · sort ast vs scopeinfo</span><span class="hi" id="readout" data-readout>lazy preparse · 3 scopeinfo / 2 ast · 68 tok</span></div>
+  </figure>
+  <p class="foot-help">Keys: <kbd>C</kbd> feed cold inner function (<kbd>ScopeInfo</kbd>) · <kbd>H</kbd> feed hot eager IIFE (<kbd>AST</kbd>) · <kbd>A</kbd> feed arrow closure · <kbd>E</kbd> inject early syntax error · <kbd>Esc</kbd> empty bins.</p>
+</main>
+<script>
+(() => {
+  const params = new URLSearchParams(location.search);
+  if (params.get("embed") === "1") document.documentElement.setAttribute("data-embed", "1");
+  if (params.get("compact") === "1") document.documentElement.setAttribute("data-compact", "1");
+  const qt = params.get("theme");
+  if (qt === "light" || qt === "dark") document.documentElement.setAttribute("data-theme", qt);
+  else document.documentElement.setAttribute("data-theme", "dark");
+  window.addEventListener("message", (ev) => {
+    if (ev.data && ev.data.type === "v8-iso-theme" && (ev.data.theme === "light" || ev.data.theme === "dark")) {
+      document.documentElement.setAttribute("data-theme", ev.data.theme);
+    }
+  });
+  if (params.get("embed") === "1" && window.parent && window.parent !== window) {
+    const postH = () => {
+      const f = document.querySelector("figure");
+      if (f) window.parent.postMessage({ type: "v8-iso-height", id: params.get("id") || "fig-04-parser", height: Math.ceil(f.getBoundingClientRect().height) }, "*");
+    };
+    new ResizeObserver(postH).observe(document.body);
+    window.addEventListener("load", postH);
+    setTimeout(postH, 60);
+  }
+})();
+
+// ---- iso kernel (verbatim MrBongoC/ai-iso-skill) ----
+const C = Math.cos(Math.PI/6), S = Math.sin(Math.PI/6), OX = 247, OY = 160;
+const P = (x,y,z) => [(x-y)*C + OX, (x+y)*S - z + OY];
+const D = (x,y,z) => [(x-y)*C, (x+y)*S - z];
+const plane = (O,U,V) => { const o=P(...O), u=D(...U), v=D(...V); return `matrix(${u[0]} ${u[1]} ${v[0]} ${v[1]} ${o[0]} ${o[1]})`; };
+const TOP = (x,y,z) => plane([x,y,z],[1,0,0],[0,1,0]);
+const FRONT = (x,y,z) => plane([x,y,z],[1,0,0],[0,0,-1]);
+const SIDE = (x,y,z) => plane([x,y,z],[0,-1,0],[0,0,-1]);
+const rect = (t,w,h,r=0,cls='face') => `<g transform="${t}"><rect class="${cls}" width="${w}" height="${h}" rx="${r}"/></g>`;
+const box = (x,y,z,w,d,h,r=0) => rect(SIDE(x+w,y+d,z+h),d,h,Math.min(r,h/4)) + rect(FRONT(x,y+d,z+h),w,h,Math.min(r,h/4)) + rect(TOP(x,y,z+h),w,d,r,'face top');
+
+
+let svg = '';
+// 1. Machine Base Slab (380 x 220 x 14)
+svg += box(0, 0, 0, 380, 220, 14, 5);
+
+// 2. Back-Right Full AST Collection Hopper Bin (eager parse output, y = 16..84)
+svg += box(256, 16, 14, 112, 68, 56, 4);
+svg += `<g transform="${TOP(256, 16, 70)}">
+  <rect class="face glass" x="8" y="8" width="96" height="52" rx="3"/>
+  <text id="astBinTop" class="lcd" x="56" y="38" font-size="11" text-anchor="middle">2 AST TREES</text>
+</g>`;
+svg += `<g transform="${FRONT(256, 84, 70)}"><text class="lbl-hi" x="56" y="32" font-size="8">EAGER AST BIN</text></g>`;
+
+// 3. Left Concentric Stepped Vibration Feeder Bowl (id="vibBowl", x = 16..140, y = 28..152)
+svg += box(24, 36, 14, 108, 108, 18, 6); // heavy electromagnetic base
+svg += `<g class="unit" id="vibBowl">
+  ${box(16, 28, 32, 124, 124, 20, 8)}
+  ${box(26, 38, 52, 104, 104, 18, 7)}
+  ${box(38, 50, 70, 80, 80, 14, 6)}
+  <g transform="${TOP(38, 50, 84)}">
+    <circle class="struct" cx="40" cy="40" r="34"/>
+    <circle class="detail" cx="40" cy="40" r="23"/>
+    <circle class="detail" cx="40" cy="40" r="12"/>
+    <rect fill="var(--live)" x="22" y="32" width="10" height="6" rx="1"/>
+    <rect fill="var(--live)" x="46" y="20" width="12" height="6" rx="1"/>
+    <rect fill="var(--live)" x="48" y="50" width="10" height="6" rx="1"/>
+    <text class="lbl" x="40" y="43" font-size="6.8">UTF-16</text>
+  </g>
+</g>`;
+
+// 4. Linear Vibratory Feed Chute + Optical Sorting Gate Housing (x = 136..252, y = 66..108)
+svg += box(150, 74, 14, 86, 28, 38, 2); // chute pedestal
+svg += box(136, 68, 52, 118, 38, 12, 3); // vibratory track
+// Pivoting Optical Diverter Gate Vane on track
+svg += `<g class="unit lit" id="diverterGate">${box(224, 74, 64, 26, 10, 10, 2)}</g>`;
+// Overhead Optical Scanner Arch spanning the track
+svg += box(172, 62, 64, 52, 50, 44, 4);
+svg += `<g transform="${FRONT(172, 112, 108)}">
+  <rect class="face glass" x="6" y="6" width="40" height="32" rx="3"/>
+  <text id="optMode" class="lcd" x="26" y="19" font-size="7.2" text-anchor="middle">LAZY</text>
+  <text id="optTok" class="lcd-dim" x="26" y="31" font-size="6.8" text-anchor="middle">fn inner()</text>
+</g>`;
+
+// 5. Front-Right Fast ScopeInfo Hopper Bin (Pre-Parser output, y = 98..164)
+svg += box(256, 98, 14, 112, 66, 44, 4);
+svg += `<g transform="${TOP(256, 98, 58)}">
+  <rect class="face glass" x="8" y="8" width="96" height="50" rx="3"/>
+  <text id="scopeBinTop" class="lcd" x="56" y="36" font-size="10.5" text-anchor="middle">3 SCOPEINFO</text>
+</g>`;
+svg += `<g transform="${FRONT(256, 164, 58)}"><text class="lbl-hi" x="56" y="26" font-size="7.8">PRE-PARSER BIN</text></g>`;
+
+// 6. Front Control Bar (y = 174..212)
+const BTNS = [
+  ['cold', 'COLD FN', 18, 66, false],
+  ['hot', 'HOT IIFE', 90, 68, true],
+  ['arrow', 'ARROW =>', 164, 68, false],
+  ['err', 'EARLY ERR', 238, 70, false],
+  ['clr', 'EMPTY', 314, 50, false]
+];
+BTNS.forEach(([id, lbl, bx, bw, op]) => {
+  svg += `<g class="press${op?' op':''}" data-k="${id}">${box(bx, 176, 14, bw, 32, 8, 3)}<g transform="${TOP(bx, 176, 22)}"><text x="${bw/2}" y="19.5" font-size="7.8">${lbl}</text></g></g>`;
+});
+
+const stage = document.getElementById('stage');
+stage.innerHTML = svg;
+
+const st = { scopeCount: 3, astCount: 2, tokens: 68, gate: 'lazy', tokLabel: 'fn inner()', err: false };
+const $ = id => document.getElementById(id);
+const keys = new Map([...stage.querySelectorAll('.press')].map(k => [k.dataset.k, k]));
+
+function shakeBowl() {
+  const b = $('vibBowl');
+  b.style.transform = 'translate(3px, -2px)';
+  setTimeout(() => { b.style.transform = 'translate(-2px, 1px)'; }, 55);
+  setTimeout(() => { b.style.transform = ''; }, 115);
+}
+
+function render() {
+  $('optMode').textContent = st.err ? 'SYNTAX!' : st.gate.toUpperCase();
+  $('optTok').textContent = st.tokLabel;
+  $('astBinTop').textContent = st.astCount + (st.astCount === 1 ? ' AST TREE' : ' AST TREES');
+  $('scopeBinTop').textContent = st.scopeCount + ' SCOPEINFO';
+  const gateEl = $('diverterGate');
+  gateEl.style.transform = st.gate === 'eager' ? 'translate(-4px, -6px)' : 'translate(4px, 6px)';
+  gateEl.classList.toggle('lit', !st.err);
+
+  $('readout').textContent = st.err
+    ? 'early syntax error · rejected at gate · ' + st.tokens + ' tok'
+    : st.gate + ' sort · ' + st.scopeCount + ' scopeinfo / ' + st.astCount + ' ast · ' + st.tokens + ' tok';
+}
+
+function act(k) {
+  const el = keys.get(k);
+  if (el) { el.classList.add('down'); setTimeout(() => el.classList.remove('down'), 110); }
+  shakeBowl();
+  st.err = false;
+  if (k === 'cold') { st.scopeCount++; st.tokens += 16; st.gate = 'lazy'; st.tokLabel = 'fn cold(){…}'; }
+  else if (k === 'hot') { st.astCount++; st.tokens += 14; st.gate = 'eager'; st.tokLabel = '(function(){})()'; }
+  else if (k === 'arrow') { st.scopeCount++; st.tokens += 9; st.gate = 'lazy'; st.tokLabel = 'x => x + 1'; }
+  else if (k === 'err') { st.err = true; st.tokens += 5; st.tokLabel = 'let x; let x;'; }
+  else if (k === 'clr') { st.scopeCount = 0; st.astCount = 0; st.tokens = 0; st.gate = 'ready'; st.tokLabel = 'empty bowl'; }
+  render();
+}
+
+stage.addEventListener('pointerdown', e => { const el = e.target.closest('.press'); if (el) { e.preventDefault(); act(el.dataset.k); } });
+const KM = { 'c':'cold', 'h':'hot', 'a':'arrow', 'e':'err', 'Escape':'clr', ' ':'hot' };
+window.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = KM[e.key] || KM[e.key.toLowerCase()];
+  if (k) { e.preventDefault(); act(k); }
+});
+render();
+
+</script>
+</body>
+</html>

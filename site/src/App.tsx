@@ -22,22 +22,19 @@ import SectionStatus from './SectionStatus';
 
 const HERO_V8_TRIO = [
   {
-    key: 'turbofan',
-    label: 'TurboFan speculative JIT & bailout',
-    anatomySlug: 'anatomy-03-turbofan',
-    isoSlug: 'iso-03-turbofan',
+    key: 'hidden-classes',
+    label: 'Hidden Classes (Map) · Automated Turret Punch Press',
+    slug: 'fig-03-hidden-classes',
   },
   {
     key: 'ignition',
-    label: 'Ignition bytecode & inline caches',
-    anatomySlug: 'anatomy-02-ignition',
-    isoSlug: 'iso-02-ignition',
+    label: 'Ignition Bytecode Interpreter · 24V Starter & Injection Rail',
+    slug: 'fig-05-ignition',
   },
   {
-    key: 'orinoco',
-    label: 'HiddenClasses & Orinoco GC',
-    anatomySlug: 'anatomy-04-orinoco',
-    isoSlug: 'iso-04-orinoco',
+    key: 'old-space',
+    label: 'Orinoco Old Space · AS/RS High-Bay Warehouse',
+    slug: 'fig-07-old-space',
   },
 ] as const;
 
@@ -46,7 +43,6 @@ export default function App() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [heroIsoMode, setHeroIsoMode] = useState<'anatomy' | 'iso'>('anatomy');
   const [frameHeights, setFrameHeights] = useState<Record<string, number>>({});
   const [theme, setTheme] = useState<'dark' | 'light'>(() =>
     typeof window !== 'undefined' && localStorage.getItem('conduit-theme') === 'light'
@@ -199,35 +195,15 @@ export default function App() {
               <div className="ch-hero-glass-inner">
                 <div className="ch-hero-glass-bar">
                   <div className="ch-hero-glass-heading">
-                    <span className="ch-hero-glass-kicker">Interactive V8 engine anatomy</span>
+                    <span className="ch-hero-glass-kicker">Tier-1 V8 mandatory core</span>
                     <span className="ch-hero-glass-sub">
-                      Where speculative JIT, inline caches, and heap transitions fail—and what CONDUIT proves instead
+                      Hidden-class turret dies, Ignition bytecode rail, and Orinoco AS/RS warehouse—interactive isometric models
                     </span>
                   </div>
 
                   <div className="ch-hero-glass-controls">
-                    <div className="ch-hero-mode-seg" role="group" aria-label="Select isometric figure style">
-                      <button
-                        type="button"
-                        className="ch-hero-mode-btn"
-                        aria-pressed={heroIsoMode === 'anatomy'}
-                        data-testid="hero-iso-mode-anatomy"
-                        onClick={() => setHeroIsoMode('anatomy')}
-                      >
-                        Benchtop rigs
-                      </button>
-                      <button
-                        type="button"
-                        className="ch-hero-mode-btn"
-                        aria-pressed={heroIsoMode === 'iso'}
-                        data-testid="hero-iso-mode-iso"
-                        onClick={() => setHeroIsoMode('iso')}
-                      >
-                        Pressable consoles
-                      </button>
-                    </div>
                     <a className="ch-hero-all-link" href="v8-anatomy.html">
-                      <span>All 10 figures</span>
+                      <span>All 8 core figures</span>
                       <IconArrowRight size={13} />
                     </a>
                   </div>
@@ -235,16 +211,15 @@ export default function App() {
 
                 <div className="ch-hero-trio" data-testid="hero-v8-trio">
                   {HERO_V8_TRIO.map((item) => {
-                    const slug = heroIsoMode === 'anatomy' ? item.anatomySlug : item.isoSlug;
-                    const frameId = `hero-${slug}`;
+                    const frameId = `hero-${item.slug}`;
                     const h = frameHeights[frameId];
                     return (
-                      <div className="ch-hero-iso-card" key={`${item.key}-${heroIsoMode}`}>
+                      <div className="ch-hero-iso-card" key={item.key}>
                         <iframe
                           className="ch-hero-iso-frame"
                           title={item.label}
                           scrolling="no"
-                          src={`v8-iso/pages/${slug}.html?embed=1&compact=1&theme=${theme}&id=${frameId}`}
+                          src={`v8-iso/pages/${item.slug}.html?embed=1&compact=1&theme=${theme}&id=${frameId}`}
                           style={h ? { height: `${h}px` } : undefined}
                         />
                       </div>
@@ -270,7 +245,7 @@ export default function App() {
                   <IconArrowRight size={14} />
                 </a>
                 <a className="ch-cta-secondary" href="v8-anatomy.html" data-testid="cta-v8-anatomy">
-                  <span>Explore all 10 V8 figures</span>
+                  <span>Explore all 8 V8 figures</span>
                 </a>
                 <a className="ch-cta-secondary" href="#proofs">
                   <span>See a live proof</span>
