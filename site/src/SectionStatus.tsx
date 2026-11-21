@@ -33,45 +33,44 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
 
   return (
     <section className="ch-status-section" id="ratchet">
-      {/* Header + Accurate Scope Disclosure */}
+      {/* Header + Honest Scope Boundary */}
       <div className="ch-spec-row ch-spec-row-flush">
         <div className="ch-prose-col">
           <div className="ch-section-lead">
             <img
-              src="assets/flair-ratchet.webp"
-              alt="Monotonic verification ratchet telemetry waveform"
-              className="ch-flair-medallion"
-              width={76}
-              height={76}
+              src="assets/hw-waveform.webp"
+              alt="Monotonic verification ratchet waveform"
+              className="ch-sticker-medallion"
+              width={72}
+              height={72}
             />
-            <h2 className="ch-section-title">What is proved today, and what remains next-phase design</h2>
+            <h2 className="ch-section-title">Live proof status—and what is still unbuilt</h2>
           </div>
           <p className="ch-prose-text">
-            Every crate below compiles with <code>#![forbid(unsafe_code)]</code> and zero trusted
-            escape hatches. Progress is tracked by a monotonic ratchet in{' '}
-            <code>browser/scripts/ratchet.py</code>: verified function counts and conformance suites
-            only move forward, and any PR that introduces an <code>admit()</code> or{' '}
-            <code>assume()</code> breaks verification.
+            Every crate below enforces <code>#![forbid(unsafe_code)]</code> with zero trusted
+            shortcuts. Our ratchet script (<code>browser/scripts/ratchet.py</code>) records every
+            run: verified counts and conformance pass rates only move up, and any{' '}
+            <code>admit()</code> or <code>assume()</code> fails CI on the spot.
           </p>
         </div>
 
         <div className="ch-artifact-col">
           <div className="ch-honesty-card" data-testid="honesty-card">
             <div className="ch-honesty-header">
-              <span>Current verification boundary — engine crates proved; browser kernel next</span>
-              <Badge state="warning" text="SCOPE BOUNDARY" />
+              <span>Where verification stops today</span>
+              <Badge state="info" text="BOUNDARY" />
             </div>
             <p className="ch-prose-text">
-              The WHATWG URL algorithms (<code>vurl</code>), the full J0–J7 JavaScript engine (
-              <code>vjs_spec</code> through <code>vjs_vm</code>), the Web IDL capability boundary (
+              The URL parser (<code>vurl</code>), the complete J0–J7 JavaScript engine (
+              <code>vjs_spec</code> through <code>vjs_vm</code>), the Web IDL capability layer (
               <code>vjs_webidl</code>), and the sandboxed WebAssembly 1.0 interpreter (
-              <code>vwasm</code>) are implemented and machine-verified in Rust
+              <code>vwasm</code>) are built and verified today
               {totals
                 ? ` (${totals.crates} crates, ${totals.verified.toLocaleString('en-US')} verified functions, ${totalTrusted} trusted items)`
                 : ''}
-              . Browser kernel non-interference theorems, <code>rspec!</code> origin/CSP/CORS
-              policies, Nanvix per-site sandboxing, HTML/CSS/XML integration, and browser chrome
-              remain next phases.
+              . Browser kernel non-interference theorems, <code>rspec!</code> origin and cookie
+              policies, Nanvix sandboxing, HTML/CSS/XML integration, and browser UI are still design
+              work.
             </p>
           </div>
         </div>
@@ -80,7 +79,7 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
       {/* Full-Width 11-Crate Verification Ratchet Ledger */}
       <div className="ch-block">
         <div className="ch-block-head">
-          <h3>Per-crate verification ratchet</h3>
+          <h3>Verified crates</h3>
           <span className="ch-mono ch-muted">
             {totals
               ? `${totals.crates} crates · ${totals.verified.toLocaleString('en-US')} verified · ${totalTrusted} trusted · ${totals.verify_seconds}s`
@@ -94,14 +93,14 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
               <thead>
                 <tr>
                   <th>Crate</th>
-                  <th>Track</th>
-                  <th>Scope &amp; proved theorem</th>
+                  <th>Milestone</th>
+                  <th>Scope &amp; headline theorem</th>
                   <th className="ch-num">Verified</th>
                   <th className="ch-num">Trusted</th>
                   <th className="ch-num">Verify</th>
                   <th className="ch-num">Tests</th>
                   <th className="ch-num">LOC</th>
-                  <th>Evidence</th>
+                  <th>Artifacts</th>
                 </tr>
               </thead>
               <tbody>
@@ -190,8 +189,8 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
         <div className="ch-col">
           <div className="ch-block">
             <div className="ch-block-head">
-              <h3>J0–J7 JavaScript &amp; WebAssembly verification track</h3>
-              <span className="ch-mono ch-muted">9 verified milestones</span>
+              <h3>JavaScript &amp; WebAssembly milestones (J0–J7)</h3>
+              <span className="ch-mono ch-muted">9 verified stages</span>
             </div>
             <div className="ch-accordion-group" data-testid="vjs-rows">
               {VJS_STEPS.map((s, idx) => {
@@ -212,7 +211,7 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
                     <Field label="Crate(s)">{live ? <code>{live.crate}</code> : NR}</Field>
                     <Field label="Scope">{live ? live.scope : s.scope}</Field>
                     <Field label="Proved theorem">{live ? live.theorem : s.exit}</Field>
-                    <Field label="Live ratchet metrics">
+                    <Field label="Live ratchet numbers">
                       {live
                         ? `${live.verified.toLocaleString('en-US')} verified · ${live.trusted} trusted · ${live.verify_seconds}s verify · ${live.tests_passed} crate tests · ${live.test262_passed}/${live.test262_total} conformance`
                         : NR}
@@ -227,22 +226,23 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
             <div className="ch-block" data-testid="vm-benchmarks">
               <div className="ch-bench-header">
                 <img
-                  src="assets/flair-differential.webp"
-                  alt="Bytecode VM vs AST differential waveform"
-                  className="ch-flair-thumb"
-                  width={52}
-                  height={52}
+                  src="assets/hw-prover.webp"
+                  alt="Bytecode VM equivalence verification die"
+                  className="ch-sticker-medallion"
+                  width={54}
+                  height={54}
                 />
                 <div>
-                  <h3>J7 bytecode VM vs. AST interpreter</h3>
+                  <h3>Bytecode VM vs. AST interpreter</h3>
                   <p className="ch-prose-note">
                     Geometric-mean speedup:{' '}
                     <strong className="ch-accent-text">
                       {ratchet.vm_benchmarks_geomean_speedup !== undefined
                         ? `${ratchet.vm_benchmarks_geomean_speedup}×`
                         : NR}
-                    </strong>{' '}
-                    with CompCert-style proved result equivalence (<code>VM == AST</code>).
+                    </strong>
+                    , backed by a CompCert-style proof that bytecode output matches the AST
+                    interpreter.
                   </p>
                 </div>
               </div>
@@ -307,7 +307,7 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
           {ratchet?.test262_suites && ratchet.test262_suites.length > 0 && (
             <div className="ch-block" data-testid="suites-table">
               <div className="ch-block-head">
-                <h3>Conformance &amp; differential verification suites</h3>
+                <h3>Conformance &amp; differential tests</h3>
                 <span className="ch-mono ch-muted">
                   {totalDiffCases !== null
                     ? `${totalDiffCases.toLocaleString('en-US')} differential cases`
@@ -318,7 +318,7 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
                 <table className="ch-table ch-table-compact">
                   <thead>
                     <tr>
-                      <th>Step</th>
+                      <th>Stage</th>
                       <th>Suite</th>
                       <th className="ch-num">Pass</th>
                       <th className="ch-num">Diff cases</th>
@@ -347,22 +347,22 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
 
           <div className="ch-block">
             <div className="ch-block-head">
-              <h3>Nine engineering tradeoffs</h3>
-              <span className="ch-mono ch-muted">Synced with plan review</span>
+              <h3>Nine hard engineering tradeoffs</h3>
+              <span className="ch-mono ch-muted">From the architecture review</span>
             </div>
             <div className="ch-accordion-group" data-testid="tradeoffs">
               {TRADEOFFS.map((t, idx) => (
                 <DetailsRow key={idx} k={`T${idx + 1}`} v={t.decision} open={idx === 0}>
-                  <Field label="Given up">{t.givenUp}</Field>
-                  <Field label="Gained">{t.gained}</Field>
-                  <Field label="Residual risk">{t.residual}</Field>
+                  <Field label="What we give up">{t.givenUp}</Field>
+                  <Field label="What we gain">{t.gained}</Field>
+                  <Field label="What risk remains">{t.residual}</Field>
                 </DetailsRow>
               ))}
             </div>
             <p className="ch-prose-note">
-              Adapted from{' '}
+              Reviewed in{' '}
               <Source href={blobUrl('docs/vjs-plan-review.md')}>docs/vjs-plan-review.md §1</Source>{' '}
-              and updated to reflect completed J0–J7 crate verifications.
+              and kept current with the live J0–J7 crates.
             </p>
           </div>
         </div>
@@ -371,11 +371,11 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
       {/* Full-Width vurl Modules & Zero-Overlap Proof Dependency Graph */}
       <div className="ch-spec-row ch-spec-row-sub">
         <div className="ch-prose-col">
-          <h3 className="ch-subsection-title">vurl modules &amp; obligation graph</h3>
+          <h3 className="ch-subsection-title">vurl modules &amp; proof dependency graph</h3>
           <p className="ch-prose-text">
             Phase 1 transcribed WHATWG URL percent-encoding, IPv4, and IPv6 parsing into Verus.
-            Each module separates specification, verified executable code, and proved algebraic
-            properties—and explicitly documents what remains outside scope.
+            Each module keeps its specification, verified executable code, and proved properties
+            separate—and lists every gap explicitly.
           </p>
           <div className="ch-accordion-group" data-testid="modules">
             {VURL_MODULES.map((m, idx) => (
@@ -386,18 +386,18 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
                 tone={vurlOk ? 'proved' : 'fail'}
                 open={idx === 0}
               >
-                <Field label="Proved executable functions">
+                <Field label="Proved functions">
                   <span className="ch-mono">{m.exec.join(' · ')}</span>
                 </Field>
                 <Field label="Proved theorems">
                   <span className="ch-mono">{m.theorems.join(' · ')}</span>
                 </Field>
-                <Field label="Explicitly out of scope">{m.gaps}</Field>
+                <Field label="Out of scope">{m.gaps}</Field>
               </DetailsRow>
             ))}
           </div>
           <p className="ch-prose-note">
-            Primary docs:{' '}
+            Read more:{' '}
             <Source href={blobUrl('docs/verified-browser-engine.md')}>architecture plan</Source> ·{' '}
             <Source href={blobUrl('browser/README.md')}>browser README</Source> ·{' '}
             <Source href={blobUrl('browser/url/tests/data/PROVENANCE')}>WPT provenance</Source>.
@@ -410,7 +410,7 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
           ) : (
             <div className="ch-disclosure-card">
               <h3>Obligation graph unavailable</h3>
-              <p>The dependency graph renders only from live browser/ratchet.json data.</p>
+              <p>The dependency graph draws only from live browser/ratchet.json data.</p>
             </div>
           )}
         </div>

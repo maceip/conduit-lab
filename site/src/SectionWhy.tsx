@@ -6,23 +6,23 @@ import { DetailsRow, Field, ScaleCompare, Source } from './parts';
 const CONSTRAINTS = [
   {
     k: '01',
-    v: 'Proofs grow faster than the code they certify',
-    body: 'seL4 required roughly 20 person-years to verify 8,700 lines of C. The Isabelle proof is an order of magnitude larger than the kernel itself, and complexity compounds with concurrency and mutable state machines. Scaling that directly to ~36 million lines of Linux or Chromium is not a viable plan.',
+    v: 'Proofs outsize the code they verify',
+    body: 'seL4 took roughly twenty person-years to verify 8,700 lines of C. The Isabelle proof is an order of magnitude larger than the kernel itself, and the effort climbs steeply with concurrency and mutable state. Applying that brute-force to 36 million lines of Linux or Chromium is not realistic.',
   },
   {
     k: '02',
-    v: 'Moving specifications break proofs continuously',
-    body: 'A formal theorem binds one exact code snapshot to one exact specification. General-purpose kernels and browsers merge thousands of changes monthly. seL4 stays verifiable by keeping its API tiny and fixed; CONDUIT pins standard commits and tracks upstream Verus weekly.',
+    v: 'Fast-moving specs break proofs continuously',
+    body: 'Every proof ties one code snapshot to one exact specification. General-purpose kernels and browsers merge thousands of commits a month. seL4 stays verifiable because its API barely moves; CONDUIT pins upstream standard commits and re-verifies against upstream Verus every week.',
   },
   {
     k: '03',
-    v: 'Hardware and device drivers resist formalization',
-    body: 'Drivers account for the majority of Linux source lines and vulnerabilities, yet talk to undocumented silicon nobody has formalized. Even seL4 excludes boot assembly and hardware semantics from its theorem. Unformalized code must be isolated and labeled untrusted.',
+    v: 'Hardware and drivers have no formal model',
+    body: 'Device drivers make up most of Linux—and most of its bugs—yet talk to undocumented silicon nobody has formalized. Even seL4 leaves boot assembly and hardware semantics outside its proof. Unformalized code has to be isolated and labeled untrusted.',
   },
   {
     k: '04',
-    v: 'Prove the security boundary, isolate everything else',
-    body: 'Every shipped formal-verification success targets compact, high-leverage surfaces: cryptographic arithmetic, compilers, microkernels, and certificate policy. Quark proved a Coq browser kernel in 2012 while running unmodified WebKit in sandboxed tabs. CONDUIT extends that boundary inward one crate at a time.',
+    v: 'Prove the boundary, then shrink the sandbox',
+    body: 'Every shipped verification win picked a small, high-leverage target: crypto math, compilers, microkernels, certificate validation. Quark proved a Coq browser kernel in 2012 while running unmodified WebKit in sandboxed tabs. CONDUIT follows that playbook and pushes verified Rust inward one crate at a time.',
   },
 ];
 
@@ -54,15 +54,16 @@ const SectionWhy: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
             height={72}
           />
           <h2 className="ch-section-title">
-            Why verification targets boundaries instead of 36 million lines
+            Why nobody verifies all of Linux—or all of Chrome
           </h2>
         </div>
 
         <p className="ch-prose-text">
-          seL4 proved an operating-system microkernel correct in 2009. Modern Linux is four thousand
-          times larger and still carries no end-to-end proof. A full web browser hits the same four
-          constraints, so CONDUIT follows the proven strategy: verify the security kernel and
-          highest-risk engines, sandbox the rest, and never let the trusted base grow.
+          seL4 proved an entire microkernel correct in 2009—all 8,700 lines of C took roughly
+          twenty person-years. Linux is four thousand times larger, and modern browsers sit on the
+          same scale. Real-world verification never proves everything at once: it proves the
+          security kernel and highest-risk engines, sandboxes the rest, and expands coverage
+          release by release.
         </p>
 
         <ScaleCompare items={scaleItems} />
@@ -70,7 +71,7 @@ const SectionWhy: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
         <div className="ch-accordion-group" data-testid="reasons">
           {CONSTRAINTS.map((c, idx) => (
             <DetailsRow key={c.k} k={c.k} v={c.v} open={idx === 0}>
-              <Field label="Engineering constraint">{c.body}</Field>
+              <Field label="Why it matters">{c.body}</Field>
             </DetailsRow>
           ))}
         </div>
@@ -84,16 +85,16 @@ const SectionWhy: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
       <div className="ch-artifact-col">
         <div className="ch-table-card">
           <div className="ch-table-meta">
-            <span>Prior art · What formal verification has shipped</span>
+            <span>What formal verification has actually shipped</span>
             <span>9 landmark systems</span>
           </div>
           <table className="ch-table" data-testid="systems-table">
             <thead>
               <tr>
                 <th>System</th>
-                <th>What was proved</th>
-                <th>Scale / effort</th>
-                <th>Role in CONDUIT</th>
+                <th>What it proved</th>
+                <th>Scale &amp; effort</th>
+                <th>Lesson for CONDUIT</th>
               </tr>
             </thead>
             <tbody>

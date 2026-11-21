@@ -71,9 +71,10 @@ test("scoreboard renders live 11-crate totals and enforces adjacent pill density
   expect(verusClipped, "verus revision pill must not clip").toBeLessThanOrEqual(2);
 });
 
-test("all modified illustrations and emblems load cleanly with naturalWidth > 0", async ({ page }) => {
+test("all modified illustrations, 3D hardware sculptures, and stickers load cleanly", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByTestId("hero-visual").locator("img")).toBeVisible();
+  await expect(page.getByTestId("hardware-strip").locator("a")).toHaveCount(4);
   await expect(page.getByTestId("iso-architecture").locator("img")).toBeVisible();
 
   const imgStates = await page.locator("img").evaluateAll((imgs) =>
@@ -83,7 +84,7 @@ test("all modified illustrations and emblems load cleanly with naturalWidth > 0"
       naturalWidth: img.naturalWidth,
     }))
   );
-  expect(imgStates.length).toBeGreaterThanOrEqual(8);
+  expect(imgStates.length).toBeGreaterThanOrEqual(12);
   for (const img of imgStates) {
     expect(img.complete, `${img.src} must finish loading`).toBe(true);
     expect(img.naturalWidth, `${img.src} must have naturalWidth > 0`).toBeGreaterThan(0);
@@ -98,8 +99,8 @@ test("chapters, navigation, and upgraded copy are consistent and free of stale c
   expect(navTargets).toEqual(ids.map((id) => `#${id}`));
 
   const lede = page.getByTestId("lede");
-  await expect(lede).toContainText("last 20 Chrome vulnerabilities");
-  await expect(lede).toContainText("13 were in V8");
+  await expect(lede).toContainText("Prove they cannot exist");
+  await expect(lede).toContainText("13 of the last 20 Chrome zero-days");
   await expect(lede).toContainText(`${totals.crates} crates`);
 
   const body = await page.locator("body").innerText();
@@ -132,7 +133,7 @@ test("section 1: interactive 20-CVE filters and primary-source detail inspector"
   await expect(page.getByTestId("cve-table").locator("tbody tr")).toHaveCount(4);
   await page.getByTestId("cve-row-CVE-2026-3909").click();
   await expect(detail).toContainText("CVE-2026-3909");
-  await expect(detail).toContainText("Explicitly outside formal verification");
+  await expect(detail).toContainText("Outside formal verification");
 
   // Filter back to all
   await page.getByTestId("cve-filter-all").click();
@@ -246,7 +247,7 @@ test("section 5: 11-crate ledger, J0-J7 rows, VM benchmarks, suites, tradeoffs, 
 
   // Expanding a tradeoff shows real updated engineering tradeoff copy
   await page.getByTestId("tradeoffs").locator("details").nth(1).locator("summary").click();
-  await expect(page.getByTestId("tradeoffs").locator("details").nth(1)).toContainText("Given up");
+  await expect(page.getByTestId("tradeoffs").locator("details").nth(1)).toContainText("What we give up");
 });
 
 test("theme switch toggles dark/light mode cleanly and persists", async ({ page }) => {
@@ -271,12 +272,14 @@ test("provenance footer and staged local assets resolve with HTTP 200", async ({
     "assets/conduit-favicon.png",
     "assets/conduit-mark.png",
     "assets/hero-conduit-core.webp",
+    "assets/hw-kernel.webp",
+    "assets/hw-prover.webp",
+    "assets/hw-synthesis.webp",
+    "assets/hw-waveform.webp",
     "assets/sticker-shield.webp",
     "assets/sticker-scroll.webp",
     "assets/sticker-knot.webp",
     "assets/sticker-lock.webp",
-    "assets/flair-ratchet.webp",
-    "assets/flair-differential.webp",
     "assets/conduit-arch-iso.webp",
     "assets/conduit-banner-wide.jpg",
     "assets/fonts/archivo-latin.woff2",

@@ -28,7 +28,7 @@ const OBLIGATION_STATES: StateConfig[] = [
   {
     id: 'verified',
     label: 'Verified',
-    summary: 'Z3 proved UNSAT across every input',
+    summary: 'Z3 proved the spec holds for all inputs',
     tone: 'proved',
     fileLabel: 'browser/url/src/percent.rs',
     lines: VURL_VERIFIED_LINES,
@@ -39,9 +39,9 @@ const OBLIGATION_STATES: StateConfig[] = [
   {
     id: 'failed',
     label: 'Counterexample',
-    summary: 'Z3 returns a concrete breaking input',
+    summary: 'Z3 returned a concrete breaking byte',
     tone: 'fail',
-    fileLabel: 'illustrative mutation — not in vurl',
+    fileLabel: 'illustrative typo — not in vurl',
     lines: COUNTEREXAMPLE_LINES,
     defaultLine: 4,
     badgeText: 'FALSIFIED (SAT)',
@@ -49,8 +49,8 @@ const OBLIGATION_STATES: StateConfig[] = [
   },
   {
     id: 'timeout',
-    label: 'Rlimit timeout',
-    summary: 'Solver budget exhausted; CI fails',
+    label: 'Timeout',
+    summary: 'Solver budget ran out; CI rejects it',
     tone: 'warn',
     fileLabel: 'illustrative timeout — not in vurl',
     lines: TIMEOUT_LINES,
@@ -60,8 +60,8 @@ const OBLIGATION_STATES: StateConfig[] = [
   },
   {
     id: 'admit',
-    label: 'Admit bypass',
-    summary: 'Counted as trusted; rejected by ratchet',
+    label: 'Admit',
+    summary: 'Manual bypass; rejected by ratchet',
     tone: 'warn',
     fileLabel: 'illustrative bypass — not in vurl',
     lines: ADMIT_LINES,
@@ -148,21 +148,21 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
             width={72}
             height={72}
           />
-          <h2 className="ch-section-title">What a proof guarantees that tests never can</h2>
+          <h2 className="ch-section-title">Tests check examples. Proofs check every input.</h2>
         </div>
 
         <p className="ch-prose-text">
-          Unit tests check only the cases a human remembered to write. Verus compiles Rust
-          implementations together with Rust specifications into SMT queries for Z3: does{' '}
-          <em>any</em> input exist that breaks the postcondition? An <code>UNSAT</code> answer
-          proves the contract across every valid input; a <code>SAT</code> answer hands back a
-          concrete counterexample.
+          A unit test only catches the cases someone thought to write down. Verus hands both your
+          Rust code and its mathematical specification to Z3 and asks a single question: does{' '}
+          <em>any</em> input break this contract? If Z3 answers no (<code>UNSAT</code>), the
+          guarantee holds across all inputs. If it answers yes (<code>SAT</code>), it returns the
+          exact input that breaks it.
         </p>
 
         <p className="ch-prose-text">
-          Every proof obligation finishes in one of four states, and only one is a proof. Select a
-          state below—the failure views inject a one-character typo into a real{' '}
-          <code>vurl</code> helper because all verified crates carry zero failing obligations.
+          Every proof check ends in one of four outcomes, and only the first counts as verified.
+          Try each state below—the failure views inject a one-character typo into a real{' '}
+          <code>vurl</code> helper because all verified crates currently have zero errors.
         </p>
 
         <div className="ch-state-selector" role="group" aria-label="Verus obligation states">
@@ -193,16 +193,15 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
               data-testid="btn-fix-typo"
               onClick={() => switchMode('verified')}
             >
-              Fix typo (r &lt; 15 → r &lt; 16) &amp; verify
+              Fix the typo (r &lt; 15 → r &lt; 16) &amp; re-verify
             </Button>
           </div>
         )}
 
         <p className="ch-prose-note">
-          Every proof still trusts Verus, Z3, <code>rustc</code>, and the specification text
-          itself. To catch specification mistakes, every spec is pinned to an upstream standard
-          commit and differentially tested against WPT, <code>tc39/test262</code>, and{' '}
-          <code>WebAssembly/spec</code>.
+          Proofs still trust Verus, Z3, <code>rustc</code>, and the specification itself. To catch
+          spec bugs early, every clause is pinned to an upstream standard commit and cross-checked
+          against WPT, <code>tc39/test262</code>, and <code>WebAssembly/spec</code>.
         </p>
       </div>
 
@@ -217,7 +216,7 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
             data-testid="tab-obligations"
             onClick={() => setWorkbenchTab('obligations')}
           >
-            Obligation states (vurl)
+            How proofs work (vurl)
           </button>
           <button
             type="button"
@@ -243,7 +242,7 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
 
             <div className="ch-code-workbench" data-testid="verus-code-workbench">
               <div className="ch-code-header">
-                <span>Click any marked obligation line to inspect the Z3 verdict</span>
+                <span>Select any marked line to read the Z3 verdict</span>
                 <span className="ch-lane-note">Lanes: spec · exec · proof</span>
               </div>
 
@@ -322,10 +321,10 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
             </div>
 
             <p className="ch-prose-note">
-              Real <code>percent.rs</code> code transcribed from WHATWG URL §1.3. Beyond positive
-              roundtrips, <code>vurl</code> also proves a negative edge case: for the six encode
-              sets that omit <code>%</code>, <code>decode(encode(&quot;%41&quot;))</code> returns{' '}
-              <code>&quot;A&quot;</code>, not <code>&quot;%41&quot;</code>.
+              Real <code>percent.rs</code> code transcribed from WHATWG URL §1.3. Alongside the
+              positive roundtrip proof, <code>vurl</code> also proves a subtle spec edge case: for
+              the six encode sets that omit <code>%</code>, <code>decode(encode(&quot;%41&quot;))</code>{' '}
+              yields <code>&quot;A&quot;</code>, not <code>&quot;%41&quot;</code>.
             </p>
           </>
         ) : (
@@ -358,7 +357,7 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
 
                 <div className="ch-code-workbench">
                   <div className="ch-code-header">
-                    <span>Live excerpt fetched directly from {activeProof.source}</span>
+                    <span>Fetched live from {activeProof.source}</span>
                     <span className="ch-proof-links">
                       <Source href={activeProof.source}>
                         Full .rs <IconExternal size={11} />

@@ -51,7 +51,7 @@ export default function App() {
       else problems.push(`data/stats.json (${(s.reason as Error)?.message ?? s.reason})`);
       if (problems.length) {
         setError(
-          `Could not load ${problems.join(' and ')}. Live metrics are shown as "${NR}" instead of guessed — regenerate them with browser/scripts/ratchet.py and scripts/collect_stats.py.`,
+          `Could not load ${problems.join(' and ')}. Live metrics show "${NR}" instead of stale placeholders — regenerate with browser/scripts/ratchet.py and scripts/collect_stats.py.`,
         );
       }
     })();
@@ -90,12 +90,12 @@ export default function App() {
             <span>CONDUIT</span>
           </a>
 
-          <nav className="ch-nav" aria-label="Specification chapters">
-            <a href="#coverage">Threats</a>
+          <nav className="ch-nav" aria-label="Page sections">
+            <a href="#coverage">Zero-days</a>
             <a href="#proofs">Proofs</a>
-            <a href="#scope">Scope</a>
+            <a href="#scope">Why boundaries</a>
             <a href="#arch">Architecture</a>
-            <a href="#ratchet">Ratchet</a>
+            <a href="#ratchet">Live status</a>
           </nav>
 
           <div className="ch-topbar-right">
@@ -126,36 +126,35 @@ export default function App() {
           </div>
         </header>
 
-        {/* Opening Thesis Hero */}
+        {/* Opening Hero */}
         <section className="ch-hero" data-testid="lede">
           <div className="ch-hero-inner">
             <div className="ch-hero-copy">
               <h1 className="ch-h1">
-                A browser engine proved one security boundary at a time
+                Don’t test a browser engine for memory bugs. Prove they cannot exist.
               </h1>
               <p className="ch-hero-prose">
-                In the last {CVES.length} Chrome vulnerabilities Google confirmed attackers
-                exploited in the wild, {v8Count} were in V8—mostly type confusion and out-of-bounds
-                memory corruption where the engine assumed an object invariant an attacker broke.
-                CONDUIT replaces those assumptions with machine-checked Rust theorems verified by
-                Verus and Z3 across every possible input.
+                {v8Count} of the last {CVES.length} Chrome zero-days exploited in the wild came
+                from V8. Almost all of them started the same way: the JavaScript engine trusted an
+                assumption about memory or object layout that an attacker broke. CONDUIT replaces
+                those assumptions with machine-checked Rust proofs verified by Verus and Z3 across
+                every possible input.
               </p>
               <p className="ch-hero-prose">
-                The verified workspace spans{' '}
-                <strong>{totals ? `${totals.crates} crates` : NR}</strong> with zero{' '}
-                <code>unsafe</code> code: WHATWG URL parsing (<code>vurl</code>), the full J0–J7
-                JavaScript engine (<code>vjs_spec</code> through <code>vjs_vm</code>), the
-                capability-checked Web IDL boundary (<code>vjs_webidl</code>), and a sandboxed
-                WebAssembly 1.0 interpreter (<code>vwasm</code>). Browser kernel isolation theorems,
-                Nanvix per-site sandboxing, and HTML/CSS/XML integration are next.
+                Today, <strong>{totals ? `${totals.crates} crates` : NR}</strong> verify from
+                scratch with zero <code>unsafe</code> code and zero trusted shortcuts: URL parsing
+                (<code>vurl</code>), the full J0–J7 JavaScript engine (<code>vjs_spec</code> to{' '}
+                <code>vjs_vm</code>), the Web IDL capability layer (<code>vjs_webidl</code>), and a
+                sandboxed WebAssembly 1.0 interpreter (<code>vwasm</code>). Next up: the browser
+                security kernel, Nanvix per-site sandboxing, and HTML/CSS/XML integration.
               </p>
               <div className="ch-hero-actions">
                 <a className="ch-cta-primary" href="#ratchet">
-                  <span>Inspect verified crates</span>
+                  <span>Inspect the verified crates</span>
                   <IconArrowRight size={14} />
                 </a>
                 <a className="ch-cta-secondary" href="#proofs">
-                  <span>Explore a Verus proof</span>
+                  <span>See a live proof</span>
                 </a>
               </div>
             </div>
@@ -163,13 +162,13 @@ export default function App() {
             <figure className="ch-hero-stage" data-testid="hero-visual">
               <img
                 src="assets/hero-conduit-core.webp"
-                alt="CONDUIT 3D verified core hardware emblem"
-                width={380}
-                height={380}
+                alt="CONDUIT verified hardware core sculpture floating over drafting grid"
+                width={348}
+                height={348}
               />
               <figcaption className="ch-hero-caption">
                 <span>Safe Rust · Verus SMT</span>
-                <span>Zero trusted hatches</span>
+                <span>Zero trusted shortcuts</span>
               </figcaption>
             </figure>
           </div>
@@ -200,7 +199,7 @@ export default function App() {
               <StatTile
                 value={totals ? `${totals.verify_seconds}s` : NR}
                 label="re-verify time"
-                hint={totals ? `${totals.source_lines.toLocaleString('en-US')} source LOC` : undefined}
+                hint={totals ? `${totals.source_lines.toLocaleString('en-US')} lines of Rust` : undefined}
                 tone="neutral"
                 testId="stat-re-verify time"
               />
@@ -211,7 +210,7 @@ export default function App() {
                     : NR
                 }
                 label="crate tests"
-                hint={totals ? `${totals.test_seconds}s test suite` : undefined}
+                hint={totals ? `${totals.test_seconds}s full suite` : undefined}
                 tone={totals ? (totals.tests_failed === 0 ? 'proved' : 'fail') : 'neutral'}
                 testId="stat-crate tests"
               />
@@ -223,7 +222,7 @@ export default function App() {
                 type="button"
                 className="ch-digest-pill"
                 onClick={() => copyDigest('verus', ratchet?.verus ?? null)}
-                title="Copy upstream Verus toolchain version"
+                title="Copy upstream Verus version"
               >
                 <span className="ch-digest-left">
                   <span className="ch-status-dot" data-tone={ratchet ? 'proved' : 'neutral'} />
@@ -256,19 +255,53 @@ export default function App() {
           </div>
         </section>
 
+        {/* Translucent Drafter-Grid Hardware Pillars */}
+        <section className="ch-hw-strip" aria-label="Core architecture pillars" data-testid="hardware-strip">
+          <div className="ch-hw-grid">
+            <a className="ch-hw-item" href="#arch">
+              <img src="assets/hw-kernel.webp" alt="Verified security kernel conduit core" width={78} height={78} />
+              <div>
+                <div className="ch-hw-title">Kernel boundary</div>
+                <div className="ch-hw-sub">Typed capability IPC gating disposable per-site renderers</div>
+              </div>
+            </a>
+            <a className="ch-hw-item" href="#proofs">
+              <img src="assets/hw-prover.webp" alt="Verus and Z3 SMT solver die" width={78} height={78} />
+              <div>
+                <div className="ch-hw-title">Verus + Z3 prover</div>
+                <div className="ch-hw-sub">Exhaustive SMT proofs across every input, zero unsafe Rust</div>
+              </div>
+            </a>
+            <a className="ch-hw-item" href="#scope">
+              <img src="assets/hw-synthesis.webp" alt="ESMeta specification synthesis core" width={78} height={78} />
+              <div>
+                <div className="ch-hw-title">Spec synthesis</div>
+                <div className="ch-hw-sub">Pinned ECMA-262 clauses compiled directly into Verus specs</div>
+              </div>
+            </a>
+            <a className="ch-hw-item" href="#ratchet">
+              <img src="assets/hw-waveform.webp" alt="Differential verification and VM speedup waveform" width={78} height={78} />
+              <div>
+                <div className="ch-hw-title">Differential ratchet</div>
+                <div className="ch-hw-sub">Live WPT, test262, and Wasm checks that never regress</div>
+              </div>
+            </a>
+          </div>
+        </section>
+
         {error && (
           <div className="ch-load-error" role="alert" data-testid="load-error">
             {error}
           </div>
         )}
 
-        {/* Tufte 2-Column Executable Specification Sections */}
+        {/* Executable Specification Sections */}
         <main className="ch-spec-container">
           <SectionCoverage />
           <SectionVerus ratchet={ratchet} />
           <SectionWhy ratchet={ratchet} />
 
-          {/* Section 4: Architecture — Verified Kernel & Per-Site Sandboxes */}
+          {/* Section 4: Architecture */}
           <section className="ch-arch-section" id="arch">
             <div className="ch-arch-header">
               <div className="ch-section-lead">
@@ -281,17 +314,16 @@ export default function App() {
                 />
                 <div>
                   <h2 className="ch-section-title">
-                    A proved security kernel gating untrusted per-site renderers
+                    One proved kernel in front of disposable renderers
                   </h2>
                   <p className="ch-prose-text">
-                    Each origin runs inside its own isolated renderer process—handling HTML
-                    (<code>html5ever</code>), CSS (<code>Stylo</code>), XML parsing, and per-site
-                    GPU work. A renderer cannot open sockets, read cookies, or alter the address
-                    bar directly; every privileged action crosses typed Vest-encoded IPC into the
-                    Verus kernel. Verified components replace renderer layers one crate at a time,
-                    starting with <code>vurl</code>, <code>vjs</code> (J0–J7),{' '}
-                    <code>vjs_webidl</code>, and <code>vwasm</code>. Release 1 ships without an
-                    extension API to eliminate that entire exploit class.
+                    Every site gets its own isolated renderer process for HTML (<code>html5ever</code>),
+                    CSS (<code>Stylo</code>), XML, and GPU drawing. A renderer cannot open sockets,
+                    read cookies, or touch the address bar—every privileged request crosses typed,
+                    capability-checked IPC into the Verus kernel. Verified crates replace renderer
+                    subsystems one by one, starting with <code>vurl</code>, <code>vjs</code>{' '}
+                    (J0–J7), <code>vjs_webidl</code>, and <code>vwasm</code>. Release 1 ships with
+                    no extension API, removing an entire recurring exploit surface.
                   </p>
                 </div>
               </div>
@@ -301,13 +333,13 @@ export default function App() {
               <figure className="ch-iso-frame" data-testid="iso-architecture">
                 <img
                   src="assets/conduit-arch-iso.webp"
-                  alt="Isometric hardware diagram of the CONDUIT kernel core and isolated verification modules"
+                  alt="Isometric hardware diagram of the CONDUIT kernel core and isolated modules"
                   width={1080}
                   height={826}
                 />
                 <figcaption>
-                  Central verified conduit core connected over isolated channels to SMT solver,
-                  spec compiler, capability router, and sandboxed execution nodes.
+                  The verified kernel core routes typed capabilities between the SMT prover, spec
+                  compiler, network boundary, and isolated per-site execution sandboxes.
                 </figcaption>
               </figure>
               <ArchitectureDiagram />
@@ -328,15 +360,15 @@ export default function App() {
               className="ch-footer-mark"
             />
             <span>
-              Every number loads at runtime from{' '}
+              Every figure loads live from{' '}
               <a className="ch-mono-link" href="browser/ratchet.json">
                 browser/ratchet.json
               </a>{' '}
               and{' '}
               <a className="ch-mono-link" href="data/stats.json">
                 data/stats.json
-              </a>{' '}
-              — zero hand-typed telemetry.{' '}
+              </a>
+              .{' '}
               <a className="ch-mono-link" href="irrigation.html">
                 Irrigation demo
               </a>

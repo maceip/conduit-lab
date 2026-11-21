@@ -38,15 +38,15 @@ export const CVES: CveRow[] = [
 ];
 
 export const COVERAGE_LABEL: Record<Coverage, string> = {
-  construction: 'Eliminated by construction (vjs)',
-  containment: 'Contained by kernel boundary',
-  graphics: 'Outside proof scope (per-site GPU)',
+  construction: 'Eliminated in vjs',
+  containment: 'Trapped by kernel',
+  graphics: 'Unverified GPU (per-site)',
 };
 
 export const COVERAGE_SHORT: Record<Coverage, string> = {
-  construction: 'By construction',
-  containment: 'Kernel containment',
-  graphics: 'Graphics (unproved)',
+  construction: 'Eliminated in vjs',
+  containment: 'Kernel isolation',
+  graphics: 'Unverified GPU',
 };
 
 export const coverageTone = (c: Coverage): 'proved' | 'warn' | 'fail' =>
@@ -54,9 +54,9 @@ export const coverageTone = (c: Coverage): 'proved' | 'warn' | 'fail' =>
 
 export const COVERAGE_DETAIL: Record<Coverage, string> = {
   construction:
-    'Ruled out by construction in vjs (J0–J7 crates verified with zero unsafe code): no optimizing JIT sits in the trusted base, memory lives in a safe-Rust indexed arena heap, and ECMA-262 §6.1.7.3 object invariants are machine-proved. Wiring vjs behind the verified kernel and renderer sandbox is the next phase.',
+    'Ruled out at compile time in vjs (J0–J7 crates verified with zero unsafe code): no optimizing JIT sits in the trusted base, memory lives in a safe-Rust indexed arena heap, and ECMA-262 §6.1.7.3 object invariants are proved. Wiring vjs behind the verified kernel is next.',
   containment:
-    'Mitigated by isolation once the browser kernel theorems land: XML/CSS parser bugs stay trapped inside an unprivileged per-site renderer, and typed Vest-encoded IPC capability handles replace raw cross-process handle passing. The kernel non-interference proofs remain next-phase design.',
+    'Isolated once the browser kernel theorems land: XML and CSS parser bugs stay trapped inside a disposable per-site renderer, and typed Vest-encoded capability handles replace raw cross-process IPC. The kernel non-interference proofs are still design work.',
   graphics:
-    'Explicitly outside formal verification. Dawn, Skia, and ANGLE have no verified replacements planned. Following the plan review, GPU translation and rasterization run per-site inside the renderer sandbox rather than in a shared privileged GPU process—containing blast radius without claiming a proof.',
+    'Outside formal verification. Dawn, Skia, and ANGLE have no verified replacements planned. Graphics translation and rasterization run per-site inside the renderer sandbox instead of a shared GPU process—containing the blast radius without pretending the GPU stack is proved.',
 };

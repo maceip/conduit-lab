@@ -37,9 +37,9 @@ const SectionCoverage: React.FC = () => {
 
   const filterButtons: Array<{ id: FilterMode; label: string; count: number }> = [
     { id: 'all', label: 'All CVEs', count: CVES.length },
-    { id: 'construction', label: 'By construction', count: tally.construction },
-    { id: 'containment', label: 'Containment', count: tally.containment },
-    { id: 'graphics', label: 'Graphics gap', count: tally.graphics },
+    { id: 'construction', label: 'Eliminated in vjs', count: tally.construction },
+    { id: 'containment', label: 'Trapped by kernel', count: tally.containment },
+    { id: 'graphics', label: 'Unverified GPU', count: tally.graphics },
   ];
 
   return (
@@ -54,12 +54,12 @@ const SectionCoverage: React.FC = () => {
             height={72}
           />
           <h2 className="ch-section-title">
-            What attackers exploited in Chrome, and where this design answers it
+            Twenty real Chrome zero-days, mapped to our architecture
           </h2>
         </div>
         <p className="ch-prose-text" data-testid="coverage-tally">
-          These are the last {CVES.length} Chrome vulnerabilities Google confirmed attackers
-          exploited in the wild through 2026-11-20. V8 accounts for {tally.v8} of them.
+          Every entry below is a Chrome bug Google confirmed attackers exploited in the wild
+          through November 20, 2026. V8 accounts for {tally.v8} of the {CVES.length}.
         </p>
 
         <div className="ch-tally-list">
@@ -68,10 +68,9 @@ const SectionCoverage: React.FC = () => {
               {tally.construction}/{CVES.length}
             </div>
             <div className="ch-tally-copy">
-              <strong>Eliminated by construction (vjs)</strong> — No optimizing JIT in the trusted
-              base, a safe-Rust indexed arena heap, and proved §6.1.7.3 object invariants target V8
-              type confusion and OOB bugs directly. J0–J7 crates are verified; browser kernel wiring
-              is next.
+              <strong>Eliminated in vjs</strong> — No optimizing JIT, safe Rust with an indexed
+              arena heap, and proved ECMA-262 object invariants cut off V8’s dominant exploit
+              classes at compile time. All J0–J7 crates verify today; kernel wiring is next.
             </div>
           </div>
 
@@ -80,9 +79,9 @@ const SectionCoverage: React.FC = () => {
               {tally.containment}/{CVES.length}
             </div>
             <div className="ch-tally-copy">
-              <strong>Contained by kernel boundary</strong> — Blink XML/CSS UAFs and Mojo handle
-              escapes land behind typed Vest-encoded IPC and per-site sandboxing once the kernel
-              theorems land.
+              <strong>Trapped by the kernel</strong> — Blink XML/CSS use-after-free bugs and Mojo
+              handle escapes hit typed IPC and per-site isolation once the browser kernel proofs
+              land.
             </div>
           </div>
 
@@ -91,9 +90,9 @@ const SectionCoverage: React.FC = () => {
               {tally.graphics}/{CVES.length}
             </div>
             <div className="ch-tally-copy">
-              <strong>Outside proof scope (GPU stack)</strong> — Dawn, Skia, and ANGLE carry no
-              verified replacement. Graphics runs per-site inside the sandbox to limit blast radius
-              rather than claiming a proof.
+              <strong>Unverified GPU stack</strong> — Dawn, Skia, and ANGLE stay outside formal
+              proofs. Graphics runs per-site inside the sandbox to limit damage—never pretending a
+              GPU driver is proved.
             </div>
           </div>
         </div>
@@ -113,19 +112,19 @@ const SectionCoverage: React.FC = () => {
             />
           </div>
           <dl className="ch-fields">
-            <Field label="Component & bug class">
+            <Field label="Component & flaw">
               {active.component} — {active.klass}
             </Field>
             <Field label="Patched in Chrome">
               {active.patched} · release <code>{active.fixedIn}</code> ({active.kev})
             </Field>
-            <Field label="Reporter / campaign">{active.reporter}</Field>
-            <Field label="This engine's answer">{COVERAGE_DETAIL[active.coverage]}</Field>
+            <Field label="Reported by">{active.reporter}</Field>
+            <Field label="How CONDUIT handles it">{COVERAGE_DETAIL[active.coverage]}</Field>
           </dl>
         </div>
 
         <p className="ch-prose-note">
-          Every row was verified against Google Chrome Releases ITW notices and CISA KEV in{' '}
+          Primary sources verified against Google Chrome Releases and CISA KEV in{' '}
           <Source href={blobUrl('docs/vjs-plan-review.md')}>docs/vjs-plan-review.md §2</Source>.
         </p>
       </div>
@@ -158,7 +157,7 @@ const SectionCoverage: React.FC = () => {
         <div className="ch-table-card">
           <div className="ch-table-meta">
             <span data-testid="packet-count">{visibleRows.length} CVEs</span>
-            <span>Select any row to inspect release provenance and coverage rationale</span>
+            <span>Click any row for release details and mitigation status</span>
           </div>
           <table className="ch-table ch-table-interactive" data-testid="cve-table">
             <thead>
@@ -166,8 +165,8 @@ const SectionCoverage: React.FC = () => {
                 <th>CVE</th>
                 <th>Patched</th>
                 <th>Component</th>
-                <th>Bug class</th>
-                <th>Architectural answer</th>
+                <th>Flaw</th>
+                <th>How CONDUIT responds</th>
               </tr>
             </thead>
             <tbody>
