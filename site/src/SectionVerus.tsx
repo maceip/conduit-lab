@@ -57,17 +57,19 @@ const SectionVerus: React.FC = () => {
   return (
     <section className="wb-row12" id="verus">
       <div className="wb-c5 wb-col">
-        <div className="wb-chapter">01 · What Verus is</div>
-        <h2 className="wb-h2">Rust checked against a written spec, for every input</h2>
+        <div className="wb-chapter">02 · Proofs</div>
+        <h2 className="wb-h2">What a proof checks that a test cannot</h2>
         <p className="wb-prose">
-          Verus checks Rust code against a written specification. The Z3 solver proves the code
-          matches the spec <strong>for every input</strong>, not for a sample of test cases. A
-          test checks one run; a proof checks all runs.
+          A test runs the code on the inputs someone thought of. Verus takes the Rust code plus a
+          specification, also written in Rust, and turns each claim into a question for Z3: is
+          there any input at all that breaks this? When Z3 answers no, the claim holds for every
+          input. When it answers yes, it hands back the input.
         </p>
         <p className="wb-prose">
-          An obligation has four states. Only one of them is a proof. Pick a state to see it in
-          the editor — the counterexample, timeout and admit views are an illustrative one-character
-          typo in a real vurl postcondition, because the actual crate has zero failed obligations.
+          Each claim, called an obligation, ends in one of four states, and only one of them is a
+          proof. Pick a state to see it in the editor. The editor shows a real vurl
+          postcondition. The counterexample, timeout and admit views add a one-character typo to
+          it, because the real crate has no failing obligations to show.
         </p>
         <div className="wb-states" role="group" aria-label="Obligation states">
           {STATES.map((s) => (
@@ -86,10 +88,10 @@ const SectionVerus: React.FC = () => {
           ))}
         </div>
         <p className="wb-prose wb-note">
-          What you still trust: Verus and Z3 themselves, the Rust compiler, and the spec. A proof
-          only shows the code meets the spec as written; a wrong spec is a proved-wrong program.
-          The specs here are differential-tested against the Web Platform Tests and pinned to an
-          exact standard commit.
+          A proof still rests on Verus, Z3, the Rust compiler and the spec. If the spec is wrong,
+          the code is proved to be wrong in the same way. So each spec here is pinned to an exact
+          commit of the standard and tested against the Web Platform Tests and against the
+          widely used <code>url</code> crate.
         </p>
       </div>
       <div className="wb-c7 wb-col">
@@ -102,10 +104,11 @@ const SectionVerus: React.FC = () => {
           />
         </div>
         <p className="wb-prose wb-note">
-          Real code from this project: the WHATWG URL percent-encoding standard transcribed into a
-          spec function, with the executable Rust proved equal to it. Click a gutter glyph to see
-          what Z3 checked. vurl also proves a negative fact:{' '}
-          <code>decode(encode("%41")) ≠ "%41"</code> for the six encode sets without <code>%</code>.
+          This is percent-encoding from the WHATWG URL standard, transcribed into a spec function,
+          with the executable Rust proved equal to it. Click a gutter glyph to see what Z3 checked.
+          vurl also proves an edge case of the standard: for the six encode sets that do not
+          contain <code>%</code>, <code>decode(encode("%41"))</code> is <code>"A"</code>, not{' '}
+          <code>"%41"</code>.
         </p>
       </div>
     </section>

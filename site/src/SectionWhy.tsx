@@ -17,12 +17,12 @@ const REASONS = [
   {
     k: '3',
     v: 'Drivers and hardware are not provable',
-    body: "Drivers are most of Linux's code and most of its bugs, and they talk to hardware nobody has formalized. Even seL4's theorem excludes boot code, assembly and the hardware itself. The honest move is to contain that code, not to call it proved.",
+    body: "Drivers are most of Linux's code and most of its bugs, and they talk to hardware nobody has formalized. Even seL4's theorem excludes boot code, assembly and the hardware itself. That code has to be isolated and labeled unproved.",
   },
   {
     k: '4',
     v: 'Verify the boundary, contain the rest',
-    body: 'Shipped verification picks small, stable targets: crypto arithmetic, compilers, microkernels, certificate validation. Quark proved a browser kernel in 2012 and ran unmodified WebKit as untrusted sandboxed tabs behind it. Security comes from the boundary, not from verifying the renderer.',
+    body: 'Shipped verification picks small, stable targets: crypto arithmetic, compilers, microkernels, certificate validation. Quark proved a browser kernel in Coq in 2012 and ran unmodified WebKit as untrusted sandboxed tabs behind it. Its theorems covered tab isolation, cookie integrity and the address bar, with no proof about WebKit at all.',
   },
 ];
 
@@ -45,11 +45,12 @@ const SectionWhy: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
   return (
     <section className="wb-row12" id="why">
       <div className="wb-c5 wb-col">
-        <div className="wb-chapter">02 · Why no verified Linux</div>
-        <h2 className="wb-h2">Verified kernels exist. Linux is not one.</h2>
+        <div className="wb-chapter">03 · Scope</div>
+        <h2 className="wb-h2">Why nobody proves a whole browser, or a whole Linux</h2>
         <p className="wb-prose">
-          seL4 proved a whole operating-system kernel correct in 2009. Linux is about{' '}
-          <strong>4,000× larger</strong> and still unverified. Size is not the only reason.
+          seL4's proof of an operating-system kernel landed in 2009. Linux is about 4,000 times
+          larger and has no such proof. A modern browser faces the same four obstacles, so this
+          project does what every shipped verification effort did and picks the target small.
         </p>
         <ScaleCompare items={scaleItems} />
         <div data-testid="reasons">
@@ -60,9 +61,9 @@ const SectionWhy: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
           ))}
         </div>
         <p className="wb-prose">
-          This project uses the same approach as Quark: verify the security kernel, run the real
-          unverified engine in per-site sandboxes behind it, and replace components one by one.
-          Verified coverage only increases between releases. Section 03 shows the current state.
+          This project follows Quark. It proves the security kernel, runs real unverified engines
+          in per-site sandboxes behind it, and then replaces renderer components with verified
+          ones, one at a time. Section 05 lists what exists and what is still design.
         </p>
         <p className="wb-prose wb-note">
           Sources: seL4 SOSP'09; Linux Foundation 2023 kernel report; browser/ratchet.json.

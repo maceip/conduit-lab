@@ -14,8 +14,8 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
   return (
     <section className="wb-row12" id="status">
       <div className="wb-c7 wb-col">
-        <div className="wb-chapter">03 · Where we are</div>
-        <h2 className="wb-h2">What is built, what is planned</h2>
+        <div className="wb-chapter">05 · Status</div>
+        <h2 className="wb-h2">What exists, and what is still design</h2>
         <div data-testid="modules">
           {VURL_MODULES.map((m, i) => (
             <DetailsRow key={m.id} k={`vurl · ${m.id}`} v={m.summary} tone={ok ? 'verified' : 'critical'} open={i === 0}>
@@ -61,8 +61,8 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
           )}
         </div>
         <p className="wb-prose wb-note">
-          Click a node to highlight its downstream impact. Not yet modeled: validation errors,
-          opaque/domain hosts, IDNA, the basic URL parser state machine. Sources:{' '}
+          Click a node to see which obligations depend on it. vurl does not yet cover validation
+          errors, opaque and domain hosts, IDNA, or the main URL parser state machine. Sources:{' '}
           <Source href={blobUrl('docs/verified-browser-engine.md')}>design doc</Source> ·{' '}
           <Source href={blobUrl('browser/README.md')}>vurl README</Source> ·{' '}
           <Source href="browser/ratchet.json">raw ratchet</Source> ·{' '}
@@ -73,11 +73,11 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
         <div className="wb-disclosure" data-testid="honesty-card">
           <h3>Only vurl is implemented</h3>
           <p>
-            The JS engine (<strong>vjs</strong>), the kernel theorems and the Nanvix renderer
-            isolation are <strong>design documents, not code</strong>. Until they land, this
-            browser's V8-class protection equals whatever untrusted engine ships inside a
-            not-yet-proven sandbox — the same bet Chrome makes today. The plan says so out loud,
-            and the ratchet is the only progress number published.
+            The JS engine (vjs), the kernel theorems and renderer isolation on Nanvix are
+            design documents, not code. Until they exist, script would run in an untrusted engine
+            inside a sandbox nobody has proved, which is where Chrome is today. The plan publishes
+            no schedule. Progress is the ratchet report: proved functions, trusted items and test
+            results from the last run.
           </p>
         </div>
         <div className="wb-box-t">Tradeoffs</div>

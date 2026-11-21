@@ -21,19 +21,25 @@ const SectionCoverage: React.FC = () => {
     containment: CVES.filter((c) => c.coverage === 'containment').length,
     graphics: CVES.filter((c) => c.coverage === 'graphics').length,
   };
+  const v8 = CVES.filter((c) => c.component.startsWith('V8')).length;
   const c = sel === null ? null : CVES[sel];
 
   return (
     <section className="wb-row12" id="coverage">
       <div className="wb-c12 wb-col">
-        <div className="wb-chapter">03 · Coverage</div>
-        <h2 className="wb-h2">The bugs that actually get exploited, mapped to this engine</h2>
+        <div className="wb-chapter">01 · The bugs</div>
+        <h2 className="wb-h2">What attackers exploited in Chrome, and what this design does about each</h2>
         <p className="wb-prose" data-testid="coverage-tally">
-          Last 20 Chrome CVEs confirmed exploited in the wild (as of 2026-11-20).{' '}
-          <strong>{tally.construction}/20</strong> answered by construction once vjs exists ·{' '}
-          <strong>{tally.containment}/20</strong> by containment, if the kernel theorems land ·{' '}
-          <strong>{tally.graphics}/20</strong> graphics (Dawn, Skia, ANGLE), contained only. V8 is
-          13 of 20.
+          These are the last {CVES.length} Chrome CVEs that Google marked as exploited in the wild,
+          as of 2026-11-20. V8 accounts for {v8} of them.{' '}
+          <strong>{tally.construction}/{CVES.length}</strong> are bug classes the planned JS engine,
+          vjs, is designed to rule out by construction: it has no JIT, its heap is safe Rust, and
+          its object model carries proved invariants. vjs is not built yet, so for now those bugs
+          would only be contained by a sandbox, the same position Chrome is in.{' '}
+          <strong>{tally.containment}/{CVES.length}</strong> are in renderer code or IPC, where the
+          answer is containment by the proved kernel once its theorems exist.{' '}
+          <strong>{tally.graphics}/{CVES.length}</strong> are in the GPU stack (Dawn, Skia, ANGLE).
+          Nothing in this plan proves those.
         </p>
         <div className="wb-grid-frame">
           <IxPacketGrid
@@ -47,8 +53,9 @@ const SectionCoverage: React.FC = () => {
           />
         </div>
         <p className="wb-prose wb-note">
-          Rail: green = by construction, amber = containment, red = contained only. Click a row
-          for the full explanation. Every row was verified against primary sources in{' '}
+          The rail color is the answer: green for by construction, amber for containment, red for
+          contained only. Click a row for the full explanation. Each row was checked against
+          Google's release notes and CISA's exploited-vulnerabilities catalog in{' '}
           <Source href={blobUrl('docs/vjs-plan-review.md')}>docs/vjs-plan-review.md §2</Source>.
         </p>
         {c && (

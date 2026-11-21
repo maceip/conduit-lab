@@ -381,3 +381,11 @@ body {
   .wb-main { padding: 20px 16px 48px; }
   .wb-top, .wb-scoreboard, .wb-footer { padding-inline: 16px; }
 }
+/* opening story */
+.wb-lede { display: flex; flex-direction: column; gap: 12px; max-width: 860px; padding: 28px 24px 8px; }
+.wb-h1 { margin: 0; font-size: 30px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; }
+.wb-lede .wb-prose { font-size: 15px; }
+@media (max-width: 640px) {
+  .wb-lede { padding: 20px 16px 4px; }
+  .wb-h1 { font-size: 23px; }
+}
