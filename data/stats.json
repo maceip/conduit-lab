@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-11-22T09:13:24+00:00",
+  "generated_at": "2026-11-22T09:38:38+00:00",
   "generator": "scripts/collect_stats.py",
   "host": {
     "machine": "arm64",
@@ -50,7 +50,7 @@
       "exit_code": 0,
       "verified": 2354,
       "errors": 0,
-      "seconds": 11.34,
+      "seconds": 12.46,
       "log": "data/logs/vstd.log"
     },
     "examples": [
@@ -60,7 +60,7 @@
         "exit_code": 0,
         "verified": 9,
         "errors": 0,
-        "seconds": 0.53,
+        "seconds": 0.56,
         "log": "data/logs/example-vectors.rs.log"
       }
     ]
@@ -73,7 +73,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 32,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-Arithmetic.log"
       },
       {
@@ -112,7 +112,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 22,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-Unicode.log"
       },
       {
@@ -121,7 +121,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 26,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-VerifiedBitmasks.log"
       },
       {
@@ -136,7 +136,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-base58.log"
       },
       {
@@ -145,7 +145,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-cachetools.log"
       },
       {
@@ -154,7 +154,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-croniter.log"
       },
       {
@@ -163,7 +163,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 14,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-deposit_sc.log"
       },
       {
@@ -172,7 +172,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-difflib.log"
       },
       {
@@ -181,7 +181,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-dijkstar.log"
       },
       {
@@ -196,7 +196,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 10,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-galoistools.log"
       },
       {
@@ -205,7 +205,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 10,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-greenery.log"
       },
       {
@@ -214,7 +214,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-intervaltree.log"
       },
       {
@@ -223,7 +223,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-ipaddress.log"
       },
       {
@@ -232,7 +232,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 10,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-jsonpatch.log"
       },
       {
@@ -241,7 +241,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 41,
-        "seconds": 0.17,
+        "seconds": 0.16,
         "log": "data/logs/lean-linked_list.log"
       },
       {
@@ -250,7 +250,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-munkres.log"
       },
       {
@@ -259,7 +259,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-netaddr.log"
       },
       {
@@ -268,7 +268,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 10,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-networkx.log"
       },
       {
@@ -277,7 +277,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-ntheory.log"
       },
       {
@@ -286,7 +286,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-packaging_version.log"
       },
       {
@@ -295,7 +295,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 12,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-piggybank.log"
       },
       {
@@ -304,7 +304,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-portion.log"
       },
       {
@@ -313,7 +313,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-primefac.log"
       },
       {
@@ -322,7 +322,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 7,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-primepy.log"
       },
       {
@@ -331,7 +331,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-prolepticgregorian.log"
       },
       {
@@ -340,7 +340,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-pyradix.log"
       },
       {
@@ -349,7 +349,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-pythonconstraint.log"
       },
       {
@@ -358,7 +358,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-reedsolo.log"
       },
       {
@@ -367,7 +367,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 10,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-rsa.log"
       },
       {
@@ -376,7 +376,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-semver.log"
       },
       {
@@ -385,7 +385,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 13,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-sortedcontainers.log"
       },
       {
@@ -394,7 +394,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-textdistance.log"
       },
       {
@@ -403,7 +403,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 8,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-textwrap.log"
       },
       {
@@ -412,7 +412,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 9,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-toposort.log"
       },
       {
@@ -421,7 +421,7 @@
         "sorry_count": 20,
         "status": "passed",
         "jobs": 28,
-        "seconds": 0.16,
+        "seconds": 0.15,
         "log": "data/logs/lean-verdict.log"
       },
       {
@@ -430,7 +430,7 @@
         "sorry_count": 0,
         "status": "passed",
         "jobs": 46,
-        "seconds": 0.17,
+        "seconds": 0.15,
         "log": "data/logs/lean-vest.log"
       }
     ]
@@ -440,7 +440,7 @@
       "name": "cargo-verus",
       "command": "$VERUS_RELEASE/cargo-verus --help",
       "exit_code": 0,
-      "seconds": 0.01,
+      "seconds": 0.0,
       "log": "data/logs/cli-cargo-verus.log"
     },
     {
@@ -452,7 +452,7 @@
     }
   ],
   "browser": {
-    "generated_at": "2026-11-22T09:13:42+00:00",
+    "generated_at": "2026-11-22T09:38:58+00:00",
     "generator": "browser/scripts/ratchet.py",
     "crates": [
       {
@@ -471,7 +471,7 @@
           "proof": 15,
           "spec": 13
         },
-        "verify_seconds": 1.61,
+        "verify_seconds": 1.71,
         "trusted": {
           "assume": 0,
           "admit": 0,
@@ -489,9 +489,9 @@
         "tests_exit": 0,
         "tests_passed": 15,
         "tests_failed": 0,
-        "test_seconds": 1.88,
+        "test_seconds": 1.86,
         "log": "data/logs/browser-vurl.log",
-        "log_sha256": "e89c63ad65e0a422dde36f946337cdfd7e67cd024a58822bbebaf47b9e8a177f",
+        "log_sha256": "957752507d63952f54693330bb4d08c2417c9e7af87fb3e24305cc3035ec12aa",
         "proof_source": "data/examples/browser-vurl-ipv6.rs"
       },
       {
@@ -510,7 +510,7 @@
           "proof": 62,
           "spec": 24
         },
-        "verify_seconds": 3.6,
+        "verify_seconds": 3.98,
         "trusted": {
           "assume": 0,
           "admit": 0,
@@ -528,9 +528,9 @@
         "tests_exit": 0,
         "tests_passed": 4,
         "tests_failed": 0,
-        "test_seconds": 1.2,
+        "test_seconds": 1.31,
         "log": "data/logs/browser-vjs_spec.log",
-        "log_sha256": "fd85307c466c0546fa364940a13b85d7058f992c2cd8ff327c297f0647a8d12b",
+        "log_sha256": "d44518750bba47d872fc36466b5c78a7eff761beb9f43dd41c1160991749c9fd",
         "proof_source": "data/examples/browser-vjs_spec-generated.rs"
       },
       {
@@ -549,7 +549,7 @@
           "proof": 86,
           "spec": 35
         },
-        "verify_seconds": 8.13,
+        "verify_seconds": 8.79,
         "trusted": {
           "assume": 0,
           "admit": 0,
@@ -567,9 +567,9 @@
         "tests_exit": 0,
         "tests_passed": 8,
         "tests_failed": 0,
-        "test_seconds": 1.67,
+        "test_seconds": 1.71,
         "log": "data/logs/browser-vjs_types.log",
-        "log_sha256": "c183543390ee4619c7f1c47c1af04d9a5b9bc38cb92e72747cca3bf905fb0f9f",
+        "log_sha256": "b43bff551b08ea107d44292b3cfc35dcbe8b1d8427de227ced361b491de82aee",
         "proof_source": "data/examples/browser-vjs_types-ops.rs"
       },
       {
@@ -588,7 +588,7 @@
           "proof": 77,
           "spec": 40
         },
-        "verify_seconds": 4.59,
+        "verify_seconds": 4.93,
         "trusted": {
           "assume": 0,
           "admit": 0,
@@ -606,9 +606,9 @@
         "tests_exit": 0,
         "tests_passed": 10,
         "tests_failed": 0,
-        "test_seconds": 1.29,
+        "test_seconds": 1.31,
         "log": "data/logs/browser-vjs_object.log",
-        "log_sha256": "d6193a3ff196ccc7d5ef2cc1da5efc5932da35a550ed11e0fe3fcc4cd59ff04b",
+        "log_sha256": "612cfd6fae3a83f460be1c8a354f85dd06e508aebe02752b48b9b41769a29202",
         "proof_source": "data/examples/browser-vjs_object-invariants_proof.rs"
       },
       {
@@ -627,7 +627,7 @@
           "proof": 40,
           "spec": 46
         },
-        "verify_seconds": 13.27,
+        "verify_seconds": 14.56,
         "trusted": {
           "assume": 0,
           "admit": 0,
@@ -645,9 +645,9 @@
         "tests_exit": 0,
         "tests_passed": 5,
         "tests_failed": 0,
-        "test_seconds": 1.46,
+        "test_seconds": 1.49,
         "log": "data/logs/browser-vjs_syntax.log",
-        "log_sha256": "12b407a3b64c663425fd7f8d8fbcfa41465b693a3a58a453615778969b394290",
+        "log_sha256": "f248e447f048bc7022c0acf5ed1d48c428a3e2eb6772364fc9249ce41cd8fecd",
         "proof_source": "data/examples/browser-vjs_syntax-token.rs"
       },
       {
@@ -666,7 +666,7 @@
           "proof": 100,
           "spec": 185
         },
-        "verify_seconds": 48.83,
+        "verify_seconds": 52.0,
         "trusted": {
           "assume": 0,
           "admit": 0,
@@ -684,9 +684,9 @@
         "tests_exit": 0,
         "tests_passed": 7,
         "tests_failed": 0,
-        "test_seconds": 9.36,
+        "test_seconds": 9.58,
         "log": "data/logs/browser-vjs.log",
-        "log_sha256": "4547e8a5fe7b85bc127478d01b3a5b0abb335dcf1acd13e07fcac0ef603cf691",
+        "log_sha256": "7bf20ea3a65bafadc89410d6fc83c9b76a7995623676911fb1c5e4d04a9c479c",
         "proof_source": "data/examples/browser-vjs-env.rs"
       },
       {
@@ -705,7 +705,7 @@
           "proof": 79,
           "spec": 62
         },
-        "verify_seconds": 10.7,
+        "verify_seconds": 11.34,
         "trusted": {
           "assume": 0,
           "admit": 0,
@@ -723,9 +723,9 @@
         "tests_exit": 0,
         "tests_passed": 13,
         "tests_failed": 0,
-        "test_seconds": 1.46,
+        "test_seconds": 1.55,
         "log": "data/logs/browser-vjs_webidl.log",
-        "log_sha256": "d77907f9600e8a36e05ac57bc77c75e2356dc224ce2815d34c47f4bbaab38f21",
+        "log_sha256": "c16a6e8694e8a446e48d52e58df7e9c31a853fb75f21224aebccc08e5af7f714",
         "proof_source": "data/examples/browser-vjs_webidl-dispatch.rs"
       },
       {
@@ -744,7 +744,7 @@
           "proof": 91,
           "spec": 53
         },
-        "verify_seconds": 3.82,
+        "verify_seconds": 4.28,
         "trusted": {
           "assume": 0,
           "admit": 0,
@@ -762,9 +762,9 @@
         "tests_exit": 0,
         "tests_passed": 7,
         "tests_failed": 0,
-        "test_seconds": 1.2,
+        "test_seconds": 1.28,
         "log": "data/logs/browser-vjs_builtins.log",
-        "log_sha256": "81067910e59be68d0829f0d121ddacc7c8fe970cd95889d93748abb40733993a",
+        "log_sha256": "4ed45ecb914bab2ad9d956467ec58f8562a5687c3f4d209191c99118c7bcb802",
         "proof_source": "data/examples/browser-vjs_builtins-json.rs"
       },
       {
@@ -783,7 +783,7 @@
           "proof": 27,
           "spec": 11
         },
-        "verify_seconds": 3.04,
+        "verify_seconds": 3.45,
         "trusted": {
           "assume": 0,
           "admit": 0,
@@ -801,9 +801,9 @@
         "tests_exit": 0,
         "tests_passed": 6,
         "tests_failed": 0,
-        "test_seconds": 1.08,
+        "test_seconds": 1.19,
         "log": "data/logs/browser-vjs_gc.log",
-        "log_sha256": "c740784742b50be6039141589b5ec92dd4c699162cd3f167dd7eb35bb5b61d54",
+        "log_sha256": "9f33507d91118f7a4faed87287640b6ca2d5794e8001fde9bf35f3d4794ba813",
         "proof_source": "data/examples/browser-vjs_gc-gc.rs"
       },
       {
@@ -822,7 +822,7 @@
           "proof": 48,
           "spec": 24
         },
-        "verify_seconds": 14.46,
+        "verify_seconds": 14.52,
         "trusted": {
           "assume": 0,
           "admit": 0,
@@ -840,9 +840,9 @@
         "tests_exit": 0,
         "tests_passed": 2,
         "tests_failed": 0,
-        "test_seconds": 1.72,
+        "test_seconds": 1.75,
         "log": "data/logs/browser-vjs_vm.log",
-        "log_sha256": "3e2f52a495fa9f1709c2f4766b3fbaa29940acbc0f0e9fcebc7bfb7ed191d213",
+        "log_sha256": "4a24ad977d48596948bef64f3190543bfcf0ba3c9c2a96ef94f1487ff40d632e",
         "proof_source": "data/examples/browser-vjs_vm-compiler_proof.rs"
       },
       {
@@ -861,7 +861,7 @@
           "proof": 19,
           "spec": 10
         },
-        "verify_seconds": 2.62,
+        "verify_seconds": 2.68,
         "trusted": {
           "assume": 0,
           "admit": 0,
@@ -879,9 +879,9 @@
         "tests_exit": 0,
         "tests_passed": 3,
         "tests_failed": 0,
-        "test_seconds": 1.99,
+        "test_seconds": 1.95,
         "log": "data/logs/browser-vwasm.log",
-        "log_sha256": "ffdd5595cbc33c4d5d5e966fbeb80618366c83f532f878740c96cac41b43c183",
+        "log_sha256": "494afca56de068166c6287384e89473107133e1674548d16ecd9938867aff9af",
         "proof_source": "data/examples/browser-vwasm-binary.rs"
       }
     ],
@@ -889,7 +889,7 @@
     "esmeta_specgen": {
       "self_test_exit": 0,
       "check_exit": 0,
-      "seconds": 0.11,
+      "seconds": 0.12,
       "log": "data/logs/browser-esmeta-specgen.log"
     },
     "verus_commit": "0dab219272ac2353320bd177ebb3929453b90a9e",
@@ -918,8 +918,8 @@
       "source_lines": 121040,
       "tests_passed": 80,
       "tests_failed": 0,
-      "verify_seconds": 114.67,
-      "test_seconds": 24.31
+      "verify_seconds": 122.24,
+      "test_seconds": 24.98
     },
     "j_steps": [
       {
@@ -931,7 +931,7 @@
         "errors": 0,
         "trusted": 0,
         "tests_passed": 4,
-        "verify_seconds": 3.6,
+        "verify_seconds": 3.98,
         "crate": "vjs_spec",
         "test262_passed": 191,
         "test262_total": 191
@@ -945,7 +945,7 @@
         "errors": 0,
         "trusted": 0,
         "tests_passed": 8,
-        "verify_seconds": 8.13,
+        "verify_seconds": 8.79,
         "crate": "vjs_types",
         "test262_passed": 165,
         "test262_total": 165
@@ -959,7 +959,7 @@
         "errors": 0,
         "trusted": 0,
         "tests_passed": 10,
-        "verify_seconds": 4.59,
+        "verify_seconds": 4.93,
         "crate": "vjs_object",
         "test262_passed": 100,
         "test262_total": 100
@@ -973,7 +973,7 @@
         "errors": 0,
         "trusted": 0,
         "tests_passed": 5,
-        "verify_seconds": 13.27,
+        "verify_seconds": 14.56,
         "crate": "vjs_syntax",
         "test262_passed": 180,
         "test262_total": 180
@@ -987,7 +987,7 @@
         "errors": 0,
         "trusted": 0,
         "tests_passed": 7,
-        "verify_seconds": 48.83,
+        "verify_seconds": 52.0,
         "crate": "vjs",
         "test262_passed": 130,
         "test262_total": 130
@@ -1001,7 +1001,7 @@
         "errors": 0,
         "trusted": 0,
         "tests_passed": 13,
-        "verify_seconds": 10.7,
+        "verify_seconds": 11.34,
         "crate": "vjs_webidl",
         "test262_passed": 153,
         "test262_total": 153
@@ -1015,7 +1015,7 @@
         "errors": 0,
         "trusted": 0,
         "tests_passed": 7,
-        "verify_seconds": 3.82,
+        "verify_seconds": 4.28,
         "crate": "vjs_builtins",
         "test262_passed": 131,
         "test262_total": 131
@@ -1029,7 +1029,7 @@
         "errors": 0,
         "trusted": 0,
         "tests_passed": 6,
-        "verify_seconds": 3.04,
+        "verify_seconds": 3.45,
         "crate": "vjs_gc",
         "test262_passed": 51,
         "test262_total": 51
@@ -1043,7 +1043,7 @@
         "errors": 0,
         "trusted": 0,
         "tests_passed": 5,
-        "verify_seconds": 17.08,
+        "verify_seconds": 17.2,
         "crates": [
           "vjs_vm",
           "vwasm"
@@ -1399,53 +1399,53 @@
       {
         "name": "fib(28)",
         "iterations": 3,
-        "ast_ms": 111.678,
-        "bytecode_ms": 56.707,
+        "ast_ms": 114.13,
+        "bytecode_ms": 57.848,
         "speedup": 1.97,
         "result_verified_equal": true
       },
       {
         "name": "sieve(8192)",
         "iterations": 40,
-        "ast_ms": 21.713,
-        "bytecode_ms": 13.93,
-        "speedup": 1.56,
+        "ast_ms": 22.265,
+        "bytecode_ms": 12.12,
+        "speedup": 1.84,
         "result_verified_equal": true
       },
       {
         "name": "tak(18, 12, 6)",
         "iterations": 10,
-        "ast_ms": 42.446,
-        "bytecode_ms": 14.025,
-        "speedup": 3.03,
+        "ast_ms": 43.742,
+        "bytecode_ms": 14.334,
+        "speedup": 3.05,
         "result_verified_equal": true
       },
       {
         "name": "gcd_sum(5000)",
         "iterations": 20,
-        "ast_ms": 33.205,
-        "bytecode_ms": 21.845,
-        "speedup": 1.52,
+        "ast_ms": 34.34,
+        "bytecode_ms": 20.095,
+        "speedup": 1.71,
         "result_verified_equal": true
       },
       {
         "name": "collatz_max(2000)",
         "iterations": 15,
-        "ast_ms": 72.288,
-        "bytecode_ms": 44.042,
-        "speedup": 1.64,
+        "ast_ms": 70.141,
+        "bytecode_ms": 42.508,
+        "speedup": 1.65,
         "result_verified_equal": true
       },
       {
         "name": "bubble_sort(256)",
         "iterations": 20,
-        "ast_ms": 36.28,
-        "bytecode_ms": 26.947,
-        "speedup": 1.35,
+        "ast_ms": 35.422,
+        "bytecode_ms": 24.155,
+        "speedup": 1.47,
         "result_verified_equal": true
       }
     ],
-    "vm_benchmarks_geomean_speedup": 1.77,
+    "vm_benchmarks_geomean_speedup": 1.89,
     "proof_showcase": [
       {
         "label": "vurl \u00b7 ipv6.rs",
@@ -1455,7 +1455,7 @@
         "source": "data/examples/browser-vurl-ipv6.rs",
         "verified": 65,
         "errors": 0,
-        "seconds": 1.61,
+        "seconds": 1.71,
         "log": "data/logs/browser-vurl.log",
         "exit_code": 0
       },
@@ -1467,7 +1467,7 @@
         "source": "data/examples/browser-vjs_spec-generated.rs",
         "verified": 271,
         "errors": 0,
-        "seconds": 3.6,
+        "seconds": 3.98,
         "log": "data/logs/browser-vjs_spec.log",
         "exit_code": 0
       },
@@ -1479,7 +1479,7 @@
         "source": "data/examples/browser-vjs_types-ops.rs",
         "verified": 504,
         "errors": 0,
-        "seconds": 8.13,
+        "seconds": 8.79,
         "log": "data/logs/browser-vjs_types.log",
         "exit_code": 0
       },
@@ -1491,7 +1491,7 @@
         "source": "data/examples/browser-vjs_object-invariants_proof.rs",
         "verified": 371,
         "errors": 0,
-        "seconds": 4.59,
+        "seconds": 4.93,
         "log": "data/logs/browser-vjs_object.log",
         "exit_code": 0
       },
@@ -1503,7 +1503,7 @@
         "source": "data/examples/browser-vjs_syntax-token.rs",
         "verified": 364,
         "errors": 0,
-        "seconds": 13.27,
+        "seconds": 14.56,
         "log": "data/logs/browser-vjs_syntax.log",
         "exit_code": 0
       },
@@ -1515,7 +1515,7 @@
         "source": "data/examples/browser-vjs-env.rs",
         "verified": 1179,
         "errors": 0,
-        "seconds": 48.83,
+        "seconds": 52.0,
         "log": "data/logs/browser-vjs.log",
         "exit_code": 0
       },
@@ -1527,7 +1527,7 @@
         "source": "data/examples/browser-vjs_webidl-dispatch.rs",
         "verified": 463,
         "errors": 0,
-        "seconds": 10.7,
+        "seconds": 11.34,
         "log": "data/logs/browser-vjs_webidl.log",
         "exit_code": 0
       },
@@ -1539,7 +1539,7 @@
         "source": "data/examples/browser-vjs_builtins-json.rs",
         "verified": 355,
         "errors": 0,
-        "seconds": 3.82,
+        "seconds": 4.28,
         "log": "data/logs/browser-vjs_builtins.log",
         "exit_code": 0
       },
@@ -1551,7 +1551,7 @@
         "source": "data/examples/browser-vjs_gc-gc.rs",
         "verified": 233,
         "errors": 0,
-        "seconds": 3.04,
+        "seconds": 3.45,
         "log": "data/logs/browser-vjs_gc.log",
         "exit_code": 0
       },
@@ -1563,7 +1563,7 @@
         "source": "data/examples/browser-vjs_vm-compiler_proof.rs",
         "verified": 116,
         "errors": 0,
-        "seconds": 14.46,
+        "seconds": 14.52,
         "log": "data/logs/browser-vjs_vm.log",
         "exit_code": 0
       },
@@ -1575,12 +1575,12 @@
         "source": "data/examples/browser-vwasm-binary.rs",
         "verified": 181,
         "errors": 0,
-        "seconds": 2.62,
+        "seconds": 2.68,
         "log": "data/logs/browser-vwasm.log",
         "exit_code": 0
       }
     ],
-    "inputs_sha256": "f153cc852e2d827edd925ca0f2d2e72ab5bfd86a199b646a759e6aee84b5082d",
+    "inputs_sha256": "88f9938fb8293e119b00914b336130b6458b5c52053789fe19ef3cb2988f8521",
     "spec_pins": [
       "WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf",
       "tc39/ecma262@74c33d406ec1763ca9ee5ad9165571661649d6e6",
@@ -1591,5 +1591,5 @@
     ],
     "log": "data/logs/browser-ratchet.log"
   },
-  "duration_seconds": 158.6
+  "duration_seconds": 167.9
 }

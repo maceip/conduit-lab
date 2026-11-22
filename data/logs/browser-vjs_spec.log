@@ -1,9 +1,9 @@
 $ $VERUS_RELEASE/cargo-verus verify -p vjs_spec --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 3.68
+# exit: 0  seconds: 3.98
 
     Checking vjs_spec v0.1.0 (~/conduit-lab/browser/vjs-spec)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.58s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.87s
 
 # from Verus --output-json --time-expanded
 {
@@ -1086,7 +1086,7 @@ $ $VERUS_RELEASE/cargo-verus verify -p vjs_spec --fwd-verus-args-to roots -- --t
 
 $ cargo test -p vjs_spec
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 1.17
+# exit: 0  seconds: 1.31
 
 
 running 0 tests
@@ -1100,7 +1100,7 @@ test zero_trusted_escape_hatches_audit ... ok
 test compiler_self_test_and_reproducibility ... ok
 test test262_and_v8_differential_suite_generates_report ... ok
 
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.42s
 
 
 running 0 tests
@@ -1417,7 +1417,7 @@ warning: negative impls are experimental
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
    Compiling vjs_spec v0.1.0 (~/conduit-lab/browser/vjs-spec)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.39s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.43s
      Running unittests src/lib.rs (target/debug/build/vjs_spec/0f985d975d28987b/out/vjs_spec-0f985d975d28987b)
      Running tests/differential_test262.rs (target/debug/build/vjs_spec/4fea74877a3d1f6c/out/differential_test262-4fea74877a3d1f6c)
    Doc-tests vjs_spec

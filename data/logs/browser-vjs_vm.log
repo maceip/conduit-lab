@@ -1,9 +1,9 @@
 $ $VERUS_RELEASE/cargo-verus verify -p vjs_vm --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 17.92
+# exit: 0  seconds: 14.52
 
     Checking vjs_vm v0.1.0 (~/conduit-lab/browser/vjs-vm)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 17.81s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 14.43s
 
 # from Verus --output-json --time-expanded
 {
@@ -576,7 +576,7 @@ $ $VERUS_RELEASE/cargo-verus verify -p vjs_vm --fwd-verus-args-to roots -- --tri
 
 $ cargo test -p vjs_vm --release
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 2.06
+# exit: 0  seconds: 1.75
 
 
 running 0 tests
@@ -588,7 +588,7 @@ running 2 tests
 test semantic_equivalence_edge_cases_and_traps ... ok
 test run_public_benchmarks_and_write_report ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.59s
 
 
 running 0 tests
@@ -905,7 +905,7 @@ warning: negative impls are experimental
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
    Compiling vjs_vm v0.1.0 (~/conduit-lab/browser/vjs-vm)
-    Finished `release` profile [optimized] target(s) in 0.97s
+    Finished `release` profile [optimized] target(s) in 0.77s
      Running unittests src/lib.rs (target/release/build/vjs_vm/011d7adfc9b4cdff/out/vjs_vm-011d7adfc9b4cdff)
      Running tests/public_benchmarks.rs (target/release/build/vjs_vm/d7391dc29a1045d0/out/public_benchmarks-d7391dc29a1045d0)
    Doc-tests vjs_vm

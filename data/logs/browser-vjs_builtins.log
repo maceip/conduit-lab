@@ -1,9 +1,9 @@
 $ $VERUS_RELEASE/cargo-verus verify -p vjs_builtins --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 4.73
+# exit: 0  seconds: 4.28
 
     Checking vjs_builtins v0.1.0 (~/conduit-lab/browser/vjs-builtins)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.63s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.19s
 
 # from Verus --output-json --time-expanded
 {
@@ -1501,7 +1501,7 @@ $ $VERUS_RELEASE/cargo-verus verify -p vjs_builtins --fwd-verus-args-to roots --
 
 $ cargo test -p vjs_builtins
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 1.23
+# exit: 0  seconds: 1.28
 
 
 running 0 tests
@@ -1510,15 +1510,15 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 
 running 7 tests
-test math_clz32_imul_and_array_nan_distinction ... ok
 test date_iso8601_and_collections_insertion_order ... ok
-test vest_json_prefix_security_and_roundtrip_witnesses ... ok
-test warblre_regexp_zero_width_guard_and_backtracking ... ok
+test math_clz32_imul_and_array_nan_distinction ... ok
 test date_iso8601_offsets_and_invalid_rejections ... ok
+test warblre_regexp_zero_width_guard_and_backtracking ... ok
+test vest_json_prefix_security_and_roundtrip_witnesses ... ok
 test provenance_integrity_check ... ok
 test test262_all_8_directories_and_v8_differential_report ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
 
 
 running 0 tests
@@ -1852,7 +1852,7 @@ warning: unexpected `cfg` condition name: `verus_keep_ghost`
 
 warning: `vjs_builtins` (lib) generated 1 warning
 warning: `vjs_builtins` (lib test) generated 1 warning (1 duplicate)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.53s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.50s
      Running unittests src/lib.rs (target/debug/build/vjs_builtins/4a41c2b68658c98a/out/vjs_builtins-4a41c2b68658c98a)
      Running tests/test262_builtins.rs (target/debug/build/vjs_builtins/1458dd60e789f992/out/test262_builtins-1458dd60e789f992)
    Doc-tests vjs_builtins

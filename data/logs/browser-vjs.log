@@ -1,9 +1,9 @@
 $ $VERUS_RELEASE/cargo-verus verify -p vjs --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 56.39
+# exit: 0  seconds: 52.0
 
     Checking vjs v0.1.0 (~/conduit-lab/browser/vjs)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 56.29s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 51.90s
 
 # from Verus --output-json --time-expanded
 {
@@ -4046,7 +4046,7 @@ $ $VERUS_RELEASE/cargo-verus verify -p vjs --fwd-verus-args-to roots -- --trigge
 
 $ cargo test -p vjs
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 9.56
+# exit: 0  seconds: 9.58
 
 
 running 0 tests
@@ -4068,7 +4068,7 @@ test test_realm_heap_quota_and_mark_sweep_gc_reclamation ... ok
 test test262_conformance_v8_differential_and_report ... ok
 test test_round2_audit_regressions ... ok
 
-test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.34s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.31s
 
 
 running 0 tests
@@ -4385,21 +4385,6 @@ warning: negative impls are experimental
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
 warning: unexpected `cfg` condition name: `verus_keep_ghost`
- --> vjs-builtins/src/date.rs:6:7
-  |
-6 | #[cfg(verus_keep_ghost)]
-  |       ^^^^^^^^^^^^^^^^
-  |
-  = help: expected names are: `docsrs`, `feature`, and `test` and 34 more
-  = help: consider using a Cargo feature instead
-  = help: or consider adding in `Cargo.toml` the `check-cfg` lint config for the lint:
-           [lints.rust]
-           unexpected_cfgs = { level = "warn", check-cfg = ['cfg(verus_keep_ghost)'] }
-  = help: or consider adding `println!("cargo::rustc-check-cfg=cfg(verus_keep_ghost)");` to the top of the `build.rs`
-  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
-  = note: `#[warn(unexpected_cfgs)]` on by default
-
-warning: unexpected `cfg` condition name: `verus_keep_ghost`
  --> url/src/ipv4.rs:8:7
   |
 8 | #[cfg(verus_keep_ghost)]
@@ -4454,10 +4439,26 @@ warning: unexpected `cfg` condition name: `verus_keep_ghost`
    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
 
    Compiling vjs_vm v0.1.0 (~/conduit-lab/browser/vjs-vm)
+   Compiling vjs_builtins v0.1.0 (~/conduit-lab/browser/vjs-builtins)
    Compiling vjs v0.1.0 (~/conduit-lab/browser/vjs)
-warning: `vjs_builtins` (lib) generated 1 warning
 warning: `vurl` (lib) generated 4 warnings
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.09s
+warning: unexpected `cfg` condition name: `verus_keep_ghost`
+ --> vjs-builtins/src/date.rs:6:7
+  |
+6 | #[cfg(verus_keep_ghost)]
+  |       ^^^^^^^^^^^^^^^^
+  |
+  = help: expected names are: `docsrs`, `feature`, and `test` and 34 more
+  = help: consider using a Cargo feature instead
+  = help: or consider adding in `Cargo.toml` the `check-cfg` lint config for the lint:
+           [lints.rust]
+           unexpected_cfgs = { level = "warn", check-cfg = ['cfg(verus_keep_ghost)'] }
+  = help: or consider adding `println!("cargo::rustc-check-cfg=cfg(verus_keep_ghost)");` to the top of the `build.rs`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: `vjs_builtins` (lib) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.11s
      Running unittests src/lib.rs (target/debug/build/vjs/fa4522a5d8d3d353/out/vjs-fa4522a5d8d3d353)
      Running tests/full_pipeline_j0_j7.rs (target/debug/build/vjs/87f9d2f61a39b2e4/out/full_pipeline_j0_j7-87f9d2f61a39b2e4)
      Running tests/test262_and_differential.rs (target/debug/build/vjs/a93d3f77d462f10f/out/test262_and_differential-a93d3f77d462f10f)

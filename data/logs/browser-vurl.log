@@ -1,9 +1,9 @@
 $ $VERUS_RELEASE/cargo-verus verify -p vurl --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 1.82
+# exit: 0  seconds: 1.71
 
     Checking vurl v0.1.0 (~/conduit-lab/browser/url)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.72s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.61s
 
 # from Verus --output-json --time-expanded
 {
@@ -271,7 +271,7 @@ $ $VERUS_RELEASE/cargo-verus verify -p vurl --fwd-verus-args-to roots -- --trigg
 
 $ cargo test -p vurl -- --nocapture
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 1.8
+# exit: 0  seconds: 1.86
 
 
 running 0 tests
@@ -298,7 +298,7 @@ differential: 3726 parsed, 296274 failures
 test differential_ipv6_vs_url_crate ... ok
 test serialize_parse_roundtrip_random ... ok
 
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
 
 
 running 5 tests
@@ -310,7 +310,7 @@ test differential_percent_decode_vs_crate ... ok
 differential: 26280 ipv4, 15160 failures, 258560 non-ipv4
 test differential_ipv4_vs_url_crate ... ok
 
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.48s
 
 
 running 0 tests
@@ -681,9 +681,9 @@ warning: unexpected `cfg` condition name: `verus_keep_ghost`
    = help: or consider adding `println!("cargo::rustc-check-cfg=cfg(verus_keep_ghost)");` to the top of the `build.rs`
    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
 
-warning: `vurl` (lib) generated 4 warnings (4 duplicates)
-warning: `vurl` (lib test) generated 4 warnings
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.36s
+warning: `vurl` (lib) generated 4 warnings
+warning: `vurl` (lib test) generated 4 warnings (4 duplicates)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.35s
      Running unittests src/lib.rs (target/debug/build/vurl/e40cd703632f1d02/out/vurl-e40cd703632f1d02)
      Running tests/encode_sets.rs (target/debug/build/vurl/3771d7d77207f500/out/encode_sets-3771d7d77207f500)
      Running tests/ipv6.rs (target/debug/build/vurl/e5b588e228251321/out/ipv6-e5b588e228251321)

@@ -1,9 +1,9 @@
 $ $VERUS_RELEASE/cargo-verus verify -p vjs_object --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 5.86
+# exit: 0  seconds: 4.93
 
     Checking vjs_object v0.1.0 (~/conduit-lab/browser/vjs-object)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.77s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.83s
 
 # from Verus --output-json --time-expanded
 {
@@ -1291,7 +1291,7 @@ $ $VERUS_RELEASE/cargo-verus verify -p vjs_object --fwd-verus-args-to roots -- -
 
 $ cargo test -p vjs_object
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 1.48
+# exit: 0  seconds: 1.31
 
 
 running 0 tests
@@ -1301,9 +1301,9 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 running 10 tests
 test test_same_value_and_same_value_zero ... ok
-test test_prototype_cycles_and_non_extensible_set_proto ... ok
 test test_prop_key_canonicalization ... ok
 test test_descriptors_and_validate_and_apply ... ok
+test test_prototype_cycles_and_non_extensible_set_proto ... ok
 test test_ordinary_get_has_set_delete_and_integrity ... ok
 test test_own_property_keys_ordering ... ok
 test test_ieee754_u32_bits_roundtrip_and_f64_oracle ... ok
@@ -1311,7 +1311,7 @@ test test_v8_sealed_empty_array_isfrozen_bug_caught_by_vjs_object ... ok
 test test_array_exotic_length_and_nonconfigurable_barrier ... ok
 test test_test262_suite_and_v8_differential_and_write_report ... ok
 
-test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s
 
 
 running 0 tests
@@ -1628,7 +1628,7 @@ warning: negative impls are experimental
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
    Compiling vjs_object v0.1.0 (~/conduit-lab/browser/vjs-object)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.54s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.48s
      Running unittests src/lib.rs (target/debug/build/vjs_object/0761e55801446372/out/vjs_object-0761e55801446372)
      Running tests/test262_object.rs (target/debug/build/vjs_object/1af01dbbcb559410/out/test262_object-1af01dbbcb559410)
    Doc-tests vjs_object
