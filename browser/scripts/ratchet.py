@@ -178,7 +178,7 @@ CRATE_SPECS: list[CrateSpec] = [
 MARKERS = {
     "assume": re.compile(r"\bassume\s*\("),
     "admit": re.compile(r"\badmit\s*\("),
-    "external_body": re.compile(r"\bexternal_body\b"),
+    "external_body": re.compile(r"(?:\bverifier\s*::|[(,])\s*external_body\b"),
     "external": re.compile(r"\b(?:verifier|verus_verify)\s*(?:::|\()\s*external\b"),
     "external_spec": re.compile(r"\bexternal_(?:fn|type|trait)_\w+"),
     "assume_specification": re.compile(r"\bassume_specification\b"),
