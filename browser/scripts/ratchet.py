@@ -272,11 +272,10 @@ def sha256_file(path: Path) -> str:
 
 def graph_problems(env: dict[str, str]) -> list[str]:
     """Ways the workspace could let unchecked Verus specs reach a ratcheted crate."""
-    meta = json.loads(
-        subprocess.run(
-            ["cargo", "metadata", "--format-version", "1"], cwd=ROOT, env=env, capture_output=True, check=True
-        ).stdout
-    )
+    p = subprocess.run(["cargo", "metadata", "--format-version", "1"], cwd=ROOT, env=env, capture_output=True, text=True)
+    if p.returncode != 0:
+        return [f"cargo metadata exited {p.returncode}: {p.stderr.strip()}"]
+    meta = json.loads(p.stdout)
     problems: list[str] = []
     pkgs = {p["id"]: p for p in meta["packages"]}
     members = set(meta["workspace_members"])
@@ -365,13 +364,14 @@ def verify_crate(spec: CrateSpec, env: dict[str, str], target_dir: Path) -> dict
         problems.append(f"cargo verus exited {p.returncode}: {errs[0] if errs else p.stderr.strip()[-300:]}")
 
     res = report["verification-results"] if report else {}
-    modules = report["times-ms"]["smt"]["smt-run-module-times"] if report else []
+    # absent when Verus stopped before reaching the solver
+    modules = report["times-ms"].get("smt", {}).get("smt-run-module-times") if report else None
     functions = sorted(
         ({"function": f["function"], "mode": f.get("mode:", f.get("mode")), "success": f["success"]}
-         for m in modules for f in m.get("function-breakdown", [])),
+         for m in modules or [] for f in m.get("function-breakdown", [])),
         key=lambda f: f["function"],
     )  # fmt: skip
-    by_mode = {k: sum(f["mode"] == k for f in functions) for k in ("exec", "proof", "spec")} if report else None
+    by_mode = {k: sum(f["mode"] == k for f in functions) for k in ("exec", "proof", "spec")} if modules is not None else None
     if report is None:
         problems.append("no Verus JSON report")
     elif not (res.get("success") and res.get("is-verifying-entire-crate")) or res.get("errors") != 0:
@@ -750,6 +750,9 @@ TEST_FIELDS = ["tests_exit", "tests_passed", "tests_failed"]
 def recorded_problems(rec: dict) -> list[str]:
     """Checks of the committed report that need no Verus run."""
     problems: list[str] = []
+    missing = {"inputs_sha256", "spec_pins", "verus_commit", "crates", "totals"} - rec.keys()
+    if missing or any(not {*PROOF_FIELDS, *TEST_FIELDS, "log", "log_sha256"} <= c.keys() for c in rec["crates"]):
+        return [f"ratchet.json lacks required fields {sorted(missing)}; regenerate it with ratchet.py"]
     if rec.get("inputs_sha256") != inputs_sha256():
         problems.append("stale: browser/ inputs changed since ratchet.json was generated")
     if rec.get("spec_pins") != spec_pins():
