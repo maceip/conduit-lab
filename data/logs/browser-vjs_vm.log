@@ -1,14 +1,582 @@
-$ $VERUS_RELEASE/cargo-verus verify -p vjs_vm -- --triggers-mode silent
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 15.74
+$ $VERUS_RELEASE/cargo-verus verify -p vjs_vm --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 17.92
 
-verification results:: 116 verified, 0 errors
-    Checking vjs_vm v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs-vm)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 15.65s
+    Checking vjs_vm v0.1.0 (~/conduit-lab/browser/vjs-vm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 17.81s
+
+# from Verus --output-json --time-expanded
+{
+ "verus": {
+  "profile": "release",
+  "version": "0.2026.11.19.0dab219",
+  "platform": {
+   "os": "macos",
+   "arch": "aarch64"
+  },
+  "toolchain": "1.100.0-aarch64-apple-darwin",
+  "commit": "0dab219272ac2353320bd177ebb3929453b90a9e"
+ },
+ "verification-results": {
+  "encountered-error": false,
+  "encountered-vir-error": false,
+  "success": true,
+  "verified": 116,
+  "errors": 0,
+  "is-verifying-entire-crate": true
+ },
+ "functions": [
+  {
+   "function": "vjs_vm::ast::BinOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::ExecHeap::alloc_array",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::ExecHeap::array_get",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::ExecHeap::array_set",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::ExecHeap::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::ExecHeap::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::ExecProgramOutcome::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::MAX_ARRAY_LEN",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::MAX_GLOBALS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::MAX_HEAP_ARRAYS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::MAX_LOCALS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::VmError::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::alloc_zeros",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::eval_binop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::eval_not",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::eval_program",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::exec_eval_args",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::exec_eval_call_body",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::exec_eval_expr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::exec_eval_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::expr_list_from_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::pad_locals_from_slice",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::pad_locals_owned",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::spec_eval_args",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::spec_eval_call_body",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::spec_eval_expr",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::spec_eval_stmt",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::spec_expr_list_len",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::spec_expr_list_size",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::spec_expr_size",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::ast::spec_stmt_size",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::bytecode::CompiledFunc::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::bytecode::CompiledProgram::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::bytecode::ExecFrame::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::bytecode::Instr::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::bytecode::exec_step_binop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::bytecode::exec_step_call",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::bytecode::exec_step_ret",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::bytecode::exec_vm_step",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::bytecode::pop_args_and_pad_into",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::bytecode::run_vm",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::bytecode::spec_vm_run_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler::CompileError::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler::MAX_CODE_LEN",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler::binop_instr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler::compile_args",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler::compile_expr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler::compile_func",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler::compile_program",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler::compile_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler::lemma_compile_expr_nonempty",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler::lemma_expr_list_len_le_compiled",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler::spec_compile_args",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler::spec_compile_expr",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler::spec_compile_stmt",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::compile_and_run_verified",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_call_epilogue_normal",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_code_at_single",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_code_at_split",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_code_at_split3",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_code_at_split4",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_compile_args_sim",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_compile_call_sim",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_compile_expr_sim",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_compile_stmt_sim",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_eval_args_len",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_log_and_prepare_rhs",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_log_and_short_circuit",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_log_or_prepare_rhs",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_log_or_short_circuit",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_normalize_bool_tail",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_prefix_suffix_embeds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_sim_array_get",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_sim_array_set",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_sim_binop",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_sim_call_expr",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_sim_if",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_sim_log_and",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_sim_log_or",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_sim_while",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_array_get",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_array_new",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_array_set",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_binop",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_call",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_jump",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_jump_back",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_jump_if_false",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_load_global",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_load_local",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_not",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_pop",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_push_const",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_ret",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_store_global",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_step_store_local",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_vm_run_steps_add",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_vm_run_steps_one",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_vm_run_steps_terminal",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::lemma_vm_run_steps_zero",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::spec_args_has_call",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::spec_args_vm_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::spec_call_vm_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::spec_expr_has_call",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::spec_expr_vm_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::spec_stmt_has_call",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::spec_stmt_vm_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::theorem_compile_expr_prefix_suffix",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_vm::compiler_proof::theorem_compile_program_correct",
+   "mode": "proof",
+   "success": true
+  }
+ ]
+}
 
 $ cargo test -p vjs_vm --release
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 7.41
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 2.06
 
 
 running 0 tests
@@ -20,28 +588,13 @@ running 2 tests
 test semantic_equivalence_edge_cases_and_traps ... ok
 test run_public_benchmarks_and_write_report ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.57s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s
 
 
 running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-   Compiling proc-macro2 v1.0.107
-   Compiling quote v1.0.47
-   Compiling unicode-ident v1.0.27
-   Compiling verus_syn v0.0.0-2026-11-01-0251 (~/workspaces/verus-stack/verus/dependencies/syn)
-   Compiling verus_prettyplease v0.0.0-2026-11-01-0251 (~/workspaces/verus-stack/verus/dependencies/prettyplease)
-   Compiling hashbrown v0.17.1
-   Compiling equivalent v1.0.3
-   Compiling zmij v1.0.23
-   Compiling vstd v0.0.0-2026-11-15-0327 (~/workspaces/verus-stack/verus/source/vstd)
-   Compiling serde_core v1.0.229
-   Compiling convert_case v0.4.0
-   Compiling verus_builtin v0.0.0-2026-11-15-0327 (~/workspaces/verus-stack/verus/source/builtin)
-   Compiling serde_json v1.0.154
-   Compiling memchr v2.8.3
-   Compiling itoa v1.0.19
 warning: negative impls are experimental
    --> ~/workspaces/verus-stack/verus/source/builtin/src/lib.rs:976:6
     |
@@ -73,17 +626,12 @@ warning: negative impls are experimental
     = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
 
 warning: `verus_builtin` (lib) generated 3 warnings
-   Compiling indexmap v2.14.2
-   Compiling syn v2.0.119
-   Compiling synstructure v0.13.2
-   Compiling verus_state_machines_macros v0.0.0-2026-11-15-0327 (~/workspaces/verus-stack/verus/source/state_machines_macros)
-   Compiling verus_builtin_macros v0.0.0-2026-11-15-0327 (~/workspaces/verus-stack/verus/source/builtin_macros)
 warning: unused variable: `perm`
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -92,7 +640,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -104,7 +652,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -113,7 +661,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -124,7 +672,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -133,7 +681,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -144,7 +692,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -153,7 +701,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -164,7 +712,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -173,7 +721,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -184,7 +732,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -193,7 +741,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -204,7 +752,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -213,7 +761,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -224,7 +772,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -233,7 +781,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -244,7 +792,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -253,7 +801,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -264,7 +812,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -273,7 +821,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -285,7 +833,6 @@ warning: unused variable: `out`
 535 |         let out = self.m.m.remove(k);
     |             ^^^ help: if this is intentional, prefix it with an underscore: `_out`
 
-   Compiling vjs_vm v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs-vm)
 warning: negative impls are experimental
    --> ~/workspaces/verus-stack/verus/source/vstd/invariant.rs:171:18
     |
@@ -357,7 +904,8 @@ warning: negative impls are experimental
     = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
-    Finished `release` profile [optimized] target(s) in 6.47s
+   Compiling vjs_vm v0.1.0 (~/conduit-lab/browser/vjs-vm)
+    Finished `release` profile [optimized] target(s) in 0.97s
      Running unittests src/lib.rs (target/release/build/vjs_vm/011d7adfc9b4cdff/out/vjs_vm-011d7adfc9b4cdff)
      Running tests/public_benchmarks.rs (target/release/build/vjs_vm/d7391dc29a1045d0/out/public_benchmarks-d7391dc29a1045d0)
    Doc-tests vjs_vm

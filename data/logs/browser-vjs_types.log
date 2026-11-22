@@ -1,14 +1,1322 @@
-$ $VERUS_RELEASE/cargo-verus verify -p vjs_types -- --triggers-mode silent
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 8.6
+$ $VERUS_RELEASE/cargo-verus verify -p vjs_types --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 8.86
 
-verification results:: 504 verified, 0 errors
-    Checking vjs_types v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs-types)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.50s
+    Checking vjs_types v0.1.0 (~/conduit-lab/browser/vjs-types)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.77s
+
+# from Verus --output-json --time-expanded
+{
+ "verus": {
+  "profile": "release",
+  "version": "0.2026.11.19.0dab219",
+  "platform": {
+   "os": "macos",
+   "arch": "aarch64"
+  },
+  "toolchain": "1.100.0-aarch64-apple-darwin",
+  "commit": "0dab219272ac2353320bd177ebb3929453b90a9e"
+ },
+ "verification-results": {
+  "encountered-error": false,
+  "encountered-vir-error": false,
+  "success": true,
+  "verified": 504,
+  "errors": 0,
+  "is-verifying-entire-crate": true
+ },
+ "functions": [
+  {
+   "function": "vjs_types::bigint::JsBigInt::add",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::clone_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::cmp",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::cmp_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::eq_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::from_i64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::from_u64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::is_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::mul",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::neg",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::sub",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::to_string_radix",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::to_string_radix10",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::JsBigInt::zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::add_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::bigint_to_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::clone_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::cmp_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::div_rem_limb",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_bigint_add_associative",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_bigint_add_commutative",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_bigint_add_neg_inverse",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_bigint_add_zero_identity",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_bigint_canonical_unique",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_bigint_distributive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_bigint_from_int_props",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_bigint_mul_commutative",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_bigint_mul_identities",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_bigint_to_string_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_canonical_limbs_of_nat_props",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_diff_at_top_mismatch",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_limbs_canonical_unique",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_limbs_upper_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_limbs_wf_lower_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_limbs_wf_zero_iff_empty",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_nat_to_radix10_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_parse_radix_prefix_none",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_pow2_32",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_pow2_add",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_pow2_pos",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_pow32_add",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_pow32_is_pow2",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_pow32_mono",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_pow32_pos",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_prefix_step",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_prepend_limb_val",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_prepend_zeros_val",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_rev_vec_index",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_rev_vec_len",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_rev_vec_push",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_same_len_limbs_unique",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_u32_shl_is_pow2",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_u32_shl_is_pow2_low16",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::lemma_u32_shl_is_pow2_pub",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::mul_limb_add",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::mul_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::normalize_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::parse_radix_limbs_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::pow2_nat",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::pow32",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::pow_nat",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::pow_u32_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::prepend_zeros",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::radix_digit_u16_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::rev_vec_view",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::shl_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::spec_canonical_limbs_of_nat",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::spec_limbs_nat",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::spec_nat_to_radix_nonempty",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::spec_parse_radix_digits",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::string_to_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::bigint::sub_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::abs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::add",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::canonicalize_nan",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::div",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::equal",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::from_i32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::from_u32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::is_finite",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::is_infinite",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::is_integral_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::is_nan",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::is_neg_infinite",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::is_neg_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::is_pos_infinite",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::is_pos_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::is_safe_integer",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::is_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::less_than",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::mul",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::negate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::same_value",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::same_value_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::sub",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::to_exact_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::to_int32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::to_js_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::to_uint16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::JsNumber::to_uint32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::bigint_to_number_rne",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::bit_len_limbs_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::bit_len_u128_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::bit_len_u64_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::div_57_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::exp_bits_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::format_ecmascript_decimal_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::impl&%8::EPSILON",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::impl&%8::MAX_SAFE_INTEGER",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::impl&%8::MAX_VALUE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::impl&%8::MIN_SAFE_INTEGER",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::impl&%8::MIN_VALUE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::impl&%8::NAN",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::impl&%8::NEG_INFINITY",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::impl&%8::NEG_ONE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::impl&%8::NEG_ZERO",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::impl&%8::ONE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::impl&%8::POS_INFINITY",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::impl&%8::POS_ZERO",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_bd_high_implies_d_lt_9",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_bit_len_u128_pack_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_bit_len_u64_range",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_from_i32_to_int32_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_from_u32_to_uint32_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_nat_bit_len_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_nat_bit_len_unique",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_neg_mod_u32",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_not_nan_not_inf_is_finite",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_number_add_mul_commutative",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_number_order_properties",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_number_same_value_equivalence",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_number_same_value_zero_equivalence",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_pack_lsh_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_pack_rne_mag32_extract",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_pack_rsh_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_pos_neg_zero_distinction",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_pow10_le_pow32",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_pow10_mul_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_pow10_pos",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_pow2_54_56_57",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_pow2_strict_mono",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_pow32_eq_pow2_local",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_pow5_le_pow32_div8",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_pow5_limbs_len_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_radix_none_propagates_local",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_rational_scaled_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_sig_limbs_len_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_subnormal_shift_range",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_to_int32_matches_ecma_modulo",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_to_uint32_matches_ecma_modulo",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_u64_shl_mod32_is_mul_pow2",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::lemma_u64_shr_is_div_pow2",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::mant_bits_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::match_infinity_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::number_to_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::one_limbs_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::pack_rne_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::parse_radix_to_number_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::parse_unsigned_decimal_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::positive_finite_to_string_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::push_slice_u16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::push_zeros_u16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::rational_to_number_rne_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::scan_dec_digits_exec_bounded",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::sign_bit_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::spec_bd_generate_digits",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::spec_bd_scale_down",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::spec_bd_scale_up",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::spec_div_digit_10",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::spec_nat_bit_len",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::spec_repeat_zero_u16",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::spec_scan_dec_digits",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::spec_scan_exp_digits",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::string_to_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::u32_bit_len_loop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::number::unpack_finite_nonzero_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::JsInput::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::JsNumeric::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::JsPrim::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::JsPrim::clone_prim",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::MethodOutcome::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::ObjectToPrimitiveHook::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::PreferredType::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::TypeErrorKind::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::is_loosely_equal",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::is_loosely_equal_input",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::is_strictly_equal",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::lemma_equality_hierarchy_and_symmetry",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::lemma_same_value_equivalence",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::lemma_same_value_zero_equivalence",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::lemma_to_primitive_abrupt_and_short_circuit",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::lemma_to_primitive_idempotent_on_prim",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::loosely_equal_non_bool_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::make_utf16_4",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::make_utf16_5",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::make_utf16_6",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::make_utf16_7",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::make_utf16_9",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::ordinary_to_primitive_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::same_value",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::same_value_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::to_boolean",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::to_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::to_numeric",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::to_primitive",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::to_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::ops::typeof_prim",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::CodePointRecord::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::clone_str",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::code_point_at",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::code_unit_at",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::concat",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::eq_str",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::from_ascii",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::from_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::index_of",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::is_empty",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::is_less_than",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::is_well_formed_unicode",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::len",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::slice",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::trim",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::trim_end",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::trim_start",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::Utf16Str::utf16_to_wtf8_or_lossless",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::is_leading_surrogate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::is_str_white_space",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::is_surrogate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::is_trailing_surrogate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::lemma_code_point_at_properties",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::lemma_first_non_ws_props",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::lemma_index_of_from_sound_and_minimal",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::lemma_last_non_ws_end_props",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::lemma_slice_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::lemma_trim_clean_and_idempotent",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::lemma_utf16_encode_decode_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::lemma_utf16_lt_from_irreflexive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::lemma_utf16_lt_from_strict_order",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::lemma_utf16_lt_from_transitive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::lemma_utf16_lt_strict_total_order",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::lemma_utf16_lt_transitive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::lemma_utf8_decode_step_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::push_wtf8_code_point",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::spec_first_non_ws",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::spec_index_of_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::spec_is_well_formed_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::spec_last_non_ws_end",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::spec_utf16_lt_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::spec_utf16_to_wtf8_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::spec_utf8_to_utf16_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::utf16_encode_code_point",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::utf8_decode_step_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_types::utf16::utf8_to_utf16",
+   "mode": "exec",
+   "success": true
+  }
+ ]
+}
 
 $ cargo test -p vjs_types
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 2.0
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 1.72
 
 
 running 0 tests
@@ -26,7 +1334,7 @@ test number_to_string_and_string_to_number_edge_tests ... ok
 test ieee754_classification_comparisons_and_ties_to_even_tests ... ok
 test test262_and_differential_v8_and_f64_suite ... ok
 
-test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.64s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.71s
 
 
 running 0 tests
@@ -69,7 +1377,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -78,7 +1386,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -90,7 +1398,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -99,7 +1407,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -110,7 +1418,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -119,7 +1427,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -130,7 +1438,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -139,7 +1447,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -150,7 +1458,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -159,7 +1467,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -170,7 +1478,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -179,7 +1487,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -190,7 +1498,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -199,7 +1507,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -210,7 +1518,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -219,7 +1527,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -230,7 +1538,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -239,7 +1547,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -250,7 +1558,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -259,7 +1567,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -342,8 +1650,8 @@ warning: negative impls are experimental
     = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
-   Compiling vjs_types v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs-types)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.85s
+   Compiling vjs_types v0.1.0 (~/conduit-lab/browser/vjs-types)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.51s
      Running unittests src/lib.rs (target/debug/build/vjs_types/c767fffd6ab1609a/out/vjs_types-c767fffd6ab1609a)
      Running tests/test262_and_v8.rs (target/debug/build/vjs_types/bea3c03c10a70756/out/test262_and_v8-bea3c03c10a70756)
    Doc-tests vjs_types

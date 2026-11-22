@@ -1628,6 +1628,7 @@ fn clone_cont_vec_exec(cont: &[ContOp]) -> (out: Vec<ContOp>)
 }
 
 #[verifier::spinoff_prover]
+#[verifier::rlimit(50)]
 fn apply_op_exec(
     input: &[u16],
     flags: RegexFlags,
@@ -2934,6 +2935,7 @@ fn parse_class_item_exec(
     }
 }
 
+#[verifier::rlimit(50)]
 fn parse_char_class_body_exec(pat: &[u16], pos: usize) -> (res: Option<(Vec<(u16, u16)>, usize)>)
     requires
         pos <= pat@.len(),
@@ -3238,6 +3240,7 @@ fn parse_alternative_exec(
     }
 }
 
+#[verifier::rlimit(50)]
 fn parse_term_exec(
     pat: &[u16],
     pos: usize,

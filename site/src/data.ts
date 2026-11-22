@@ -1,12 +1,13 @@
 export const NR = 'not recorded';
 
-export interface TrustedCounts {
-  assume: number;
-  admit: number;
-  external_body: number;
-  external: number;
-  assume_specification: number;
-  unsafe: number;
+/** Textual trust markers by kind; the kinds are ratchet.py's MARKERS. */
+export type TrustedCounts = Record<string, number>;
+
+/** Functions Verus sent to the solver, by mode. */
+export interface FunctionsByMode {
+  exec: number;
+  proof: number;
+  spec: number;
 }
 
 export interface RatchetCrate {
@@ -18,8 +19,12 @@ export interface RatchetCrate {
   verify_exit: number;
   verified: number;
   errors: number;
+  /** Verified as a root under `--no-cheating`. */
+  no_cheating: boolean;
+  functions_by_mode: FunctionsByMode;
   verify_seconds: number;
   trusted: TrustedCounts;
+  vacuous_requires: number;
   source_lines: number;
   tests_exit: number;
   tests_passed: number;
@@ -34,6 +39,8 @@ export interface RatchetTotals {
   verified: number;
   errors: number;
   trusted: TrustedCounts;
+  functions_by_mode: FunctionsByMode;
+  vacuous_requires: number;
   source_lines: number;
   tests_passed: number;
   tests_failed: number;
@@ -95,6 +102,8 @@ export interface Ratchet {
   generator: string;
   crates: RatchetCrate[];
   verus: string;
+  /** Digest of everything under browser/ the run depended on. */
+  inputs_sha256?: string;
   totals?: RatchetTotals;
   j_steps?: RatchetJStep[];
   test262_suites?: RatchetSuite[];
@@ -125,8 +134,16 @@ export async function loadText(url: string): Promise<string> {
 export const sumTrusted = (t: TrustedCounts | undefined): number | null =>
   t ? Object.values(t).reduce((a, b) => a + b, 0) : null;
 
+/** Every check ratchet.py fails on. A field missing from the report counts as failing. */
 export const crateOk = (c: RatchetCrate | undefined): boolean =>
-  !!c && c.verify_exit === 0 && c.errors === 0;
+  !!c &&
+  c.verify_exit === 0 &&
+  c.errors === 0 &&
+  c.no_cheating === true &&
+  sumTrusted(c.trusted) === 0 &&
+  c.vacuous_requires === 0 &&
+  c.tests_exit === 0 &&
+  c.tests_failed === 0;
 
 export const allCratesOk = (r: Ratchet | null): boolean =>
   !!r && r.crates.length > 0 && r.crates.every(crateOk);
@@ -144,49 +161,7 @@ export const sumDifferentialCases = (suites: RatchetSuite[] | undefined): number
 };
 
 export const ratchetTotals = (r: Ratchet | null): RatchetTotals | null => {
-  if (!r) return null;
-  if (r.totals) return r.totals;
-  const trusted: TrustedCounts = {
-    assume: 0,
-    admit: 0,
-    external_body: 0,
-    external: 0,
-    assume_specification: 0,
-    unsafe: 0,
-  };
-  let verified = 0;
-  let errors = 0;
-  let source_lines = 0;
-  let tests_passed = 0;
-  let tests_failed = 0;
-  let verify_seconds = 0;
-  let test_seconds = 0;
-  for (const c of r.crates) {
-    verified += c.verified;
-    errors += c.errors;
-    source_lines += c.source_lines;
-    tests_passed += c.tests_passed;
-    tests_failed += c.tests_failed;
-    verify_seconds += c.verify_seconds;
-    test_seconds += c.test_seconds;
-    trusted.assume += c.trusted.assume;
-    trusted.admit += c.trusted.admit;
-    trusted.external_body += c.trusted.external_body;
-    trusted.external += c.trusted.external;
-    trusted.assume_specification += c.trusted.assume_specification;
-    trusted.unsafe += c.trusted.unsafe;
-  }
-  return {
-    crates: r.crates.length,
-    verified,
-    errors,
-    trusted,
-    source_lines,
-    tests_passed,
-    tests_failed,
-    verify_seconds: Math.round(verify_seconds * 100) / 100,
-    test_seconds: Math.round(test_seconds * 100) / 100,
-  };
+  return r?.totals ?? null;
 };
 
 export const fmtDate = (iso: string | undefined): string =>

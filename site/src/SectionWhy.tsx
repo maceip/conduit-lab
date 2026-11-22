@@ -37,7 +37,7 @@ const SectionWhy: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
       display: totals ? `${totals.source_lines.toLocaleString('en-US')} LOC` : NR,
       tone: 'proved' as const,
       note: totals
-        ? `${totals.verified.toLocaleString('en-US')} verified functions across ${totals.crates} crates · ${totals.verify_seconds}s full re-verify`
+        ? `${totals.verified.toLocaleString('en-US')} verified proof queries across ${totals.crates} crates · ${totals.verify_seconds}s full re-verify`
         : 'Load browser/ratchet.json for live workspace scale',
     },
   ];

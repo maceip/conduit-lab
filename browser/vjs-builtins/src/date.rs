@@ -3,6 +3,8 @@
 //! `MonthFromTime`, `DateFromTime`, `WeekDay`, `HourFromTime`, `MinFromTime`, `SecFromTime`,
 //! `msFromTime`, `MakeTime`, `MakeDay`, `MakeDate`, `TimeClip`) and §21.4.1.32 / §21.4.4.36
 //! ISO-8601 Date Time String parser & serializer with valid-date roundtrip proof.
+#[cfg(verus_keep_ghost)]
+use vstd::arithmetic::div_mod::lemma_fundamental_div_mod_converse;
 use vstd::prelude::*;
 
 verus! {
@@ -347,9 +349,43 @@ pub proof fn lemma_day_from_year_step(y: int)
     ensures
         spec_day_from_year(y + 1) == spec_day_from_year(y) + spec_days_in_year(y),
 {
-    assert((y + 1 - 1969) / 4 - (y - 1969) / 4 == if y % 4 == 0 { 1int } else { 0int });
-    assert((y + 1 - 1901) / 100 - (y - 1901) / 100 == if y % 100 == 0 { 1int } else { 0int });
-    assert((y + 1 - 1601) / 400 - (y - 1601) / 400 == if y % 400 == 0 { 1int } else { 0int });
+    // Each step is decided by y = d * q + r, so Z3 never has to relate the three divisions at once.
+    assert((y + 1 - 1969) / 4 - (y - 1969) / 4 == if y % 4 == 0 { 1int } else { 0int }) by {
+        let q = y / 4;
+        let r = y % 4;
+        lemma_fundamental_div_mod_converse(y + 1 - 1969, 4, q - 492, r);
+        if r == 0 {
+            lemma_fundamental_div_mod_converse(y - 1969, 4, q - 493, 3);
+        } else {
+            lemma_fundamental_div_mod_converse(y - 1969, 4, q - 492, r - 1);
+        }
+    }
+    assert((y + 1 - 1901) / 100 - (y - 1901) / 100 == if y % 100 == 0 { 1int } else { 0int }) by {
+        let q = y / 100;
+        let r = y % 100;
+        lemma_fundamental_div_mod_converse(y + 1 - 1901, 100, q - 19, r);
+        if r == 0 {
+            lemma_fundamental_div_mod_converse(y - 1901, 100, q - 20, 99);
+        } else {
+            lemma_fundamental_div_mod_converse(y - 1901, 100, q - 19, r - 1);
+        }
+    }
+    assert((y + 1 - 1601) / 400 - (y - 1601) / 400 == if y % 400 == 0 { 1int } else { 0int }) by {
+        let q = y / 400;
+        let r = y % 400;
+        lemma_fundamental_div_mod_converse(y + 1 - 1601, 400, q - 4, r);
+        if r == 0 {
+            lemma_fundamental_div_mod_converse(y - 1601, 400, q - 5, 399);
+        } else {
+            lemma_fundamental_div_mod_converse(y - 1601, 400, q - 4, r - 1);
+        }
+    }
+    if y % 100 == 0 {
+        lemma_fundamental_div_mod_converse(y, 4, 25 * (y / 100), 0);
+    }
+    if y % 400 == 0 {
+        lemma_fundamental_div_mod_converse(y, 100, 4 * (y / 400), 0);
+    }
 }
 
 /// Strict monotonicity of `DayFromYear`: `y1 < y2 ==> DayFromYear(y1) < DayFromYear(y2)`.
@@ -493,17 +529,17 @@ proof fn lemma_make_time_recovers_hms(d: int, hr: int, mn: int, sc: int, ms: int
     let tm = spec_make_time(hr, mn, sc, ms);
     assert(0 <= tm && tm < MS_PER_DAY as int);
     let tv = spec_make_date(d, tm);
-    assert(tv == (d * 24 + hr) * 3_600_000 + mn * 60_000 + sc * 1_000 + ms);
-    assert(tv / 86_400_000 == d);
-    assert(tv / 3_600_000 == d * 24 + hr);
-    assert((d * 24 + hr) % 24 == hr);
-    assert(tv == ((d * 24 + hr) * 60 + mn) * 60_000 + sc * 1_000 + ms);
-    assert(tv / 60_000 == (d * 24 + hr) * 60 + mn);
-    assert(((d * 24 + hr) * 60 + mn) % 60 == mn);
-    assert(tv == (((d * 24 + hr) * 60 + mn) * 60 + sc) * 1_000 + ms);
-    assert(tv / 1_000 == ((d * 24 + hr) * 60 + mn) * 60 + sc);
-    assert((((d * 24 + hr) * 60 + mn) * 60 + sc) % 60 == sc);
-    assert(tv % 1_000 == ms);
+    // Name each quotient and remainder instead of leaving Z3 to search for seven divisions at once.
+    let h = d * 24 + hr;
+    let m = h * 60 + mn;
+    let s = m * 60 + sc;
+    lemma_fundamental_div_mod_converse(tv, 86_400_000, d, tm);
+    lemma_fundamental_div_mod_converse(tv, 3_600_000, h, mn * 60_000 + sc * 1_000 + ms);
+    lemma_fundamental_div_mod_converse(h, 24, d, hr);
+    lemma_fundamental_div_mod_converse(tv, 60_000, m, sc * 1_000 + ms);
+    lemma_fundamental_div_mod_converse(m, 60, h, mn);
+    lemma_fundamental_div_mod_converse(tv, 1_000, s, ms);
+    lemma_fundamental_div_mod_converse(s, 60, m, sc);
 }
 
 proof fn lemma_make_day_recovers_ymd(y: int, m: int, dt: int, tv: int)
@@ -1435,15 +1471,21 @@ proof fn lemma_fmt4_at(s: Seq<u16>, pos: int, n: int)
     ensures
         spec_parse4(s, pos) == Some(n),
 {
-    let d0 = n / 1000;
-    let d1 = (n / 100) % 10;
-    let d2 = (n / 10) % 10;
+    // One digit at a time, as in lemma_fmt6_at: a single four-digit goal sends Z3 searching.
+    let q1 = n / 10;
     let d3 = n % 10;
+    assert(n == q1 * 10 + d3);
+    let q2 = q1 / 10;
+    let d2 = q1 % 10;
+    assert(q2 == n / 100 && q1 == q2 * 10 + d2);
+    let d0 = q2 / 10;
+    let d1 = q2 % 10;
+    assert(d0 == n / 1000 && q2 == d0 * 10 + d1);
+    assert(d0 * 1000 + d1 * 100 + d2 * 10 + d3 == n);
     lemma_digit_char_val(d0);
     lemma_digit_char_val(d1);
     lemma_digit_char_val(d2);
     lemma_digit_char_val(d3);
-    assert(d0 * 1000 + d1 * 100 + d2 * 10 + d3 == n);
 }
 
 proof fn lemma_fmt6_at(s: Seq<u16>, pos: int, n: int)
@@ -1555,6 +1597,7 @@ proof fn lemma_format_iso_date_part(
 }
 
 #[verifier::spinoff_prover]
+#[verifier::rlimit(50)]
 proof fn lemma_format_iso_time_part(
     y: int,
     m: int,
@@ -1728,6 +1771,7 @@ fn push_fmt6(out: &mut Vec<u16>, n: i64)
     }
 }
 
+#[verifier::rlimit(50)]
 fn format_iso_fields_exec(
     y: i64,
     m: i64,

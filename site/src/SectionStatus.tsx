@@ -48,9 +48,10 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
           </div>
           <p className="ch-prose-text">
             Every crate below enforces <code>#![forbid(unsafe_code)]</code> with zero trusted
-            shortcuts. Our ratchet script (<code>browser/scripts/ratchet.py</code>) records every
-            run: verified counts and conformance pass rates only move up, and any{' '}
-            <code>admit()</code> or <code>assume()</code> fails CI on the spot.
+            shortcuts. Our ratchet script (<code>browser/scripts/ratchet.py</code>) verifies each
+            crate under Verus <code>--no-cheating</code>, which rejects <code>admit()</code>,{' '}
+            <code>assume()</code>, and unproved axioms. CI re-runs every proof and test, and this
+            page deploys only if the results match the committed report.
           </p>
         </div>
 
@@ -66,7 +67,7 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
               <code>vjs_webidl</code>), and the sandboxed WebAssembly 1.0 interpreter (
               <code>vwasm</code>) are built and verified today
               {totals
-                ? ` (${totals.crates} crates, ${totals.verified.toLocaleString('en-US')} verified functions, ${totalTrusted} trusted items)`
+                ? ` (${totals.crates} crates, ${totals.verified.toLocaleString('en-US')} verified proof queries, ${totalTrusted} trusted items)`
                 : ''}
               . Browser kernel non-interference theorems, <code>rspec!</code> origin and cookie
               policies, Nanvix sandboxing, HTML/CSS/XML integration, and browser UI are still design
@@ -155,7 +156,7 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
                   <tr className="ch-total-row">
                     <td className="ch-mono">Workspace total</td>
                     <td className="ch-mono">{totals.crates} crates</td>
-                    <td>{allOk ? 'All crates verified with zero errors and zero unsafe code' : 'Verification errors present'}</td>
+                    <td>{allOk ? 'All crates verified with zero errors and zero unsafe code' : 'Some crates fail a proof, trust, or test check'}</td>
                     <td className="ch-mono ch-num" data-tone={allOk ? 'proved' : 'fail'}>
                       {totals.verified.toLocaleString('en-US')}
                     </td>
@@ -197,7 +198,7 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
                 const live = jStepMap.get(s.step);
                 const verified = live?.status === 'verified' && live.errors === 0;
                 const meta = live
-                  ? `${live.verified.toLocaleString('en-US')} fns · ${live.test262_passed}/${live.test262_total}`
+                  ? `${live.verified.toLocaleString('en-US')} queries · ${live.test262_passed}/${live.test262_total}`
                   : NR;
                 return (
                   <DetailsRow

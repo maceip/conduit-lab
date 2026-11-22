@@ -1,0 +1,73 @@
+# Re-runs every proof and test behind the numbers the site shows, and fails if they differ from the
+# committed browser/ratchet.json. pages.yml calls this, so nothing deploys on a red ratchet.
+name: Ratchet
+
+on:
+  pull_request:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Pinned here, not read from ratchet.json: `ratchet.py --check` compares the two.
+  VERUS_COMMIT: 0dab219272ac2353320bd177ebb3929453b90a9e
+  RUST_TOOLCHAIN: 1.100.0
+
+jobs:
+  consistency:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: ratchet.json matches the sources, logs and stats.json
+        run: python3 browser/scripts/ratchet.py --quick
+
+  reverify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.15.0
+      - name: Expose Node at the path the V8 differential tests are pinned to
+        run: |
+          sudo mkdir -p /Users/mac/.nvm/versions/node/v24.15.0/bin
+          sudo ln -s "$(which node)" /Users/mac/.nvm/versions/node/v24.15.0/bin/node
+      - name: Install Rust
+        run: |
+          rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal -c rustfmt,rustc-dev,llvm-tools
+          rustup default "$RUST_TOOLCHAIN"
+      - name: Cache Verus
+        id: verus
+        uses: actions/cache@v4
+        with:
+          path: verus
+          key: verus-${{ runner.os }}-${{ runner.arch }}-${{ env.VERUS_COMMIT }}
+      - name: Check out Verus
+        if: steps.verus.outputs.cache-hit != 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: verus-lang/verus
+          ref: ${{ env.VERUS_COMMIT }}
+          path: verus
+      - name: Build Verus
+        if: steps.verus.outputs.cache-hit != 'true'
+        working-directory: verus/source
+        run: |
+          ./tools/get-z3.sh
+          source ../tools/activate
+          vargo build --release
+      - name: Point at the Verus build
+        run: |
+          {
+            echo "VERUS_SOURCE=$GITHUB_WORKSPACE/verus/source"
+            echo "VERUS_RELEASE=$GITHUB_WORKSPACE/verus/source/target-verus/release"
+            echo "VERUS_Z3_PATH=$GITHUB_WORKSPACE/verus/source/z3"
+          } >> "$GITHUB_ENV"
+          echo "$GITHUB_WORKSPACE/verus/source/target-verus/release" >> "$GITHUB_PATH"
+      - name: Re-verify and re-test every crate against ratchet.json
+        run: python3 browser/scripts/ratchet.py --check
+      - name: The ratchet still rejects every known way to fool it
+        run: python3 browser/scripts/test_ratchet.py

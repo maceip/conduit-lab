@@ -48,7 +48,7 @@ test("built HTML, app JS, and site source contain no hard-coded ratchet results"
 
 test("scoreboard renders live 11-crate totals and enforces adjacent pill density <= 2", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByTestId("stat-verified functions")).toHaveText(totals.verified.toLocaleString("en-US"));
+  await expect(page.getByTestId("stat-verified queries")).toHaveText(totals.verified.toLocaleString("en-US"));
   await expect(page.getByTestId("stat-trusted items")).toHaveText(String(totalTrusted));
   await expect(page.getByTestId("stat-re-verify time")).toHaveText(`${totals.verify_seconds}s`);
   await expect(page.getByTestId("stat-crate tests")).toHaveText(
@@ -56,6 +56,10 @@ test("scoreboard renders live 11-crate totals and enforces adjacent pill density
   );
   await expect(page.getByTestId("ratchet-stats")).toContainText(`verus ${ratchet.verus}`);
   await expect(page.getByTestId("ratchet-stats")).toContainText(`${totals.crates} crates`);
+  await expect(page.getByTestId("ratchet-stats")).toContainText(
+    `${totals.functions_by_mode.exec.toLocaleString("en-US")} exec · ${totals.functions_by_mode.proof.toLocaleString("en-US")} proof fns`
+  );
+  await expect(page.getByTestId("inputs-digest")).toHaveText(ratchet.inputs_sha256.slice(0, 12));
   await expect(page.getByTestId("load-error")).toHaveCount(0);
 
   // Label density check: provenance pill stack must stay <= 2 adjacent pills
@@ -310,10 +314,41 @@ test("missing ratchet.json and stats.json show load-error and not recorded", asy
   await page.goto("/");
   await expect(page.getByTestId("load-error")).toBeVisible();
   await expect(page.getByTestId("load-error")).toContainText("HTTP 404");
-  await expect(page.getByTestId("stat-verified functions")).toHaveText("not recorded");
+  await expect(page.getByTestId("stat-verified queries")).toHaveText("not recorded");
   await expect(page.getByTestId("stat-trusted items")).toHaveText("not recorded");
   await expect(page.getByTestId("stat-re-verify time")).toHaveText("not recorded");
   await expect(page.getByTestId("stat-crate tests")).toHaveText("not recorded");
   await expect(page.getByTestId("scale-conduit")).toHaveText("not recorded");
   await expect(page.getByTestId("crates-table-missing")).toContainText("not recorded");
 });
+
+// Each of these alone must turn the crate's dot, its count, the workspace total and (for vurl) the DAG red.
+for (const [why, mutate] of [
+  ["Verus exits non-zero", (c) => (c.verify_exit = 1)],
+  ["Verus reports errors", (c) => (c.errors = 1)],
+  ["not verified under --no-cheating", (c) => (c.no_cheating = false)],
+  ["report predates the no_cheating field", (c) => delete c.no_cheating],
+  ["a trust marker is present", (c) => (c.trusted.axiom = 1)],
+  ["a vacuous contract is present", (c) => (c.vacuous_requires = 1)],
+  ["cargo test exits non-zero", (c) => (c.tests_exit = 101)],
+  ["a test failed", (c) => (c.tests_failed = 1)],
+]) {
+  test(`vurl is not shown as verified when ${why}`, async ({ page }) => {
+    const row = page.getByTestId("crates-table").locator("tbody tr").first();
+    const total = page.getByTestId("crates-table").locator("tfoot tr");
+    await page.goto("/");
+    await expect(row.locator(".ch-status-dot")).toHaveAttribute("data-tone", "proved");
+    await expect(total).toContainText("All crates verified");
+    const dagBefore = await page.locator(".ch-dag-node").evaluateAll((ns) => ns.map((n) => n.outerHTML));
+
+    const changed = JSON.parse(JSON.stringify(ratchet));
+    mutate(changed.crates[0]);
+    await page.route("**/browser/ratchet.json", (r) => r.fulfill({ json: changed }));
+    await page.reload();
+    await expect(row).toContainText("vurl");
+    await expect(row.locator(".ch-status-dot")).toHaveAttribute("data-tone", "fail");
+    await expect(total).toContainText("Some crates fail a proof, trust, or test check");
+    const dagAfter = await page.locator(".ch-dag-node").evaluateAll((ns) => ns.map((n) => n.outerHTML));
+    expect(dagAfter, "DAG must stop showing its nodes as verified").not.toEqual(dagBefore);
+  });
+}

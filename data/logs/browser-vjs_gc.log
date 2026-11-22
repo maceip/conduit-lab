@@ -1,14 +1,972 @@
-$ $VERUS_RELEASE/cargo-verus verify -p vjs_gc -- --triggers-mode silent
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 3.1
+$ $VERUS_RELEASE/cargo-verus verify -p vjs_gc --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 3.24
 
-verification results:: 233 verified, 0 errors
-    Checking vjs_gc v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs-gc)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.00s
+    Checking vjs_gc v0.1.0 (~/conduit-lab/browser/vjs-gc)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.14s
+
+# from Verus --output-json --time-expanded
+{
+ "verus": {
+  "profile": "release",
+  "version": "0.2026.11.19.0dab219",
+  "platform": {
+   "os": "macos",
+   "arch": "aarch64"
+  },
+  "toolchain": "1.100.0-aarch64-apple-darwin",
+  "commit": "0dab219272ac2353320bd177ebb3929453b90a9e"
+ },
+ "verification-results": {
+  "encountered-error": false,
+  "encountered-vir-error": false,
+  "success": true,
+  "verified": 233,
+  "errors": 0,
+  "is-verifying-entire-crate": true
+ },
+ "functions": [
+  {
+   "function": "vjs_gc::gc::Color::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::GcHeap::add_edge",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::GcHeap::alloc",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::GcHeap::collect",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::GcHeap::total_live_bytes",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::GcHeap::with_realms",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::GcPayload::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::GcStats::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::RealmQuota::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::clone_gc_object",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::clone_usize_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_all_white_unmarked_upto",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_gray_to_black_upto",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_reachable_implies_live",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_reachable_in_implies_live",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_reachable_in_preserved_backward",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_reachable_in_preserved_forward",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_reachable_step",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_realm_bytes_prefix_ext",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_realm_objects_prefix_ext",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_realm_upto_monotonic",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_root_is_reachable",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_same_weights_preserve_accounting",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_same_weights_upto",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_total_bytes_prefix_ext",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_total_bytes_upto_monotonic",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_tricolor_reachable_in_is_black",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_update_free_slot_accounting",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_update_free_slot_upto",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::lemma_white_to_gray_upto",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::mark_sweep",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::spec_count_reachable_upto",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::spec_count_reclaimed_upto",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::spec_count_unmarked_upto",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::spec_reachable_in",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::spec_realm_bytes_upto",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::spec_realm_objects_upto",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::spec_reclaimed_bytes_upto",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::gc::spec_total_live_bytes_upto",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::AsyncFrame::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::AsyncOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::AsyncStateTag::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::AsyncStepOutcome::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::GenOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::GenStateTag::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::GeneratorObject::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::IterResult::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::TryRegion::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::clone_jsval_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::find_enclosing_catch",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::find_enclosing_finally",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::generator_next",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::generator_return",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::generator_throw",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::generator_validate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::make_locals",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::read_local",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::run_generator_from",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::step_async_frame",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::generator::write_local",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::DrainOutcome::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::JobQueue::dequeue",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::JobQueue::enqueue",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::JobQueue::is_empty",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::JobQueue::len",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::JobQueue::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::MicrotaskJob::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseCapability::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseReaction::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::adopt_promise",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::all_group_values",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::call_resolving_reject",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::call_resolving_resolve",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::drain_jobs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::drive_async_step",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::fulfill_promise",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::new_promise",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::new_promise_capability",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::perform_promise_then",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::promise_all",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::promise_race",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::promise_reject",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::promise_resolve",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::promise_state",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::reject_promise",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::resolve_promise",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::resolve_promise_internal",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::spawn_async",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::step_microtask",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseRuntime::then",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::PromiseState::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::ReactionHandler::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::SpecPromiseOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::is_settled_state",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::lemma_settled_monotonic_reflexive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::lemma_settled_monotonic_transitive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::spec_apply_ops",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::spec_drain_leaf_fifo",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::theorem_fifo_order_and_liveness_under_fuel",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::promise_jobs::theorem_settle_once_monotonic_arbitrary_ops",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::BoolTrapStub::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::HandlerTraps::empty",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::ObjectStore::alloc_ordinary",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::ObjectStore::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::ObjectStore::proxy_create",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::ObjectStore::proxy_revocable",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::ObjectStore::revoke_proxy",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::ObjectStore::set_handler_traps",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::ObjectStore::validate_non_revoked_proxy",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::OwnPropDescTrapOutput::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::OwnPropDescTrapStub::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::PartialDescriptor::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::PartialDescriptor::empty",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::PartialDescriptor::from_complete",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::PropEntry::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::PropKey::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::PropertyDescriptor::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::ProtoTrapOutput::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::ProtoTrapStub::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::ProxyRecord::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::RevocableProxy::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::TargetKeyInfo::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::ValTrapStub::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::apply_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::check_no_duplicate_keys",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::clone_prop_keys",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::complete_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::desc_configurable",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::desc_enumerable",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::find_prop_index",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::is_compatible_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::is_valid_partial_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::key_in_slice",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::key_in_target_info",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::lemma_delete_preserves_transitive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::lemma_find_prop_none_when_absent",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::object_define_own_property",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::object_delete",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::object_get",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::object_get_own_property",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::object_get_prototype_of",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::object_has_property",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::object_is_extensible",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::object_own_property_keys",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::object_prevent_extensions",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::object_set",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::object_set_prototype_of",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::opt_obj_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::prop_key_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::proto_creates_cycle",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::proxy_validate_define_own_property",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::proxy_validate_delete",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::proxy_validate_get",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::proxy_validate_get_own_property",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::proxy_validate_get_prototype_of",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::proxy_validate_has_property",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::proxy_validate_is_extensible",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::proxy_validate_own_property_keys",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::proxy_validate_prevent_extensions",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::proxy_validate_set",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::proxy_validate_set_prototype_of",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::reflect_define_property",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::reflect_delete_property",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::reflect_get",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::reflect_get_own_property_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::reflect_get_prototype_of",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::reflect_has",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::reflect_is_extensible",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::reflect_own_keys",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::reflect_prevent_extensions",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::reflect_set",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::reflect_set_prototype_of",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::require_object_id",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::resolve_handler_traps",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::spec_find_prop_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::proxy::theorem_proxy_essential_invariants_against_malicious_traps",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::types::AtomTable::get",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::types::AtomTable::intern",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::types::AtomTable::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::types::JsError::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::types::JsVal::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::types::bytes_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::types::clone_bytes",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::types::is_nan_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::types::lemma_same_value_equivalence",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_gc::types::same_value",
+   "mode": "exec",
+   "success": true
+  }
+ ]
+}
 
 $ cargo test -p vjs_gc
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 1.32
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 1.28
 
 
 running 0 tests
@@ -24,7 +982,7 @@ test proxy_invariants_and_reflect_v8_differential ... ok
 test promise_and_async_await_v8_differential ... ok
 test test262_j6_conformance_differential_and_gc_report ... ok
 
-test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
 
 
 running 0 tests
@@ -67,7 +1025,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -76,7 +1034,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -88,7 +1046,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -97,7 +1055,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -108,7 +1066,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -117,7 +1075,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -128,7 +1086,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -137,7 +1095,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -148,7 +1106,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -157,7 +1115,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -168,7 +1126,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -177,7 +1135,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -188,7 +1146,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -197,7 +1155,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -208,7 +1166,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -217,7 +1175,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -228,7 +1186,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -237,7 +1195,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -248,7 +1206,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -257,7 +1215,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -340,8 +1298,8 @@ warning: negative impls are experimental
     = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
-   Compiling vjs_gc v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs-gc)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.70s
+   Compiling vjs_gc v0.1.0 (~/conduit-lab/browser/vjs-gc)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.51s
      Running unittests src/lib.rs (target/debug/build/vjs_gc/5102757c44788366/out/vjs_gc-5102757c44788366)
      Running tests/test262_j6.rs (target/debug/build/vjs_gc/188086df72067f68/out/test262_j6-188086df72067f68)
    Doc-tests vjs_gc

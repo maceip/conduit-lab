@@ -2,7 +2,7 @@
 
 Architecture & specification roadmap: [../docs/verified-browser-engine.md](../docs/verified-browser-engine.md) · CVE coverage audit: [../docs/vjs-plan-review.md](../docs/vjs-plan-review.md).
 
-Every crate in this Cargo workspace enforces `#![forbid(unsafe_code)]`, has **zero** trusted escape hatches (`assume`, `admit`, `external_body`, `external`, `assume_specification`, `unsafe` — counted automatically by [`scripts/ratchet.py`](scripts/ratchet.py)), proves termination (`decreases` on all loops and recursive functions), and carries zero ambient host authority (`std::fs`, `std::net`, `std::process`, `std::env`, `std::os`) in `src/`. Exact verification counts, test counts, and timings are generated from live runs into [`ratchet.json`](ratchet.json) and [`../data/stats.json`](../data/stats.json).
+Every crate in this Cargo workspace enforces `#![forbid(unsafe_code)]`, has **zero** trusted escape hatches (Verus `--no-cheating` on every crate, a dependency-graph check, and a marker count over the files rustc actually compiled — see [`scripts/ratchet.py`](scripts/ratchet.py); what remains trusted is Verus, vstd, Z3, rustc, and the specs themselves), proves termination (`decreases` on all loops and recursive functions), and carries zero ambient host authority (`std::fs`, `std::net`, `std::process`, `std::env`, `std::os`) in `src/`. Exact verification counts, test counts, and timings are generated from live runs into [`ratchet.json`](ratchet.json) and [`../data/stats.json`](../data/stats.json).
 
 ---
 
@@ -38,8 +38,8 @@ source ~/workspaces/verus-stack/env.zsh
 ./scripts/use-local-verus.sh                                           # point vstd at local VERUS_SOURCE
 
 # Verify any individual crate with Verus + Z3
-"$VERUS_RELEASE/cargo-verus" verify -p vurl -- --triggers-mode silent
-"$VERUS_RELEASE/cargo-verus" verify -p vjs -- --triggers-mode silent
+"$VERUS_RELEASE/cargo-verus" verify -p vurl --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating
+"$VERUS_RELEASE/cargo-verus" verify -p vjs --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating
 
 # Run crate conformance & differential suites (plus cross-crate E2E pipeline)
 cargo test -p vjs --test full_pipeline_j0_j7
@@ -48,4 +48,10 @@ cargo test -p vjs_vm --release                                         # writes 
 
 # Run ESMeta specgen checks + re-verify & test all 11 crates -> writes ratchet.json
 python3 scripts/ratchet.py
+python3 ../scripts/collect_stats.py                                    # the same, plus data/stats.json, which must embed it
+
+# What CI runs (.github/workflows/ratchet.yml); none of these write to the tree
+python3 scripts/ratchet.py --quick                                     # no Verus: report is current and consistent
+python3 scripts/ratchet.py --check                                     # re-verify + re-test, compare with ratchet.json
+python3 scripts/test_ratchet.py                                        # replay known ways to fool the ratchet
 ```

@@ -1,6 +1,6 @@
 $ uv run skydiscover --help
 # cwd: ~/workspaces/verus-stack/skydiscover
-# exit: 0  seconds: 0.12
+# exit: 0  seconds: 0.06
 
 usage: skydiscover [-h] <command> ...
 

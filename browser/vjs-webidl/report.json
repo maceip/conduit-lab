@@ -15,7 +15,7 @@
     ],
     "files_scanned": 63,
     "forbidden_imports_found": 0,
-    "lines_scanned": 120990,
+    "lines_scanned": 121040,
     "trusted_markers": {
       "admit": 0,
       "assume": 0,

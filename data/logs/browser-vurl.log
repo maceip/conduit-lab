@@ -1,19 +1,293 @@
-$ $VERUS_RELEASE/cargo-verus verify -p vurl -- --triggers-mode silent
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 1.72
+$ $VERUS_RELEASE/cargo-verus verify -p vurl --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 1.82
 
-verification results:: 65 verified, 0 errors
-    Checking vurl v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/url)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.63s
+    Checking vurl v0.1.0 (~/conduit-lab/browser/url)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.72s
+
+# from Verus --output-json --time-expanded
+{
+ "verus": {
+  "profile": "release",
+  "version": "0.2026.11.19.0dab219",
+  "platform": {
+   "os": "macos",
+   "arch": "aarch64"
+  },
+  "toolchain": "1.100.0-aarch64-apple-darwin",
+  "commit": "0dab219272ac2353320bd177ebb3929453b90a9e"
+ },
+ "verification-results": {
+  "encountered-error": false,
+  "encountered-vir-error": false,
+  "success": true,
+  "verified": 65,
+  "errors": 0,
+  "is-verifying-entire-crate": true
+ },
+ "functions": [
+  {
+   "function": "vurl::ipv4::BIG",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::digit",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::ends_in_a_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::ipv4_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::ipv4_parse",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::is_ascii_digit_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::lemma_dv",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::lemma_ends_in_number_note",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::lemma_pow256",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::lemma_radix_some_iff_digits",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::lemma_split_nonempty",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::lemma_split_single_empty",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::spec_ipv4_sum",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::spec_radix_value",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::spec_split_dots",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv4::split_dots",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::compressed_index",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::hex_lower_digit_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::ipv6_finish",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::ipv6_parse",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::ipv6_serialize",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::lemma_hex_lower_shortest",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::lemma_set_view",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::push_hex_lower",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::spec_compress_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::spec_hex_lower",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::spec_hex_run",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::spec_ipv6_main",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::spec_serialize_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::spec_swap_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::spec_v4_in_v6",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vurl::ipv6::v4_in_v6",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::EncodeSet::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::hex_val",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::in_set",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::is_hex",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::lemma_decode_encode_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::lemma_form_urlencoded_note",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::lemma_nibble_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::lemma_query_not_superset_of_fragment",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::lemma_roundtrip_fails_without_percent",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::lemma_set_chain",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::lemma_sets_containing_percent",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::percent_decode",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::percent_encode",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::spec_percent_decode",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::spec_percent_encode",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vurl::percent::upper_hex",
+   "mode": "exec",
+   "success": true
+  }
+ ]
+}
 
 $ cargo test -p vurl -- --nocapture
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 1.55
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 1.8
 
 
 running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 6 tests
+test form_urlencoded_matches_form_urlencoded_crate ... ok
+test c0_control_matches_percent_encoding_crate ... ok
+test url_crate_agrees_on_path_set_except_caret ... ok
+test url_crate_agrees_on_userinfo_set ... ok
+test tables_pin_all_8_sets_for_all_256_bytes ... ok
+test url_crate_agrees_on_fragment_and_query_sets ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
 
 running 4 tests
@@ -24,7 +298,7 @@ differential: 3726 parsed, 296274 failures
 test differential_ipv6_vs_url_crate ... ok
 test serialize_parse_roundtrip_random ... ok
 
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
 
 
 running 5 tests
@@ -36,7 +310,7 @@ test differential_percent_decode_vs_crate ... ok
 differential: 26280 ipv4, 15160 failures, 258560 non-ipv4
 test differential_ipv4_vs_url_crate ... ok
 
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.45s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
 
 
 running 0 tests
@@ -79,7 +353,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -88,7 +362,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -100,7 +374,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -109,7 +383,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -120,7 +394,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -129,7 +403,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -140,7 +414,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -149,7 +423,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -160,7 +434,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -169,7 +443,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -180,7 +454,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -189,7 +463,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -200,7 +474,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -209,7 +483,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -220,7 +494,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -229,7 +503,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -240,7 +514,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -249,7 +523,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -260,7 +534,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -269,7 +543,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -352,7 +626,7 @@ warning: negative impls are experimental
     = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
-   Compiling vurl v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/url)
+   Compiling vurl v0.1.0 (~/conduit-lab/browser/url)
 warning: unexpected `cfg` condition name: `verus_keep_ghost`
  --> url/src/ipv4.rs:8:7
   |
@@ -407,10 +681,11 @@ warning: unexpected `cfg` condition name: `verus_keep_ghost`
    = help: or consider adding `println!("cargo::rustc-check-cfg=cfg(verus_keep_ghost)");` to the top of the `build.rs`
    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
 
-warning: `vurl` (lib) generated 4 warnings
-warning: `vurl` (lib test) generated 4 warnings (4 duplicates)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.30s
+warning: `vurl` (lib) generated 4 warnings (4 duplicates)
+warning: `vurl` (lib test) generated 4 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.36s
      Running unittests src/lib.rs (target/debug/build/vurl/e40cd703632f1d02/out/vurl-e40cd703632f1d02)
+     Running tests/encode_sets.rs (target/debug/build/vurl/3771d7d77207f500/out/encode_sets-3771d7d77207f500)
      Running tests/ipv6.rs (target/debug/build/vurl/e5b588e228251321/out/ipv6-e5b588e228251321)
      Running tests/wpt_and_differential.rs (target/debug/build/vurl/68c9dd0db969b3bf/out/wpt_and_differential-68c9dd0db969b3bf)
    Doc-tests vurl

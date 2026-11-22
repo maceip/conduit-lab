@@ -814,6 +814,7 @@ proof fn lemma_encode_single_unit_piece(c: u16, tail1: Seq<u16>)
 }
 
 #[verifier::spinoff_prover]
+#[verifier::rlimit(50)]
 proof fn lemma_encode_body_roundtrip(s: Seq<u16>, trailing: Seq<u16>)
     ensures
         ({
@@ -1595,6 +1596,7 @@ pub fn quote_json_string(s: &[u16]) -> (out: Vec<u16>)
 }
 
 #[verifier::spinoff_prover]
+#[verifier::rlimit(50)]
 fn push_encoded_string_body(out: &mut Vec<u16>, s: &[u16])
     ensures
         final(out)@ == old(out)@ + spec_encode_string_body(s@),
@@ -1731,6 +1733,7 @@ fn push_int_exec(out: &mut Vec<u16>, v: i64)
     }
 }
 
+#[verifier::rlimit(50)]
 fn push_json_stringify_exec(out: &mut Vec<u16>, v: &JsonValue)
     ensures
         final(out)@ == old(out)@ + spec_json_stringify(v@),
