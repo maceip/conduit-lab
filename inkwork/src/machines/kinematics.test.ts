@@ -127,3 +127,57 @@ describe('Turboprop · twin spools and epicyclic reduction', () => {
     expect(TP.ringTeeth).toBe(TP.sunTeeth + 2 * TP.planetTeeth); // planetary congruence
   });
 });
+
+/* ────────────────────────── Maglev ────────────────────────── */
+
+import {
+  LEV_GAP, doorTravel, guidanceOffset, levitationGap, normAngle as mgNorm,
+  statorPhase, travelX,
+} from './maglev/kinematics';
+import { MG, PARTS as MAGLEV_PARTS } from './maglev/data';
+
+describe('Maglev · levitation and long-stator drive', () => {
+  it('levitation gap eases from 0 to the nominal 10 mm and never overshoots', () => {
+    expect(levitationGap(0)).toBeCloseTo(0, 6);
+    expect(levitationGap(1)).toBeCloseTo(LEV_GAP, 6);
+    expect(LEV_GAP).toBe(10);
+    let prev = -1;
+    for (let t = 0; t <= 1.0001; t += 0.05) {
+      const g = levitationGap(t);
+      expect(g).toBeGreaterThanOrEqual(prev - 1e-9);
+      expect(g).toBeLessThanOrEqual(LEV_GAP + 1e-9);
+      prev = g;
+    }
+  });
+
+  it('long-stator phase advances exactly 2π per pole pitch (synchronous)', () => {
+    expect(statorPhase(0)).toBeCloseTo(0, 9);
+    expect(statorPhase(MG.polePitch)).toBeCloseTo(Math.PI * 2, 6);
+    expect(statorPhase(3 * MG.polePitch)).toBeCloseTo(6 * Math.PI, 6);
+    expect(MG.polePitch).toBe(258);
+  });
+
+  it('guidance wander stays inside ±1 mm and travel is monotone', () => {
+    for (let p = 0; p < 40; p += 0.4) {
+      expect(Math.abs(guidanceOffset(p))).toBeLessThanOrEqual(1.0 + 1e-9);
+      expect(mgNorm(p)).toBeGreaterThanOrEqual(0);
+    }
+    expect(travelX(2)).toBeGreaterThan(travelX(1));
+  });
+
+  it('plug-door travel is a smooth 0..1 ramp', () => {
+    expect(doorTravel(0)).toBeCloseTo(0, 6);
+    expect(doorTravel(1)).toBeCloseTo(1, 6);
+    expect(doorTravel(0.5)).toBeGreaterThan(0);
+  });
+
+  it('car and beam dimensions are consistent with a 27 m TR08 car', () => {
+    expect(MG.carLength).toBe(27000);
+    expect(MG.carWidth).toBe(3700);
+    expect(MG.beamW).toBe(2800);
+    expect(MG.roofY - MG.floorY).toBe(MG.carHeight);
+    // every part has a unique balloon index 1..31
+    const idx = MAGLEV_PARTS.map((p) => p.index).sort((a, b) => a - b);
+    expect(idx).toEqual(Array.from({ length: 31 }, (_, i) => i + 1));
+  });
+});

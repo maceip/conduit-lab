@@ -3,6 +3,7 @@ import { coupling } from './coupling';
 import { macbook } from './macbook';
 import { model3 } from './model3';
 import { TURBOPROP_LEVELS, turboprop } from './turboprop';
+import { MAGLEV_LEVELS, maglev } from './maglev';
 import type { MachineDef } from './types';
 
 /**
@@ -22,12 +23,13 @@ export const GROUPS: Array<{ name: string; machines: MachineDef[] }> = [
   { name: 'Everyday Objects', machines: [macbook] },
   { name: 'Powertrain', machines: [turboprop] },
   { name: 'Large Equipment', machines: [model3] },
+  { name: 'Rail Transit', machines: [maglev] },
 ];
 
 export const MACHINES: MachineDef[] = GROUPS.flatMap((g) => g.machines);
 
 /** Every assembly, including the sub-assemblies reached through a part. */
-const ALL: MachineDef[] = [...MACHINES, ...TURBOPROP_LEVELS];
+const ALL: MachineDef[] = [...MACHINES, ...TURBOPROP_LEVELS, ...MAGLEV_LEVELS];
 
 export const allMachines = () => ALL;
 
