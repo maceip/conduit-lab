@@ -151,6 +151,35 @@ class RatchetTest(unittest.TestCase):
         self.evil_module("pub fn f(a: u8) -> u8 { a + 1 }\n")
         self.assertRejected(self.verify()["problems"], "possible arithmetic underflow/overflow")
 
+    def test_disguised_external_attributes(self):
+        for attr in ("verifier /* c */ :: external", "verifier::r#external", "verifier /* /* */ \" */ :: external /* \" */"):
+            with self.subTest(attr):
+                self.setUp()
+                self.evil_module("verus!{ #[" + attr + "] pub fn bad() -> u8 { 0 } }\n")
+                self.assertRejected(self.verify()["problems"], "trusted `external` marker")
+
+    def test_external_attribute_built_by_a_macro(self):
+        self.evil_module(
+            "macro_rules! m { ($a:ident) => { verus!{ #[verifier::$a] pub fn bad() -> u8 { 0u8 - 1u8 } } } }\n"
+            "m!(external);\n"
+        )
+        self.assertRejected(self.verify()["problems"], "trusted `external` marker")
+
+    def test_conditional_compilation(self):
+        for cfg in ("not(debug_assertions)", "not(any(verus_keep_ghost))", "test", 'feature = "x"'):
+            with self.subTest(cfg):
+                self.setUp()
+                self.evil_module(f"#[cfg({cfg})]\npub fn f(a: u8) -> u8 {{ a + 1 }}\n")
+                self.assertRejected(self.verify()["problems"], "trusted `hidden_from_verus` marker")
+
+    def test_words_in_comments_and_strings_are_not_markers(self):
+        toks = self.r.rust_tokens(
+            "// admit() external\n/* a /* unsafe */ axiom */ let s = \"assume(\\\" cfg\"; "
+            "let r = r#\"external\"#; let c = '\"'; let b = b'\\''; fn f<'admit>(x: &'admit u8) {}"
+        )
+        self.assertEqual(self.r.scan(toks)[0], {k: 0 for k in self.r.MARKERS})
+        self.assertIn("f", toks)
+
     def test_vacuous_lemma(self):
         self.evil_module("verus!{ pub proof fn lemma_bonus()\n    requires\n        false,\n    ensures 1 == 2 {} }\n")
         self.assertRejected(self.verify()["problems"], "`requires false`")
@@ -182,7 +211,22 @@ class RatchetTest(unittest.TestCase):
         self.add_dependency()
         self.edit("Cargo.toml", ('    "evil",\n', ""), ("[workspace]\n", '[workspace]\nexclude = ["evil"]\n'))
         self.edit("evil/Cargo.toml", ("{ workspace = true }", '"=0.0.0-2026-11-15-0327"'))
-        self.assertRejected(self.r.graph_problems(self.env), "dependency evil carries Verus specs")
+        self.assertRejected(self.r.graph_problems(self.env), "vurl: dependency evil is not a ratcheted or toolchain")
+
+    def test_ordinary_rust_dependency(self):
+        for kind in ("dependencies", "build-dependencies"):
+            with self.subTest(kind):
+                self.setUp()
+                self.write("evil/Cargo.toml", '[package]\nname = "evil"\nversion = "0.1.0"\nedition = "2021"\n')
+                self.write("evil/src/lib.rs", "pub fn f() -> u8 { unsafe { *(1 as *const u8) } }\n")
+                self.edit("Cargo.toml", ("[workspace]\n", '[workspace]\nexclude = ["evil"]\n'))
+                self.edit(
+                    "url/Cargo.toml",
+                    ("[dev-dependencies]\n", f'[{kind}]\nevil = {{ path = "../evil" }}\n[dev-dependencies]\n')
+                    if kind != "dependencies"
+                    else ("vstd = { workspace = true }\n", 'vstd = { workspace = true }\nevil = { path = "../evil" }\n'),
+                )
+                self.assertRejected(self.r.graph_problems(self.env), "vurl: dependency evil is not a ratcheted")
 
     def test_extra_verus_metadata(self):
         self.edit("url/Cargo.toml", ("verify = true\n", 'verify = true\ntrusted_crates = ["x"]\n'))
@@ -243,6 +287,56 @@ class RatchetTest(unittest.TestCase):
 
     def test_forged_anything_differs_from_stats(self):
         self.assertRejected(self.forged(lambda r: r.update(vm_benchmarks_geomean_speedup=99)), "stats.json embeds")
+
+    def forged_everywhere(self, mutate) -> list[str]:
+        """Forge ratchet.json and the copy in stats.json alike."""
+        rec = json.loads((BROWSER / "ratchet.json").read_text())
+        mutate(rec)
+        stats = self.site / "data/stats.json"
+        original = stats.read_text()
+        try:
+            stats.write_text(json.dumps({**json.loads(original), "browser": {**rec, "log": "x"}}))
+            return self.r.recorded_problems(rec)
+        finally:
+            stats.write_text(original)
+
+    def test_forged_ledgers(self):
+        self.assertEqual(self.forged_everywhere(lambda r: None), [])
+        cases = [
+            (lambda r: r["test262_suites"][0].update(passed=9999), "test262_suites row wpt"),
+            (lambda r: r["test262_suites"].pop(), "test262_suites has 16 rows"),
+            (lambda r: r["j_steps"][3].update(test262_passed=1), "j_steps row"),
+            (lambda r: r["j0_sections"][0].update(differential_cases=1), "j0_sections row"),
+            (lambda r: r["vm_benchmarks"][0].update(speedup=99), "vm_benchmarks row"),
+            (lambda r: r["vm_benchmarks"][0].update(speedup=99), "speedup is not ast_ms / bytecode_ms"),
+            (lambda r: r.update(vm_benchmarks_geomean_speedup=99), "differs from vjs-vm/benchmarks.json"),
+            (lambda r: r["proof_showcase"][0].update(verified=99), "proof_showcase differs"),
+            (lambda r: r["crates"][0].update(theorem="P = NP"), "vurl: theorem"),
+            (lambda r: r["crates"][0].update(test_seconds=0.01), "timings differ from its log"),
+        ]
+        for mutate, pattern in cases:
+            with self.subTest(pattern):
+                self.assertRejected(self.forged_everywhere(mutate), pattern)
+
+    def test_rerun_comparison_ignores_only_wall_clock(self):
+        rec = json.loads((BROWSER / "ratchet.json").read_text())
+        rebuilt = tuple(json.loads(json.dumps(rec[k])) for k in self.r.LEDGERS)
+        rebuilt[0][0]["verify_seconds"] += 5
+        rebuilt[3][0]["ast_ms"] += 5
+        self.assertEqual(self.r.ledger_diffs(rebuilt, rec, self.r.without_volatile), [])
+        rebuilt[3][0]["result_verified_equal"] = False
+        rebuilt[2][0]["passed"] -= 1
+        self.assertEqual(len(self.r.ledger_diffs(rebuilt, rec, self.r.without_volatile)), 2)
+
+    def test_forged_proof_source(self):
+        c = json.loads((BROWSER / "ratchet.json").read_text())["crates"][0]
+        shown = self.site / c["proof_source"]
+        original = shown.read_text()
+        try:
+            shown.write_text(original + "// nicer\n")
+            self.assertRejected(self.forged(lambda r: None), "is not a copy of")
+        finally:
+            shown.write_text(original)
 
     def test_source_change_makes_report_stale(self):
         self.edit("url/src/lib.rs", ("pub mod ipv6;\n", "pub mod ipv6;\n// touched\n"))

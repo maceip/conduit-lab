@@ -18,11 +18,11 @@ What "0 trusted" rests on, strongest first:
      external_body, axiom fns and assume_specification, however they are spelled or included.
      `--no-external-by-default` extends verification to code outside verus!{}.
   2. `graph_problems`: `--no-cheating` cannot cover dependencies (vstd rejects it, and cargo skips
-     cached crates), so every Verus-verified dependency must be a ratcheted crate, which is checked
-     as a root itself, or the toolchain's own vstd/builtin crates.
-  3. MARKERS, a textual count over exactly the files rustc read (its dep-info, so include! and
-     #[path] targets count). It also catches what `--no-cheating` allows: #[verifier::external]
-     items and exec_allows_no_decreases_clause.
+     cached crates), so the only dependencies allowed are ratcheted crates, which are checked as roots
+     themselves, and the toolchain's own vstd/builtin crates.
+  3. MARKERS, a count over the Rust tokens of exactly the files rustc read (its dep-info, so include!
+     and #[path] targets count). It also catches what `--no-cheating` allows: #[verifier::external]
+     items, exec_allows_no_decreases_clause, and conditional compilation.
 """
 from __future__ import annotations
 
@@ -30,6 +30,7 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -175,22 +176,84 @@ CRATE_SPECS: list[CrateSpec] = [
     ),
 ]
 
-MARKERS = {
-    "assume": re.compile(r"\bassume\s*\("),
-    "admit": re.compile(r"\badmit\s*\("),
-    "external_body": re.compile(r"(?:\bverifier\s*::|[(,])\s*external_body\b"),
-    "external": re.compile(r"\b(?:verifier|verus_verify)\s*(?:::|\()\s*external\b"),
-    "external_spec": re.compile(r"\bexternal_(?:fn|type|trait)_\w+"),
-    "assume_specification": re.compile(r"\bassume_specification\b"),
-    "axiom": re.compile(r"\baxiom\s+fn\b"),
-    "unproved_termination": re.compile(r"\b(?:exec_allows_no_decreases_clause|assume_termination)\b"),
-    # code that only exists when Verus is not looking
-    "hidden_from_verus": re.compile(r"\bnot\s*\(\s*verus_|\bcfg!\s*\(\s*(?:not\s*\(\s*)?verus_"),
-    "unsafe": re.compile(r"\bunsafe\s*(\{|fn\b|impl\b)"),
+# Counted as identifiers in Rust's token stream, wherever they appear (attribute, macro argument, `use`
+# alias), so comments, raw identifiers and macro fragments cannot disguise them. Order is significant
+# only for `external_spec`, which takes whatever external_* the earlier rows did not.
+MARKERS: dict[str, frozenset[str] | None] = {
+    "assume": frozenset({"assume", "assume_"}),
+    "admit": frozenset({"admit"}),
+    "external_body": frozenset({"external_body"}),
+    "external": frozenset({"external"}),
+    "external_spec": None,
+    "assume_specification": frozenset({"assume_specification"}),
+    "axiom": frozenset({"axiom"}),
+    "unproved_termination": frozenset({"exec_allows_no_decreases_clause", "assume_termination"}),
+    "hidden_from_verus": None,
+    "unsafe": frozenset({"unsafe"}),
 }
-# Verifies trivially and proves nothing, so it would only pad the count. Syntactic: an unsatisfiable
-# precondition spelled any other way is not detected.
-VACUOUS_RE = re.compile(r"\brequires\s+false\s*(?:,|\{|\bensures\b|\bdecreases\b)")
+TOKEN_RE = re.compile(
+    r"""(?P<skip>\s+ | //[^\n]*
+        | (?:b|c)?"(?:\\.|[^"\\])*"
+        | b?'(?:\\(?:x[0-9a-fA-F]{2}|u\{[^}]*\}|.)|[^\\'])'
+        | '(?:r\#)?[^\W\d]\w* | \d\w*)
+      | (?P<comment>/\*)
+      | (?:b|c)?r(?P<hashes>\#*)(?P<raw>")
+      | (?P<ident>(?:r\#)?[^\W\d]\w*)
+      | (?P<punct>.)""",
+    re.X | re.S,
+)
+
+
+def rust_tokens(text: str) -> list[str]:
+    """Identifiers and punctuation, without comments (which nest), literals, lifetimes or `r#`."""
+    out: list[str] = []
+    pos = 0
+    while pos < len(text):
+        m = TOKEN_RE.match(text, pos)
+        pos = m.end()
+        if m["comment"]:
+            depth = 1
+            while depth:
+                c = re.compile(r"/\*|\*/").search(text, pos)
+                if c is None:
+                    raise ValueError("unterminated block comment")
+                depth += 1 if c[0] == "/*" else -1
+                pos = c.end()
+        elif m["raw"]:
+            end = text.find('"' + m["hashes"], pos)
+            if end < 0:
+                raise ValueError("unterminated raw string")
+            pos = end + 1 + len(m["hashes"])
+        elif m["ident"]:
+            out.append(m["ident"].removeprefix("r#"))
+        elif m["punct"]:
+            out.append(m["punct"])
+    return out
+
+
+GHOST_IMPORT = ["#", "[", "cfg", "(", "verus_keep_ghost", ")", "]", "use"]
+
+
+def scan(tokens: list[str]) -> tuple[dict[str, int], int]:
+    """(trusted markers by kind, contracts whose precondition is literally `false`).
+
+    Verus verifies one configuration, so conditional compilation can ship code it never saw. The one
+    use accepted is `#[cfg(verus_keep_ghost)] use`, which imports names that exist only for Verus.
+    A vacuous contract verifies trivially and would only pad the count; an unsatisfiable precondition
+    spelled any other way is not detected."""
+    trusted = {k: sum(t in names for t in tokens) if names else 0 for k, names in MARKERS.items()}
+    trusted["external_spec"] = sum(t.startswith("external_") and t != "external_body" for t in tokens)
+    trusted["hidden_from_verus"] = sum(
+        t in ("cfg", "cfg_attr", "cfg_select") and (i < 2 or tokens[i - 2 : i + 6] != GHOST_IMPORT)
+        for i, t in enumerate(tokens)
+    )
+    vacuous = sum(
+        tokens[i : i + 2] == ["requires", "false"] and tokens[i + 2 : i + 3] in ([","], ["{"], ["ensures"], ["decreases"])
+        for i in range(len(tokens))
+    )
+    return trusted, vacuous
+
+
 VERUS_FLAGS = [
     "--triggers-mode", "silent", "--no-cheating", "--no-external-by-default", "--output-json", "--time-expanded",
 ]  # fmt: skip
@@ -270,8 +333,23 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def showcase_row(spec: CrateSpec, c: dict) -> dict:
+    return {
+        "label": spec.showcase_label,
+        "crate": spec.name,
+        "step": spec.step,
+        "file": f"browser/{spec.rel_dir}/{spec.showcase_rel}",
+        "source": c["proof_source"],
+        "verified": c["verified"],
+        "errors": c["errors"],
+        "seconds": c["verify_seconds"],
+        "log": c["log"],
+        "exit_code": c["verify_exit"],
+    }
+
+
 def graph_problems(env: dict[str, str]) -> list[str]:
-    """Ways the workspace could let unchecked Verus specs reach a ratcheted crate."""
+    """Ways the workspace could let unchecked code or specs reach a ratcheted crate."""
     p = subprocess.run(["cargo", "metadata", "--format-version", "1"], cwd=ROOT, env=env, capture_output=True, text=True)
     if p.returncode != 0:
         return [f"cargo metadata exited {p.returncode}: {p.stderr.strip()}"]
@@ -296,22 +374,20 @@ def graph_problems(env: dict[str, str]) -> list[str]:
         f"ratcheted crate {n} is not in the workspace" for n in sorted(names - {pkgs[m]["name"] for m in members})
     ]
 
+    # Every member is checked in its own right, and what the toolchain crates pull in is part of the
+    # toolchain, so only members' direct dependencies need judging. Dev-dependencies never reach the
+    # library; build-dependencies could.
     nodes = {n["id"]: n for n in meta["resolve"]["nodes"]}
-    todo, seen = list(members), set(members)
-    while todo:
-        for d in nodes[todo.pop()]["deps"]:
-            if d["pkg"] not in seen and any(k["kind"] != "dev" for k in d["dep_kinds"]):
-                seen.add(d["pkg"])
-                todo.append(d["pkg"])
     source = Path(env["VERUS_SOURCE"]).resolve()
-    for pid in sorted(seen - members):
-        p = pkgs[pid]
-        from_toolchain = source in Path(p["manifest_path"]).resolve().parents
-        if p["name"] in TOOLCHAIN_CRATES:
-            if not from_toolchain:
+    for pid in sorted(members):
+        for d in nodes[pid]["deps"]:
+            if d["pkg"] in members or all(k["kind"] == "dev" for k in d["dep_kinds"]):
+                continue
+            p = pkgs[d["pkg"]]
+            if p["name"] not in TOOLCHAIN_CRATES:
+                problems.append(f"{pkgs[pid]['name']}: dependency {p['name']} is not a ratcheted or toolchain crate")
+            elif source not in Path(p["manifest_path"]).resolve().parents:
                 problems.append(f"{p['name']} comes from {p['manifest_path']}, not the pinned Verus source")
-        elif (p["metadata"] or {}).get("verus") is not None:
-            problems.append(f"dependency {p['name']} carries Verus specs but is not ratcheted")
     return problems
 
 
@@ -381,8 +457,9 @@ def verify_crate(spec: CrateSpec, env: dict[str, str], target_dir: Path) -> dict
     srcs = compiled_sources(spec.name, started, target_dir) if p.returncode == 0 else sorted(path.glob("src/**/*.rs"))
     problems += [f"compiles {f} from outside {path}" for f in srcs if path.resolve() not in f.resolve().parents]
     texts = [f.read_text(errors="replace") for f in srcs]
-    trusted = {k: sum(len(r.findall(t)) for t in texts) for k, r in MARKERS.items()}
-    vacuous = sum(len(VACUOUS_RE.findall(t)) for t in texts)
+    scans = [scan(rust_tokens(t)) for t in texts]
+    trusted = {k: sum(t[k] for t, _ in scans) for k in MARKERS}
+    vacuous = sum(v for _, v in scans)
     problems += [f"{n} trusted `{k}` marker(s)" for k, n in trusted.items() if n]
     if vacuous:
         problems.append(f"{vacuous} `requires false` contract(s)")
@@ -748,6 +825,36 @@ PROOF_FIELDS = [
 TEST_FIELDS = ["tests_exit", "tests_passed", "tests_failed"]
 
 
+# Wall-clock measurements: real, but not reproducible, so a re-run cannot confirm them.
+VOLATILE = {"verify_seconds", "ast_ms", "bytecode_ms", "speedup"}
+LEDGERS = ("j_steps", "j0_sections", "test262_suites", "vm_benchmarks")
+
+
+def without_volatile(x):
+    if isinstance(x, dict):
+        return {k: without_volatile(v) for k, v in x.items() if k not in VOLATILE}
+    return [without_volatile(v) for v in x] if isinstance(x, list) else x
+
+
+def ledger_diffs(got: tuple, rec: dict, normalize) -> list[str]:
+    """Differences between rebuilt ledgers and the recorded ones, one per row."""
+    diffs = []
+    for name, rows in zip(LEDGERS, got):
+        a, b = normalize(rows), normalize(rec[name])
+        if len(a) != len(b):
+            diffs.append(f"{name} has {len(b)} rows in ratchet.json, {len(a)} when rebuilt")
+        for x, y in zip(a, b):
+            bad = {k: (x.get(k), y.get(k)) for k in x.keys() | y.keys() if x.get(k) != y.get(k)}
+            if bad:
+                label = x.get("suite") or x.get("clause") or x.get("step") or x.get("name")
+                diffs.append(f"{name} row {label}: rebuilt vs ratchet.json {bad}")
+    return diffs
+
+
+def read_reports() -> dict[str, dict]:
+    return {s.name: load_fresh_json(ROOT / s.rel_dir / s.report_rel) for s in CRATE_SPECS if s.report_rel}
+
+
 def recorded_problems(rec: dict) -> list[str]:
     """Checks of the committed report that need no Verus run."""
     problems: list[str] = []
@@ -770,7 +877,15 @@ def recorded_problems(rec: dict) -> list[str]:
     for k in ("trusted", "functions_by_mode"):
         if t[k] != {m: sum(c[k][m] for c in crates) for m in t[k]}:
             problems.append(f"totals.{k} is not the sum over crates")
-    for c in crates:
+    for spec, c in zip(CRATE_SPECS, crates):
+        for k, want in (("step", spec.step), ("scope", spec.scope), ("theorem", spec.theorem), ("exit_code", c["verify_exit"])):
+            if c[k] != want:
+                problems.append(f"{c['name']}: {k} is not {want!r}")
+        showcase = ROOT / spec.rel_dir / spec.showcase_rel
+        if c["proof_source"] != f"data/examples/browser-{spec.name}-{showcase.name}":
+            problems.append(f"{c['name']}: unexpected proof_source {c['proof_source']}")
+        elif (SITE / c["proof_source"]).read_bytes() != showcase.read_bytes():
+            problems.append(f"{c['name']}: {c['proof_source']} is not a copy of {spec.showcase_rel}")
         log = SITE / c["log"]
         if not log.exists() or sha256_file(log) != c["log_sha256"]:
             problems.append(f"{c['name']}: {c['log']} does not match log_sha256")
@@ -782,6 +897,30 @@ def recorded_problems(rec: dict) -> list[str]:
         tests = TEST_RE.findall(text)
         if (sum(int(a) for a, _ in tests), sum(int(b) for _, b in tests)) != (c["tests_passed"], c["tests_failed"]):
             problems.append(f"{c['name']}: test counts differ from its log")
+        if re.findall(r"^# exit: (-?\d+)  seconds: ([\d.]+)$", text, re.M) != [
+            (str(c["verify_exit"]), str(c["verify_seconds"])),
+            (str(c["tests_exit"]), str(c["test_seconds"])),
+        ]:
+            problems.append(f"{c['name']}: exit codes or timings differ from its log")
+    for k in ("verify_seconds", "test_seconds"):
+        if t[k] != round(sum(c[k] for c in crates), 2):
+            problems.append(f"totals.{k} is not the sum over crates")
+    if rec["proof_showcase"] != [showcase_row(spec, c) for spec, c in zip(CRATE_SPECS, crates)]:
+        problems.append("proof_showcase differs from the crates")
+    if not rec["verus"].endswith(rec["verus_commit"][:7]):
+        problems.append(f"verus {rec['verus']} is not commit {rec['verus_commit']}")
+    reports = read_reports()
+    vurl_log = (SITE / crates[0]["log"]).read_text()
+    rebuilt = build_ledgers({c["name"]: c for c in crates}, reports, vurl_log)
+    problems += ledger_diffs(rebuilt, rec, lambda rows: rows)
+    if rec["vm_benchmarks_geomean_speedup"] != reports["vjs_vm"].get("geometric_mean_speedup"):
+        problems.append("vm_benchmarks_geomean_speedup differs from vjs-vm/benchmarks.json")
+    for b in rec["vm_benchmarks"]:
+        if abs(b["speedup"] - b["ast_ms"] / b["bytecode_ms"]) > 0.01:
+            problems.append(f"vm_benchmarks {b['name']}: speedup is not ast_ms / bytecode_ms")
+    speedups = [b["speedup"] for b in rec["vm_benchmarks"]]
+    if abs(rec["vm_benchmarks_geomean_speedup"] - math.prod(speedups) ** (1 / len(speedups))) > 0.01:
+        problems.append("vm_benchmarks_geomean_speedup is not the geometric mean of the speedups")
     embedded = dict(json.loads((DATA / "stats.json").read_text())["browser"])
     embedded.pop("log", None)
     if embedded != rec:
@@ -811,7 +950,13 @@ def check(only: list[str], skip_tests: bool) -> None:
     target_dir = target_directory(env)
     # `cargo test` rewrites these reports; a check must leave the tree as it found it.
     saved = {p: p.read_bytes() for s in CRATE_SPECS if s.report_rel and (p := ROOT / s.rel_dir / s.report_rel).exists()}
+    full = not only and not skip_tests
+    measured: dict[str, dict] = {}
+    vurl_test_stdout = ""
     try:
+        if full:
+            for p in saved:
+                p.unlink()  # so a report can only come from this run's tests
         for spec in CRATE_SPECS:
             if only and spec.name not in only:
                 continue
@@ -819,12 +964,17 @@ def check(only: list[str], skip_tests: bool) -> None:
             problems += [f"{spec.name}: {x}" for x in v["problems"]]
             if v["verus_commit"] != rec["verus_commit"]:
                 problems.append(f"{spec.name}: Verus {v['verus_commit']}, report used {rec['verus_commit']}")
-            got = {"name": spec.name, "path": f"browser/{spec.rel_dir}", "verify_exit": v["exit"], **v}
+            got = {
+                "name": spec.name, "path": f"browser/{spec.rel_dir}", "scope": spec.scope, "theorem": spec.theorem,
+                "verify_exit": v["exit"], "verify_seconds": v["seconds"], **v,
+            }  # fmt: skip
             fields = list(PROOF_FIELDS)
             if not skip_tests:
                 t = run_tests(spec, env)
                 got |= {"tests_exit": t["exit"], "tests_passed": t["passed"], "tests_failed": t["failed"]}
                 fields += TEST_FIELDS
+                if spec.name == "vurl":
+                    vurl_test_stdout = t["text"]
                 if t["exit"] != 0:
                     why = re.findall(r"^test .* FAILED$|^thread .* panicked at .*(?:\n.*){0,3}", t["text"], re.M)
                     detail = "\n".join(why)[:4000] or t["text"].strip()[-600:]
@@ -833,7 +983,11 @@ def check(only: list[str], skip_tests: bool) -> None:
             for f in fields:
                 if got[f] != want.get(f):
                     problems.append(f"{spec.name}: {f} is {got[f]}, ratchet.json says {want.get(f)}")
+            measured[spec.name] = got
             print(f"{spec.name}: {v['verified']} verified, {v['errors']} errors, {v['seconds']}s", flush=True)
+        if full and not problems:
+            rebuilt = build_ledgers(measured, read_reports(), vurl_test_stdout)
+            problems += [f"re-run: {x}" for x in ledger_diffs(rebuilt, rec, without_volatile)]
     finally:
         for p, data in saved.items():
             p.write_bytes(data)
@@ -931,7 +1085,6 @@ def measure() -> None:
         copied_name = f"browser-{spec.name}-{showcase_src.name}"
         shutil.copyfile(showcase_src, EXAMPLES_DIR / copied_name)
         proof_source = f"data/examples/{copied_name}"
-        repo_rel_file = f"browser/{spec.rel_dir}/{spec.showcase_rel}"
 
         crate_entry = {
             "name": spec.name,
@@ -961,20 +1114,7 @@ def measure() -> None:
         }
         out["crates"].append(crate_entry)
 
-        proof_showcase.append(
-            {
-                "label": spec.showcase_label,
-                "crate": spec.name,
-                "step": spec.step,
-                "file": repo_rel_file,
-                "source": proof_source,
-                "verified": v["verified"],
-                "errors": v["errors"],
-                "seconds": v["seconds"],
-                "log": crate_log,
-                "exit_code": v["exit"],
-            }
-        )
+        proof_showcase.append(showcase_row(spec, crate_entry))
 
         if report_path:
             reports[spec.name] = load_fresh_json(report_path)
