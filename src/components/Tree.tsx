@@ -5,7 +5,7 @@ import type { MachineDef } from '../machines/types';
 import { selectMachine, useStudio } from '../state';
 
 /**
- * 结构树: the whole assembly tree of the current machine in a side drawer —
+ * Structure: the whole assembly tree of the current machine in a side drawer —
  * every subassembly, recursively, down to the plain parts, with how deep
  * each branch goes. Click an assembly to open it, a part to open its
  * assembly with the part selected. The branch you are in starts expanded.
@@ -61,13 +61,13 @@ function Node({ m, level, label, path, onPath, memo }: { m: MachineDef; level: n
   return (
     <li className={`tree-node${here ? ' is-here' : ''}`}>
       <div className="tree-row">
-        <button type="button" className="tree-twist" aria-label={open ? '收起' : '展开'} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? '▾' : '▸'}</button>
+        <button type="button" className="tree-twist" aria-label={open ? 'Collapse' : 'Expand'} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? '▾' : '▸'}</button>
         <button type="button" className="tree-name" onClick={() => openPart(m.id, null)} title={m.summary}>
           <span className="tree-level">L{level + 1}</span>
           <b>{label ?? m.name}</b>
           {label && label !== m.name && <i> · {m.name}</i>}
         </button>
-        <span className="tree-meta">{m.parts.length} 件{s.depth > 1 ? ` · 下 ${s.depth - 1} 级` : ''}</span>
+        <span className="tree-meta">{m.parts.length} parts{s.depth > 1 ? ` · ${s.depth - 1} level(s) deeper` : ''}</span>
       </div>
       {open && (
         <ul className="tree-list">
@@ -106,24 +106,24 @@ export function Tree() {
   const s = stats(root, memo);
   const longest = deepest(root);
   return (
-    <aside className="tree-drawer" role="dialog" aria-label="结构树">
+    <aside className="tree-drawer" role="dialog" aria-label="Structure">
       <header className="tree-head">
         <div>
-          <p className="tree-kicker">STRUCTURE · 结构树</p>
+          <p className="tree-kicker">STRUCTURE</p>
           <h2>{root.name}</h2>
         </div>
-        <button type="button" className="tree-close" onClick={() => set(false)} aria-label="关闭">×</button>
+        <button type="button" className="tree-close" onClick={() => set(false)} aria-label="Close">×</button>
       </header>
       <div className="tree-stats">
-        <span><b>{s.depth}</b> 级</span>
-        <span><b>{s.assemblies}</b> 种组件</span>
-        <span><b>{s.instances}</b> 个零件（含重复）</span>
+        <span><b>{s.depth}</b> level(s)</span>
+        <span><b>{s.assemblies}</b> assemblies</span>
+        <span><b>{s.instances}</b> parts (with repeats)</span>
       </div>
-      {s.depth > 1 && <p className="tree-deepest">最深一支：{longest.map((m) => m.name).join(' › ')}</p>}
+      {s.depth > 1 && <p className="tree-deepest">Deepest branch: {longest.map((m) => m.name).join(' › ')}</p>}
       <ul className="tree-list tree-root" key={root.id}>
         <Node m={root} level={0} path={root.id} onPath={onPath} memo={memo} />
       </ul>
-      <p className="tree-foot">点组件名打开那一级 · 点零件直接选中 · ▸ 展开 · Esc 关闭</p>
+      <p className="tree-foot">Click an assembly to open that level · click a part to select · ▸ expands · Esc closes</p>
     </aside>
   );
 }

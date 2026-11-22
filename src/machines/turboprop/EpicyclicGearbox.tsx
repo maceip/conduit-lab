@@ -6,13 +6,14 @@ import { motion } from '../../state';
 import { HollowSteppedShaft, ToothedGear } from '../turboprop-kit';
 
 /**
- * 子组件 · 两级行星减速轮系（用户提供的 EpicyclicGearboxStage，接入 Inkwork）。
+ * Sub-assembly: the epicyclic reduction gear train (author-provided EpicyclicGearboxStage, wired into Inkwork).
  *
- * 啮合约束 Z_ring = Z_sun + 2·Z_planet；5 行星时 (Z_s + Z_r)/5 ∈ ℤ 保证不顶齿。
- * 默认齿数 20/20/60（1:4 单级）；本机按 15:1 两级（16/24/64 + 16/8/32）传入。
- * explodeOffsets = 各元件的爆炸行程（u 单位）；windows = 0–1 时间窗，给出后
- * 由 useFrame 按 explode.ts 的滑杆逐帧推进（太阳轮/行星轮/销轴/行星架/内齿圈
- * 沿 +x 伸缩 + 行星轮径向散开）。
+ * Meshing constraint Z_ring = Z_sun + 2·Z_planet; with five planets,
+ * (Z_s + Z_r)/5 ∈ ℤ keeps the teeth from colliding. Defaults are 20/20/60
+ * (single 1:4 stage); this machine passes the 15:1 pair (16/24/64 + 16/8/32).
+ * explodeOffsets = per-element travel (u units); windows = 0–1 slider windows —
+ * when given, useFrame drives them from the explode.ts slider each frame
+ * (sun / planets / pins / carrier / ring telescoping along +x, planets fanning radially).
  */
 
 export interface EpicyclicStageProps {

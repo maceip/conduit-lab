@@ -11,7 +11,7 @@ import {
 } from '../turboprop-kit';
 import { BladeRow, BoltCircle, DiffuserPipes, FlangeCollar, Ribs, Shell } from './kit';
 import {
-  BOM, BOLT_SETS, CAMERA, CENTRE_LINES, DIMENSIONS, GUIDES, NEIGHBOURS, PARTS, STEPS, TP,
+  ANNOTATIONS, BOM, BOLT_SETS, CAMERA, CENTRE_LINES, DIMENSIONS, GUIDES, NEIGHBOURS, PARTS, STEPS, TP,
 } from './data';
 import { propeller } from './propeller';
 import { gearbox } from './gearbox';
@@ -23,10 +23,10 @@ import { carrierAngle, freeAngle, hpAngle, planetSpin, STAGE1 } from './kinemati
 
 const AY = TP.AY;
 const U = TP.u;
-/** 毫米站位 → 组件的 u 设计空间（组件内建 1u = TP.u 毫米）。 */
+/** Millimetre station → the component u design space (1u = TP.u mm). */
 const at = (x: number, y = AY, z = 0) => [x, y, z] as [number, number, number];
 
-/** 相位量（弧度）；只在「运转」时前进。所有转动件共用这一个相位。 */
+/** Shared phase (radians); only advances while running. Every rotating part reads it. */
 export const tpMotion = { phase: 0 };
 
 export function TurbopropDriver() {
@@ -37,7 +37,7 @@ export function TurbopropDriver() {
   return null;
 }
 
-/** 绕发动机轴线（y=AY, z=0，沿 x）转动的组。 */
+/** Group spinning about the engine centreline (y=AY, z=0, along x). */
 function SpinX({ which, children }: { which: 'hp' | 'free' | 'prop'; children: ReactNode }) {
   const ref = useRef<THREE.Group>(null);
   useFrame(() => {
@@ -55,9 +55,9 @@ function SpinX({ which, children }: { which: 'hp' | 'free' | 'prop'; children: R
 }
 
 /**
- * 一级行星轮：随行星架公转（0.05ω），绕自身销轴按真实齿数差动自转，
- * 并沿各自销轴径向扇出（对照表 Planets +0.55u = 220 mm）。
- * 齿轮轴线与发动机轴线平行（外啮合行星轮系的正确布置）。
+ * First-stage planet: orbits with the carrier (0.05ω), spins on its pin at the
+ * true epicyclic ratio, and fans out radially along that pin (map Planets +0.55u
+ * = 220 mm). Gear axes stay parallel to the shaft — the correct spur planetary.
  */
 function PlanetGear({ i }: { i: number }) {
   const spin = useRef<THREE.Group>(null);
@@ -65,7 +65,7 @@ function PlanetGear({ i }: { i: number }) {
   useFrame(() => {
     const ph = tpMotion.phase;
     if (spin.current) spin.current.rotation.x = planetSpin(ph);
-    // 径向扇出（行星轮窗口 0.63→0.83，表：Planets +0.55u = 220 mm）
+    // radial fan (planet window 0.63→0.83, map: Planets +0.55u = 220 mm)
     const t = Math.min(1, Math.max(0, (motion.explode - 0.63) / 0.2));
     const s = t * t * (3 - 2 * t);
     if (orbit.current) orbit.current.position.y = 100 + 220 * s;
@@ -84,7 +84,7 @@ function PlanetGear({ i }: { i: number }) {
   );
 }
 
-/* ── Wave 1 · 紧固件与外皮 ───────────────────────────────────────── */
+/* ── Wave 1 · fasteners & outer skins ───────────────────────────────────────── */
 
 function Spinner() {
   return (
@@ -113,7 +113,7 @@ function PitchLockRing() {
   );
 }
 
-/** 短舱/外机匣母线（(r, x) 外轮廓），按新站位生成。 */
+/** Nacelle / outer-case meridian ((r, x) outer contour) for the map stations. */
 function nacelleProfile(): Array<[number, number]> {
   return [
     [330, 300], [372, 240], [380, 60], [380, -760], [368, -1020], [344, -1300],
@@ -142,7 +142,7 @@ function CowlLower() {
 }
 
 function CombustorCase({ half }: { half: 'a' | 'b' }) {
-  // 外机匣（压力壳）：x 300→−1420，包住压气机-扩压-燃烧段；±z 两半。
+  // outer case (pressure shell): x 300→−1420 around compressor/diffuser/combustor; two ±z halves.
   const profile: Array<[number, number]> = [
     [252, 300], [312, 250], [332, 180], [332, -1180], [322, -1320], [308, -1420],
     [288, -1420], [302, -1320], [312, -1180], [312, 180], [294, 250], [236, 300],
@@ -163,7 +163,7 @@ function CombustorCase({ half }: { half: 'a' | 'b' }) {
   );
 }
 
-/* ── Wave 2 · 大部件分离 ─────────────────────────────────────────── */
+/* ── Wave 2 · major groups ─────────────────────────────────────────── */
 
 function PropHub() {
   return (
@@ -183,23 +183,23 @@ function PropHub() {
 function Gearbox() {
   return (
     <Part id="gearbox">
-      {/* 镁合金机匣（挖空）+ 前后凸缘 */}
+      {/* magnesium casing (hollowed) + front and aft flanges */}
       <Shell k="tp-gearcase" t={16} profile={[[248, TP.gearX0], [272, 380], [272, 800], [258, TP.gearX1]]} />
       <FlangeCollar k="tp-gear-fl0" x={330} r={282} thick={34} bossCount={12} bossR={20} />
       <FlangeCollar k="tp-gear-fl1" x={846} r={268} thick={30} bossCount={12} bossR={18} />
       <BoltCircle x={352} r={302} count={12} d={18} len={44} set="gear-bolts" />
       <Ribs x={430} r0={276} r1={318} count={5} thick={14} />
       <Ribs x={760} r0={262} r1={304} count={5} thick={14} />
-      {/* 扭矩计筒 */}
+      {/* torque-meter barrel */}
       <Cyl c={[TP.torqueX, AY, 0]} r={145} len={112} axis="x" seg={36} />
       <Turn k="tp-torque-ring" axis="x" p={[0, AY, 0]} profile={[[145, 640], [158, 646], [158, 668], [145, 674]]} />
-      {/* 环形径向进气滤网 + 前轴承机匣 */}
+      {/* annular intake screen + front bearing housing */}
       <Turn k="tp-inlet-outer" axis="x" p={[0, AY, 0]} profile={tube(272, 134, 166, 12)} />
       <Turn k="tp-inlet-inner" axis="x" p={[0, AY, 0]} profile={tube(208, 134, 166, 12)} />
       <Ribs x={150} r0={214} r1={268} count={18} thick={10} />
       <Shell k="tp-brg-house" t={14} profile={[[158, -60], [158, 20]]} />
       <FlangeCollar k="tp-brg-fl" x={-20} r={168} thick={24} bossCount={8} bossR={14} />
-      {/* 前收油泵齿轮 */}
+      {/* front oil scavenge gear */}
       <group position={[352, AY - 172, 0]}>
         <group scale={U}>
           <ToothedGear teeth={14} module={0.0125} thickness={0.055} boreR={0.03} lighteningHoles={3} />
@@ -228,7 +228,7 @@ function Exhaust() {
 }
 
 function FuelManifoldGroup() {
-  // 14 个旋流喷嘴杯（火焰筒后端球冠上）+ 环形总管 + 2 支点火电嘴。
+  // 14 swirl-cup nozzles on the liner aft dome + annular manifold + two igniter plugs.
   return (
     <Part id="fuel-manifold">
       <group position={at(TP.linerX0 + 40)}>
@@ -272,7 +272,7 @@ function AccessoryDrive() {
   );
 }
 
-/* ── Wave 3 · 内部 telescoping 与径向扇出 ────────────────────────── */
+/* ── Wave 3 · internal telescoping & radial fan-out ────────────────────────── */
 
 function Blades() {
   return (
@@ -459,10 +459,10 @@ function Turbines() {
   return (
     <>
       <Part id="hp-turbine">
-        {/* 导向器环（静止） */}
+        {/* nozzle guide vane ring (static) */}
         <BladeRow k="tp-ngv" x={TP.ngvX} count={34} rootR={106} tipR={192} chord={36} thick={11} pitch={0.72} />
         <Turn k="tp-ngv-ring" axis="x" p={[0, AY, 0]} profile={tube(192, TP.ngvX - 22, TP.ngvX + 22, 12)} />
-        {/* 高压涡轮盘（1.0ω） */}
+        {/* HP turbine disk (1.0ω) */}
         <SpinX which="hp">
           <group position={at(TP.hpX)}>
             <group scale={U}>
@@ -480,7 +480,7 @@ function Turbines() {
             </group>
           </group>
         </SpinX>
-        {/* 级间挡板（静止） */}
+        {/* inter-stage baffle (static) */}
         <Turn k="tp-baffle" axis="x" p={[0, AY, 0]} profile={[[70, TP.baffleX - 16], [152, TP.baffleX - 6], [152, TP.baffleX + 12], [70, TP.baffleX + 20]]} />
         <Callout id="hp-turbine" p={[TP.hpX + 120, AY + 240 + 8 * 150, 70]} />
       </Part>
@@ -523,7 +523,7 @@ function Turbines() {
                 twistDeg={12}
               />
             </group>
-            {/* 同心内轴：穿过空心高压转子把功率送到太阳轮（带迷宫密封） */}
+            {/* concentric inner shaft: carries power through the hollow HP spool to the sun gear (labyrinth seals) */}
             <HollowSteppedShaft
               innerR={38}
               steps={[
@@ -586,10 +586,10 @@ export const turboprop: MachineDef = level({
   id: 'turboprop',
   unit: 10 / 3152,
   bounds: [[TP.tailX - 60, 0, -TP.propR - 80], [TP.spinnerX1 + 60, TP.AY + TP.propR + 80, TP.propR + 80]],
-  name: '涡轮螺旋桨发动机',
+  name: 'Turboprop Engine',
   en: 'Turboprop Engine',
-  subtitle: '装配体 · 双转子 · 两级行星减速 · 半剖',
-  summary: '31 种零件 · 6 个子组件 · 15:1 行星减速带动 4 叶恒速螺旋桨',
+  subtitle: 'Assembly · twin-spool · 15:1 planetary · half-section',
+  summary: '31 parts · 6 sub-assemblies · 15:1 planetary drive to a four-blade constant-speed propeller',
   drawingNo: 'GW-TP-00',
   scale: '1 : 10',
   parts: PARTS,
@@ -616,7 +616,8 @@ export const turboprop: MachineDef = level({
   },
   dimensions: DIMENSIONS,
   bom: BOM,
+  annotations: ANNOTATIONS,
 });
 
-/** 六个子组件（A–F），在 machines/index.ts 的 ALL 里展开。 */
+/** The six sub-assemblies (A–F), spread into ALL in machines/index.ts. */
 export const TURBOPROP_LEVELS = [propeller, gearbox, airflow, compressor, combustor, turbine];

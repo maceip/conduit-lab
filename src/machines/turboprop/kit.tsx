@@ -6,16 +6,17 @@ import type { Vec3 } from '../types';
 import { TP, AY } from './data';
 
 /**
- * 涡桨发动机几何积木 / procedural geometry kit.
+ * Procedural geometry kit for the turboprop.
  *
- * 纪律：全部毫米；轴线在 (·, AY, 0)、沿 x；缓存键一律 tp- 前缀；
- * 转子/齿轮绝不留"占位圆柱"——叶片是带桨距的翼型，齿轮有齿廓与腹板轻化孔，
- * 机匣有凸缘螺栓座、加强肋与周向紧固件阵列。
+ * Discipline: millimetres throughout; axis at (·, AY, 0) along x; cache keys
+ * prefixed tp-; never a placeholder cylinder for a rotor or gear — blades are
+ * pitched airfoils, gears have real tooth profiles and lightened webs, casings
+ * carry flange bolt bosses, reinforcement ribs and perimeter fastener arrays.
  */
 
-/* ── 翼型与叶片阵列 ─────────────────────────────────────────────── */
+/* ── Airfoils & blade rows ─────────────────────────────────────────────── */
 
-/** 翼型截面（弦长 c、厚 t），位于 (轴向, 周向) 平面。 */
+/** Airfoil section (chord c, thickness t) in the (axial, tangential) plane. */
 export function airfoilShape(c: number, t: number) {
   return poly([
     [-c * 0.5, 0],
@@ -31,8 +32,9 @@ export function airfoilShape(c: number, t: number) {
 }
 
 /**
- * 径向叶片阵列：count 片绕 x 轴均布，每片绕自身径向轴倾斜 pitch（弦向桨距），
- * 相邻片再加 stagger 扭转差。count ∈ 19..37 为压气机/涡轮叶排，4 为螺旋桨。
+ * Radial blade row: `count` blades evenly spaced about the x axis, each pitched
+ * about its own radial axis, with a per-blade stagger twist. Counts 19–37 suit
+ * compressor/turbine rows, 4 suits a propeller.
  */
 export function BladeRow({
   k, x, count, rootR, tipR, chord, thick, pitch, stagger = 0, a0 = 0, lean = 0,
@@ -67,7 +69,7 @@ export function BladeRow({
   );
 }
 
-/** 桨叶：大展弦比翼型，根部弦长 c0、尖部弦长 c1，带 25° 巡航桨距。 */
+/** Prop blade: high aspect-ratio airfoil, chord c0 at root to c1 at tip, 25° cruise pitch. */
 export function PropBlade({ i, x, rootR, tipR, c0, c1, thick, pitch }: {
   i: number; x: number; rootR: number; tipR: number; c0: number; c1: number; thick: number; pitch: number;
 }) {
@@ -78,10 +80,10 @@ export function PropBlade({ i, x, rootR, tipR, c0, c1, thick, pitch }: {
       <group rotation={[theta, 0, 0]}>
       <group position={[x, 0, 0]}>
         <group rotation={[0, pitch, 0]}>
-          {/* 根段与尖段两截翼型，弦长收窄模拟扭转桨叶 */}
+          {/* root and tip airfoil segments, chord narrowing to fake the twist */}
           <Plate k={`tp-pb${i}-r`} shape={airfoilShape(c0, thick)} depth={span * 0.55} p={[0, rootR, 0]} r={XZ_Y} />
           <Plate k={`tp-pb${i}-t`} shape={airfoilShape(c1, thick * 0.7)} depth={span * 0.45} p={[0, rootR + span * 0.55, 0]} r={XZ_Y} />
-          {/* 桨根接头 */}
+          {/* root fitting */}
           <Cyl c={[0, rootR + 18, 0]} r={38} len={90} axis="y" seg={20} />
         </group>
       </group>
@@ -90,9 +92,9 @@ export function PropBlade({ i, x, rootR, tipR, c0, c1, thick, pitch }: {
   );
 }
 
-/* ── 齿轮（齿廓 + 腹板轻化孔） ──────────────────────────────────── */
+/* ── Gears (tooth profiles + lightened webs) ──────────────────────────────────── */
 
-/** 齿轮腹板：渐开线齿廓（梯形齿）+ 中孔 + 均布轻化孔。 */
+/** Gear web: involute-ish tooth profile (trapezoid teeth) + bore + lightening holes. */
 export function gearWebShape(teeth: number, pitchR: number, addendum: number, bore: number, holes: Array<[number, number, number]>) {
   return () => {
     const s = gearShape(teeth, pitchR, addendum, bore);
@@ -105,7 +107,7 @@ export function gearWebShape(teeth: number, pitchR: number, addendum: number, bo
   };
 }
 
-/** 齿盘本体（原点处、轴线沿 x），行星轮在自己的径向坐标系里用。 */
+/** Gear disc at the origin (axis along x) for planets in their own frames. */
 export function GearDisc({ k, teeth, pitchR, addendum, bore, thick, holes = 5, holeR }: {
   k: string; teeth: number; pitchR: number; addendum: number; bore: number; thick: number; holes?: number; holeR?: number;
 }) {
@@ -121,8 +123,8 @@ export function GearDisc({ k, teeth, pitchR, addendum, bore, thick, holes = 5, h
 }
 
 /**
- * 行星/直齿轮：轴线沿 x 的齿圈盘，腹板开 count 个轻化孔，带轮毂短轴。
- * teeth ∈ 8..64；addendum/dedendum 由 gearShape 给出（齿顶高/齿根高 1.25 倍）。
+ * Spur / planet gear: disc with its axis along x, `holes` lightening holes and a hub stub.
+ * teeth ∈ 8..64; addendum/dedendum follow gearShape (1.25× dedendum depth).
  */
 export function GearWheel({
   k, x, teeth, pitchR, addendum, bore, thick, holes = 5, holeR, hubR, hubLen = 0,
@@ -146,13 +148,13 @@ export function GearWheel({
   );
 }
 
-/** 内齿圈：环形齿圈（齿朝内），腹板均布销孔。 */
+/** Ring gear: internal teeth, web drilled with pin holes. */
 export function RingGear({
   k, x, teeth, innerR, outerR, thick, holes = 12,
 }: {
   k: string; x: number; teeth: number; innerR: number; outerR: number; thick: number; holes?: number;
 }) {
-  // 内齿：齿顶在内侧。用外径盘挖出带齿的内孔——齿廓取反（把 gearShape 画在孔上）。
+  // Internal teeth face inward: drill a toothed bore out of an outer disc — reverse the tooth loop.
   const shape = () => {
     const s = new THREE.Shape();
     s.absarc(0, 0, outerR, 0, Math.PI * 2, false);
@@ -185,9 +187,9 @@ export function RingGear({
   return <Plate k={`tp-${k}`} shape={shape} depth={thick} p={[x, AY, 0]} r={YZ_X} />;
 }
 
-/* ── 机匣凸缘、加强肋、紧固件阵列 ───────────────────────────────── */
+/* ── Casing flanges, ribs, fastener arrays ───────────────────────────────── */
 
-/** 周向螺栓阵列（凸缘法兰）。set 给出时螺栓随爆炸窗先脱。 */
+/** Perimeter bolt circle (flange). With `set`, bolts back out first on the explode window. */
 export function BoltCircle({ x, r, count, d = 22, len = 46, dir = 'x', set }: {
   x: number; r: number; count: number; d?: number; len?: number; dir?: Dir; set?: string;
 }) {
@@ -203,7 +205,7 @@ export function BoltCircle({ x, r, count, d = 22, len = 46, dir = 'x', set }: {
   );
 }
 
-/** 凸缘环：带一圈凸起螺栓座（raised bolt bosses）的厚环。 */
+/** Flanged collar: thick ring with a circle of raised bolt bosses. */
 export function FlangeCollar({ k, x, r, thick, bossCount = 12, bossR }: {
   k: string; x: number; r: number; thick: number; bossCount?: number; bossR?: number;
 }) {
@@ -219,7 +221,7 @@ export function FlangeCollar({ k, x, r, thick, bossCount = 12, bossR }: {
   );
 }
 
-/** 结构加强肋：沿周向的径向肋板。 */
+/** Structural ribs: radial plates around the circumference. */
 export function Ribs({ x, r0, r1, count, thick = 14 }: { x: number; r0: number; r1: number; count: number; thick?: number }) {
   return (
     <>
@@ -234,9 +236,9 @@ export function Ribs({ x, r0, r1, count, thick = 14 }: { x: number; r0: number; 
   );
 }
 
-/* ── 密封与管路 ─────────────────────────────────────────────────── */
+/* ── Seals & plumbing ─────────────────────────────────────────────────── */
 
-/** 迷宫密封：轴上一叠方齿（气流曲折泄漏路径）。 */
+/** Labyrinth seal: a stack of square teeth on the shaft (tortuous leak path). */
 export function Labyrinth({ x0, r, teeth, toothH = 14, toothW = 12, gap = 26 }: {
   x0: number; r: number; teeth: number; toothH?: number; toothW?: number; gap?: number;
 }) {
@@ -250,7 +252,7 @@ export function Labyrinth({ x0, r, teeth, toothH = 14, toothW = 12, gap = 26 }: 
   return <Turn k={`tp-lab-${x0}-${teeth}`} profile={profile} axis="x" seg={36} p={[0, AY, 0]} />;
 }
 
-/** 径向扩压管阵列：从叶轮外缘径向甩出、再折向 −x。 */
+/** Radial diffuser pipes: thrown off the impeller rim, then bent toward −x. */
 export function DiffuserPipes({ x, r0, r1, count, r }: { x: number; r0: number; r1: number; count: number; r: number }) {
   return (
     <>
@@ -269,7 +271,7 @@ export function DiffuserPipes({ x, r0, r1, count, r }: { x: number; r0: number; 
   );
 }
 
-/** 燃油总管环 + 14 个喷嘴凸台。 */
+/** Fuel manifold ring with 14 nozzle bosses. */
 export function FuelManifold({ x, r, tubeR = 16 }: { x: number; r: number; tubeR?: number }) {
   return (
     <>
@@ -289,7 +291,7 @@ export function FuelManifold({ x, r, tubeR = 16 }: { x: number; r: number; tubeR
   );
 }
 
-/** 转子盘：带榫槽凸台的实心盘（外缘一圈叶根凸台）。 */
+/** Rotor disk: solid web with a rim of blade-root lugs. */
 export function RotorDisc({ k, x, rimR, hubR, thick, tabs = 24 }: {
   k: string; x: number; rimR: number; hubR: number; thick: number; tabs?: number;
 }) {
@@ -313,9 +315,9 @@ export function RotorDisc({ k, x, rimR, hubR, thick, tabs = 24 }: {
   );
 }
 
-/** 薄壁回转壳（外轮廓 + 反向内轮廓，剖视是空心）。 */
+/** Thin-walled shell: outer contour plus a reversed inner contour, so the section reads hollow. */
 export function Shell({ k, profile, t = TP.wall, seg = 48 }: { k: string; profile: Array<[number, number]>; t?: number; seg?: number }) {
-  // profile 是外轮廓 (半径, x)；内轮廓沿径向缩 t。
+  // profile is the outer contour (radius, x); the inner contour shrinks by t.
   const outer = profile;
   const inner = [...profile].reverse().map(([r, x]): [number, number] => [Math.max(6, r - t), x]);
   return <Turn k={`tp-${k}`} profile={[...outer, ...inner]} axis="x" seg={seg} p={[0, AY, 0]} />;

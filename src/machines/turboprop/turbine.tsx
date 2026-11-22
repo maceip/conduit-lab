@@ -4,67 +4,68 @@ import type { CameraDef, MachineDef, PartDef, StepDef, Vec3 } from '../types';
 import { Cyl, level, Rod, Turn, tube } from '../kit';
 import { Shell } from './kit';
 import { BladeRow, Labyrinth, RotorDisc } from './kit';
-import { TP } from './data';
+import { ANNOTATIONS, TP } from './data';
 
 const AY = TP.AY;
 
 /**
- * 子组件 F · 燃气发生器与动力涡轮 + 排气 / Gas Generator & Power Turbines + Exhaust。
- * 导向器 + 高压涡轮盘 + 级间挡板 + 两级反转自由动力涡轮 + 同心内轴 + 双排气短管 + 尾锥。
+ * Sub-assembly F: gas generator & power turbines + exhaust — NGV ring, HP
+ * turbine disk, inter-stage baffle, two counter-rotating free power turbines,
+ * the concentric inner shaft, twin exhaust stubs and the tailcone.
  */
 
 const PARTS: PartDef[] = [
   {
-    id: 'ngv-ring', index: 1, name: '涡轮导向器环', en: 'Turbine NGV Ring', role: '导向',
-    material: 'DS 高温合金', description: '34 片空心导向叶片，出口角 72°，把燃气加速并导向高压转子，前缘气膜冷却。',
+    id: 'ngv-ring', index: 1, name: 'Turbine NGV Ring', en: 'Turbine NGV Ring', role: 'Guidance',
+    material: 'DS superalloy', description: '34 hollow guide vanes at 72° exit angle, accelerating and steering the gas into the HP rotor; film-cooled leading edges.',
     explode: [320, 0, 0], stage: [0, 0.3],
   },
   {
-    id: 'hp-turbine-disk', index: 2, name: '高压涡轮盘', en: 'HP Turbine Disk', role: '驱动压气机',
-    material: 'DS 高温合金', description: '29 叶、叶高 48 mm，盘心冷却孔 18 个；燃气做功直接带转子（1.0ω）。',
+    id: 'hp-turbine-disk', index: 2, name: 'HP Turbine Disk', en: 'HP Turbine Disk', role: 'Drives compressor',
+    material: 'DS superalloy', description: '29 blades of 48 mm height, 18 bore cooling holes; the gas work turns the spool directly (1.0ω).',
     explode: [160, 0, 0], stage: [0.08, 0.38],
   },
   {
-    id: 'inter-baffle', index: 3, name: '级间挡板', en: 'Inter-Stage Baffle', role: '隔热 · 密封',
-    material: 'GH4169', description: '挡板把高压级与动力级的冷热腔隔开，外缘 4 道迷宫齿，减少冷气掺混损失。',
+    id: 'inter-baffle', index: 3, name: 'Inter-Stage Baffle', en: 'Inter-Stage Baffle', role: 'Heat shield · seal',
+    material: 'GH4169', description: 'Splits the hot and cold cavities between the HP and power stages; four labyrinth teeth in the rim cut cooling-air mixing losses.',
     explode: [0, 260, 0], stage: [0.16, 0.46],
   },
   {
-    id: 'pt-disk-1', index: 4, name: '动力涡轮一级盘', en: 'Power Turbine Disk 1', role: '输出功 · 31 叶',
-    material: 'FGH96 粉末合金', description: '31 叶、叶高 56 mm，与高压涡轮气动解耦，反转（−0.75ω），效率 91%。',
+    id: 'pt-disk-1', index: 4, name: 'Power Turbine Disk 1', en: 'Power Turbine Disk 1', role: 'Output · 31 blades',
+    material: 'FGH96 powder alloy', description: '31 blades of 56 mm height, aerodynamically decoupled from the HP turbine, counter-rotating (−0.75ω), 91% efficient.',
     explode: [-180, 0, 0], stage: [0.24, 0.54],
   },
   {
-    id: 'pt-disk-2', index: 5, name: '动力涡轮二级盘', en: 'Power Turbine Disk 2', role: '输出功 · 33 叶',
-    material: 'FGH96 粉末合金', description: '33 叶、叶高 56 mm，与一级盘同轴；两级落压比 3.2:1，输出轴功率 1 500 shp 级。',
+    id: 'pt-disk-2', index: 5, name: 'Power Turbine Disk 2', en: 'Power Turbine Disk 2', role: 'Output · 33 blades',
+    material: 'FGH96 powder alloy', description: '33 blades of 56 mm height, coaxial with stage one; 3.2:1 pressure drop over the two stages, shaft power in the 1,500 shp class.',
     explode: [-360, 0, 0], stage: [0.32, 0.62],
   },
   {
-    id: 'inner-shaft', index: 6, name: '自由涡轮内轴', en: 'Free Power Turbine Shaft', role: '输出功率',
-    material: '40CrNiMoA', description: 'Ø124×1.7 m 空心内轴，穿过高压转子中心把功率送到太阳轮；两道迷宫密封隔开冷热腔。',
+    id: 'inner-shaft', index: 6, name: 'Free Power Turbine Shaft', en: 'Free Power Turbine Shaft', role: 'Power out',
+    material: '40CrNiMoA steel', description: 'Ø124 × 1.7 m hollow shaft carrying power through the HP spool centre to the sun gear; two labyrinth packs separate hot and cold sides.',
     explode: [0, -320, 0], stage: [0.36, 0.66],
   },
   {
-    id: 'exhaust-stubs', index: 7, name: '排气短管 ×2', en: 'Exhaust Duct Stubs ×2', role: '排气',
-    material: 'Inconel 625', description: '双侧短管内径 220 mm、上偏 15°，壁厚 3 mm 波纹段吸收热膨胀，排气温度约 700 °C。',
+    id: 'exhaust-stubs', index: 7, name: 'Exhaust Duct Stubs ×2', en: 'Exhaust Duct Stubs ×2', role: 'Exhaust',
+    material: 'Inconel 625', description: 'Twin stubs with a 220 mm bore canted up 15°, 3 mm wall with a bellows section for thermal growth; ≈ 700 °C exhaust.',
     explode: [-420, 0, 0], stage: [0.4, 0.7],
   },
   {
-    id: 'tailcone', index: 8, name: '尾锥', en: 'Aft Tailcone', role: '整流',
-    material: 'Inconel 625', description: '长 100 mm 尾锥把两股排气掺混整流，减少后体阻力，内壁测温热电偶 2 点。',
+    id: 'tailcone', index: 8, name: 'Aft Tailcone', en: 'Aft Tailcone', role: 'Fairing',
+    material: 'Inconel 625', description: 'The 100 mm tailcone mixes and straightens the two exhaust jets, cutting base drag; two thermocouples read the inner wall.',
     explode: [-580, 0, 0], stage: [0.44, 0.74],
   },
 ];
 
 const STEPS: StepDef[] = [
   {
-    title: '涡轮与排气', en: 'Turbines & Exhaust',
-    body: '燃气先经导向器进高压涡轮（带转子），再进两级反转动力涡轮——外转子带压气机、内轴带螺旋桨，两轴同心反转，中间靠迷宫密封隔开。',
+    title: 'Turbines & Exhaust', en: 'Turbines & Exhaust',
+    body: 'Gas passes the guide vanes into the HP turbine (which turns the spool), then into the two counter-rotating free power turbines — the outer spool drives the compressor and the inner shaft the propeller, the two concentric shafts turning opposite ways across a labyrinth seal.',
     state: { explode: 0, section: true, running: false, select: 'pt-disk-2', focus: null },
   },
   {
-    title: '分解', en: 'Exploded',
-    body: '导向器、高压盘、挡板、两级动力盘沿轴向伸开；内轴下沉拉出，排气短管与尾锥整体后脱。',
+    title: 'Exploded', en: 'Exploded',
+    body: 'Guide ring, HP disk, baffle and both power disks telescope along the axis; the inner shaft drops out below, and the exhaust stubs and tailcone leave aft together.',
     state: { explode: 1, section: false, running: false, select: null, focus: null },
   },
 ];
@@ -133,13 +134,14 @@ export const turbine: MachineDef = level({
   parent: 'turboprop',
   unit: 10 / 900,
   bounds: [[-1580, AY - 320, -340], [-680, AY + 340, 340]],
-  name: '燃气发生器与动力涡轮',
+  name: 'Gas Generator & Power Turbines',
   en: 'Gas Generator & Power Turbines + Exhaust',
-  subtitle: '子组件 F · 双反转轴 · 双排气',
-  summary: '8 种零件 · 高压涡轮带转子，两级动力涡轮经内轴带螺旋桨',
+  subtitle: 'Sub-assembly F · counter-rotating shafts · twin exhaust',
+  summary: '8 parts · HP turbine turns the spool, two power turbines reach the prop through the inner shaft',
   drawingNo: 'GW-TP-F',
   scale: '1 : 3',
   parts: PARTS,
+  annotations: ANNOTATIONS,
   boltSets: {},
   neighbours: {
     'pt-disk-2': ['inner-shaft', 'pt-disk-1', 'pt-disk-2'],

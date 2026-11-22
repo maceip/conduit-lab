@@ -4,8 +4,8 @@ import type { Vec3 } from '../machines/types';
 /**
  * Three-view layout, first-angle projection (GB/T 14692): the top view sits
  * below the front view and the left view to its right, all at one scale so
- * the projection rules hold on screen: 长对正 (front ↔ top share x),
- * 高平齐 (front ↔ left share y), 宽相等 (top ↔ left share depth, via 45°).
+ * the projection rules hold on screen: front ↔ top share x (length aligned),
+ * front ↔ left share y (height level), top ↔ left share depth (width equal, via 45°).
  */
 
 export type DrawingViewId = 'front' | 'top' | 'left' | 'iso';
@@ -18,7 +18,7 @@ export interface DrawingView {
   /** CSS pixels, top-left origin, relative to the stage. */
   rect: Rect;
   camera: THREE.OrthographicCamera;
-  /** The section applies to the front view only (全剖主视图). */
+  /** The section applies to the front view only (Section Front View). */
   section: boolean;
   /** Hidden (dashed) lines: orthographic views only. */
   hidden: boolean;
@@ -93,7 +93,7 @@ export function computeLayout(
   cLeft.up.set(0, 1, 0);
   cLeft.lookAt(centre.x, centre.y, centre.z);
 
-  // Isometric (正等轴测): fitted to its own cell.
+  // Isometric: fitted to its own cell.
   const isoDir = new THREE.Vector3(1, 1, 1).normalize();
   const cIso = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.5, FAR * 2.5);
   cIso.position.copy(centre).addScaledVector(isoDir, FAR);
@@ -121,10 +121,10 @@ export function computeLayout(
   const mid = (r: Rect) => new THREE.Vector2(r.x + r.w / 2, r.y + r.h / 2);
   return {
     views: [
-      { id: 'front', label: '主视图', rect: front, camera: cFront, section: true, hidden: true },
-      { id: 'top', label: '俯视图', rect: top, camera: cTop, section: false, hidden: true },
-      { id: 'left', label: '左视图', rect: left, camera: cLeft, section: false, hidden: true },
-      { id: 'iso', label: '正等轴测图', rect: iso, camera: cIso, section: false, hidden: false },
+      { id: 'front', label: 'Front View', rect: front, camera: cFront, section: true, hidden: true },
+      { id: 'top', label: 'Top View', rect: top, camera: cTop, section: false, hidden: true },
+      { id: 'left', label: 'Left View', rect: left, camera: cLeft, section: false, hidden: true },
+      { id: 'iso', label: 'Isometric', rect: iso, camera: cIso, section: false, hidden: false },
     ],
     scale,
     centre,

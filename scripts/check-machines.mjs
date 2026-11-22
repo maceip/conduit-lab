@@ -31,9 +31,9 @@ async function check(b, m) {
     const shot = await b.send('Page.captureScreenshot', { format: 'png' });
     writeFileSync(join(shots, `${m.replace(/\//g, '_')}.png`), Buffer.from(shot.result.data, 'base64'));
   }
-  await b.eval(`[...document.querySelectorAll('.views button')].find(b=>b.textContent.trim()==='三视图')?.click()`);
+  await b.eval(`[...document.querySelectorAll('.views button')].find(b=>b.textContent.trim()==='Drawing')?.click()`);
   await sleep(2000);
-  await b.eval(`[...document.querySelectorAll('.views button')].find(b=>b.textContent.trim()==='透视')?.click()`);
+  await b.eval(`[...document.querySelectorAll('.views button')].find(b=>b.textContent.trim()==='3D')?.click()`);
   await sleep(500);
   const uniq = [...new Set(b.errors)];
   console.log(`${uniq.length ? '✗' : '✓'} ${m} (${name})${uniq.length ? '\n    ' + uniq.join('\n    ') : ''}`);

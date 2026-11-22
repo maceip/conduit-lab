@@ -6,66 +6,67 @@ import { Cyl, Hoop, level, Turn, tube } from '../kit';
 import { BoltCircle, FlangeCollar, Ribs, Shell } from './kit';
 import { ToothedGear } from '../turboprop-kit';
 import { EpicyclicGearboxStage } from './EpicyclicGearbox';
-import { TP } from './data';
+import { ANNOTATIONS, TP } from './data';
 import { STAGE1 } from './kinematics';
 
 const AY = TP.AY;
 const U = TP.u;
 
 /**
- * 子组件 B · 两级行星减速齿轮箱 / Two-Stage Epicyclic Reduction Gearbox。
- * 轮系整体用 EpicyclicGearboxStage（太阳轮/行星轮/销轴/行星架/内齿圈按
- * explode.ts 时间窗沿 +x telescoping 0.35u/件，行星轮另径向 +0.55u）。
- * 一级 16/24/64（5:1）+ 二级 16/8/32（3:1）= 15:1，齿圈固定。
+ * Sub-assembly B: two-stage epicyclic reduction gearbox.
+ * The gear train is one EpicyclicGearboxStage (sun / planets / pins / carrier /
+ * ring telescoping 0.35u per element on their explode.ts windows, planets also
+ * fanning +0.55u radially). Stage one 16/24/64 (5:1) plus stage two 16/8/32
+ * (3:1) makes 15:1 with the ring gear fixed.
  */
 
 const PARTS: PartDef[] = [
   {
-    id: 'gearbox-casing', index: 1, name: '齿轮箱机匣', en: 'Gearbox Casing', role: '承力',
-    material: '镁合金 AZ91C', description: '壁厚 16 mm，前后凸缘各 12 螺栓；内腔兼作滑油收油池，回油温度 110 °C。',
+    id: 'gearbox-casing', index: 1, name: 'Gearbox Casing', en: 'Gearbox Casing', role: 'Structural',
+    material: 'AZ91C magnesium', description: '16 mm wall with twelve bolts on each flange; the cavity doubles as the oil sump, scavenge temperature 110 °C.',
     explode: [-420, 0, 0], stage: [0.3, 0.62],
   },
   {
-    id: 'torque-meter', index: 2, name: '扭矩计筒', en: 'Torque-Meter Cylinder', role: '测扭',
-    material: '40CrNiMoA', description: '弹性筒长 112 mm、外径 290 mm，贴 4 组应变片，测扭精度 ±0.5%。',
+    id: 'torque-meter', index: 2, name: 'Torque-Meter Cylinder', en: 'Torque-Meter Cylinder', role: 'Torque sensing',
+    material: '40CrNiMoA steel', description: 'Elastic barrel 112 mm long, 290 mm outer diameter, with four strain-gauge bridges; ±0.5% torque accuracy.',
     explode: [0, 320, 0], stage: [0.25, 0.55],
   },
   {
-    id: 'gear-train', index: 3, name: '行星轮系', en: 'Epicyclic Gear Train', role: '15:1 减速',
-    material: '18Cr2Ni4WA 渗碳', description: '一级 16/24/64（5 轮）+ 二级 16/8/32；太阳轮 +0.75u、行星轮 +0.40u 并径向 +0.55u、销轴/行星架 +0.05u、内齿圈 −0.30u 依次伸开（0.35u/件）。',
+    id: 'gear-train', index: 3, name: 'Epicyclic Gear Train', en: 'Epicyclic Gear Train', role: '15:1 reduction',
+    material: 'Case-hardened 18Cr2Ni4WA', description: 'Stage one 16/24/64 (five planets) and stage two 16/8/32; sun +0.75u, planets +0.40u with a +0.55u radial fan, pins/carrier +0.05u, ring −0.30u — telescoping at 0.35u per element.',
     explode: [0, 0, 0], stage: [0.6, 0.9],
   },
   {
-    id: 'bearing-inner', index: 4, name: '推力轴承内圈', en: 'Thrust Bearing Inner Race', role: '承受桨拉力',
-    material: 'GCr15', description: '内圈外径 210 mm，滚道淬硬 HRC 62，承受桨拉力约 30 kN（起飞状态）。',
+    id: 'bearing-inner', index: 4, name: 'Thrust Bearing Inner Race', en: 'Thrust Bearing Inner Race', role: 'Takes prop thrust',
+    material: 'GCr15 bearing steel', description: 'Race outer diameter 210 mm, tracks hardened to HRC 62; carries ≈ 30 kN of propeller thrust at take-off.',
     explode: [220, 0, 0], stage: [0.55, 0.8],
   },
   {
-    id: 'bearing-outer', index: 5, name: '推力轴承外圈', en: 'Thrust Bearing Outer Race', role: '传力至机匣',
-    material: 'GCr15', description: '外圈压装在机匣前壁，把桨拉力传给机匣与安装桁架。',
+    id: 'bearing-outer', index: 5, name: 'Thrust Bearing Outer Race', en: 'Thrust Bearing Outer Race', role: 'Loads into casing',
+    material: 'GCr15 bearing steel', description: 'Shrunk into the front casing wall, passing propeller thrust into the casing and the mounting truss.',
     explode: [-180, 0, 0], stage: [0.55, 0.8],
   },
   {
-    id: 'bearing-cage', index: 6, name: '钢球保持架', en: 'Ball Cage', role: '保持钢球',
-    material: '酚醛胶布', description: '18 粒 Ø22 钢球均布，保持架引导间隙 0.15 mm，飞溅润滑。',
+    id: 'bearing-cage', index: 6, name: 'Ball Cage', en: 'Ball Cage', role: 'Holds the balls',
+    material: 'Fabric phenolic', description: 'Eighteen Ø22 balls evenly spaced, cage guidance clearance 0.15 mm, splash lubricated.',
     explode: [0, 0, -420], stage: [0.58, 0.82],
   },
   {
-    id: 'scavenge-pump-gear', index: 7, name: '收油泵齿轮', en: 'Oil Scavenge Pump Gear', role: '回油',
-    material: '45 钢', description: '直齿轮 14 齿、模数 2.5（腹板 3 个轻化孔），把收油池滑油泵回油箱，流量 12 L/min。',
+    id: 'scavenge-pump-gear', index: 7, name: 'Oil Scavenge Pump Gear', en: 'Oil Scavenge Pump Gear', role: 'Scavenge',
+    material: '45 steel', description: '14-tooth spur gear, module 2.5, three lightening holes in the web; pumps sump oil back to the tank at 12 L/min.',
     explode: [-320, -280, 0], stage: [0.5, 0.75],
   },
 ];
 
 const STEPS: StepDef[] = [
   {
-    title: '轮系', en: 'Gear Train',
-    body: '两级行星：一级 16/24/64（5:1），二级 16/8/32（3:1），合计 15:1。齿圈固定，太阳轮反转，行星架慢转带动桨毂；5 个行星轮绕销轴差动自转。',
+    title: 'Gear Train', en: 'Gear Train',
+    body: 'Two planetary stages: 16/24/64 (5:1) then 16/8/32 (3:1) — fifteen to one. The ring is fixed, the sun turns backwards, and the slow carrier drives the hub while five planets spin on their pins.',
     state: { explode: 0, section: true, running: false, select: 'gear-train', focus: null },
   },
   {
-    title: '分解', en: 'Exploded',
-    body: '机匣、扭矩计筒先后脱开；轮系按 0.35u/件 telescoping 伸开，行星轮另径向 +0.55u 散开，轴承三件与收油泵齿轮依次拉出。',
+    title: 'Exploded', en: 'Exploded',
+    body: 'Casing and torque-meter leave first; the gear train telescopes at 0.35u per element with the planets fanning +0.55u radially, then the three bearing pieces and the scavenge gear pull out in turn.',
     state: { explode: 1, section: false, running: false, select: null, focus: null },
   },
 ];
@@ -95,7 +96,7 @@ export function GearboxGroup() {
         <Callout id="torque-meter" p={[TP.torqueX, AY + 210, 90]} />
       </Part>
 
-      {/* 行星轮系：EpicyclicGearboxStage，元件按 explode.ts 时间窗伸开 */}
+      {/* EpicyclicGearboxStage: elements open on their explode.ts windows */}
       <Part id="gear-train">
         <group position={[TP.gearMidX, AY, 0]}>
           <group scale={U}>
@@ -149,13 +150,14 @@ export const gearbox: MachineDef = level({
   parent: 'turboprop',
   unit: 10 / 700,
   bounds: [[280, AY - 320, -320], [900, AY + 320, 320]],
-  name: '两级行星减速齿轮箱',
+  name: 'Two-Stage Epicyclic Reduction Gearbox',
   en: 'Two-Stage Epicyclic Reduction Gearbox',
-  subtitle: '子组件 B · 15:1 · 齿圈固定',
-  summary: '7 种零件 · 16/24/64 + 16/8/32 两级行星，推力轴承承受桨拉力',
+  subtitle: 'Sub-assembly B · 15:1 · fixed ring',
+  summary: '7 parts · 16/24/64 + 16/8/32 planets, thrust bearing takes prop load',
   drawingNo: 'GW-TP-B',
   scale: '1 : 2',
   parts: PARTS,
+  annotations: ANNOTATIONS,
   boltSets: {},
   neighbours: {
     'gear-train': ['torque-meter', 'gear-train'],

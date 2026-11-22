@@ -140,14 +140,14 @@ export async function exportPlate() {
   ctx.fillStyle = PALETTE.ink;
   ctx.textBaseline = 'alphabetic';
   ctx.font = `900 230px ${ZH}`;
-  ctx.fillText('格物', 150, 380);
+  ctx.fillText('Inkwork', 150, 380);
   ctx.fillRect(150, 440, 640, 2);
   ctx.font = `500 54px ${EN}`;
   ctx.letterSpacing = '12px';
   ctx.fillText('INKWORK', 150, 530);
   ctx.font = `400 46px ${ZH}`;
   ctx.letterSpacing = '16px';
-  ctx.fillText(`${machine.name} · 爆炸图`, 150, 620);
+  ctx.fillText(`${machine.name} · Exploded View`, 150, 620);
   ctx.letterSpacing = '4px';
   ctx.fillStyle = PALETTE.rust;
   ctx.font = `500 40px ${EN}`;
@@ -214,7 +214,7 @@ export async function exportPlate() {
   ctx.fillStyle = inkA(0.55);
   ctx.font = `500 34px ${EN}`;
   ctx.letterSpacing = '6px';
-  ctx.fillText('零件明细 · PARTS', tx, ty - 30);
+  ctx.fillText('PARTS LIST', tx, ty - 30);
   ctx.letterSpacing = '0px';
   const rowH = 82;
   machine.parts.forEach((part, i) => {
@@ -251,11 +251,11 @@ export async function exportPlate() {
   ctx.stroke();
   ctx.fillStyle = PALETTE.ink;
   ctx.font = `600 40px ${ZH}`;
-  ctx.fillText(`格物 · ${machine.name}`, bx + 28, by + 62);
+  ctx.fillText(`Inkwork · ${machine.name}`, bx + 28, by + 62);
   ctx.font = `400 30px ${ZH}`;
   ctx.fillStyle = inkA(0.7);
-  ctx.fillText(`图号 ${machine.drawingNo}`, bx + 28, by + 152);
-  ctx.fillText(`比例 ${machine.scale}`, bx + 378, by + 152);
+  ctx.fillText(`Dwg No ${machine.drawingNo}`, bx + 28, by + 152);
+  ctx.fillText(`Scale ${machine.scale}`, bx + 378, by + 152);
 
   // Restore the live view before the (slow) PNG encode.
   bridge.setDpr?.(restoreDpr);
@@ -288,7 +288,7 @@ export async function recordTeardown(onProgress: (seconds: number | null) => voi
     const s = out.width / source.clientWidth;
     ctx.fillStyle = PALETTE.ink;
     ctx.font = `600 ${Math.round(22 * s)}px ${ZH}`;
-    ctx.fillText(`格物 · ${machine.name}`, 32 * s, out.height - 34 * s);
+    ctx.fillText(`Inkwork · ${machine.name}`, 32 * s, out.height - 34 * s);
     ctx.fillStyle = PALETTE.rust;
     ctx.font = `500 ${Math.round(16 * s)}px ${EN}`;
     ctx.fillText('INKWORK · FIG. 01', 32 * s, out.height - 64 * s);

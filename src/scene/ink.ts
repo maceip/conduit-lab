@@ -144,9 +144,11 @@ export interface InkMaterialOptions {
   /** 0 = flat paper, 1 = full soft shading. */
   tone?: number;
   clip?: THREE.Plane[];
+  /** Per-part accent (hover/selection tint). Defaults to the theme accent. */
+  accent?: THREE.ColorRepresentation;
 }
 
-export function createInkMaterial({ partId, tone = 1, clip }: InkMaterialOptions) {
+export function createInkMaterial({ partId, tone = 1, clip, accent }: InkMaterialOptions) {
   const material = new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader,
@@ -163,7 +165,9 @@ export function createInkMaterial({ partId, tone = 1, clip }: InkMaterialOptions
       uFace: paletteUniforms.uFace,
       uShade: paletteUniforms.uShade,
       uCut: paletteUniforms.uCut,
-      uAccent: paletteUniforms.uAccent,
+      uAccent: accent === undefined
+        ? paletteUniforms.uAccent
+        : { value: new THREE.Color(accent) },
     },
   });
   material.clippingPlanes = clip ?? null;

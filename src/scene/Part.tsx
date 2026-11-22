@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
-import { machineById } from '../machines';
+import { currentMachine, machineById } from '../machines';
 import type { MachineDef } from '../machines/types';
 import { editOf, partEdits, partVisible, useStudio } from '../state';
 import { createInkMaterial } from './ink';
@@ -73,13 +73,14 @@ function PartBody({ id, tone, children }: { id: string; tone: number; children: 
   const centre = useRef<THREE.Vector3 | null>(null);
   const drag = useRef<{ plane: THREE.Plane; last: THREE.Vector3 } | null>(null);
   const { camera, controls } = useThree() as unknown as { camera: THREE.Camera; controls: { enabled: boolean } | null };
+  const accent = useStudio((s) => currentMachine().annotations?.[id]?.colour);
   const materials = useMemo<PartMaterials>(() => {
     const partId = index / 64;
     return {
-      solid: createInkMaterial({ partId, tone }),
-      clipped: createInkMaterial({ partId, tone, clip: [SECTION_PLANE] }),
+      solid: createInkMaterial({ partId, tone, accent }),
+      clipped: createInkMaterial({ partId, tone, accent, clip: [SECTION_PLANE] }),
     };
-  }, [index, tone]);
+  }, [index, tone, accent]);
   const select = useStudio((s) => s.set);
 
   useEffect(() => () => {

@@ -5,19 +5,21 @@ import { M } from '../scene/Part';
 import { cyl } from '../scene/geometry';
 
 /**
- * 涡桨发动机 R3F 程序化几何积木（用户提供的实现，接入 Inkwork）。
+ * Turboprop R3F procedural geometry kit (author-provided, wired into Inkwork).
  *
- * InkRenderer 从深度不连续、法线折痕与剖切模板缓冲提取线条；因此这里坚持
- * 显式硬边拓扑（闭合流形车削轮廓 / 挤出齿廓 / 三维翼型网格）。一处适配：
- * 仓库的墨线材质用 toCreasedNormals(π/5) 让圆滑面平滑、硬边起线——比裸
- * computeVertexNormals() 多保住台阶/齿顶/齿根的线，故本文件在返回前过 crease()。
- * 所有网格经 <M clip> 渲染，才能拿到墨线材质与 z=0 剖切面。轴线一律 +X。
+ * InkRenderer draws lines from depth breaks, normal creases and the stencil
+ * section plane, so this kit keeps explicit hard-edge topology (closed lathed
+ * manifolds, extruded tooth profiles, 3D airfoil skins). One adaptation: the
+ * repo's ink materials run toCreasedNormals(π/5), which keeps smooth surfaces
+ * smooth while creasing steps, tooth tips and roots — richer than a bare
+ * computeVertexNormals() — so every mesh goes through crease() before return.
+ * All meshes render via <M clip> for the ink material and the z = 0 cut. Axis +X.
  */
 
 const X_TO_Z = new THREE.Matrix4().makeRotationY(Math.PI / 2);
 const Y_TO_X = new THREE.Matrix4().makeRotationZ(-Math.PI / 2);
 
-/** 与 src/scene/geometry.ts 一致的硬边折痕处理。 */
+/** Hard-edge creasing, matching src/scene/geometry.ts. */
 const crease = (g: THREE.BufferGeometry) => toCreasedNormals(g, Math.PI / 5);
 
 export interface ShaftStep {
@@ -372,11 +374,12 @@ export const AxialBladeDisk: React.FC<AxialCompressorStageProps> = ({
 };
 
 /* ═══════════════════════════════════════════════════════════════════
- * 4–6. 离心叶轮 / 环形回流火焰筒 / 4 叶变距螺旋桨（用户提供的实现）
- * 同上：显式硬边拓扑 + <M clip> 墨线材质 + crease() 折痕。
- * 这三个组件按"u"设计空间建模（表 4 的坐标就是 u），调用方用
- * <group scale={TP.u}> 放进毫米机架。另加两个渲染过滤开关（show /
- * bladeIndices），让 Inkwork 的 <Part> 包住单个元件做爆炸与件号标注。
+ * 4–6. Centrifugal impeller / reverse-flow liner / 4-blade propeller
+ * (author-provided). Same rules: hard-edge topology, <M clip>, crease().
+ * These three live in the u design space (the map's units), so callers wrap
+ * them in <group scale={TP.u}> inside the millimetre frame. Two render filters
+ * (show / bladeIndices) let Inkwork <Part>s own single elements for explosion
+ * and ballooning.
  * ═══════════════════════════════════════════════════════════════════ */
 
 const _Y_TO_X = new THREE.Matrix4().makeRotationZ(-Math.PI / 2);
@@ -568,7 +571,7 @@ export interface AnnularCombustorLinerProps {
     holeR: number;
     onInnerWall?: boolean;
   }>;
-  /** 渲染过滤：把筒体/掺混孔环/喷嘴旋流杯分给不同的 <Part> 做爆炸与件号。 */
+  /** Render filter: split body / grommet rings / nozzle swirl cups across <Part>s. */
   show?: { body?: boolean; grommets?: boolean; nozzles?: boolean };
 }
 
@@ -740,9 +743,9 @@ export interface VariablePitchPropellerProps {
     bladeRadial?: number;
     backplateX?: number;
   };
-  /** 渲染过滤：把整流罩/背板/桨毂/变距缸/桨叶分给不同的 <Part>（爆炸 + 件号）。 */
+  /** Render filter: split spinner / backplate / hub / dome / blades across <Part>s. */
   show?: { spinner?: boolean; backplate?: boolean; hub?: boolean; dome?: boolean; blades?: boolean };
-  /** 只渲染这些桨叶象限（0..3），供 Blade_1..4 各自成件。 */
+  /** Render only these blade quadrants (0..3) so Blade_1..4 each own one. */
   bladeIndices?: number[];
 }
 

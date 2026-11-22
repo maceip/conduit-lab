@@ -30,15 +30,15 @@ export function TitleColumn() {
   return (
     <section className="title-column">
       <header className="masthead">
-        <h1 className="mast-title">格物</h1>
+        <h1 className="mast-title">Inkwork</h1>
         <div className="mast-rule" />
         <p className="mast-en">INKWORK</p>
-        <p className="mast-zh">工程制图 · 交互拆解</p>
+        <p className="mast-zh">Engineering Drawing · Interactive Teardown</p>
         <div className="fig-rule"><span>FIG. {pad(MACHINES.indexOf(root) + 1)}{chain.length > 1 ? `-${chain.length - 1}` : ''}</span><i /></div>
         <div className="mast-buttons">
-          <button type="button" className="mast-catalogue" onClick={() => useGuide.getState().set(true)}>说明</button>
-          <button type="button" className="mast-catalogue" onClick={() => useCatalogue.getState().set(true)}>目录</button>
-          <button type="button" className="mast-catalogue" onClick={() => useTree.getState().set(!useTree.getState().open)}>结构树</button>
+          <button type="button" className="mast-catalogue" onClick={() => useGuide.getState().set(true)}>Guide</button>
+          <button type="button" className="mast-catalogue" onClick={() => useCatalogue.getState().set(true)}>Catalogue</button>
+          <button type="button" className="mast-catalogue" onClick={() => useTree.getState().set(!useTree.getState().open)}>Structure</button>
         </div>
       </header>
 
@@ -49,7 +49,7 @@ export function TitleColumn() {
 
       <div className="subject">
         {chain.length > 1 && (
-          <nav className="crumbs" aria-label="所在组件">
+          <nav className="crumbs" aria-label="Where am I">
             {chain.slice(0, -1).map((m) => (
               <button key={m.id} type="button" onClick={() => selectMachine(m.id)}>{m.name}</button>
             ))}
@@ -75,13 +75,13 @@ export function TitleColumn() {
 
       <div className="controls">
         <label className="slider">
-          <span>拆解</span>
+          <span>Explode</span>
           <input type="range" min={0} max={1} step={0.01} value={explode} onChange={(e) => set({ explode: Number(e.target.value) })} />
           <output>{Math.round(explode * 100)}%</output>
         </label>
         {section && (
-          <label className="slider" title="拖动剖切面：0% 刚切到表皮，50% 沿中线，100% 只留最后一层">
-            <span>剖切</span>
+          <label className="slider" title="Drag the cut plane: 0% skims the skin, 50% is the centre line, 100% leaves the last layer">
+            <span>Cut</span>
             <input type="range" min={0} max={1} step={0.01} value={sectionDepth} onChange={(e) => set({ sectionDepth: Number(e.target.value) })} />
             <output>{Math.round(sectionDepth * 100)}%</output>
           </label>
@@ -89,21 +89,21 @@ export function TitleColumn() {
         <Stepper machine={machine} explode={explode} />
         {Controls && <Controls />}
         <div className="toggles">
-          <button type="button" className={running ? 'is-on' : ''} onClick={() => set({ running: !running })}>{running ? '暂停' : '运转'}</button>
+          <button type="button" className={running ? 'is-on' : ''} onClick={() => set({ running: !running })}>{running ? 'Pause' : 'Run'}</button>
           {Toggles && <Toggles />}
-          <button type="button" className={section ? 'is-on' : ''} onClick={() => set({ section: !section })}>剖视</button>
+          <button type="button" className={section ? 'is-on' : ''} onClick={() => set({ section: !section })}>Section</button>
           {drawingMode ? (
             <>
-              <button type="button" className={hiddenLines ? 'is-on' : ''} onClick={() => set({ hiddenLines: !hiddenLines })} title="不可见轮廓线（细虚线）">虚线</button>
-              <button type="button" className={projection ? 'is-on' : ''} onClick={() => set({ projection: !projection })} title="长对正 · 高平齐 · 宽相等">投影</button>
+              <button type="button" className={hiddenLines ? 'is-on' : ''} onClick={() => set({ hiddenLines: !hiddenLines })} title="Hidden outlines (thin dashed)">Hidden</button>
+              <button type="button" className={projection ? 'is-on' : ''} onClick={() => set({ projection: !projection })} title="Length aligned · Height level · Width equal">Project</button>
             </>
           ) : (
             <>
-              <button type="button" className={labels ? 'is-on' : ''} onClick={() => set({ labels: !labels })}>标注</button>
-              <button type="button" className={moveMode ? 'is-on' : ''} onClick={() => set({ moveMode: !moveMode })} title="拖动零件挪到别处（视角暂停转动）">挪动</button>
+              <button type="button" className={labels ? 'is-on' : ''} onClick={() => set({ labels: !labels })}>Labels</button>
+              <button type="button" className={moveMode ? 'is-on' : ''} onClick={() => set({ moveMode: !moveMode })} title="Drag parts to move them (view rotation pauses)">Move</button>
               {(hidden.length > 0 || solo) && (
-                <button type="button" className="is-on" onClick={() => set({ hidden: [], solo: null })} title="把隐藏的零件都显示出来">
-                  显示全部{hidden.length > 0 ? ` (${hidden.length})` : ''}
+                <button type="button" className="is-on" onClick={() => set({ hidden: [], solo: null })} title="Show every hidden part">
+                  Show all{hidden.length > 0 ? ` (${hidden.length})` : ''}
                 </button>
               )}
               {machine.children && (
@@ -111,9 +111,9 @@ export function TitleColumn() {
                   type="button"
                   className={deep ? 'is-on' : ''}
                   onClick={() => set(deep ? { deep: false } : { deep: true, explode: 1, localExplode: null })}
-                  title="整个拆开，并把每个子组件拉到旁边再拆开"
+                  title="Explode the whole tree, pulling each sub-assembly aside too"
                 >
-                  全部展开
+                  Expand all
                 </button>
               )}
             </>
@@ -124,37 +124,37 @@ export function TitleColumn() {
   );
 }
 
-const VIEWS: Array<[ViewMode, string]> = [['perspective', '透视'], ['drawing', '三视图'], ['elevation', '主视'], ['plan', '俯视']];
+const VIEWS: Array<[ViewMode, string]> = [['perspective', '3D'], ['drawing', 'Drawing'], ['elevation', 'Front'], ['plan', 'Top']];
 
 type ExportKind = 'plate' | 'video' | 'json';
 
 const EXPORTS: Array<[ExportKind, string, string]> = [
-  ['plate', '图版 PNG', 'A4 横版爆炸图：编号、明细表、标题栏'],
-  ['video', '拆装动画', '整机 → 拆开 → 合拢，WebM 视频'],
-  ['json', '零件数据', '零件表与讲解步骤，JSON'],
+  ['plate', 'Plate PNG', 'A4 landscape exploded sheet: balloons, parts list, title block'],
+  ['video', 'Teardown video', 'Assembled → exploded → closed, as a WebM video'],
+  ['json', 'Part data', 'Parts list and study steps as JSON'],
 ];
 
 /** Opens the structure tree beside the plate. */
 function TreeToggle() {
   const { open, set } = useTree();
-  return <button type="button" className={`meta-action meta-tree${open ? ' is-on' : ''}`} aria-pressed={open} onClick={() => set(!open)} title="结构树：所有层级的组件与零件">结构树</button>;
+  return <button type="button" className={`meta-action meta-tree${open ? ' is-on' : ''}`} aria-pressed={open} onClick={() => set(!open)} title="Structure: every assembly and part at every level">Structure</button>;
 }
 
 export function PlateMeta({ onExport, busy, recording }: { onExport: (kind: ExportKind) => void; busy: boolean; recording: number | null }) {
   const { view, viewNonce, set } = useStudio();
   const machine = useMachine();
   return (
-    <nav className="plate-meta" aria-label="视图">
-      <button type="button" className="meta-catalogue" onClick={() => useCatalogue.getState().set(true)} title="全部机器一览">目录</button>
-      <button type="button" className="meta-action meta-guide" onClick={() => useGuide.getState().set(true)} title="怎么使用">说明</button>
+    <nav className="plate-meta" aria-label="Views">
+      <button type="button" className="meta-catalogue" onClick={() => useCatalogue.getState().set(true)} title="All machines at a glance">Catalogue</button>
+      <button type="button" className="meta-action meta-guide" onClick={() => useGuide.getState().set(true)} title="How to use this studio">Guide</button>
       <TreeToggle />
-      <div className="views" role="group" aria-label="视图">
+      <div className="views" role="group" aria-label="Views">
         {VIEWS.map(([id, label]) => (
           <button key={id} type="button" aria-pressed={view === id} className={view === id ? 'is-on' : ''} onClick={() => set({ view: id, focus: null, viewNonce: viewNonce + 1 })}>{label}</button>
         ))}
       </div>
-      <button type="button" className="meta-action" onClick={() => restoreAll(machine.steps[0])} title="合拢所有零件，撤销挪动、缩放和隐藏，关掉剖视，回到第一步和默认视角">
-        复位
+      <button type="button" className="meta-action" onClick={() => restoreAll(machine.steps[0])} title="Close every part, undo moves, scales and hiding, turn off the section, and return to step one">
+        Reset
       </button>
       <ThemeToggle />
       <ExportMenu onExport={onExport} busy={busy} recording={recording} />
@@ -167,8 +167,8 @@ function ThemeToggle() {
   const { theme, set } = useTheme();
   const blueprint = theme === 'blueprint';
   return (
-    <button type="button" className={`meta-action meta-theme${blueprint ? ' is-on' : ''}`} aria-pressed={blueprint} onClick={() => set(blueprint ? 'paper' : 'blueprint')} title={blueprint ? '换回纸面线稿' : '换成蓝图：深蓝底、白色线条'}>
-      <span className="theme-swatch" aria-hidden="true" />蓝图
+    <button type="button" className={`meta-action meta-theme${blueprint ? ' is-on' : ''}`} aria-pressed={blueprint} onClick={() => set(blueprint ? 'paper' : 'blueprint')} title={blueprint ? 'Back to the paper ink look' : 'Blueprint: deep blue ground, white lines'}>
+      <span className="theme-swatch" aria-hidden="true" />Blueprint
     </button>
   );
 }
@@ -198,7 +198,7 @@ function ExportMenu({ onExport, busy, recording }: { onExport: (kind: ExportKind
         aria-expanded={open}
         onClick={() => setOpen(!open)}
       >
-        {recording !== null ? `录制中 ${recording.toFixed(0)}s` : '导出'} <span aria-hidden="true">▾</span>
+        {recording !== null ? `Recording ${recording.toFixed(0)}s` : 'Export'} <span aria-hidden="true">▾</span>
       </button>
       {open && (
         <ul className="export-menu" role="menu">
@@ -223,14 +223,14 @@ function MachineSwitcher({ rootId }: { rootId: string }) {
   useEffect(() => setOpen(home), [home]);
   const group = GROUPS[open] ?? GROUPS[0];
   return (
-    <nav className="machines" aria-label="选择机器">
+    <nav className="machines" aria-label="Choose a machine">
       <div className="machines-tabs" role="tablist">
         {GROUPS.map((g, i) => (
           <button key={g.name} type="button" role="tab" aria-selected={i === open} className={i === open ? 'is-open' : ''} onClick={() => setOpen(i)}>
             {g.name}<span className="machines-count">{g.machines.length}</span>
           </button>
         ))}
-        <button type="button" className="machines-all" onClick={() => useCatalogue.getState().set(true)} title="全部机器一览">全部 ↗</button>
+        <button type="button" className="machines-all" onClick={() => useCatalogue.getState().set(true)} title="All machines at a glance">All ↗</button>
       </div>
       <div className="machines-list" role="tabpanel">
         {group.machines.map((m) => (
@@ -252,7 +252,7 @@ function MachineStrip({ rootId }: { rootId: string }) {
     if (strip && on) strip.scrollTo({ left: on.offsetLeft - (strip.clientWidth - on.offsetWidth) / 2, behavior: 'smooth' });
   }, [rootId]);
   return (
-    <nav className="machine-strip" aria-label="选择机器" ref={ref}>
+    <nav className="machine-strip" aria-label="Choose a machine" ref={ref}>
       {GROUPS.map((g) => (
         <Fragment key={g.name}>
           <span className="strip-group">{g.name}</span>
@@ -315,7 +315,7 @@ function PartSearch() {
       <input
         id="part-search"
         type="search"
-        placeholder="搜索零件，如 活塞环、喷注器…（按 / ）"
+        placeholder="Search parts — a piston ring, an injector… (press /)"
         value={query}
         autoComplete="off"
         onChange={(e) => setQuery(e.target.value)}
@@ -353,7 +353,7 @@ function teardownStops(machine: MachineDef) {
     stops.set(key, stop);
   };
   for (const [id, set] of Object.entries(machine.boltSets)) {
-    if (set.stage[1] > set.stage[0]) add(set.stage[1], `${machine.parts.find((p) => p.id === set.owner)?.name ?? ''}的螺钉`);
+    if (set.stage[1] > set.stage[0]) add(set.stage[1], `Screws of ${machine.parts.find((p) => p.id === set.owner)?.name ?? ''}`);
   }
   for (const p of machine.parts) if (p.stage[1] > p.stage[0]) add(p.stage[1], p.name, p.id);
   return [...stops.values()].sort((a, b) => a.at - b.at);
@@ -372,14 +372,14 @@ function Stepper({ machine, explode }: { machine: MachineDef; explode: number })
   };
   const current = done > 0 ? stops[done - 1] : null;
   return (
-    <div className="stepper" title="也可以用键盘 ← →">
+    <div className="stepper" title="Arrow keys work too">
       <StepKeys onPrev={() => done > 0 && go(done - 1)} onNext={() => done < stops.length && go(done + 1)} />
-      <button type="button" disabled={done === 0} onClick={() => go(done - 1)} aria-label="上一步">‹</button>
+      <button type="button" disabled={done === 0} onClick={() => go(done - 1)} aria-label="Previous step">‹</button>
       <p>
         <span className="stepper-count">{pad(done)} / {pad(stops.length)}</span>
-        {current ? `拆下 ${current.labels.join('、')}` : '完整装配 · 按 › 逐步拆开'}
+        {current ? `Remove ${current.labels.join(', ')}` : 'Fully assembled · press › to take it apart'}
       </p>
-      <button type="button" disabled={done === stops.length} onClick={() => go(done + 1)} aria-label="下一步">›</button>
+      <button type="button" disabled={done === stops.length} onClick={() => go(done + 1)} aria-label="Next step">›</button>
     </div>
   );
 }
@@ -406,7 +406,7 @@ function PartSize({ id }: { id: string }) {
   return (
     <div className="part-size">
       <label className="slider">
-        <span>大小</span>
+        <span>Size</span>
         <input
           type="range"
           min={0.5}
@@ -421,7 +421,7 @@ function PartSize({ id }: { id: string }) {
         />
         <output>{scale.toFixed(2)}×</output>
       </label>
-      <button type="button" className="caption-action" onClick={() => clearEdits(id)}>还原</button>
+      <button type="button" className="caption-action" onClick={() => clearEdits(id)}>Revert</button>
     </div>
   );
 }
@@ -447,34 +447,34 @@ export function PartsLegend() {
               <h3>{part.name}</h3>
               <p className="caption-en">{part.en} · {part.role}</p>
             </div>
-            {selected && <button type="button" className="caption-close" onClick={() => set({ selected: null })} aria-label="取消选择">×</button>}
+            {selected && <button type="button" className="caption-close" onClick={() => set({ selected: null })} aria-label="Deselect">×</button>}
           </div>
           <p className="caption-body">{part.description}</p>
           {selected && view !== 'drawing' && <PartSize id={selected} />}
           {selected && view !== 'drawing' && (
             <div className="caption-tools">
-              <button type="button" className="caption-action" onClick={() => set({ hidden: [...hidden, selected], selected: null, solo: solo === selected ? null : solo })}>隐藏</button>
-              <button type="button" className="caption-action" onClick={() => set({ solo: solo === selected ? null : selected })}>{solo === selected ? '显示全部' : '只看它'}</button>
-              <button type="button" className="caption-action" onClick={() => aimAt(selected)} title="镜头对准这个零件（键盘 F）">对准</button>
+              <button type="button" className="caption-action" onClick={() => set({ hidden: [...hidden, selected], selected: null, solo: solo === selected ? null : solo })}>Hide</button>
+              <button type="button" className="caption-action" onClick={() => set({ solo: solo === selected ? null : selected })}>{solo === selected ? 'Show all' : 'Solo'}</button>
+              <button type="button" className="caption-action" onClick={() => aimAt(selected)} title="Aim the camera at this part (key F)">Aim</button>
             </div>
           )}
           {child && (
             <button type="button" className="caption-open" onClick={() => selectMachine(child)}>
-              拆开此组件：{machineById(child).summary} <span aria-hidden="true">↘</span>
+              Open this sub-assembly: {machineById(child).summary} <span aria-hidden="true">↘</span>
             </button>
           )}
           <div className="caption-foot">
             <p className="caption-mat">{part.material}</p>
             {selected && (
               <button type="button" className="caption-action" onClick={() => set({ localExplode: localExplode === selected ? null : selected, explode: 0 })}>
-                {localExplode === selected ? '收拢' : '局部展开'} <span aria-hidden="true">{localExplode === selected ? '↙' : '↗'}</span>
+                {localExplode === selected ? 'Collapse' : 'Explode this'} <span aria-hidden="true">{localExplode === selected ? '↙' : '↗'}</span>
               </button>
             )}
           </div>
         </div>
       )}
       <table className={`parts${machine.parts.length > 15 ? ' is-long' : ''}`}>
-        <caption>零件明细 · PARTS</caption>
+        <caption>PARTS LIST</caption>
         <tbody>
           {machine.parts.map((item) => (
             <tr
@@ -487,16 +487,16 @@ export function PartsLegend() {
               onPointerLeave={() => set({ hovered: null })}
             >
               <td className="num">{pad(item.index)}</td>
-              <td>{item.name}{machine.children?.[item.id] && <span className="has-child" title="可继续拆开"> ▸</span>}</td>
+              <td>{item.name}{machine.children?.[item.id] && <span className="has-child" title="opens further"> ▸</span>}</td>
               <td className="en">{item.en}</td>
             </tr>
           ))}
         </tbody>
       </table>
       <div className="title-block">
-        <span>图号 {machine.drawingNo}</span>
-        <span>比例 {machine.scale}</span>
-        <span>第 1 张 共 1 张</span>
+        <span>Dwg No {machine.drawingNo}</span>
+        <span>Scale {machine.scale}</span>
+        <span>Sheet 1 of 1</span>
       </div>
     </aside>
   );

@@ -48,14 +48,14 @@ export function Catalogue() {
   }, [open, set]);
   if (!open) return null;
   return (
-    <div className="catalogue" role="dialog" aria-label="目录" onClick={() => set(false)}>
+    <div className="catalogue" role="dialog" aria-label="Catalogue" onClick={() => set(false)}>
       <div className="catalogue-sheet" onClick={(e) => e.stopPropagation()}>
         <header className="catalogue-head">
           <div>
-            <p className="catalogue-kicker">CATALOGUE · 目录</p>
-            <h2>格物 · 机械结构图谱</h2>
+            <p className="catalogue-kicker">CATALOGUE</p>
+            <h2>Inkwork · Mechanical Drawing Atlas</h2>
           </div>
-          <button type="button" className="catalogue-close" onClick={() => set(false)} aria-label="关闭">×</button>
+          <button type="button" className="catalogue-close" onClick={() => set(false)} aria-label="Close">×</button>
         </header>
         {GROUPS.map((group) => (
           <section key={group.name} className="catalogue-group">
@@ -70,9 +70,9 @@ export function Catalogue() {
                     <span className="card-no">{m.drawingNo}</span>
                     <span className="card-name">{m.name}</span>
                     <span className="card-en">{m.en}</span>
-                    <span className="card-summary">{m.summary.replace(/^\d+\s*(?:个|种)[^·，,]*[·，,]\s*/, '')}</span>
+                    <span className="card-summary">{m.summary.replace(/^\d+\s*(?:parts?|assemblies)[·,]\s*/i, '')}</span>
                     <span className="card-meta">
-                      {parts} 种零件{depth > 1 ? ` · ${depth} 级拆解` : ''}{m.Driver ? ' · 会动' : ''}
+                      {parts} parts{depth > 1 ? ` · ${depth} teardown levels` : ''}{m.Driver ? ' · animated' : ''}
                     </span>
                   </button>
                 );
@@ -81,8 +81,8 @@ export function Catalogue() {
           </section>
         ))}
         <p className="catalogue-foot">
-          点卡片进入 · Esc 关闭 · 之后可以随时从右上角“目录”回到这里 ·{' '}
-          <button type="button" className="catalogue-guide" onClick={() => { set(false); useGuide.getState().set(true); }}>第一次用？看使用说明</button>
+          Click a card to open · Esc closes · return here anytime from Catalogue ·{' '}
+          <button type="button" className="catalogue-guide" onClick={() => { set(false); useGuide.getState().set(true); }}>First time? Read the guide</button>
         </p>
       </div>
     </div>

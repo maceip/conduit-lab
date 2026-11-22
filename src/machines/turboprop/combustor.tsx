@@ -3,52 +3,52 @@ import { Callout } from '../../scene/Overlay';
 import type { CameraDef, MachineDef, PartDef, StepDef, Vec3 } from '../types';
 import { Hoop, level, Rod } from '../kit';
 import { BoltCircle, FuelManifold, Shell } from './kit';
-import { TP } from './data';
+import { ANNOTATIONS, TP } from './data';
 
 const AY = TP.AY;
 
 /**
- * 子组件 E · 环形回流燃烧室 / Annular Reverse-Flow Combustor。
- * 外压力壳 + 火焰筒（3 排掺混孔）+ 14 喷嘴凸台 + 燃油总管 + 2 点火电嘴。
+ * Sub-assembly E: annular reverse-flow combustor — outer pressure shell, flame
+ * liner (3 dilution rows), 14 nozzle bosses, the fuel manifold and 2 igniter plugs.
  */
 
 const PARTS: PartDef[] = [
   {
-    id: 'outer-case', index: 1, name: '外压力壳', en: 'Outer Pressure Vessel Shell', role: '承压',
-    material: 'GH4169', description: '内径 580 mm、壁厚 18 mm，承受 4×10⁵ Pa；前后法兰各 12 螺栓，中分面开 14 喷嘴孔。',
+    id: 'outer-case', index: 1, name: 'Outer Pressure Shell', en: 'Outer Pressure Vessel Shell', role: 'Pressure vessel',
+    material: 'GH4169', description: '580 mm bore, 18 mm wall, holding 4×10⁵ Pa; twelve bolts on each flange and 14 nozzle holes along the split line.',
     explode: [0, 0, -420], stage: [0, 0.32],
   },
   {
-    id: 'flame-liner', index: 2, name: '火焰筒', en: 'Combustion Flame Liner', role: '燃烧 · 掺混',
-    material: 'GH3044', description: '回流环形火焰筒（外径 460 mm、壁厚 3 mm），3 排掺混孔共 96 孔（每排 32 孔），气膜冷却贴壁。',
+    id: 'flame-liner', index: 2, name: 'Flame Liner', en: 'Combustion Flame Liner', role: 'Burn · mix',
+    material: 'GH3044', description: 'Reverse-flow annular liner (460 mm outer, 3 mm wall) with three dilution rows totalling 96 holes (32 per row) and film cooling along the wall.',
     explode: [0, 0, 420], stage: [0.12, 0.44],
   },
   {
-    id: 'nozzle-bosses', index: 3, name: '喷嘴凸台 ×14', en: 'Fuel Nozzle Bosses ×14', role: '雾化',
-    material: '1Cr18Ni9Ti', description: '14 个凸台均布（25.7° 间隔），雾化锥角 80°，喷嘴流量 0.12 L/s·个。',
+    id: 'nozzle-bosses', index: 3, name: 'Nozzle Bosses ×14', en: 'Fuel Nozzle Bosses ×14', role: 'Atomisation',
+    material: '1Cr18Ni9Ti stainless', description: 'Fourteen bosses evenly spaced (25.7° apart), 80° spray cone, 0.12 L/s per nozzle.',
     explode: [0, 380, 0], stage: [0.3, 0.6],
   },
   {
-    id: 'manifold-tubing', index: 4, name: '燃油总管', en: 'Fuel Manifold Tubing', role: '均压供油',
-    material: '1Cr18Ni9Ti', description: '环形总管外径 572 mm、管径 Ø34，各喷嘴支管等长均压，防止周向燃油分布不均。',
+    id: 'manifold-tubing', index: 4, name: 'Manifold Tubing', en: 'Fuel Manifold Tubing', role: 'Equalised feed',
+    material: '1Cr18Ni9Ti stainless', description: 'Annular manifold 572 mm outer with Ø34 tubing; equal-length branches keep the circumferential fuel distribution even.',
     explode: [0, 520, 0], stage: [0.34, 0.64],
   },
   {
-    id: 'igniter-plugs', index: 5, name: '点火电嘴 ×2', en: 'Igniter Plugs ×2', role: '点火',
-    material: '镍基合金', description: '2 支半导体电嘴（火花能量 2 J），位于火焰筒回流区，地面起动点火，空中可连续点火。',
+    id: 'igniter-plugs', index: 5, name: 'Igniter Plugs ×2', en: 'Igniter Plugs ×2', role: 'Ignition',
+    material: 'Nickel alloy', description: 'Two semiconductor igniters (2 J spark energy) in the liner recirculation zone; lights on the ground and can relight in flight.',
     explode: [-120, 320, 0], stage: [0.38, 0.68],
   },
 ];
 
 const STEPS: StepDef[] = [
   {
-    title: '燃烧室', en: 'Combustor',
-    body: '扩压后的空气分两股进火焰筒：主燃孔与燃油喷嘴形成回流区稳定火焰，掺混孔把燃气掺冷到涡轮前温度约 1 100 °C。',
+    title: 'Combustor', en: 'Combustor',
+    body: 'Diffused air splits into two streams around the liner: primary holes and fuel nozzles hold a stable recirculating flame, and the dilution holes cool the gas to ≈ 1,100 °C before the turbine.',
     state: { explode: 0, section: true, running: false, select: 'flame-liner', focus: null },
   },
   {
-    title: '分解', en: 'Exploded',
-    body: '火焰筒与外压力壳对开，14 个喷嘴凸台随燃油总管径向拉出，点火电嘴最后。',
+    title: 'Exploded', en: 'Exploded',
+    body: 'Liner and pressure shell part along their split; the 14 nozzle bosses leave radially with the manifold, and the igniter plugs come last.',
     state: { explode: 1, section: false, running: false, select: null, focus: null },
   },
 ];
@@ -115,13 +115,14 @@ export const combustor: MachineDef = level({
   parent: 'turboprop',
   unit: 10 / 1100,
   bounds: [[-800, AY - 340, -340], [280, AY + 360, 340]],
-  name: '环形回流燃烧室',
+  name: 'Annular Reverse-Flow Combustor',
   en: 'Annular Reverse-Flow Combustor',
-  subtitle: '子组件 E · 14 喷嘴 · 回流火焰筒',
-  summary: '5 种零件 · 3 排 96 掺混孔，涡轮前温度约 1 100 °C',
+  subtitle: 'Sub-assembly E · 14 nozzles · reverse-flow liner',
+  summary: '5 parts · three rows, 96 dilution holes, ≈ 1,100 °C before the turbine',
   drawingNo: 'GW-TP-E',
   scale: '1 : 3',
   parts: PARTS,
+  annotations: ANNOTATIONS,
   boltSets: {},
   neighbours: {
     'flame-liner': ['nozzle-bosses', 'manifold-tubing', 'igniter-plugs', 'flame-liner'],

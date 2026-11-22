@@ -13,6 +13,7 @@ import { boltSetDef, partDef, partOffset, stageProgress } from './explode';
 /** Numbered balloon with a short curved leader, in the style of a drawing plate. */
 export function Callout({ id, p }: { id: string; p: Vec3 }) {
   const part = partDef(id);
+  const anno = useMachine().annotations?.[id];
   const selected = useStudio((s) => s.selected === id);
   const hovered = useStudio((s) => s.hovered === id);
   const labels = useStudio((s) => s.labels);
@@ -21,12 +22,16 @@ export function Callout({ id, p }: { id: string; p: Vec3 }) {
   const nested = usePartDepth() > 1;
   const shown = useStudio((s) => !s.hidden.includes(id) && (!s.solo || s.solo === id));
   if (!part || nested || !shown || drawingMode || (!labels && !selected && !hovered)) return null;
+  const tint = anno?.colour;
   return (
     <Html position={p} zIndexRange={[20, 0]} style={{ pointerEvents: 'none' }}>
-      <div className={`callout${selected ? ' is-selected' : ''}${hovered ? ' is-hovered' : ''}`}>
+      <div
+        className={`callout${selected ? ' is-selected' : ''}${hovered ? ' is-hovered' : ''}${anno ? ' is-annotated' : ''}`}
+        style={tint ? ({ ['--callout-tint' as string]: tint } as React.CSSProperties) : undefined}
+      >
         <svg className="callout-leader" width="44" height="30" viewBox="0 0 44 30" aria-hidden="true">
-          <circle cx="3" cy="27" r="2.2" />
-          <path d="M3 27 C 10 12, 22 5, 40 4" />
+          <circle cx="3" cy="27" r="2.2" fill={tint ?? 'currentColor'} stroke="none" />
+          <path d="M3 27 C 10 12, 22 5, 40 4" stroke={tint ?? 'currentColor'} />
         </svg>
         <button
           type="button"
@@ -35,8 +40,9 @@ export function Callout({ id, p }: { id: string; p: Vec3 }) {
           onPointerEnter={() => set({ hovered: id })}
           onPointerLeave={() => set({ hovered: null })}
         >
-          <span className="callout-num">{String(part.index).padStart(2, '0')}</span>
+          <span className="callout-num" style={tint ? { color: tint } : undefined}>{String(part.index).padStart(2, '0')}</span>
           <span className="callout-name">{part.name}</span>
+          {anno && <span className="callout-anno" style={{ color: tint }} title={anno.full ?? anno.label}>{anno.label}</span>}
         </button>
       </div>
     </Html>

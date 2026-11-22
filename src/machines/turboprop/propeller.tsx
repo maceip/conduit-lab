@@ -4,74 +4,75 @@ import type { CameraDef, MachineDef, PartDef, StepDef, Vec3 } from '../types';
 import { level } from '../kit';
 import { BoltCircle, FlangeCollar } from './kit';
 import { VariablePitchPropellerHub } from '../turboprop-kit';
-import { TP } from './data';
+import { ANNOTATIONS, TP } from './data';
 
 const AY = TP.AY;
 const U = TP.u;
 
 /**
- * 子组件 A · 螺旋桨与变距机构 / Propeller & Pitch Control（+x 桨头）。
- * VariablePitchPropellerHub 按元件切片包进各 <Part>：
- * 两片整流罩（锥 + 背板）→ 4 臂桨毂 → 液压变距缸 → 4 叶（各自径向爆炸）。
+ * Sub-assembly A: propeller & pitch control (+x nose).
+ * VariablePitchPropellerHub is sliced per element into the <Part>s: two spinner
+ * pieces (cone + backplate) → four-arm hub → hydraulic pitch dome → 4 blades
+ * (each exploding radially on its own).
  */
 
 const PARTS: PartDef[] = [
   {
-    id: 'spinner-front', index: 1, name: '整流罩前片', en: 'Spinner Dome Front', role: '整流',
-    material: '玻璃钢', description: '抛物线双层整流锥前片（长 608 mm），内壁贴 2 mm 防冰加热线。',
+    id: 'spinner-front', index: 1, name: 'Spinner Cone (front piece)', en: 'Spinner Dome Front', role: 'Fairing',
+    material: 'Glass fibre', description: 'Front half of the parabolic double-walled spinner (608 mm long), with a 2 mm anti-icing mat bonded inside.',
     explode: [620, 0, 0], stage: [0, 0.3],
   },
   {
-    id: 'spinner-aft', index: 2, name: '整流罩背板', en: 'Spinner Bulkhead Backplate', role: '整流 · 承力',
-    material: '玻璃钢', description: '后部环形背板（Ø660）与前片对合，带 4 个桨根让位缺口。',
+    id: 'spinner-aft', index: 2, name: 'Spinner Bulkhead Backplate', en: 'Spinner Bulkhead Backplate', role: 'Fairing · load path',
+    material: 'Glass fibre', description: 'Aft annular backplate (Ø660) mating with the cone, with four blade-root cutouts.',
     explode: [320, 0, 0], stage: [0.05, 0.35],
   },
   {
-    id: 'pitch-lock-ring', index: 3, name: '变距锁紧螺栓环', en: 'Pitch-Lock Bolt Ring', role: '锁紧',
-    material: '30CrMnSiA', description: '12 条 M10 螺栓沿周向锁紧变距活塞，预紧 45 N·m，拆时先脱 220 mm。',
+    id: 'pitch-lock-ring', index: 3, name: 'Pitch-Lock Bolt Ring', en: 'Pitch-Lock Bolt Ring', role: 'Locks pitch',
+    material: '30CrMnSiA steel', description: 'Twelve M10 bolts lock the pitch piston around the circumference, 45 N·m preload; they back out 220 mm first.',
     explode: [540, 0, 0], stage: [0.1, 0.4],
   },
   {
-    id: 'hub-spider', index: 4, name: '桨毂辐条', en: 'Prop Hub Spider', role: '传扭',
-    material: '20CrMo 锻钢', description: '4 臂整体锻钢：中心花键筒 + 4 个径向桨根承力套筒，疲劳寿命 12 000 h。',
+    id: 'hub-spider', index: 4, name: 'Hub Spider', en: 'Prop Hub Spider', role: 'Torque path',
+    material: '20CrMo forged steel', description: 'One-piece four-arm forging: central splined barrel plus four radial blade-root sockets; 12,000 h fatigue life.',
     explode: [180, 0, 0], stage: [0.35, 0.65],
   },
   {
-    id: 'pitch-dome', index: 5, name: '液压变距缸', en: 'Pitch-Change Dome', role: '变距',
-    material: '40Cr', description: '双向液压缸（行程 ±25°），工作油压 4 MPa，经变距轴拨动桨叶。',
+    id: 'pitch-dome', index: 5, name: 'Pitch-Change Dome', en: 'Pitch-Change Dome', role: 'Feathering',
+    material: '40Cr steel', description: 'Double-acting hydraulic cylinder (±25° travel) at 4 MPa, swinging the blades through the feathering shaft.',
     explode: [-260, 0, 0], stage: [0.35, 0.65],
   },
   {
-    id: 'blade-1', index: 6, name: '桨叶 1', en: 'Blade 1', role: '拉力 · 上',
-    material: '钛合金 TC4', description: '48°→16° 洗出扭转、42% 弦长变距轴、桨根配重夹环；径向 +y 拉出 1.15u。',
+    id: 'blade-1', index: 6, name: 'Blade 1', en: 'Blade 1', role: 'Thrust · up',
+    material: 'TC4 titanium', description: '48°→16° washout twist, pitch axis at 42% chord, root counterweight clamp; radial fan +1.15u.',
     explode: [0, 520, 0], stage: [0.6, 0.9],
   },
   {
-    id: 'blade-2', index: 7, name: '桨叶 2', en: 'Blade 2', role: '拉力 · 下',
-    material: '钛合金 TC4', description: '与 1 号同型、相位 180°；桨根 6×M16 螺栓，离心载荷约 68 kN。',
+    id: 'blade-2', index: 7, name: 'Blade 2', en: 'Blade 2', role: 'Thrust · down',
+    material: 'TC4 titanium', description: 'Same as blade 1 at 180°; root flange on 6×M16 bolts, centrifugal load ≈ 68 kN.',
     explode: [0, -520, 0], stage: [0.6, 0.9],
   },
   {
-    id: 'blade-3', index: 8, name: '桨叶 3', en: 'Blade 3', role: '拉力 · 右',
-    material: '钛合金 TC4', description: '相位 90°，配重块在叶根内腔；雷击防护铜条沿前缘 40% 弦长。',
+    id: 'blade-3', index: 8, name: 'Blade 3', en: 'Blade 3', role: 'Thrust · right',
+    material: 'TC4 titanium', description: 'At 90°, counterweight in the root cavity; lightning strip along the leading edge for 40% of the chord.',
     explode: [0, 0, 520], stage: [0.62, 0.92],
   },
   {
-    id: 'blade-4', index: 9, name: '桨叶 4', en: 'Blade 4', role: '拉力 · 左',
-    material: '钛合金 TC4', description: '相位 270°；四叶按 90° 均布，动平衡精度 G2.5。',
+    id: 'blade-4', index: 9, name: 'Blade 4', en: 'Blade 4', role: 'Thrust · left',
+    material: 'TC4 titanium', description: 'At 270°; four blades spaced 90° apart, balanced to G2.5.',
     explode: [0, 0, -520], stage: [0.62, 0.92],
   },
 ];
 
 const STEPS: StepDef[] = [
   {
-    title: '桨组件', en: 'Propeller Group',
-    body: '4 叶恒速螺旋桨：4 臂桨毂接桨叶根套筒，液压变距缸在后，12 螺栓锁紧环保证桨距不漂移。',
+    title: 'Propeller Group', en: 'Propeller Group',
+    body: 'Four-blade constant-speed propeller: the four-arm hub carries the blade-root sockets, the hydraulic pitch cylinder sits behind, and the 12-bolt lock ring keeps pitch from creeping.',
     state: { explode: 0, section: true, running: false, select: 'hub-spider', focus: null },
   },
   {
-    title: '分解', en: 'Exploded',
-    body: '两片整流罩与锁紧环先脱，桨毂与变距缸分离，4 叶沿各自径向拉出 1.15u。',
+    title: 'Exploded', en: 'Exploded',
+    body: 'Spinner pieces and the lock ring leave first, then the hub and pitch dome part, and the four blades fan out radially by 1.15u each.',
     state: { explode: 1, section: false, running: false, select: null, focus: null },
   },
 ];
@@ -83,7 +84,7 @@ const CAMERA: CameraDef = {
   exploded: { target: [1500, AY, 0], scale: 1.6 },
 };
 
-/** 同一台变距桨组件，按 show/bladeIndices 切片装进各 <Part>。 */
+/** The same propeller assembly, sliced by show/bladeIndices into each <Part>. */
 const HubSlice = ({ show, bladeIndices }: { show: Parameters<typeof VariablePitchPropellerHub>[0]['show']; bladeIndices?: number[] }) => (
   <group position={[TP.hubX, AY, 0]}>
     <group scale={U}>
@@ -131,13 +132,14 @@ export const propeller: MachineDef = level({
   parent: 'turboprop',
   unit: 10 / 2400,
   bounds: [[820, AY - 1200, -1200], [1620, AY + 1200, 1200]],
-  name: '螺旋桨与变距机构',
+  name: 'Propeller & Pitch Control',
   en: 'Propeller & Pitch Control',
-  subtitle: '子组件 A · 恒速桨 · 4 叶',
-  summary: '9 种零件 · 液压变距 ±25°，12 螺栓锁紧环',
+  subtitle: 'Sub-assembly A · constant-speed propeller',
+  summary: '9 parts · hydraulic pitch ±25°, 12-bolt lock ring',
   drawingNo: 'GW-TP-A',
   scale: '1 : 8',
   parts: PARTS,
+  annotations: ANNOTATIONS,
   boltSets: {},
   neighbours: {
     'hub-spider': ['blade-1', 'blade-2', 'blade-3', 'blade-4', 'hub-spider'],

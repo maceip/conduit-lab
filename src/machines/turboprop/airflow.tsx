@@ -3,52 +3,52 @@ import { Callout } from '../../scene/Overlay';
 import type { CameraDef, MachineDef, PartDef, StepDef, Vec3 } from '../types';
 import { Box, Cyl, level, Turn, tube } from '../kit';
 import { FlangeCollar, GearDisc, Ribs, Shell } from './kit';
-import { TP } from './data';
+import { ANNOTATIONS, TP } from './data';
 
 const AY = TP.AY;
 
 /**
- * 子组件 C · 附件与进气段 / Accessory & Air Intake Section。
- * 环形径向进气滤网 + 压气机前轴承机匣 + 附件锥齿轮 + 起发座 + 高压燃油泵壳。
+ * Sub-assembly C: accessory & air intake section — annular intake screen, front
+ * bearing housing, accessory bevel gear, starter-generator pad, fuel pump housing.
  */
 
 const PARTS: PartDef[] = [
   {
-    id: 'inlet-screen', index: 1, name: '进气滤网', en: 'Annular Inlet Screen', role: '防异物',
-    material: '不锈钢丝网', description: '环形径向滤网（内径 416、外径 544 mm），18 根径向筋，网孔 4 mm，防冰热气从环腔通入。',
+    id: 'inlet-screen', index: 1, name: 'Annular Inlet Screen', en: 'Annular Inlet Screen', role: 'FOD screen',
+    material: 'Stainless mesh', description: 'Annular radial screen (416 mm inner, 544 mm outer) with 18 radial ribs and 4 mm mesh; anti-icing hot air feeds the annulus.',
     explode: [360, 0, 0], stage: [0, 0.3],
   },
   {
-    id: 'front-bearing-housing', index: 2, name: '前轴承机匣', en: 'Front Bearing Housing', role: '支承转子',
-    material: '40CrNiMoA', description: '内装双列球轴承（Ø85 孔），滑油喷嘴 4 个；前接滤网，后接压气机机匣。',
+    id: 'front-bearing-housing', index: 2, name: 'Front Bearing Housing', en: 'Front Bearing Housing', role: 'Rotor support',
+    material: '40CrNiMoA steel', description: 'Holds a double-row ball bearing (Ø85 bore) with four oil jets; screens at the front, compressor case aft.',
     explode: [180, 0, 0], stage: [0.15, 0.45],
   },
   {
-    id: 'bevel-drive-gear', index: 3, name: '附件锥齿轮', en: 'Accessory Bevel Gear', role: '直角传动',
-    material: '18Cr2Ni4WA', description: '27 齿锥齿轮副（轴交角 90°），把水平轴功率转到竖直附件轴，转速 6 000 r/min。',
+    id: 'bevel-drive-gear', index: 3, name: 'Accessory Bevel Gear', en: 'Accessory Bevel Gear', role: 'Right-angle drive',
+    material: '18Cr2Ni4WA steel', description: '27-tooth bevel pair (90° shaft angle) turning horizontal shaft power down to the vertical accessory shaft at 6,000 r/min.',
     explode: [0, -360, 0], stage: [0.5, 0.78],
   },
   {
-    id: 'starter-gen-pad', index: 4, name: '起动发电机座', en: 'Starter-Generator Pad', role: '起动 · 发电',
-    material: '铝合金 2A14', description: 'ISO 5 接口安装座（4×M12），起动扭矩 180 N·m，发电功率 9 kW。',
+    id: 'starter-gen-pad', index: 4, name: 'Starter-Generator Pad', en: 'Starter-Generator Pad', role: 'Start · generate',
+    material: '2A14 aluminium', description: 'ISO 5 mounting pad (4×M12): 180 N·m of cranking torque in, 9 kW of generating power out.',
     explode: [-180, -420, 0], stage: [0.52, 0.8],
   },
   {
-    id: 'fuel-pump-housing', index: 5, name: '高压燃油泵壳', en: 'HP Fuel Pump Housing', role: '增压供油',
-    material: '铝合金 2A14', description: '柱塞泵壳（出口压力 7 MPa），花键接口 12 齿，与调速器同轴安装。',
+    id: 'fuel-pump-housing', index: 5, name: 'HP Fuel Pump Housing', en: 'HP Fuel Pump Housing', role: 'Fuel pump',
+    material: '2A14 aluminium', description: 'Plunger pump housing (7 MPa outlet) on a 12-tooth spline, mounted coaxially with the governor.',
     explode: [-40, -420, 0], stage: [0.54, 0.82],
   },
 ];
 
 const STEPS: StepDef[] = [
   {
-    title: '附件段', en: 'Accessory Section',
-    body: '空气从环形滤网四周进入，经前轴承机匣的导流窗汇入轴向；下方锥齿轮副把功率引到起发与高压燃油泵。',
+    title: 'Accessory Section', en: 'Accessory Section',
+    body: 'Air enters around the annular screen and turns axial through the front bearing housing windows; below, the bevel pair leads power to the starter-generator and the high-pressure fuel pump.',
     state: { explode: 0, section: true, running: false, select: 'inlet-screen', focus: null },
   },
   {
-    title: '分解', en: 'Exploded',
-    body: '滤网前脱、轴承机匣随后；三个附件沿 −y 径向拉出，锥齿轮最后。',
+    title: 'Exploded', en: 'Exploded',
+    body: 'The screen leaves first, then the bearing housing; the three accessories pull out radially along −y and the bevel gear last.',
     state: { explode: 1, section: false, running: false, select: null, focus: null },
   },
 ];
@@ -104,13 +104,14 @@ export const airflow: MachineDef = level({
   parent: 'turboprop',
   unit: 10 / 620,
   bounds: [[180, AY - 560, -300], [360, AY + 340, 300]],
-  name: '附件与进气段',
+  name: 'Accessory & Air Intake Section',
   en: 'Accessory & Air Intake Section',
-  subtitle: '子组件 C · 环形进气 · 直角传动',
-  summary: '5 种零件 · 滤网防异物，锥齿轮驱动起发与高压燃油泵',
+  subtitle: 'Sub-assembly C · annular intake · right-angle drive',
+  summary: '5 parts · FOD screen, bevel drive to starter-generator and fuel pump',
   drawingNo: 'GW-TP-C',
   scale: '1 : 3',
   parts: PARTS,
+  annotations: ANNOTATIONS,
   boltSets: {},
   neighbours: {
     'inlet-screen': ['front-bearing-housing', 'inlet-screen'],

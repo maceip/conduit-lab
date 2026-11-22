@@ -13,8 +13,8 @@ function viewRect(layout: DrawingLayout, view: 'front' | 'top' | 'left', box: TH
 }
 
 /**
- * Projection lines for the focused part: 长对正 between front and top,
- * 高平齐 between front and left, 宽相等 from top to left through the 45° line.
+ * Projection lines for the focused part: length aligned between front and top,
+ * height level between front and left, width equal from top to left via the 45° line.
  */
 function ProjectionLines({ layout, box }: { layout: DrawingLayout; box: THREE.Box3 }) {
   const f = viewRect(layout, 'front', box);
@@ -65,8 +65,9 @@ function CentreCrosses({ layout, lines }: { layout: DrawingLayout; lines: Array<
 }
 
 /**
- * 尺寸链：从 from 到 to 在指定视图上偏移 offset 像素，画界线、箭头与数字。
- * 总长/分段链在主视图（长对正），转子直径在左视图（圆的十字中心线旁）。
+ * Dimension chains: from–to offset `offset` px in a view, with extension lines,
+ * arrows and the number. The length chain sits on the front view, the rotor
+ * diameter on the left view beside the centre cross.
  */
 function Dim({ layout, d }: { layout: DrawingLayout; d: DimensionDef }) {
   const a = project(layout, d.view, new THREE.Vector3(...d.from));
@@ -78,7 +79,7 @@ function Dim({ layout, d }: { layout: DrawingLayout; d: DimensionDef }) {
   const n = new THREE.Vector2(-dir.y, dir.x).multiplyScalar(d.offset);
   const a2 = a.clone().add(n);
   const b2 = b.clone().add(n);
-  // 45° 工程箭头
+  // 45° engineering arrowhead
   const tick = (at: THREE.Vector2, toward: THREE.Vector2) => {
     const t = toward.clone().sub(at).normalize();
     const w = new THREE.Vector2(-t.y, t.x).multiplyScalar(3.2);
@@ -100,18 +101,18 @@ function Dim({ layout, d }: { layout: DrawingLayout; d: DimensionDef }) {
   );
 }
 
-/** BOM 气泡：编号 + 引线，统一排在主视图上沿。 */
-function Balloon({ layout, b, i, index, name }: { layout: DrawingLayout; b: BomCallout; i: number; index: number; name: string }) {
+/** BOM balloon: number + leader, lined up along the top of the front view. */
+function Balloon({ layout, b, i, index, name, tint }: { layout: DrawingLayout; b: BomCallout; i: number; index: number; name: string; tint?: string }) {
   const p = project(layout, 'front', new THREE.Vector3(...b.p));
   const front = layout.views.find((v) => v.id === 'front')!.rect;
   const bx = p.x;
   const by = Math.max(86, front.y - 22 - (i % 3) * 34);
   return (
-    <g className="balloon" stroke="currentColor" fill="none" opacity={0.9}>
+    <g className="balloon" stroke={tint ?? 'currentColor'} fill="none" opacity={0.9}>
       <line x1={bx} y1={by + 11} x2={p.x} y2={p.y} strokeWidth={1} />
-      <circle cx={p.x} cy={p.y} r={2.2} fill="currentColor" stroke="none" />
+      <circle cx={p.x} cy={p.y} r={2.2} fill={tint ?? 'currentColor'} stroke="none" />
       <circle cx={bx} cy={by} r={12} strokeWidth={1.3} fill="var(--paper, #fff)" />
-      <text x={bx} y={by + 4.2} textAnchor="middle" fill="currentColor" stroke="none" fontSize={11.5} fontFamily="inherit">{String(index).padStart(2, '0')}</text>
+      <text x={bx} y={by + 4.2} textAnchor="middle" fill={tint ?? 'currentColor'} stroke="none" fontSize={11.5} fontFamily="inherit">{String(index).padStart(2, '0')}</text>
       <title>{name}</title>
     </g>
   );
@@ -135,12 +136,12 @@ export function DrawingSheet() {
         {machine.dimensions?.map((d, i) => <Dim key={i} layout={layout} d={d} />)}
         {machine.bom?.map((b, i) => {
           const part = machine.parts.find((pp) => pp.id === b.id);
-          return part ? <Balloon key={b.id} layout={layout} b={b} i={i} index={part.index} name={part.name} /> : null;
+          return part ? <Balloon key={b.id} layout={layout} b={b} i={i} index={part.index} name={part.name} tint={machine.annotations?.[b.id]?.colour} /> : null;
         })}
       </svg>
       {layout.views.map((v) => (
         <span key={v.id} className={`sheet-label sheet-label--${v.id}`} style={{ left: v.rect.x + v.rect.w / 2, top: v.rect.y + v.rect.h + 4 }}>
-          {v.id === 'front' && section ? '全剖主视图' : v.label}
+          {v.id === 'front' && section ? 'Section Front View' : v.label}
         </span>
       ))}
       {part && (
@@ -152,13 +153,13 @@ export function DrawingSheet() {
         <tbody>
           <tr>
             <td rowSpan={2} className="sheet-title-name">{machine.name}</td>
-            <td>比例</td><td>{machine.scale}</td>
+            <td>Scale</td><td>{machine.scale}</td>
           </tr>
           <tr>
-            <td>图号</td><td>{machine.drawingNo}</td>
+            <td>Dwg No</td><td>{machine.drawingNo}</td>
           </tr>
           <tr>
-            <td>格物 · 工程制图</td><td>投影</td><td>第一角</td>
+            <td>Inkwork · Engineering Drawing</td><td>Proj</td><td>1st Angle</td>
           </tr>
         </tbody>
       </table>

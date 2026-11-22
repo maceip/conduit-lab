@@ -6,31 +6,32 @@ import { TURBOPROP_LEVELS, turboprop } from './turboprop';
 import type { MachineDef } from './types';
 
 /**
- * 机器注册表 / machine registry.
+ * Machine registry.
  *
- * 每组架子一个；新增顶层的机器加进对应组的 machines 数组。
- * 子组件（多层次拆解里单独打开的层级）不放进 GROUPS，放进下面的 ALL。
+ * One shelf per group; new top-level machines go into that group's machines
+ * array. Sub-assemblies (levels opened through a part) stay out of GROUPS and
+ * go into ALL below.
  *
- * 例：叶轮是 `pump/impeller` 这样的子组件，就在文件末尾
+ * Example: an impeller sub-assembly `pump/impeller` — at the end of the file
  *   import { PUMP_LEVELS, pump } from './pump';
- * 然后 `const ALL: MachineDef[] = [...MACHINES, ...PUMP_LEVELS];`
+ * then `const ALL: MachineDef[] = [...MACHINES, ...PUMP_LEVELS];`
  */
 export const GROUPS: Array<{ name: string; machines: MachineDef[] }> = [
-  { name: '基础机构', machines: [coupling] },
-  { name: '机床', machines: [] },
-  { name: '日常器物', machines: [macbook] },
-  { name: '动力传动', machines: [turboprop] },
-  { name: '大型装备', machines: [model3] },
+  { name: 'Mechanisms', machines: [coupling] },
+  { name: 'Machine Tools', machines: [] },
+  { name: 'Everyday Objects', machines: [macbook] },
+  { name: 'Powertrain', machines: [turboprop] },
+  { name: 'Large Equipment', machines: [model3] },
 ];
 
 export const MACHINES: MachineDef[] = GROUPS.flatMap((g) => g.machines);
 
-/** 所有装配，包含只能通过打开某个零件才进入的子组件。 */
+/** Every assembly, including the sub-assemblies reached through a part. */
 const ALL: MachineDef[] = [...MACHINES, ...TURBOPROP_LEVELS];
 
 export const allMachines = () => ALL;
 
-// 给 scripts/ 里的脚本用：应用真正注册的每一级装配。
+// For the scripts/ tools: every level the app really registers.
 if (typeof window !== 'undefined') {
   (window as unknown as { gewu: unknown }).gewu = { assemblies: () => ALL.map((m) => ({ id: m.id, parent: m.parent ?? null })) };
 }
@@ -40,14 +41,14 @@ export function machineById(id: string): MachineDef {
   return ALL.find((m) => m.id === id) ?? MACHINES[0];
 }
 
-/** 从顶层到这一级的装配链。 */
+/** The chain of assemblies from the top level down to this one. */
 export function lineage(machine: MachineDef): MachineDef[] {
   const chain = [machine];
   while (chain[0].parent) chain.unshift(machineById(chain[0].parent));
   return chain;
 }
 
-/** 此刻在图纸上的机器（给非 React 代码：每帧与导出用）。 */
+/** The machine on the sheet right now (for non-React code: every frame and export). */
 export function currentMachine(): MachineDef {
   return machineById(useStudio.getState().machineId);
 }

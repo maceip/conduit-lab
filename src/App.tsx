@@ -156,7 +156,7 @@ export default function App() {
       <Catalogue />
       <Guide />
       <Tree />
-      <p className="stage-hint">{drawingMode ? '第一角画法 · 悬停或点选零件查看投影关系' : moveMode ? '按住零件拖动来挪动 · 拖空白处旋转 · 选中后可调大小' : '拖动旋转 · 滚轮缩放 · 点选零件'}</p>
+      <p className="stage-hint">{drawingMode ? 'First-angle projection · hover or click a part to see its projections' : moveMode ? 'Drag a part to move it · drag empty space to rotate · resize once selected' : 'Drag to rotate · scroll to zoom · click a part'}</p>
     </div>
   );
 }

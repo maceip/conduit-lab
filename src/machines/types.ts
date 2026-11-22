@@ -76,6 +76,16 @@ export interface BomCallout {
   p: Vec3;
 }
 
+/** Per-part callout annotation: a coloured badge + label (e.g. a V8 component name). */
+export interface PartAnnotation {
+  /** Short label shown under the part name in the callout (e.g. "v8::Isolate"). */
+  label: string;
+  /** Full name, shown as the callout tooltip. */
+  full?: string;
+  /** CSS colour for the balloon, leader and hover/selection accent. */
+  colour: string;
+}
+
 export interface MachineDef {
   id: string;
   /** Assembled bounding box [min, max], used to lay out the three views. */
@@ -120,4 +130,6 @@ export interface MachineDef {
   dimensions?: DimensionDef[];
   /** Numbered BOM balloons on the three-view sheet (model units; level() scales them). */
   bom?: BomCallout[];
+  /** Coloured callout badges/labels per part id. */
+  annotations?: Record<string, PartAnnotation>;
 }

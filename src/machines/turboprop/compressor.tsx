@@ -3,67 +3,68 @@ import { Callout } from '../../scene/Overlay';
 import type { CameraDef, MachineDef, PartDef, StepDef, Vec3 } from '../types';
 import { level, Turn, tube } from '../kit';
 import { BladeRow, DiffuserPipes, Labyrinth, RotorDisc } from './kit';
-import { TP } from './data';
+import { ANNOTATIONS, TP } from './data';
 
 const AY = TP.AY;
 
 /**
- * 子组件 D · 轴流-离心压气机转子 / Axial-Centrifugal Compressor Spool。
- * 三级轴流转子（33/29/27 叶）+ 三级静子环（23/21/19 叶）+ 离心叶轮 + 12 根径向扩压管。
+ * Sub-assembly D: axial-centrifugal compressor spool — three axial rotors
+ * (33/29/27 blades), three stator rings (23/21/19 vanes), the centrifugal
+ * impeller and twelve radial diffuser pipes.
  */
 
 const PARTS: PartDef[] = [
   {
-    id: 'rotor-1', index: 1, name: '一级转子', en: 'Compressor Rotor 1', role: '增压 · 33 叶',
-    material: '钛合金 TC11', description: '盘径 Ø420、33 叶、安装角 32°，三榫榫槽，轮缘周向 20 个叶根凸台。',
+    id: 'rotor-1', index: 1, name: 'Rotor Stage 1', en: 'Compressor Rotor 1', role: 'Boost · 33 blades',
+    material: 'TC11 titanium', description: 'Ø420 disk, 33 blades at 32° stagger, triple fir-tree slots and 20 blade-root lugs around the rim.',
     explode: [420, 0, 0], stage: [0, 0.3],
   },
   {
-    id: 'rotor-2', index: 2, name: '二级转子', en: 'Compressor Rotor 2', role: '增压 · 29 叶',
-    material: '钛合金 TC11', description: '盘径 Ø390、29 叶、安装角 38°，与一级鼓筒摩擦焊成一体转子。',
+    id: 'rotor-2', index: 2, name: 'Rotor Stage 2', en: 'Compressor Rotor 2', role: 'Boost · 29 blades',
+    material: 'TC11 titanium', description: 'Ø390 disk, 29 blades at 38° stagger, friction-welded to the stage-one drum as one rotor.',
     explode: [210, 0, 0], stage: [0.08, 0.38],
   },
   {
-    id: 'rotor-3', index: 3, name: '三级转子', en: 'Compressor Rotor 3', role: '增压 · 27 叶',
-    material: '钛合金 TC11', description: '盘径 Ø360、27 叶、安装角 44°；三级后总压比约 4:1。',
+    id: 'rotor-3', index: 3, name: 'Rotor Stage 3', en: 'Compressor Rotor 3', role: 'Boost · 27 blades',
+    material: 'TC11 titanium', description: 'Ø360 disk, 27 blades at 44° stagger; overall pressure ratio across the three stages ≈ 4:1.',
     explode: [0, 0, 0], stage: [0.16, 0.46],
   },
   {
-    id: 'stator-1', index: 4, name: '一级静子环', en: 'Stator Ring 1', role: '整流 · 23 叶',
-    material: 'GH4169', description: '23 片静叶焊在内环上，叶偏 28°，把气流扭回轴向进二级。',
+    id: 'stator-1', index: 4, name: 'Stator Ring 1', en: 'Stator Ring 1', role: 'Guide · 23 vanes',
+    material: 'GH4169', description: '23 stator vanes welded into the inner ring at 28° camber, turning the flow axial before stage two.',
     explode: [300, 0, 0], stage: [0.04, 0.34],
   },
   {
-    id: 'stator-2', index: 5, name: '二级静子环', en: 'Stator Ring 2', role: '整流 · 21 叶',
-    material: 'GH4169', description: '21 片、叶高 52 mm，外缘 24 个径向销定位在机匣上。',
+    id: 'stator-2', index: 5, name: 'Stator Ring 2', en: 'Stator Ring 2', role: 'Guide · 21 vanes',
+    material: 'GH4169', description: '21 vanes, 52 mm high, located in the casing by 24 radial pins in the rim.',
     explode: [90, 0, 0], stage: [0.12, 0.42],
   },
   {
-    id: 'stator-3', index: 6, name: '三级静子环', en: 'Stator Ring 3', role: '整流 · 19 叶',
-    material: 'GH4169', description: '19 片，后接离心叶轮进口导叶，出口马赫数 0.55。',
+    id: 'stator-3', index: 6, name: 'Stator Ring 3', en: 'Stator Ring 3', role: 'Guide · 19 vanes',
+    material: 'GH4169', description: '19 vanes feeding the centrifugal impeller eye; exit Mach 0.55.',
     explode: [-120, 0, 0], stage: [0.2, 0.5],
   },
   {
-    id: 'impeller', index: 7, name: '离心叶轮', en: 'Centrifugal Impeller', role: '增压',
-    material: '钛合金 TC4', description: '12 长叶 + 12 短叶交错，出口角 26°，叶轮外径 Ø460，单级压比 4.2:1。',
+    id: 'impeller', index: 7, name: 'Centrifugal Impeller', en: 'Centrifugal Impeller', role: 'Boost',
+    material: 'TC4 titanium', description: '12 long + 12 short interleaved vanes, 26° exit angle, Ø460 tip; 4.2:1 in a single stage.',
     explode: [-300, 0, 0], stage: [0.28, 0.58],
   },
   {
-    id: 'diffuser-pipes', index: 8, name: '径向扩压管', en: 'Radial Diffuser Pipes', role: '扩压',
-    material: 'GH4169', description: '12 根扩压管（内径 28 mm）从叶轮外缘径向甩出再折向燃烧室，扩压比 1.8:1。',
+    id: 'diffuser-pipes', index: 8, name: 'Radial Diffuser Pipes', en: 'Radial Diffuser Pipes', role: 'Diffusion',
+    material: 'GH4169', description: 'Twelve pipes (28 mm bore) throw the flow radially off the impeller and bend it toward the combustor, 1.8:1 diffusion.',
     explode: [-300, 0, 320], stage: [0.32, 0.62],
   },
 ];
 
 const STEPS: StepDef[] = [
   {
-    title: '压气机', en: 'Compressor Spool',
-    body: '轴流三级在前、离心级在后：转子与静子交错排布，空气逐级增压；离心叶轮把气流径向甩出经扩压管进燃烧室。',
+    title: 'Compressor Spool', en: 'Compressor Spool',
+    body: 'Three axial stages ahead of a centrifugal stage: rotors and stators interleave and compress the air stage by stage, then the impeller throws it out radially through the diffuser pipes into the combustor.',
     state: { explode: 0, section: true, running: false, select: 'impeller', focus: null },
   },
   {
-    title: '分解', en: 'Exploded',
-    body: '沿轴向拉成一串：三级转子、三级静子、叶轮与扩压管每级 0.4u 让开，叶排零重叠。',
+    title: 'Exploded', en: 'Exploded',
+    body: 'Pulled out along the axis in a row: three rotors, three stators, impeller and diffuser pipes each step aside so no blade row overlaps another.',
     state: { explode: 1, section: false, running: false, select: null, focus: null },
   },
 ];
@@ -122,13 +123,14 @@ export const compressor: MachineDef = level({
   parent: 'turboprop',
   unit: 10 / 760,
   bounds: [[-360, AY - 320, -320], [300, AY + 320, 320]],
-  name: '轴流-离心压气机',
+  name: 'Axial-Centrifugal Compressor Spool',
   en: 'Axial-Centrifugal Compressor Spool',
-  subtitle: '子组件 D · 三级轴流 + 离心级',
-  summary: '8 种零件 · 33/29/27 叶三转子 + 23/21/19 叶三静子 + 12 扩压管',
+  subtitle: 'Sub-assembly D · three axial stages + centrifugal',
+  summary: '8 parts · rotors 33/29/27, stators 23/21/19, twelve diffuser pipes',
   drawingNo: 'GW-TP-D',
   scale: '1 : 2',
   parts: PARTS,
+  annotations: ANNOTATIONS,
   boltSets: {},
   neighbours: {
     impeller: ['diffuser-pipes', 'stator-3', 'impeller'],

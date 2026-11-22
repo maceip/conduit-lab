@@ -681,3 +681,17 @@ button:focus-visible, input:focus-visible { outline: 1px solid var(--rust); outl
 @media (max-width: 899px) {
   .tree-drawer { top: auto; right: 0; left: 0; bottom: 0; width: auto; max-height: 72vh; border-width: 1px 0 0; }
 }
+
+/* ── Annotated (coloured) callouts ─────────────────── */
+.callout.is-annotated .callout-label {
+  border-color: var(--callout-tint, currentColor);
+  box-shadow: 0 1px 0 var(--callout-tint, transparent);
+}
+.callout-anno {
+  display: block;
+  font-size: 10px;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+  opacity: 0.95;
+}
