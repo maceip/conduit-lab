@@ -6,12 +6,29 @@ Every number comes from running the real tools or scanning the sources; nothing 
 cached, or estimated. Writes `browser/ratchet.json`, `data/logs/browser-*.log`, and copies
 representative verified source files to `data/examples/browser-*.rs`.
 
-Trusted markers counted: assume(, admit(, #[verifier::external_body], #[verifier::external],
-assume_specification, unsafe blocks/fns/impls.
+    ratchet.py                                   re-verify + test everything, write the reports
+    ratchet.py --check [--only CRATE ...] [--skip-tests]
+                                                 re-verify + test, write nothing, fail if any
+                                                 deterministic field differs from ratchet.json
+    ratchet.py --quick                           no Verus: fail if ratchet.json is stale or
+                                                 inconsistent with the sources, logs or stats.json
+
+What "0 trusted" rests on, strongest first:
+  1. Every crate is verified as a root under `--no-cheating`: Verus itself rejects assume, admit,
+     external_body, axiom fns and assume_specification, however they are spelled or included.
+     `--no-external-by-default` extends verification to code outside verus!{}.
+  2. `graph_problems`: `--no-cheating` cannot cover dependencies (vstd rejects it, and cargo skips
+     cached crates), so every Verus-verified dependency must be a ratcheted crate, which is checked
+     as a root itself, or the toolchain's own vstd/builtin crates.
+  3. MARKERS, a textual count over exactly the files rustc read (its dep-info, so include! and
+     #[path] targets count). It also catches what `--no-cheating` allows: #[verifier::external]
+     items and exec_allows_no_decreases_clause.
 """
 from __future__ import annotations
 
+import argparse
 import datetime as dt
+import hashlib
 import json
 import os
 import re
@@ -161,12 +178,26 @@ CRATE_SPECS: list[CrateSpec] = [
 MARKERS = {
     "assume": re.compile(r"\bassume\s*\("),
     "admit": re.compile(r"\badmit\s*\("),
-    "external_body": re.compile(r"verifier::external_body"),
-    "external": re.compile(r"verifier::external\b(?!_)"),
+    "external_body": re.compile(r"\bexternal_body\b"),
+    "external": re.compile(r"\b(?:verifier|verus_verify)\s*(?:::|\()\s*external\b"),
+    "external_spec": re.compile(r"\bexternal_(?:fn|type|trait)_\w+"),
     "assume_specification": re.compile(r"\bassume_specification\b"),
+    "axiom": re.compile(r"\baxiom\s+fn\b"),
+    "unproved_termination": re.compile(r"\b(?:exec_allows_no_decreases_clause|assume_termination)\b"),
+    # code that only exists when Verus is not looking
+    "hidden_from_verus": re.compile(r"\bnot\s*\(\s*verus_|\bcfg!\s*\(\s*(?:not\s*\(\s*)?verus_"),
     "unsafe": re.compile(r"\bunsafe\s*(\{|fn\b|impl\b)"),
 }
-RESULT_RE = re.compile(r"verification results::\s*(\d+) verified,\s*(\d+) errors")
+# Verifies trivially and proves nothing, so it would only pad the count. Syntactic: an unsatisfiable
+# precondition spelled any other way is not detected.
+VACUOUS_RE = re.compile(r"\brequires\s+false\s*(?:,|\{|\bensures\b|\bdecreases\b)")
+VERUS_FLAGS = [
+    "--triggers-mode", "silent", "--no-cheating", "--no-external-by-default", "--output-json", "--time-expanded",
+]  # fmt: skip
+# Shipped with the verifier and patched to its source tree by use-local-verus.sh.
+TOOLCHAIN_CRATES = {"vstd", "verus_builtin", "verus_builtin_macros", "verus_state_machines_macros"}
+GENERATED = re.compile(r"(^|/)(ratchet|report|benchmarks)\.json$|\.md$")
+PIN_RE = re.compile(r"\b[\w.-]+/[\w.-]+@[0-9a-f]{40}\b")
 TEST_RE = re.compile(r"test result: \w+\. (\d+) passed; (\d+) failed")
 VURL_WPT_IPV4_RE = re.compile(r"WPT IPv4 host cases checked:\s*(\d+)")
 VURL_WPT_IPV6_RE = re.compile(r"WPT IPv6 host cases checked:\s*(\d+)")
@@ -175,6 +206,8 @@ VURL_DIFF_IPV4_RE = re.compile(r"differential:\s*(\d+)\s+ipv4,\s*(\d+)\s+failure
 
 
 def stack_env() -> dict[str, str]:
+    if "VERUS_RELEASE" in os.environ and "VERUS_SOURCE" in os.environ:
+        return dict(os.environ)
     env_file = Path(os.environ.get("VERUS_STACK", Path.home() / "workspaces/verus-stack")) / "env.zsh"
     out = subprocess.run(
         ["zsh", "-c", f"source {env_file} >/dev/null && env -0"],
@@ -203,6 +236,201 @@ def write_log(filename: str, blocks: list[tuple[list[str], Path, int, float, str
         )
     (LOGS / filename).write_text(sanitize_home("\n".join(chunks)))
     return f"data/logs/{filename}"
+
+
+def tracked_files() -> list[Path]:
+    """Every file under browser/ that is tracked or would be (not ignored)."""
+    out = subprocess.run(
+        ["git", "ls-files", "-coz", "--exclude-standard"], cwd=ROOT, capture_output=True, check=True
+    ).stdout.decode()
+    return sorted({ROOT / f for f in out.split("\0") if f and (ROOT / f).is_file()})
+
+
+def inputs_sha256() -> str:
+    """Digest of everything a run depends on inside browser/ (sources, specs, tests, corpora,
+    manifests, this script), excluding the files a run generates."""
+    h = hashlib.sha256()
+    for p in tracked_files():
+        rel = p.relative_to(ROOT).as_posix()
+        if not GENERATED.search(rel):
+            h.update(rel.encode() + b"\0" + hashlib.sha256(p.read_bytes()).digest())
+    return h.hexdigest()
+
+
+def spec_pins() -> list[str]:
+    """Upstream commits (owner/repo@sha) named by the sources and PROVENANCE files."""
+    pins: set[str] = set()
+    for p in tracked_files():
+        if p.name == "PROVENANCE" or (p.suffix == ".rs" and "src" in p.parts):
+            pins.update(PIN_RE.findall(p.read_text()))
+    return sorted(pins)
+
+
+def sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def graph_problems(env: dict[str, str]) -> list[str]:
+    """Ways the workspace could let unchecked Verus specs reach a ratcheted crate."""
+    meta = json.loads(
+        subprocess.run(
+            ["cargo", "metadata", "--format-version", "1"], cwd=ROOT, env=env, capture_output=True, check=True
+        ).stdout
+    )
+    problems: list[str] = []
+    pkgs = {p["id"]: p for p in meta["packages"]}
+    members = set(meta["workspace_members"])
+    names = {s.name for s in CRATE_SPECS}
+    for pid in members:
+        p = pkgs[pid]
+        if p["name"] not in names:
+            problems.append(f"workspace crate {p['name']} is not ratcheted")
+        verus_meta = (p["metadata"] or {}).get("verus")
+        if verus_meta != {"verify": True}:
+            problems.append(f"{p['name']}: [package.metadata.verus] is {verus_meta}, expected only verify = true")
+        for t in p["targets"]:
+            if t["kind"] not in (["lib"], ["test"]):
+                problems.append(f"{p['name']}: target {t['name']} of kind {t['kind']} is not covered")
+            if t["kind"] == ["lib"] and Path(t["src_path"]) != Path(p["manifest_path"]).parent / "src/lib.rs":
+                problems.append(f"{p['name']}: library root is {t['src_path']}, not src/lib.rs")
+    problems += [
+        f"ratcheted crate {n} is not in the workspace" for n in sorted(names - {pkgs[m]["name"] for m in members})
+    ]
+
+    nodes = {n["id"]: n for n in meta["resolve"]["nodes"]}
+    todo, seen = list(members), set(members)
+    while todo:
+        for d in nodes[todo.pop()]["deps"]:
+            if d["pkg"] not in seen and any(k["kind"] != "dev" for k in d["dep_kinds"]):
+                seen.add(d["pkg"])
+                todo.append(d["pkg"])
+    source = Path(env["VERUS_SOURCE"]).resolve()
+    for pid in sorted(seen - members):
+        p = pkgs[pid]
+        from_toolchain = source in Path(p["manifest_path"]).resolve().parents
+        if p["name"] in TOOLCHAIN_CRATES:
+            if not from_toolchain:
+                problems.append(f"{p['name']} comes from {p['manifest_path']}, not the pinned Verus source")
+        elif (p["metadata"] or {}).get("verus") is not None:
+            problems.append(f"dependency {p['name']} carries Verus specs but is not ratcheted")
+    return problems
+
+
+def compiled_sources(name: str, since: float, target_dir: Path) -> list[Path]:
+    """The files rustc read to build `name`'s library in a run started at `since`, from dep-info."""
+    files: set[Path] = set()
+    for d in target_dir.glob(f"debug/**/{name}-*.d"):
+        if d.stat().st_mtime < since - 1:
+            continue
+        for line in d.read_text().splitlines():
+            if line.endswith(":") and not line.startswith("#"):
+                f = line[:-1].replace("\\ ", " ")
+                files.add((ROOT / f).resolve())
+    if not files:
+        raise RuntimeError(f"{name}: no dep-info written by this run under {target_dir}")
+    return sorted(files)
+
+
+def parse_verus_json(stdout: str) -> dict | None:
+    """The last report `--output-json` printed (other lines are dependencies' human output)."""
+    found, pos = None, 0
+    while (m := re.compile(r"^\{", re.M).search(stdout, pos)) is not None:
+        try:
+            obj, end = json.JSONDecoder().raw_decode(stdout, m.start())
+        except json.JSONDecodeError:
+            pos = m.end()
+            continue
+        pos = end
+        if "verification-results" in obj:
+            found = obj
+    return found
+
+
+def verify_crate(spec: CrateSpec, env: dict[str, str], target_dir: Path) -> dict:
+    """Re-verify one crate as a root. Returns measurements plus `problems`, empty iff acceptable."""
+    path = ROOT / spec.rel_dir
+    (path / "src" / "lib.rs").touch()  # force genuine Verus re-verification of this crate
+    cmd = [
+        str(Path(env["VERUS_RELEASE"]) / "cargo-verus"),
+        "verify", "-p", spec.name, "--fwd-verus-args-to", "roots", "--", *VERUS_FLAGS,
+    ]  # fmt: skip
+    started = time.time()
+    t0 = time.monotonic()
+    p = subprocess.run(cmd, cwd=ROOT, env=env, capture_output=True, text=True)
+    secs = round(time.monotonic() - t0, 2)
+    report = parse_verus_json(p.stdout)
+    problems: list[str] = []
+    if p.returncode != 0:
+        errs = re.findall(r"^error.*", p.stderr, re.M)
+        problems.append(f"cargo verus exited {p.returncode}: {errs[0] if errs else p.stderr.strip()[-300:]}")
+
+    res = report["verification-results"] if report else {}
+    modules = report["times-ms"]["smt"]["smt-run-module-times"] if report else []
+    functions = sorted(
+        ({"function": f["function"], "mode": f.get("mode:", f.get("mode")), "success": f["success"]}
+         for m in modules for f in m.get("function-breakdown", [])),
+        key=lambda f: f["function"],
+    )  # fmt: skip
+    by_mode = {k: sum(f["mode"] == k for f in functions) for k in ("exec", "proof", "spec")} if report else None
+    if report is None:
+        problems.append("no Verus JSON report")
+    elif not (res.get("success") and res.get("is-verifying-entire-crate")) or res.get("errors") != 0:
+        problems.append(f"Verus did not verify the entire crate: {res}")
+
+    srcs = compiled_sources(spec.name, started, target_dir) if p.returncode == 0 else sorted(path.glob("src/**/*.rs"))
+    problems += [f"compiles {f} from outside {path}" for f in srcs if path.resolve() not in f.resolve().parents]
+    texts = [f.read_text(errors="replace") for f in srcs]
+    trusted = {k: sum(len(r.findall(t)) for t in texts) for k, r in MARKERS.items()}
+    vacuous = sum(len(VACUOUS_RE.findall(t)) for t in texts)
+    problems += [f"{n} trusted `{k}` marker(s)" for k, n in trusted.items() if n]
+    if vacuous:
+        problems.append(f"{vacuous} `requires false` contract(s)")
+
+    log_text = p.stderr.rstrip() + "\n"
+    if report:
+        log_text += "\n# from Verus --output-json --time-expanded\n" + json.dumps(
+            {"verus": report["verus"], "verification-results": res, "functions": functions}, indent=1
+        )
+    return {
+        "cmd": ["$VERUS_RELEASE/cargo-verus", *cmd[1:]],
+        "exit": p.returncode,
+        "seconds": secs,
+        "verified": res.get("verified"),
+        "errors": res.get("errors"),
+        "no_cheating": "--no-cheating" in cmd and p.returncode == 0,
+        "functions_by_mode": by_mode,
+        "trusted": trusted,
+        "vacuous_requires": vacuous,
+        "source_lines": sum(len(t.splitlines()) for t in texts),
+        "verus_commit": report["verus"].get("commit") if report else None,
+        "log_text": log_text,
+        "problems": problems,
+    }
+
+
+def run_tests(spec: CrateSpec, env: dict[str, str]) -> dict:
+    cmd = ["cargo", "test", "-p", spec.name]
+    if spec.release_tests:
+        cmd.append("--release")
+    if spec.nocapture_tests:
+        cmd.extend(["--", "--nocapture"])
+    code, text, secs = run(cmd, env)
+    tests = TEST_RE.findall(text)
+    return {
+        "cmd": cmd,
+        "exit": code,
+        "seconds": secs,
+        "text": text,
+        "passed": sum(int(a) for a, _ in tests) if tests else None,
+        "failed": sum(int(b) for _, b in tests) if tests else None,
+    }
+
+
+def target_directory(env: dict[str, str]) -> Path:
+    meta = subprocess.run(
+        ["cargo", "metadata", "--format-version", "1", "--no-deps"], cwd=ROOT, env=env, capture_output=True, check=True
+    )
+    return Path(json.loads(meta.stdout)["target_directory"])
 
 
 def load_fresh_json(path: Path) -> dict:
@@ -394,7 +622,9 @@ def build_ledgers(
             if (
                 c["verify_exit"] != 0
                 or c["errors"] != 0
+                or not c["no_cheating"]
                 or sum(c["trusted"].values()) != 0
+                or c["vacuous_requires"] != 0
                 or c["tests_exit"] != 0
                 or c["tests_failed"] != 0
             ):
@@ -509,10 +739,125 @@ def build_ledgers(
     return j_steps, j0_sections, test262_suites, vm_benchmarks
 
 
-def main() -> None:
+# Deterministic per-crate fields, reproducible on any host with the pinned Verus commit.
+PROOF_FIELDS = [
+    "name", "path", "verify_exit", "verified", "errors", "no_cheating", "functions_by_mode", "trusted",
+    "vacuous_requires", "source_lines",
+]  # fmt: skip
+TEST_FIELDS = ["tests_exit", "tests_passed", "tests_failed"]
+
+
+def recorded_problems(rec: dict) -> list[str]:
+    """Checks of the committed report that need no Verus run."""
+    problems: list[str] = []
+    if rec.get("inputs_sha256") != inputs_sha256():
+        problems.append("stale: browser/ inputs changed since ratchet.json was generated")
+    if rec.get("spec_pins") != spec_pins():
+        problems.append("spec_pins differ from the sources")
+    crates = rec["crates"]
+    if [c["name"] for c in crates] != [s.name for s in CRATE_SPECS]:
+        problems.append("crate list differs from CRATE_SPECS")
+    t = rec["totals"]
+    if t["crates"] != len(crates):
+        problems.append("totals.crates is not the number of crates")
+    for k in ("verified", "errors", "source_lines", "tests_passed", "tests_failed", "vacuous_requires"):
+        if t[k] != sum(c[k] for c in crates):
+            problems.append(f"totals.{k} is not the sum over crates")
+    for k in ("trusted", "functions_by_mode"):
+        if t[k] != {m: sum(c[k][m] for c in crates) for m in t[k]}:
+            problems.append(f"totals.{k} is not the sum over crates")
+    for c in crates:
+        log = SITE / c["log"]
+        if not log.exists() or sha256_file(log) != c["log_sha256"]:
+            problems.append(f"{c['name']}: {c['log']} does not match log_sha256")
+            continue
+        text = log.read_text()
+        logged = re.search(r'"verified": (\d+),\s*"errors": (\d+)', text)
+        if not logged or [int(x) for x in logged.groups()] != [c["verified"], c["errors"]]:
+            problems.append(f"{c['name']}: verified/errors differ from its log")
+        tests = TEST_RE.findall(text)
+        if (sum(int(a) for a, _ in tests), sum(int(b) for _, b in tests)) != (c["tests_passed"], c["tests_failed"]):
+            problems.append(f"{c['name']}: test counts differ from its log")
+    embedded = dict(json.loads((DATA / "stats.json").read_text())["browser"])
+    embedded.pop("log", None)
+    if embedded != rec:
+        problems.append("data/stats.json embeds a different ratchet report; re-run scripts/collect_stats.py")
+    return problems
+
+
+def finish(problems: list[str], ok: str) -> None:
+    for x in problems:
+        print(f"FAIL {x}", file=sys.stderr)
+    if problems:
+        sys.exit(1)
+    print(ok)
+
+
+def check(only: list[str], skip_tests: bool) -> None:
+    """Re-run the real tools and compare with the committed report, writing nothing."""
+    rec = json.loads((ROOT / "ratchet.json").read_text())
+    recorded = {c["name"]: c for c in rec["crates"]}
     env = stack_env()
-    cargo_verus = str(Path(env["VERUS_RELEASE"]) / "cargo-verus")
     subprocess.run([str(ROOT / "scripts/use-local-verus.sh")], env=env, check=True, capture_output=True)
+    problems = recorded_problems(rec) + graph_problems(env)
+    for flag in ("--self-test", "--check"):
+        code, text, _ = run(["python3", str(ROOT / "scripts/esmeta_to_verus.py"), flag], env)
+        if code != 0:
+            problems.append(f"esmeta_to_verus.py {flag} exited {code}: {text.strip()[-300:]}")
+    target_dir = target_directory(env)
+    # `cargo test` rewrites these reports; a check must leave the tree as it found it.
+    saved = {p: p.read_bytes() for s in CRATE_SPECS if s.report_rel and (p := ROOT / s.rel_dir / s.report_rel).exists()}
+    try:
+        for spec in CRATE_SPECS:
+            if only and spec.name not in only:
+                continue
+            v = verify_crate(spec, env, target_dir)
+            problems += [f"{spec.name}: {x}" for x in v["problems"]]
+            if v["verus_commit"] != rec["verus_commit"]:
+                problems.append(f"{spec.name}: Verus {v['verus_commit']}, report used {rec['verus_commit']}")
+            got = {"name": spec.name, "path": f"browser/{spec.rel_dir}", "verify_exit": v["exit"], **v}
+            fields = list(PROOF_FIELDS)
+            if not skip_tests:
+                t = run_tests(spec, env)
+                got |= {"tests_exit": t["exit"], "tests_passed": t["passed"], "tests_failed": t["failed"]}
+                fields += TEST_FIELDS
+                if t["exit"] != 0:
+                    problems.append(f"{spec.name}: cargo test exited {t['exit']}: {t['text'].strip()[-600:]}")
+            want = recorded.get(spec.name, {})
+            for f in fields:
+                if got[f] != want.get(f):
+                    problems.append(f"{spec.name}: {f} is {got[f]}, ratchet.json says {want.get(f)}")
+            print(f"{spec.name}: {v['verified']} verified, {v['errors']} errors, {v['seconds']}s", flush=True)
+    finally:
+        for p, data in saved.items():
+            p.write_bytes(data)
+    finish(problems, "ratchet.json reproduced")
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--check", action="store_true")
+    ap.add_argument("--quick", action="store_true")
+    ap.add_argument("--only", nargs="+", default=[], choices=[s.name for s in CRATE_SPECS])
+    ap.add_argument("--skip-tests", action="store_true")
+    args = ap.parse_args()
+    if (args.only or args.skip_tests) and not args.check:
+        ap.error("--only and --skip-tests need --check: a partial run must never write ratchet.json")
+    if args.quick:
+        finish(recorded_problems(json.loads((ROOT / "ratchet.json").read_text())), "ratchet.json is current")
+    elif args.check:
+        check(args.only, args.skip_tests)
+    else:
+        measure()
+
+
+def measure() -> None:
+    env = stack_env()
+    subprocess.run([str(ROOT / "scripts/use-local-verus.sh")], env=env, check=True, capture_output=True)
+    digest = inputs_sha256()
+    target_dir = target_directory(env)
+    if problems := graph_problems(env):
+        finish(problems, "")
 
     LOGS.mkdir(parents=True, exist_ok=True)
     EXAMPLES_DIR.mkdir(parents=True, exist_ok=True)
@@ -524,7 +869,7 @@ def main() -> None:
         "generator": "browser/scripts/ratchet.py",
         "crates": [],
     }
-    _, vv, _ = run(["verus", "--version"], env)
+    _, vv, _ = run([str(Path(env["VERUS_RELEASE"]) / "verus"), "--version"], env)
     out["verus"] = next((l.split(":", 1)[1].strip() for l in vv.splitlines() if "Version" in l), None)
 
     # 1. Run J0 ESMeta -> Verus compiler self-tests and byte-exact reproducibility check
@@ -557,44 +902,24 @@ def main() -> None:
 
     for spec in CRATE_SPECS:
         path = ROOT / spec.rel_dir
-        (path / "src" / "lib.rs").touch()  # force genuine Verus re-verification of this crate
-
         report_path = (path / spec.report_rel) if spec.report_rel else None
         if report_path and report_path.exists():
             report_path.unlink()  # force `cargo test` to regenerate report.json/benchmarks.json live
 
-        v_cmd = [cargo_verus, "verify", "-p", spec.name, "--", "--triggers-mode", "silent"]
-        code, text, secs = run(v_cmd, env)
-        m = RESULT_RE.findall(text)
-        verified = int(m[-1][0]) if m else None
-        errors = int(m[-1][1]) if m else None
-
-        t_cmd = ["cargo", "test", "-p", spec.name]
-        if spec.release_tests:
-            t_cmd.append("--release")
-        if spec.nocapture_tests:
-            t_cmd.extend(["--", "--nocapture"])
-        tcode, ttext, tsecs = run(t_cmd, env)
+        v = verify_crate(spec, env, target_dir)
+        t = run_tests(spec, env)
         if spec.name == "vurl":
-            vurl_test_stdout = ttext
-        tests = TEST_RE.findall(ttext)
-        tests_passed = sum(int(a) for a, _ in tests) if tests else None
-        tests_failed = sum(int(b) for _, b in tests) if tests else None
-
-        # Log command with portable `$VERUS_RELEASE/cargo-verus` display
-        display_v_cmd = ["$VERUS_RELEASE/cargo-verus", *v_cmd[1:]]
+            vurl_test_stdout = t["text"]
+        out.setdefault("verus_commit", v["verus_commit"])
         crate_log = write_log(
             f"browser-{spec.name}.log",
             [
-                (display_v_cmd, ROOT, code, secs, text),
-                (t_cmd, ROOT, tcode, tsecs, ttext),
+                (v["cmd"], ROOT, v["exit"], v["seconds"], v["log_text"]),
+                (t["cmd"], ROOT, t["exit"], t["seconds"], t["text"]),
             ],
         )
-
-        srcs = sorted(path.glob("src/**/*.rs"))
-        body = "\n".join(p.read_text() for p in srcs)
-        trusted = {k: len(r.findall(body)) for k, r in MARKERS.items()}
-        source_lines = sum(len(p.read_text().splitlines()) for p in srcs)
+        for x in v["problems"]:
+            print(f"FAIL {spec.name}: {x}", file=sys.stderr)
 
         showcase_src = path / spec.showcase_rel
         copied_name = f"browser-{spec.name}-{showcase_src.name}"
@@ -608,19 +933,24 @@ def main() -> None:
             "step": spec.step,
             "scope": spec.scope,
             "theorem": spec.theorem,
-            "verify_exit": code,
-            "exit_code": code,
-            # the last results line is the crate itself (earlier lines are dependencies like vstd)
-            "verified": verified,
-            "errors": errors,
-            "verify_seconds": secs,
-            "trusted": trusted,
-            "source_lines": source_lines,
-            "tests_exit": tcode,
-            "tests_passed": tests_passed,
-            "tests_failed": tests_failed,
-            "test_seconds": tsecs,
+            "verify_exit": v["exit"],
+            "exit_code": v["exit"],
+            # Verus's own count for this crate: queries that verified, so more than one per function
+            "verified": v["verified"],
+            "errors": v["errors"],
+            "no_cheating": v["no_cheating"],
+            # functions Verus sent to the solver, by mode (a vacuous lemma shows up as "proof")
+            "functions_by_mode": v["functions_by_mode"],
+            "verify_seconds": v["seconds"],
+            "trusted": v["trusted"],
+            "vacuous_requires": v["vacuous_requires"],
+            "source_lines": v["source_lines"],
+            "tests_exit": t["exit"],
+            "tests_passed": t["passed"],
+            "tests_failed": t["failed"],
+            "test_seconds": t["seconds"],
             "log": crate_log,
+            "log_sha256": sha256_file(SITE / crate_log),
             "proof_source": proof_source,
         }
         out["crates"].append(crate_entry)
@@ -632,25 +962,18 @@ def main() -> None:
                 "step": spec.step,
                 "file": repo_rel_file,
                 "source": proof_source,
-                "verified": verified,
-                "errors": errors,
-                "seconds": secs,
+                "verified": v["verified"],
+                "errors": v["errors"],
+                "seconds": v["seconds"],
                 "log": crate_log,
-                "exit_code": code,
+                "exit_code": v["exit"],
             }
         )
 
         if report_path:
             reports[spec.name] = load_fresh_json(report_path)
 
-        if (
-            code != 0
-            or verified is None
-            or errors != 0
-            or sum(trusted.values()) != 0
-            or tcode != 0
-            or (tests_failed or 0) != 0
-        ):
+        if v["problems"] or t["exit"] != 0 or (t["failed"] or 0) != 0:
             any_failure = True
 
     crates_out = out["crates"]
@@ -660,6 +983,11 @@ def main() -> None:
         "verified": sum(c["verified"] for c in crates_out if c["verified"] is not None),
         "errors": sum(c["errors"] for c in crates_out if c["errors"] is not None),
         "trusted": {k: sum(c["trusted"][k] for c in crates_out) for k in MARKERS},
+        "functions_by_mode": {
+            k: sum(c["functions_by_mode"][k] for c in crates_out if c["functions_by_mode"])
+            for k in ("exec", "proof", "spec")
+        },
+        "vacuous_requires": sum(c["vacuous_requires"] for c in crates_out),
         "source_lines": sum(c["source_lines"] for c in crates_out),
         "tests_passed": sum(c["tests_passed"] for c in crates_out if c["tests_passed"] is not None),
         "tests_failed": sum(c["tests_failed"] for c in crates_out if c["tests_failed"] is not None),
@@ -677,6 +1005,10 @@ def main() -> None:
     out["vm_benchmarks_geomean_speedup"] = reports["vjs_vm"].get("geometric_mean_speedup")
     out["proof_showcase"] = proof_showcase
 
+    if inputs_sha256() != digest:
+        raise RuntimeError("browser/ inputs changed during the run; not writing ratchet.json")
+    out["inputs_sha256"] = digest
+    out["spec_pins"] = spec_pins()
     (ROOT / "ratchet.json").write_text(json.dumps(out, indent=2) + "\n")
     print(
         json.dumps(
