@@ -99,7 +99,7 @@ PARTS 零件表  +  几何（kit 积木）  +  MachineDef（镜头/步骤/轴线
 
 ---
 
-## 自带四台范例
+## 自带五台范例
 
 | 机器 | 零件 | 学什么 |
 |---|---|---|
@@ -107,8 +107,10 @@ PARTS 零件表  +  几何（kit 积木）  +  MachineDef（镜头/步骤/轴线
 | **MacBook Pro 14"** `macbook` | 16 | 超薄分层堆叠体：分层拆解、厚度放大技巧 |
 | **特斯拉 Model 3** `model3` | 20 | 侧视轮廓拉伸的复杂装配：滑板底盘、纵剖视 |
 | **涡桨发动机** `turboprop` | 31 | PT6A/T56 级：双转子联动、三波爆炸、6 个子装配、BOM 引线轨气泡与图版尺寸 |
+| **上海磁浮** `maglev` | 31 | SMT / Transrapid TR08：EMS 悬浮 + 长定子 LSM 驱动、三波爆炸、6 个子装配、MV 码 BOM 引线轨 |
 
 ![Turboprop 图版](docs/screenshots/turboprop-sheet.png)
+![Maglev 图版](docs/screenshots/maglev-sheet.png)
 
 ```bash
 npm run dev
@@ -117,6 +119,7 @@ npm run dev
 #   http://localhost:5173/#macbook
 #   http://localhost:5173/#model3
 #   http://localhost:5173/#turboprop
+#   http://localhost:5173/#maglev
 ```
 
 ---
@@ -136,7 +139,7 @@ npm run dev
 ├── src/
 │   ├── scene/              渲染核心：ink.ts（着色器）、InkRenderer、Part、geometry
 │   ├── drawing/            三视图排版（第一角）与 SVG 图层
-│   └── machines/           kit.tsx 建模积木 + types.ts + 四台范例
+│   └── machines/           kit.tsx 建模积木 + types.ts + 五台范例
 ├── scripts/                自检、缩略图、字体子集
 └── install.sh
 ```
