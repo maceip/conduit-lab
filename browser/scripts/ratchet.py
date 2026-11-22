@@ -231,20 +231,23 @@ def rust_tokens(text: str) -> list[str]:
     return out
 
 
-GHOST_IMPORT = ["#", "[", "cfg", "(", "verus_keep_ghost", ")", "]", "use"]
+GHOST_CFG = ["#", "[", "cfg", "(", "verus_keep_ghost", ")", "]"]
 
 
 def scan(tokens: list[str]) -> tuple[dict[str, int], int]:
     """(trusted markers by kind, contracts whose precondition is literally `false`).
 
     Verus verifies one configuration, so conditional compilation can ship code it never saw. The one
-    use accepted is `#[cfg(verus_keep_ghost)] use`, which imports names that exist only for Verus.
+    use accepted is on an import, `#[cfg(verus_keep_ghost)] [pub] use`, because ghost names vanish
+    from a normal build. This does not check that the imported names are in fact ghost.
     A vacuous contract verifies trivially and would only pad the count; an unsatisfiable precondition
     spelled any other way is not detected."""
     trusted = {k: sum(t in names for t in tokens) if names else 0 for k, names in MARKERS.items()}
     trusted["external_spec"] = sum(t.startswith("external_") and t != "external_body" for t in tokens)
     trusted["hidden_from_verus"] = sum(
-        t in ("cfg", "cfg_attr", "cfg_select") and (i < 2 or tokens[i - 2 : i + 6] != GHOST_IMPORT)
+        t in ("cfg", "cfg_attr", "cfg_select")
+        and not (i >= 2 and tokens[i - 2 : i + 5] == GHOST_CFG and tokens[i + 5 : i + 7] == ["pub", "use"])
+        and not (i >= 2 and tokens[i - 2 : i + 5] == GHOST_CFG and tokens[i + 5 : i + 6] == ["use"])
         for i, t in enumerate(tokens)
     )
     vacuous = sum(

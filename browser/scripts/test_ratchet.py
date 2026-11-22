@@ -180,6 +180,12 @@ class RatchetTest(unittest.TestCase):
         self.assertEqual(self.r.scan(toks)[0], {k: 0 for k in self.r.MARKERS})
         self.assertIn("f", toks)
 
+    def test_only_imports_may_be_verus_only(self):
+        ghost = "#[cfg(verus_keep_ghost)]\n"
+        for item, n in (("use a::b;", 0), ("pub use a::{b, c};", 0), ("pub fn f() {}", 1), ("pub mod m;", 1)):
+            with self.subTest(item):
+                self.assertEqual(self.r.scan(self.r.rust_tokens(ghost + item))[0]["hidden_from_verus"], n)
+
     def test_vacuous_lemma(self):
         self.evil_module("verus!{ pub proof fn lemma_bonus()\n    requires\n        false,\n    ensures 1 == 2 {} }\n")
         self.assertRejected(self.verify()["problems"], "`requires false`")
