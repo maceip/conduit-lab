@@ -1,9 +1,9 @@
 $ $VERUS_RELEASE/cargo-verus verify -p vurl --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 1.77
+# exit: 0  seconds: 1.61
 
     Checking vurl v0.1.0 (~/conduit-lab/browser/url)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.67s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.52s
 
 # from Verus --output-json --time-expanded
 {
@@ -271,7 +271,7 @@ $ $VERUS_RELEASE/cargo-verus verify -p vurl --fwd-verus-args-to roots -- --trigg
 
 $ cargo test -p vurl -- --nocapture
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 1.89
+# exit: 0  seconds: 1.88
 
 
 running 0 tests
@@ -280,10 +280,10 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 
 running 6 tests
-test form_urlencoded_matches_form_urlencoded_crate ... ok
 test c0_control_matches_percent_encoding_crate ... ok
-test tables_pin_all_8_sets_for_all_256_bytes ... ok
+test form_urlencoded_matches_form_urlencoded_crate ... ok
 test url_crate_agrees_on_path_set_except_caret ... ok
+test tables_pin_all_8_sets_for_all_256_bytes ... ok
 test url_crate_agrees_on_userinfo_set ... ok
 test url_crate_agrees_on_fragment_and_query_sets ... ok
 
@@ -298,12 +298,12 @@ differential: 3726 parsed, 296274 failures
 test differential_ipv6_vs_url_crate ... ok
 test serialize_parse_roundtrip_random ... ok
 
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
 
 
 running 5 tests
-test component_set_matches_encode_uri_component ... ok
 test spec_examples ... ok
+test component_set_matches_encode_uri_component ... ok
 WPT IPv4 host cases checked: 49
 test wpt_urltestdata_ipv4_hosts ... ok
 test differential_percent_decode_vs_crate ... ok
@@ -681,9 +681,9 @@ warning: unexpected `cfg` condition name: `verus_keep_ghost`
    = help: or consider adding `println!("cargo::rustc-check-cfg=cfg(verus_keep_ghost)");` to the top of the `build.rs`
    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
 
-warning: `vurl` (lib) generated 4 warnings (2 duplicates)
-warning: `vurl` (lib test) generated 4 warnings (2 duplicates)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.39s
+warning: `vurl` (lib) generated 4 warnings
+warning: `vurl` (lib test) generated 4 warnings (4 duplicates)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.33s
      Running unittests src/lib.rs (target/debug/build/vurl/e40cd703632f1d02/out/vurl-e40cd703632f1d02)
      Running tests/encode_sets.rs (target/debug/build/vurl/3771d7d77207f500/out/encode_sets-3771d7d77207f500)
      Running tests/ipv6.rs (target/debug/build/vurl/e5b588e228251321/out/ipv6-e5b588e228251321)

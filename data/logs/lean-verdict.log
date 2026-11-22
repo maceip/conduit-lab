@@ -1,6 +1,6 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/verdict
-# exit: 0  seconds: 0.15
+# exit: 0  seconds: 0.16
 
 ⚠ [8/28] Replayed Verdict.Impl.PolicyChrome
 warning: Verdict/Impl/PolicyChrome.lean:191:4: declaration uses `sorry`

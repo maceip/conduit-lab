@@ -1,9 +1,9 @@
 $ $VERUS_RELEASE/cargo-verus verify -p vjs_gc --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 3.58
+# exit: 0  seconds: 3.04
 
     Checking vjs_gc v0.1.0 (~/conduit-lab/browser/vjs-gc)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.47s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.94s
 
 # from Verus --output-json --time-expanded
 {
@@ -966,7 +966,7 @@ $ $VERUS_RELEASE/cargo-verus verify -p vjs_gc --fwd-verus-args-to roots -- --tri
 
 $ cargo test -p vjs_gc
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 1.23
+# exit: 0  seconds: 1.08
 
 
 running 0 tests
@@ -977,8 +977,8 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 running 6 tests
 test provenance_sha256_integrity_check ... ok
 test mark_sweep_gc_stress_and_bfs_oracle ... ok
-test generator_state_machine_v8_differential ... ok
 test proxy_invariants_and_reflect_v8_differential ... ok
+test generator_state_machine_v8_differential ... ok
 test promise_and_async_await_v8_differential ... ok
 test test262_j6_conformance_differential_and_gc_report ... ok
 
@@ -1299,7 +1299,7 @@ warning: negative impls are experimental
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
    Compiling vjs_gc v0.1.0 (~/conduit-lab/browser/vjs-gc)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.53s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.45s
      Running unittests src/lib.rs (target/debug/build/vjs_gc/5102757c44788366/out/vjs_gc-5102757c44788366)
      Running tests/test262_j6.rs (target/debug/build/vjs_gc/188086df72067f68/out/test262_j6-188086df72067f68)
    Doc-tests vjs_gc

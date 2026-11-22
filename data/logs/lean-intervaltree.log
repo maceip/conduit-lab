@@ -1,5 +1,5 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/intervaltree
-# exit: 0  seconds: 0.15
+# exit: 0  seconds: 0.17
 
 Build completed successfully (8 jobs).

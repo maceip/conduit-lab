@@ -1,9 +1,9 @@
 $ $VERUS_RELEASE/cargo-verus verify -p vjs_syntax --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 15.32
+# exit: 0  seconds: 13.27
 
     Checking vjs_syntax v0.1.0 (~/conduit-lab/browser/vjs-syntax)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 15.22s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 13.19s
 
 # from Verus --output-json --time-expanded
 {
@@ -1566,7 +1566,7 @@ $ $VERUS_RELEASE/cargo-verus verify -p vjs_syntax --fwd-verus-args-to roots -- -
 
 $ cargo test -p vjs_syntax
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 1.52
+# exit: 0  seconds: 1.46
 
 
 running 0 tests
@@ -1581,7 +1581,7 @@ test static_ratchet_and_zero_ambient_authority_audit ... ok
 test callexpression_strict_assignment_target_matches_ecma262_and_jsc ... ok
 test test262_provenance_and_differential_suite ... ok
 
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
 
 
 running 0 tests
@@ -1898,7 +1898,7 @@ warning: negative impls are experimental
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
    Compiling vjs_syntax v0.1.0 (~/conduit-lab/browser/vjs-syntax)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.68s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.67s
      Running unittests src/lib.rs (target/debug/build/vjs_syntax/3698e2f233fd4b55/out/vjs_syntax-3698e2f233fd4b55)
      Running tests/test262_parse.rs (target/debug/build/vjs_syntax/d668fe475a1af23d/out/test262_parse-d668fe475a1af23d)
    Doc-tests vjs_syntax

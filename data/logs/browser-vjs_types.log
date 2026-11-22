@@ -1,9 +1,9 @@
 $ $VERUS_RELEASE/cargo-verus verify -p vjs_types --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 8.8
+# exit: 0  seconds: 8.13
 
     Checking vjs_types v0.1.0 (~/conduit-lab/browser/vjs-types)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.70s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.04s
 
 # from Verus --output-json --time-expanded
 {
@@ -1316,7 +1316,7 @@ $ $VERUS_RELEASE/cargo-verus verify -p vjs_types --fwd-verus-args-to roots -- --
 
 $ cargo test -p vjs_types
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 1.73
+# exit: 0  seconds: 1.67
 
 
 running 0 tests
@@ -1334,7 +1334,7 @@ test number_to_string_and_string_to_number_edge_tests ... ok
 test ieee754_classification_comparisons_and_ties_to_even_tests ... ok
 test test262_and_differential_v8_and_f64_suite ... ok
 
-test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.72s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.69s
 
 
 running 0 tests
@@ -1651,7 +1651,7 @@ warning: negative impls are experimental
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
    Compiling vjs_types v0.1.0 (~/conduit-lab/browser/vjs-types)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.49s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.46s
      Running unittests src/lib.rs (target/debug/build/vjs_types/c767fffd6ab1609a/out/vjs_types-c767fffd6ab1609a)
      Running tests/test262_and_v8.rs (target/debug/build/vjs_types/bea3c03c10a70756/out/test262_and_v8-bea3c03c10a70756)
    Doc-tests vjs_types

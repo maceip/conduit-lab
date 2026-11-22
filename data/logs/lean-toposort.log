@@ -1,5 +1,5 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/toposort
-# exit: 0  seconds: 0.16
+# exit: 0  seconds: 0.17
 
 Build completed successfully (9 jobs).

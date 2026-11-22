@@ -1,6 +1,6 @@
 $ python3 ~/conduit-lab/browser/scripts/esmeta_to_verus.py --self-test
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 0.07
+# exit: 0  seconds: 0.06
 
 test_cfg_every_operation_has_entry_and_exit_blocks (__main__.TestEsmetaToVerusCompiler.test_cfg_every_operation_has_entry_and_exit_blocks) ... ok
 test_completion_shorthands_question_and_bang (__main__.TestEsmetaToVerusCompiler.test_completion_shorthands_question_and_bang) ... ok
@@ -14,7 +14,7 @@ test_topological_call_graph_ordering (__main__.TestEsmetaToVerusCompiler.test_to
 test_warblre_interleaved_comments_and_zero_trusted_markers (__main__.TestEsmetaToVerusCompiler.test_warblre_interleaved_comments_and_zero_trusted_markers) ... ok
 
 ----------------------------------------------------------------------
-Ran 10 tests in 0.020s
+Ran 10 tests in 0.019s
 
 OK
 

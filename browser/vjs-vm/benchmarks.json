@@ -2,9 +2,9 @@
   "all_verified_equal": true,
   "benchmarks": [
     {
-      "ast_ms": 116.15,
+      "ast_ms": 111.678,
       "bytecode_instructions": 19,
-      "bytecode_ms": 59.032,
+      "bytecode_ms": 56.707,
       "computed_result": 317811,
       "iterations": 3,
       "name": "fib(28)",
@@ -12,60 +12,60 @@
       "speedup": 1.97
     },
     {
-      "ast_ms": 22.832,
+      "ast_ms": 21.713,
       "bytecode_instructions": 70,
-      "bytecode_ms": 14.059,
+      "bytecode_ms": 13.93,
       "computed_result": 1028,
       "iterations": 40,
       "name": "sieve(8192)",
       "result_verified_equal": true,
-      "speedup": 1.62
+      "speedup": 1.56
     },
     {
-      "ast_ms": 45.681,
+      "ast_ms": 42.446,
       "bytecode_instructions": 30,
-      "bytecode_ms": 14.874,
+      "bytecode_ms": 14.025,
       "computed_result": 7,
       "iterations": 10,
       "name": "tak(18, 12, 6)",
       "result_verified_equal": true,
-      "speedup": 3.07
+      "speedup": 3.03
     },
     {
-      "ast_ms": 35.435,
+      "ast_ms": 33.205,
       "bytecode_instructions": 49,
-      "bytecode_ms": 24.524,
+      "bytecode_ms": 21.845,
       "computed_result": 25770,
       "iterations": 20,
       "name": "gcd_sum(5000)",
       "result_verified_equal": true,
-      "speedup": 1.44
+      "speedup": 1.52
     },
     {
-      "ast_ms": 76.401,
+      "ast_ms": 72.288,
       "bytecode_instructions": 54,
-      "bytecode_ms": 44.648,
+      "bytecode_ms": 44.042,
       "computed_result": 181,
       "iterations": 15,
       "name": "collatz_max(2000)",
       "result_verified_equal": true,
-      "speedup": 1.71
+      "speedup": 1.64
     },
     {
-      "ast_ms": 38.644,
+      "ast_ms": 36.28,
       "bytecode_instructions": 106,
-      "bytecode_ms": 24.038,
+      "bytecode_ms": 26.947,
       "computed_result": 726008870,
       "iterations": 20,
       "name": "bubble_sort(256)",
       "result_verified_equal": true,
-      "speedup": 1.61
+      "speedup": 1.35
     }
   ],
   "crate": "vjs_vm",
-  "geometric_mean_speedup": 1.84,
+  "geometric_mean_speedup": 1.77,
   "kernel_count": 6,
   "profile": "release",
-  "total_ast_ms": 335.142,
-  "total_bytecode_ms": 181.174
+  "total_ast_ms": 317.611,
+  "total_bytecode_ms": 177.496
 }

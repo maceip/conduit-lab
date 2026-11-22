@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-22T08:22:20+00:00",
+  "generated_at": "2026-11-22T09:13:42+00:00",
   "generator": "browser/scripts/ratchet.py",
   "crates": [
     {
@@ -18,7 +18,7 @@
         "proof": 15,
         "spec": 13
       },
-      "verify_seconds": 1.77,
+      "verify_seconds": 1.61,
       "trusted": {
         "assume": 0,
         "admit": 0,
@@ -36,9 +36,9 @@
       "tests_exit": 0,
       "tests_passed": 15,
       "tests_failed": 0,
-      "test_seconds": 1.89,
+      "test_seconds": 1.88,
       "log": "data/logs/browser-vurl.log",
-      "log_sha256": "95d187137f7ae2f9e59a7fdd7ee97687e0d0194679ee44a0dc9a632daeacf808",
+      "log_sha256": "e89c63ad65e0a422dde36f946337cdfd7e67cd024a58822bbebaf47b9e8a177f",
       "proof_source": "data/examples/browser-vurl-ipv6.rs"
     },
     {
@@ -57,7 +57,7 @@
         "proof": 62,
         "spec": 24
       },
-      "verify_seconds": 4.25,
+      "verify_seconds": 3.6,
       "trusted": {
         "assume": 0,
         "admit": 0,
@@ -75,9 +75,9 @@
       "tests_exit": 0,
       "tests_passed": 4,
       "tests_failed": 0,
-      "test_seconds": 1.28,
+      "test_seconds": 1.2,
       "log": "data/logs/browser-vjs_spec.log",
-      "log_sha256": "7161f55d148af9d0dd54be31944334208f793c4bdabec186fbce4da9ee285552",
+      "log_sha256": "fd85307c466c0546fa364940a13b85d7058f992c2cd8ff327c297f0647a8d12b",
       "proof_source": "data/examples/browser-vjs_spec-generated.rs"
     },
     {
@@ -96,7 +96,7 @@
         "proof": 86,
         "spec": 35
       },
-      "verify_seconds": 8.8,
+      "verify_seconds": 8.13,
       "trusted": {
         "assume": 0,
         "admit": 0,
@@ -114,9 +114,9 @@
       "tests_exit": 0,
       "tests_passed": 8,
       "tests_failed": 0,
-      "test_seconds": 1.73,
+      "test_seconds": 1.67,
       "log": "data/logs/browser-vjs_types.log",
-      "log_sha256": "80215b864b54250ebdcdeafce5df2974e430c5e5eadf8f3503c6d1454a96d0b4",
+      "log_sha256": "c183543390ee4619c7f1c47c1af04d9a5b9bc38cb92e72747cca3bf905fb0f9f",
       "proof_source": "data/examples/browser-vjs_types-ops.rs"
     },
     {
@@ -135,7 +135,7 @@
         "proof": 77,
         "spec": 40
       },
-      "verify_seconds": 5.54,
+      "verify_seconds": 4.59,
       "trusted": {
         "assume": 0,
         "admit": 0,
@@ -153,9 +153,9 @@
       "tests_exit": 0,
       "tests_passed": 10,
       "tests_failed": 0,
-      "test_seconds": 1.34,
+      "test_seconds": 1.29,
       "log": "data/logs/browser-vjs_object.log",
-      "log_sha256": "88e53c3ce39627b0bb09f5d792d48c28148f645c659d92dd637fc433381948d6",
+      "log_sha256": "d6193a3ff196ccc7d5ef2cc1da5efc5932da35a550ed11e0fe3fcc4cd59ff04b",
       "proof_source": "data/examples/browser-vjs_object-invariants_proof.rs"
     },
     {
@@ -174,7 +174,7 @@
         "proof": 40,
         "spec": 46
       },
-      "verify_seconds": 15.32,
+      "verify_seconds": 13.27,
       "trusted": {
         "assume": 0,
         "admit": 0,
@@ -192,9 +192,9 @@
       "tests_exit": 0,
       "tests_passed": 5,
       "tests_failed": 0,
-      "test_seconds": 1.52,
+      "test_seconds": 1.46,
       "log": "data/logs/browser-vjs_syntax.log",
-      "log_sha256": "cd65bb3cb36aed4b9d005b1d34b5ff3fe202c192b281442e3aa930714d15c180",
+      "log_sha256": "12b407a3b64c663425fd7f8d8fbcfa41465b693a3a58a453615778969b394290",
       "proof_source": "data/examples/browser-vjs_syntax-token.rs"
     },
     {
@@ -213,7 +213,7 @@
         "proof": 100,
         "spec": 185
       },
-      "verify_seconds": 56.83,
+      "verify_seconds": 48.83,
       "trusted": {
         "assume": 0,
         "admit": 0,
@@ -231,9 +231,9 @@
       "tests_exit": 0,
       "tests_passed": 7,
       "tests_failed": 0,
-      "test_seconds": 9.76,
+      "test_seconds": 9.36,
       "log": "data/logs/browser-vjs.log",
-      "log_sha256": "45922a00a5c172311e8cf0e2af4bc29b47ac3827bb159db7cac30efeae085bc9",
+      "log_sha256": "4547e8a5fe7b85bc127478d01b3a5b0abb335dcf1acd13e07fcac0ef603cf691",
       "proof_source": "data/examples/browser-vjs-env.rs"
     },
     {
@@ -252,7 +252,7 @@
         "proof": 79,
         "spec": 62
       },
-      "verify_seconds": 12.3,
+      "verify_seconds": 10.7,
       "trusted": {
         "assume": 0,
         "admit": 0,
@@ -270,9 +270,9 @@
       "tests_exit": 0,
       "tests_passed": 13,
       "tests_failed": 0,
-      "test_seconds": 1.57,
+      "test_seconds": 1.46,
       "log": "data/logs/browser-vjs_webidl.log",
-      "log_sha256": "b0cb525dce247da237304c019a225505cfd61d6cfb9084e12bfe29089d311ce0",
+      "log_sha256": "d77907f9600e8a36e05ac57bc77c75e2356dc224ce2815d34c47f4bbaab38f21",
       "proof_source": "data/examples/browser-vjs_webidl-dispatch.rs"
     },
     {
@@ -291,7 +291,7 @@
         "proof": 91,
         "spec": 53
       },
-      "verify_seconds": 4.88,
+      "verify_seconds": 3.82,
       "trusted": {
         "assume": 0,
         "admit": 0,
@@ -305,13 +305,13 @@
         "unsafe": 0
       },
       "vacuous_requires": 0,
-      "source_lines": 10931,
+      "source_lines": 10981,
       "tests_exit": 0,
       "tests_passed": 7,
       "tests_failed": 0,
-      "test_seconds": 1.33,
+      "test_seconds": 1.2,
       "log": "data/logs/browser-vjs_builtins.log",
-      "log_sha256": "b464e16d797e9676b8fe366767563798433b79de6601b8e3edf0b6de7ceea8e5",
+      "log_sha256": "81067910e59be68d0829f0d121ddacc7c8fe970cd95889d93748abb40733993a",
       "proof_source": "data/examples/browser-vjs_builtins-json.rs"
     },
     {
@@ -330,7 +330,7 @@
         "proof": 27,
         "spec": 11
       },
-      "verify_seconds": 3.58,
+      "verify_seconds": 3.04,
       "trusted": {
         "assume": 0,
         "admit": 0,
@@ -348,9 +348,9 @@
       "tests_exit": 0,
       "tests_passed": 6,
       "tests_failed": 0,
-      "test_seconds": 1.23,
+      "test_seconds": 1.08,
       "log": "data/logs/browser-vjs_gc.log",
-      "log_sha256": "133070aad6c8de8c793b6e862b63a091c69880dcae945e009bb187c9ee6df32d",
+      "log_sha256": "c740784742b50be6039141589b5ec92dd4c699162cd3f167dd7eb35bb5b61d54",
       "proof_source": "data/examples/browser-vjs_gc-gc.rs"
     },
     {
@@ -369,7 +369,7 @@
         "proof": 48,
         "spec": 24
       },
-      "verify_seconds": 17.29,
+      "verify_seconds": 14.46,
       "trusted": {
         "assume": 0,
         "admit": 0,
@@ -387,9 +387,9 @@
       "tests_exit": 0,
       "tests_passed": 2,
       "tests_failed": 0,
-      "test_seconds": 1.66,
+      "test_seconds": 1.72,
       "log": "data/logs/browser-vjs_vm.log",
-      "log_sha256": "ae3a94f4cedc74cc7beb51c40f7ecb2b5ded74c428c6a7c459225c2e9181db95",
+      "log_sha256": "3e2f52a495fa9f1709c2f4766b3fbaa29940acbc0f0e9fcebc7bfb7ed191d213",
       "proof_source": "data/examples/browser-vjs_vm-compiler_proof.rs"
     },
     {
@@ -408,7 +408,7 @@
         "proof": 19,
         "spec": 10
       },
-      "verify_seconds": 3.18,
+      "verify_seconds": 2.62,
       "trusted": {
         "assume": 0,
         "admit": 0,
@@ -426,9 +426,9 @@
       "tests_exit": 0,
       "tests_passed": 3,
       "tests_failed": 0,
-      "test_seconds": 2.26,
+      "test_seconds": 1.99,
       "log": "data/logs/browser-vwasm.log",
-      "log_sha256": "71e99f5a0dcc26e571c666126d6c5305684b345215eb8e86affea6234869429a",
+      "log_sha256": "ffdd5595cbc33c4d5d5e966fbeb80618366c83f532f878740c96cac41b43c183",
       "proof_source": "data/examples/browser-vwasm-binary.rs"
     }
   ],
@@ -436,7 +436,7 @@
   "esmeta_specgen": {
     "self_test_exit": 0,
     "check_exit": 0,
-    "seconds": 0.12,
+    "seconds": 0.11,
     "log": "data/logs/browser-esmeta-specgen.log"
   },
   "verus_commit": "0dab219272ac2353320bd177ebb3929453b90a9e",
@@ -462,11 +462,11 @@
       "spec": 503
     },
     "vacuous_requires": 0,
-    "source_lines": 120990,
+    "source_lines": 121040,
     "tests_passed": 80,
     "tests_failed": 0,
-    "verify_seconds": 133.74,
-    "test_seconds": 25.57
+    "verify_seconds": 114.67,
+    "test_seconds": 24.31
   },
   "j_steps": [
     {
@@ -478,7 +478,7 @@
       "errors": 0,
       "trusted": 0,
       "tests_passed": 4,
-      "verify_seconds": 4.25,
+      "verify_seconds": 3.6,
       "crate": "vjs_spec",
       "test262_passed": 191,
       "test262_total": 191
@@ -492,7 +492,7 @@
       "errors": 0,
       "trusted": 0,
       "tests_passed": 8,
-      "verify_seconds": 8.8,
+      "verify_seconds": 8.13,
       "crate": "vjs_types",
       "test262_passed": 165,
       "test262_total": 165
@@ -506,7 +506,7 @@
       "errors": 0,
       "trusted": 0,
       "tests_passed": 10,
-      "verify_seconds": 5.54,
+      "verify_seconds": 4.59,
       "crate": "vjs_object",
       "test262_passed": 100,
       "test262_total": 100
@@ -520,7 +520,7 @@
       "errors": 0,
       "trusted": 0,
       "tests_passed": 5,
-      "verify_seconds": 15.32,
+      "verify_seconds": 13.27,
       "crate": "vjs_syntax",
       "test262_passed": 180,
       "test262_total": 180
@@ -534,7 +534,7 @@
       "errors": 0,
       "trusted": 0,
       "tests_passed": 7,
-      "verify_seconds": 56.83,
+      "verify_seconds": 48.83,
       "crate": "vjs",
       "test262_passed": 130,
       "test262_total": 130
@@ -548,7 +548,7 @@
       "errors": 0,
       "trusted": 0,
       "tests_passed": 13,
-      "verify_seconds": 12.3,
+      "verify_seconds": 10.7,
       "crate": "vjs_webidl",
       "test262_passed": 153,
       "test262_total": 153
@@ -562,7 +562,7 @@
       "errors": 0,
       "trusted": 0,
       "tests_passed": 7,
-      "verify_seconds": 4.88,
+      "verify_seconds": 3.82,
       "crate": "vjs_builtins",
       "test262_passed": 131,
       "test262_total": 131
@@ -576,7 +576,7 @@
       "errors": 0,
       "trusted": 0,
       "tests_passed": 6,
-      "verify_seconds": 3.58,
+      "verify_seconds": 3.04,
       "crate": "vjs_gc",
       "test262_passed": 51,
       "test262_total": 51
@@ -590,7 +590,7 @@
       "errors": 0,
       "trusted": 0,
       "tests_passed": 5,
-      "verify_seconds": 20.47,
+      "verify_seconds": 17.08,
       "crates": [
         "vjs_vm",
         "vwasm"
@@ -946,53 +946,53 @@
     {
       "name": "fib(28)",
       "iterations": 3,
-      "ast_ms": 116.15,
-      "bytecode_ms": 59.032,
+      "ast_ms": 111.678,
+      "bytecode_ms": 56.707,
       "speedup": 1.97,
       "result_verified_equal": true
     },
     {
       "name": "sieve(8192)",
       "iterations": 40,
-      "ast_ms": 22.832,
-      "bytecode_ms": 14.059,
-      "speedup": 1.62,
+      "ast_ms": 21.713,
+      "bytecode_ms": 13.93,
+      "speedup": 1.56,
       "result_verified_equal": true
     },
     {
       "name": "tak(18, 12, 6)",
       "iterations": 10,
-      "ast_ms": 45.681,
-      "bytecode_ms": 14.874,
-      "speedup": 3.07,
+      "ast_ms": 42.446,
+      "bytecode_ms": 14.025,
+      "speedup": 3.03,
       "result_verified_equal": true
     },
     {
       "name": "gcd_sum(5000)",
       "iterations": 20,
-      "ast_ms": 35.435,
-      "bytecode_ms": 24.524,
-      "speedup": 1.44,
+      "ast_ms": 33.205,
+      "bytecode_ms": 21.845,
+      "speedup": 1.52,
       "result_verified_equal": true
     },
     {
       "name": "collatz_max(2000)",
       "iterations": 15,
-      "ast_ms": 76.401,
-      "bytecode_ms": 44.648,
-      "speedup": 1.71,
+      "ast_ms": 72.288,
+      "bytecode_ms": 44.042,
+      "speedup": 1.64,
       "result_verified_equal": true
     },
     {
       "name": "bubble_sort(256)",
       "iterations": 20,
-      "ast_ms": 38.644,
-      "bytecode_ms": 24.038,
-      "speedup": 1.61,
+      "ast_ms": 36.28,
+      "bytecode_ms": 26.947,
+      "speedup": 1.35,
       "result_verified_equal": true
     }
   ],
-  "vm_benchmarks_geomean_speedup": 1.84,
+  "vm_benchmarks_geomean_speedup": 1.77,
   "proof_showcase": [
     {
       "label": "vurl \u00b7 ipv6.rs",
@@ -1002,7 +1002,7 @@
       "source": "data/examples/browser-vurl-ipv6.rs",
       "verified": 65,
       "errors": 0,
-      "seconds": 1.77,
+      "seconds": 1.61,
       "log": "data/logs/browser-vurl.log",
       "exit_code": 0
     },
@@ -1014,7 +1014,7 @@
       "source": "data/examples/browser-vjs_spec-generated.rs",
       "verified": 271,
       "errors": 0,
-      "seconds": 4.25,
+      "seconds": 3.6,
       "log": "data/logs/browser-vjs_spec.log",
       "exit_code": 0
     },
@@ -1026,7 +1026,7 @@
       "source": "data/examples/browser-vjs_types-ops.rs",
       "verified": 504,
       "errors": 0,
-      "seconds": 8.8,
+      "seconds": 8.13,
       "log": "data/logs/browser-vjs_types.log",
       "exit_code": 0
     },
@@ -1038,7 +1038,7 @@
       "source": "data/examples/browser-vjs_object-invariants_proof.rs",
       "verified": 371,
       "errors": 0,
-      "seconds": 5.54,
+      "seconds": 4.59,
       "log": "data/logs/browser-vjs_object.log",
       "exit_code": 0
     },
@@ -1050,7 +1050,7 @@
       "source": "data/examples/browser-vjs_syntax-token.rs",
       "verified": 364,
       "errors": 0,
-      "seconds": 15.32,
+      "seconds": 13.27,
       "log": "data/logs/browser-vjs_syntax.log",
       "exit_code": 0
     },
@@ -1062,7 +1062,7 @@
       "source": "data/examples/browser-vjs-env.rs",
       "verified": 1179,
       "errors": 0,
-      "seconds": 56.83,
+      "seconds": 48.83,
       "log": "data/logs/browser-vjs.log",
       "exit_code": 0
     },
@@ -1074,7 +1074,7 @@
       "source": "data/examples/browser-vjs_webidl-dispatch.rs",
       "verified": 463,
       "errors": 0,
-      "seconds": 12.3,
+      "seconds": 10.7,
       "log": "data/logs/browser-vjs_webidl.log",
       "exit_code": 0
     },
@@ -1086,7 +1086,7 @@
       "source": "data/examples/browser-vjs_builtins-json.rs",
       "verified": 355,
       "errors": 0,
-      "seconds": 4.88,
+      "seconds": 3.82,
       "log": "data/logs/browser-vjs_builtins.log",
       "exit_code": 0
     },
@@ -1098,7 +1098,7 @@
       "source": "data/examples/browser-vjs_gc-gc.rs",
       "verified": 233,
       "errors": 0,
-      "seconds": 3.58,
+      "seconds": 3.04,
       "log": "data/logs/browser-vjs_gc.log",
       "exit_code": 0
     },
@@ -1110,7 +1110,7 @@
       "source": "data/examples/browser-vjs_vm-compiler_proof.rs",
       "verified": 116,
       "errors": 0,
-      "seconds": 17.29,
+      "seconds": 14.46,
       "log": "data/logs/browser-vjs_vm.log",
       "exit_code": 0
     },
@@ -1122,12 +1122,12 @@
       "source": "data/examples/browser-vwasm-binary.rs",
       "verified": 181,
       "errors": 0,
-      "seconds": 3.18,
+      "seconds": 2.62,
       "log": "data/logs/browser-vwasm.log",
       "exit_code": 0
     }
   ],
-  "inputs_sha256": "08eea53246b0b0a2033a5bc8e7a0ff8b428585fbbe6bb69851dba3b95483ffc3",
+  "inputs_sha256": "f153cc852e2d827edd925ca0f2d2e72ab5bfd86a199b646a759e6aee84b5082d",
   "spec_pins": [
     "WebAssembly/spec@977f97014c962f7bd1291fcc6d28b41a924882bf",
     "tc39/ecma262@74c33d406ec1763ca9ee5ad9165571661649d6e6",
