@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { useMachine } from '../machines';
+import { motion } from '../state';
 import type { BomCallout, DimensionDef } from '../machines/types';
 import { useStudio } from '../state';
 import { useDrawing } from './DrawingRig';
@@ -101,19 +102,55 @@ function Dim({ layout, d }: { layout: DrawingLayout; d: DimensionDef }) {
   );
 }
 
-/** BOM balloon: number + leader, lined up along the top of the front view. */
-function Balloon({ layout, b, i, index, name, tint }: { layout: DrawingLayout; b: BomCallout; i: number; index: number; name: string; tint?: string }) {
-  const p = project(layout, 'front', new THREE.Vector3(...b.p));
+/**
+ * BOM balloon with a leader-rail route: datum dot on the part, a 45° elbow,
+ * then a horizontal landing shelf to the balloon docked on the top rail
+ * (above the front view) or the bottom rail (the gap above the top view).
+ * Anchors ride each part's explosion travel so leaders track parts t=0→1.
+ */
+function Balloon({ layout, b, index, name, tint, explode, stage, unit }: {
+  layout: DrawingLayout;
+  b: BomCallout;
+  index: number;
+  name: string;
+  tint?: string;
+  explode: [number, number, number];
+  stage: [number, number];
+  unit: number;
+}) {
   const front = layout.views.find((v) => v.id === 'front')!.rect;
-  const bx = p.x;
-  const by = Math.max(86, front.y - 22 - (i % 3) * 34);
+  const top = layout.views.find((v) => v.id === 'top')!.rect;
+  // Live anchor: assembled position + the part's own explosion travel.
+  let w = 0;
+  if (stage[1] > stage[0]) {
+    const x = Math.min(1, Math.max(0, (motion.explode - stage[0]) / (stage[1] - stage[0])));
+    w = x * x * (3 - 2 * x);
+  }
+  const live = new THREE.Vector3(
+    b.p[0] + explode[0] * w * unit,
+    b.p[1] + explode[1] * w * unit,
+    b.p[2] + explode[2] * w * unit,
+  );
+  const anchor = project(layout, 'front', live);
+  const rail = b.rail ?? 'top';
+  const railY = rail === 'top'
+    ? Math.max(86, front.y - 24 - (index % 2) * 34)
+    : top.y - 30 - (index % 2) * 34;
+  const [edx, edy] = b.elbowOffset ?? [20, rail === 'top' ? -40 : 46];
+  const elbow = { x: anchor.x + edx, y: railY + (edy > 0 ? -Math.abs(edy) * 0.2 : Math.abs(edy) * 0.2) };
+  const bx = elbow.x + (edx >= 0 ? 26 : -26);
+  const stroke = tint ?? 'currentColor';
   return (
-    <g className="balloon" stroke={tint ?? 'currentColor'} fill="none" opacity={0.9}>
-      <line x1={bx} y1={by + 11} x2={p.x} y2={p.y} strokeWidth={1} />
-      <circle cx={p.x} cy={p.y} r={2.2} fill={tint ?? 'currentColor'} stroke="none" />
-      <circle cx={bx} cy={by} r={12} strokeWidth={1.3} fill="var(--paper, #fff)" />
-      <text x={bx} y={by + 4.2} textAnchor="middle" fill={tint ?? 'currentColor'} stroke="none" fontSize={11.5} fontFamily="inherit">{String(index).padStart(2, '0')}</text>
-      <title>{name}</title>
+    <g className="balloon" stroke={stroke} fill="none" opacity={0.92}>
+      {/* 45° elbow then a horizontal landing shelf */}
+      <polyline points={`${anchor.x},${anchor.y} ${elbow.x},${railY} ${bx},${railY}`} fill="none" strokeWidth={1} />
+      <circle cx={anchor.x} cy={anchor.y} r={2.2} fill={stroke} stroke="none" />
+      <circle cx={bx} cy={railY} r={11} strokeWidth={1.3} fill="var(--paper, #fff)" />
+      <text x={bx} y={railY + 3.9} textAnchor="middle" fill={stroke} stroke="none" fontSize={11} fontFamily="inherit">{String(index).padStart(2, '0')}</text>
+      {b.code && (
+        <text x={bx + (edx >= 0 ? 15 : -15)} y={railY + 3.6} textAnchor={edx >= 0 ? 'start' : 'end'} fill={stroke} stroke="none" fontSize={9} fontFamily="inherit" opacity={0.85}>{b.code}</text>
+      )}
+      <title>{[b.code, name, b.title, b.material, b.qty ? `×${b.qty}` : ''].filter(Boolean).join(' · ')}</title>
     </g>
   );
 }
@@ -136,7 +173,19 @@ export function DrawingSheet() {
         {machine.dimensions?.map((d, i) => <Dim key={i} layout={layout} d={d} />)}
         {machine.bom?.map((b, i) => {
           const part = machine.parts.find((pp) => pp.id === b.id);
-          return part ? <Balloon key={b.id} layout={layout} b={b} i={i} index={part.index} name={part.name} tint={machine.annotations?.[b.id]?.colour} /> : null;
+          return part ? (
+            <Balloon
+              key={b.id}
+              layout={layout}
+              b={b}
+              index={part.index}
+              name={part.name}
+              tint={machine.annotations?.[b.id]?.colour}
+              explode={part.explode}
+              stage={part.stage}
+              unit={machine.unit ?? 1}
+            />
+          ) : null;
         })}
       </svg>
       {layout.views.map((v) => (

@@ -19,7 +19,7 @@ await step(0); await sleep(9000); await shot('1-assembled-t0');
 await step(1); await sleep(6000); await shot('2-section-t0');
 await step(2); await sleep(5000); await shot('3-train');
 await step(3); await sleep(11000); await shot('4-exploded-t1');
-await b.eval(`[...document.querySelectorAll('.views button')].find(b=>b.textContent.trim()==='三视图')?.click()`);
+await b.eval(`[...document.querySelectorAll('.views button')].find(b=>b.textContent.trim()==='Drawing')?.click()`);
 await sleep(3500); await shot('5-sheet');
 const uniq = [...new Set(b.errors)];
 console.log(uniq.length ? 'ERRORS:\n' + uniq.join('\n') : 'ZERO console errors');

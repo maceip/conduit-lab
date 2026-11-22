@@ -74,6 +74,17 @@ export interface DimensionDef {
 export interface BomCallout {
   id: string;
   p: Vec3;
+  /** Sheet code (e.g. TP-101). */
+  code?: string;
+  /** Full title for the leader tooltip. */
+  title?: string;
+  /** Material callout for the leader tooltip / parts table. */
+  material?: string;
+  qty?: number;
+  /** Leader routing dock so leaders never cross the engine core. */
+  rail?: 'top' | 'bottom';
+  /** Elbow offset [dx, dy] in sheet pixels before snapping to the rail. */
+  elbowOffset?: [number, number];
 }
 
 /** Per-part callout annotation: a coloured badge + label (e.g. a V8 component name). */

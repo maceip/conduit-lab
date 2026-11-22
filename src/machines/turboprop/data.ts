@@ -1,4 +1,5 @@
 import type { BoltSetDef, CameraDef, GuideDef, PartAnnotation, PartDef, StepDef, Vec3 } from '../types';
+import { TURBOPROP_BOM_CALLOUTS } from './bom';
 
 /**
  * Turboprop Engine (PT6A / T56 architecture)
@@ -361,24 +362,29 @@ export const DIMENSIONS = [
     to: [TP.rotor1X, TP.AY + TP.rotorTipR[0], 0] as Vec3,
     view: 'left' as const, label: 'Ø420', offset: 64,
   },
+  {
+    from: [TP.hubX, TP.AY - TP.propR, 0] as Vec3,
+    to: [TP.hubX, TP.AY + TP.propR, 0] as Vec3,
+    view: 'left' as const, label: 'Ø2160', offset: 120,
+  },
+  {
+    from: [-1140, TP.AY - 332, 0] as Vec3,
+    to: [-1140, TP.AY + 332, 0] as Vec3,
+    view: 'front' as const, label: 'Ø664', offset: -90,
+  },
 ];
 
-/** Sheet BOM balloons (front-view projection leaders). */
-export const BOM = [
-  { id: 'spinner', p: [TP.spinnerX1 - 160, TP.AY + 210, 0] as Vec3 },
-  { id: 'prop-hub', p: [TP.hubX + 40, TP.AY + 330, 0] as Vec3 },
-  { id: 'gearbox', p: [TP.gearX0 + 180, TP.AY + 320, 0] as Vec3 },
-  { id: 'sun-gear', p: [TP.gearMidX + 40, TP.AY + 120, 0] as Vec3 },
-  { id: 'planet-gears', p: [TP.gearMidX - 120, TP.AY + 190, 0] as Vec3 },
-  { id: 'rotor-1', p: [TP.rotor1X, TP.AY + 250, 0] as Vec3 },
-  { id: 'stator-2', p: [TP.stator2X, TP.AY + 250, 0] as Vec3 },
-  { id: 'impeller', p: [TP.impellerX, TP.AY + 270, 0] as Vec3 },
-  { id: 'combustor-liner', p: [TP.linerX1 - 200, TP.AY + 330, 0] as Vec3 },
-  { id: 'hp-turbine', p: [TP.hpX, TP.AY + 220, 0] as Vec3 },
-  { id: 'pt-disk-2', p: [TP.pt2X, TP.AY + 230, 0] as Vec3 },
-  { id: 'exhaust', p: [TP.exhaustX0 - 120, TP.AY + 190, 0] as Vec3 },
-  { id: 'mount-truss', p: [580, 140, 0] as Vec3 },
-];
+/** Sheet BOM balloons: leader-rail callouts (code / material / qty / rail). */
+export const BOM = TURBOPROP_BOM_CALLOUTS.map((c) => ({
+  id: c.partId,
+  p: c.anchor,
+  code: c.code,
+  title: c.title,
+  material: c.material,
+  qty: c.qty,
+  rail: c.rail,
+  elbowOffset: c.elbowOffset,
+}));
 
 /**
  * V8 / browser-engine ↔ turboprop pairing. Each pair owns a colour: its parts'
