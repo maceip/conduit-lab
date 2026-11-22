@@ -15,7 +15,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  ratchet:
+    uses: ./.github/workflows/ratchet.yml
+
   build:
+    needs: ratchet
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
