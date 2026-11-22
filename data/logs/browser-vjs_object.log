@@ -1,14 +1,1297 @@
-$ $VERUS_RELEASE/cargo-verus verify -p vjs_object -- --triggers-mode silent
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 5.36
+$ $VERUS_RELEASE/cargo-verus verify -p vjs_object --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 5.54
 
-verification results:: 371 verified, 0 errors
-    Checking vjs_object v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs-object)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.26s
+    Checking vjs_object v0.1.0 (~/conduit-lab/browser/vjs-object)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.43s
+
+# from Verus --output-json --time-expanded
+{
+ "verus": {
+  "profile": "release",
+  "version": "0.2026.11.19.0dab219",
+  "platform": {
+   "os": "macos",
+   "arch": "aarch64"
+  },
+  "toolchain": "1.100.0-aarch64-apple-darwin",
+  "commit": "0dab219272ac2353320bd177ebb3929453b90a9e"
+ },
+ "verification-results": {
+  "encountered-error": false,
+  "encountered-vir-error": false,
+  "success": true,
+  "verified": 371,
+  "errors": 0,
+  "is-verifying-entire-crate": true
+ },
+ "functions": [
+  {
+   "function": "vjs_object::array::apply_array_set_length_on_object",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::array_create",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::array_create_checked",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::array_define_own_property",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::array_length",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::array_set_length",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::coerce_array_length_value",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::define_own_property",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::js_set",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::js_set_with_own_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::lemma_array_define_essential",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::lemma_array_define_preserves_wf",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::lemma_array_set_length_essential",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::lemma_array_set_length_preserves_wf",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::lemma_shrink_elements_invariants",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::read_array_length_and_writable",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::shrink_elements_desc_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::spec_shrink_elements_desc",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::array::str_to_array_length",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::CompleteDescriptor::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::CompleteDescriptor::configurable",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::CompleteDescriptor::enumerable",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::CompleteDescriptor::is_accessor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::CompleteDescriptor::is_data",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::PropertyDescriptor::accessor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::PropertyDescriptor::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::PropertyDescriptor::data",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::PropertyDescriptor::empty",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::clone_complete_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::clone_property_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::complete_property_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::complete_to_stored",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::from_complete_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::is_accessor_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::is_compatible_property_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::is_data_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::is_empty_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::is_generic_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::lemma_data_accessor_transition_refused_when_nonconfigurable",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::lemma_descriptor_kind_partition",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::lemma_validate_nonconfigurable_invariants",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::lemma_writable_transition_asymmetry",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::opt_obj_id_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::validate_and_apply_property_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::descriptor::validate_descriptor_fields",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::Heap::alloc_ordinary",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::Heap::check_desc_wf",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::Heap::check_val_wf",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::Heap::is_valid_obj",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::Heap::len",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::Heap::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::JsObject::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::ObjectKind::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::PropertyEntry::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::clone_js_object",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::clone_prop_entries",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::clone_property_entry",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::find_prop_index",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_all_essential_invariants_refl",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_essential_invariants_refl",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_essential_invariants_trans",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_find_prop_from_spec",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_find_prop_spec",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_find_prop_unique_index",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_nonconfigurable_preserved_refl",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_nonconfigurable_preserved_trans",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_object_wf_monotonic",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_proto_chain_acyclic",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_proto_reaches_rank_le",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_remove_lookup",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_set_proto_preserves_proto_wf",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lemma_upsert_lookup",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::lookup_prop_in_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::remove_prop_in_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::spec_find_prop_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::spec_proto_reaches",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::heap::upsert_prop_in_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::lemma_ordinary_define_obj_essential",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::lemma_single_op_preserves_essential_invariants",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::spec_apply_trace",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::theorem_array_define_own_property_invariants",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::theorem_array_set_length_invariants",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::theorem_array_shrink_stops_at_nonconfigurable_element",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::theorem_define_own_property_invariants",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::theorem_delete_invariants",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::theorem_frozen_object_property_immutable",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::theorem_js_set_invariants",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::theorem_ordinary_define_own_property_invariants",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::theorem_prevent_extensions_invariants",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::theorem_prototype_chain_acyclic",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::theorem_set_integrity_level_invariants",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::theorem_set_prototype_of_invariants",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::invariants_proof::theorem_trace_preserves_all_6_1_7_3_invariants",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::GetOutcome::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::IntegrityLevel::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::SetOutcome::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::append_prop_keys",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::apply_ordinary_define_on_object",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::apply_ordinary_delete_on_object",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::collect_sorted_array_indices",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::insert_u32_sorted_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::lemma_collect_sorted_indices_props",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::lemma_delete_preserves_object_wf",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::lemma_frozen_implies_sealed",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::lemma_insert_u32_sorted",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::lemma_lower_bound_u32",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::lemma_ordinary_define_obj_essential",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::lemma_ordinary_define_preserves_props_wf",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::lemma_set_integrity_preserves_wf_and_satisfies_test",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::lemma_validate_preserves_desc_refs_wf",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::object_freeze",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::object_is_frozen",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::object_is_sealed",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::object_seal",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::opt_obj_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::ordinary_define_own_property",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::ordinary_delete",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::ordinary_get",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::ordinary_get_own_property",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::ordinary_get_prototype_of",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::ordinary_has_property",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::ordinary_is_extensible",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::ordinary_own_property_keys",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::ordinary_prevent_extensions",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::ordinary_set",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::ordinary_set_prototype_of",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::ordinary_set_with_own_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::partition_own_keys",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::proto_chain_reaches",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::resolve_set_descriptor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::set_integrity_level",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::spec_collect_sorted_indices",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::spec_collect_string_keys",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::spec_collect_symbol_keys",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::spec_lower_bound_u32",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::spec_ordinary_get",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::spec_ordinary_has_property",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::spec_resolve_set_descriptor",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::ordinary::test_integrity_level",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::NEG_INF_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::POS_INF_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::bignat_bit_len",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::bignat_cmp",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::bignat_from_digits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::bignat_mul_add_u32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::bignat_mul_pow10",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::bignat_shl_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::bignat_sub_ge",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::build_combined_digits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::clone_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::div53",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::ge_pow2",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::is_str_white_space",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_bignat_upper_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_bignat_zero_iff_empty",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_cmp_same_len_sound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_from_digits_subrange_eq",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_msb_u32_pow2_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_normalize_limbs_props",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_pow2_add",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_pow2_mono",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_pow2_pos",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_pow32_eq_pow2",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_pow32_mono",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_strip_leading_zero_lt_when_last_nonzero",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_strip_trailing_zero_last_nonzero",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_u32_shl_eq_pow2",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::lemma_u64_shl_eq_pow2",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::make_bignat_one",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::matches_infinity",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::normalize_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::pack_rational_f64_rne",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::parse_clamped_exp",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::parse_decimal_f64_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::parse_opt_signed_exp",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::parse_radix_f64_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::radix_digit_u16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::scan_dec_digits_end",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_all_radix_digits",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_bignat_from_digits_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_bignat_mul_pow10",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_bignat_shl_bits",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_bignat_val",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_cmp_same_len",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_div53_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_mul_add_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_normalize_limbs",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_parse_exp_int",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_pow32",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_radix_bignat_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_scan_dec_digits_end",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_skip_zero_u16",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_strip_leading_zero_u8",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_strip_trailing_zero_u8",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_sub_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_trim_end_idx",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::spec_trim_start_idx",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::string_to_f64_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::strip_leading_zero_idx",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::strip_trailing_zero_len",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::string_to_f64::theorem_rne_minimizes_distance_ties_to_even",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::CANONICAL_NAN_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::JsBigInt::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::JsError::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::JsVal::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::NEG_ZERO_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::ObjId::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::POS_ZERO_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::PropKey::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::UnsupportedFeature::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::bigint_same_value",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::check_prop_key_wf",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::clone_js_val",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::clone_prop_key",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::clone_vec_u16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::clone_vec_u32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::effective_bigint_len",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::eq_vec_u16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::eq_vec_u32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::f64_bits_to_exact_u32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::is_length_key",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::is_nan_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::is_zero_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::js_val_from_u32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_digits_none_propagates",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_f64_bits_to_exact_u32_canonical",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_length_key_wf",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_nan_payloads_equal_in_same_value",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_pos_neg_zero_distinct_in_same_value",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_pow10_le_9",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_pow2_shl",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_same_value_refl",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_same_value_sym",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_same_value_trans",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_shl_mul_pow2",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_u32_f64_bits_ieee754_value",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_u32_f64_bits_injective",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::lemma_u32_f64_bits_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::length_prop_key",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::msb_u32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::parse_array_index_utf16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::prop_key_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::prop_key_from_ascii",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::prop_key_from_utf16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::same_value",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::same_value_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::spec_ascii_to_utf16",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::spec_decimal_digits_value",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::spec_pow10",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::spec_pow2",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::spec_strip_trailing_zero_limbs",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_object::value::u32_to_f64_bits",
+   "mode": "exec",
+   "success": true
+  }
+ ]
+}
 
 $ cargo test -p vjs_object
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 1.68
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 1.34
 
 
 running 0 tests
@@ -17,18 +1300,18 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 
 running 10 tests
-test test_prototype_cycles_and_non_extensible_set_proto ... ok
 test test_prop_key_canonicalization ... ok
-test test_descriptors_and_validate_and_apply ... ok
+test test_prototype_cycles_and_non_extensible_set_proto ... ok
 test test_same_value_and_same_value_zero ... ok
-test test_ordinary_get_has_set_delete_and_integrity ... ok
+test test_descriptors_and_validate_and_apply ... ok
 test test_own_property_keys_ordering ... ok
+test test_ordinary_get_has_set_delete_and_integrity ... ok
 test test_ieee754_u32_bits_roundtrip_and_f64_oracle ... ok
 test test_v8_sealed_empty_array_isfrozen_bug_caught_by_vjs_object ... ok
 test test_array_exotic_length_and_nonconfigurable_barrier ... ok
 test test_test262_suite_and_v8_differential_and_write_report ... ok
 
-test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
 
 
 running 0 tests
@@ -71,7 +1354,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -80,7 +1363,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -92,7 +1375,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -101,7 +1384,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -112,7 +1395,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -121,7 +1404,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -132,7 +1415,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -141,7 +1424,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -152,7 +1435,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -161,7 +1444,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -172,7 +1455,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -181,7 +1464,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -192,7 +1475,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -201,7 +1484,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -212,7 +1495,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -221,7 +1504,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -232,7 +1515,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -241,7 +1524,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -252,7 +1535,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -261,7 +1544,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -344,8 +1627,8 @@ warning: negative impls are experimental
     = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
-   Compiling vjs_object v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs-object)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.82s
+   Compiling vjs_object v0.1.0 (~/conduit-lab/browser/vjs-object)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.48s
      Running unittests src/lib.rs (target/debug/build/vjs_object/0761e55801446372/out/vjs_object-0761e55801446372)
      Running tests/test262_object.rs (target/debug/build/vjs_object/1af01dbbcb559410/out/test262_object-1af01dbbcb559410)
    Doc-tests vjs_object

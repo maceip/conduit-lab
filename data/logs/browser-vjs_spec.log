@@ -1,14 +1,1092 @@
-$ $VERUS_RELEASE/cargo-verus verify -p vjs_spec -- --triggers-mode silent
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 3.6
+$ $VERUS_RELEASE/cargo-verus verify -p vjs_spec --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 4.25
 
-verification results:: 271 verified, 0 errors
-    Checking vjs_spec v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs-spec)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.50s
+    Checking vjs_spec v0.1.0 (~/conduit-lab/browser/vjs-spec)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.14s
+
+# from Verus --output-json --time-expanded
+{
+ "verus": {
+  "profile": "release",
+  "version": "0.2026.11.19.0dab219",
+  "platform": {
+   "os": "macos",
+   "arch": "aarch64"
+  },
+  "toolchain": "1.100.0-aarch64-apple-darwin",
+  "commit": "0dab219272ac2353320bd177ebb3929453b90a9e"
+ },
+ "verification-results": {
+  "encountered-error": false,
+  "encountered-vir-error": false,
+  "success": true,
+  "verified": 271,
+  "errors": 0,
+  "is-verifying-entire-crate": true
+ },
+ "functions": [
+  {
+   "function": "vjs_spec::generated::gen_lemma_is_strictly_equal_algebraic",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::gen_lemma_number_equal_algebraic",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::gen_lemma_number_same_value_equivalence",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::gen_lemma_number_same_value_zero_equivalence",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::gen_lemma_require_object_coercible_nullish_iff_throw",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::gen_lemma_same_type_equivalence",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::gen_lemma_same_value_equivalence",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::gen_lemma_same_value_zero_equivalence",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::gen_lemma_to_boolean_idempotent",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::is_loosely_equal",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::is_strictly_equal",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::number_bitwise_and",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::number_bitwise_not",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::number_bitwise_op",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::number_bitwise_or",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::number_bitwise_xor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::number_equal",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::number_left_shift",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::number_same_value",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::number_same_value_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::number_signed_right_shift",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::number_unsigned_right_shift",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::require_object_coercible",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::same_type",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::same_value",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::same_value_non_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::same_value_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::spec_is_loosely_equal",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::spec_to_number",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::to_boolean",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::to_fixed_size_integer",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::to_int32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::to_integer_or_infinity",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::to_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::to_uint16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::generated::to_uint32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_i32_int_u32_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_int32_bits_number_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_is_loosely_equal_not_transitive_witness",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_is_loosely_equal_symmetric",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_is_strictly_equal_agrees_with_same_value_zero_off_nan",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_is_strictly_equal_reflexive_iff_not_nan",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_is_strictly_equal_symmetric",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_is_strictly_equal_transitive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_loosely_equal_non_objects_normal",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_number_bitwise_demorgan",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_number_bitwise_not_involution",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_number_bitwise_op_commutative",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_number_bitwise_xor_self_zero",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_require_object_coercible_iff_not_nullish",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_same_type_reflexive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_same_type_symmetric",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_same_type_transitive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_same_value_non_number_equivalence",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_same_value_reflexive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_same_value_symmetric",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_same_value_transitive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_same_value_vs_same_value_zero_note",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_same_value_zero_reflexive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_same_value_zero_symmetric",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_same_value_zero_transitive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_string_to_bigint_type",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_to_boolean_idempotent",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_to_fixed_size_integer_idempotent_and_sign_invariant",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_to_int32_idempotent_and_cross_invariant",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_to_primitive_default_not_object",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_to_uint16_idempotent",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_to_uint32_idempotent_and_cross_invariant",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::lemmas::lemma_u32_bits_i32_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::AbruptOrNormal::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::BitwiseOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::CANON_NAN_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::ExactInt::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::JsBigInt::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::JsNumber::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::JsObject::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::JsPrim::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::JsValue::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::MathIntOrInf::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::NEG_INF_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::NEG_ZERO_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::ONE_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::ObjectCoercion::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::POS_INF_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::POS_ZERO_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::Signedness::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::Unused::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::ashr_i32_val",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::bigint_equal",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::bigint_is_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::bit_len_u32_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::bitand_u32_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::bitnot_i32_val",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::bitor_u32_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::bitxor_u32_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::canonical_len_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::cmp_limbs_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::dec_body_to_number_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::digit_val",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::div_54_steps_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::exact_int_modulo_pow2",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::exact_int_to_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::exact_int_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::finite_number_real_eq_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::host_supports_htmldda",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::i64_to_u32_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::integral_number_to_i64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::is_infinity_word_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::is_str_whitespace",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::js_canon_nan",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::js_neg_inf",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::js_neg_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::js_one_num",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::js_pos_inf",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::js_pos_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_bits_unique_from_parts",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_canonical_limbs_injective",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_limbs_drop_trailing_zero",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_limbs_val_canonical",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_msb_index_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_mul10_len_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_mul10_preserves_nonempty",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_mul_pow10_len_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_mul_pow10_nonempty",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_mul_pow2_mod",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_neg_euclidean_mod",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_nonzero_last_implies_pos",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_number_from_int_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_pow2_add",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_pow2_bitwidth_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_pow2_monotone",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_pow2_pos",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_pow2_small_values",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_pow2_u64_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lemma_zero_prefix_limbs",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::limbs_bit_len_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::limbs_mul_add_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::lshr_u32_val",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::msb_index_53",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::mul_pow10_limbs_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::num_is_finite",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::num_is_nan",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::num_is_neg_inf",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::num_is_neg_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::num_is_pos_inf",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::num_is_pos_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::num_is_same",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::number_from_i64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::pack_ieee754",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::parse_exp_digits_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::parse_radix_limbs_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::pow2_u64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::prim_to_val",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::raw_exp",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::raw_mant",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::round_rational_to_f64_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::scan_dec_mantissa_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::shl_i32_val",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::shl_limbs_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::shr_u64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::sign_bit",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_bit_len_u32_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_canonical_len",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_cmp_limbs_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_div_54_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_limbs_mul_add_step",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_limbs_val",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_msb_index_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_mul_pow10_limbs",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_parse_exp_digits",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_parse_radix_limbs",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_pow2",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_scan_dec_mantissa",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_shl_small_limbs",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_sub_limbs_raw",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_trim_end_idx",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::spec_trim_start_idx",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::strip_limbs_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::sub_limbs_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::to_primitive_default",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::to_primitive_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::trim_bounds_utf16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::truncate_finite_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::u32_bits_to_i64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_bigint_equal",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_has_htmldda_slot",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_bigint_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_bool_false",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_bool_true",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_boolean",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_empty_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_finite_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_nan",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_neg_inf",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_neg_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_null",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_object",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_pos_inf",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_pos_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_symbol",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_is_undefined",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_non_number_is",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_real_equal",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_same_string_code_units",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_string_to_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_string_to_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_unwrap_bool",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_spec::runtime::val_unwrap_number",
+   "mode": "exec",
+   "success": true
+  }
+ ]
+}
 
 $ cargo test -p vjs_spec
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 1.46
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 1.28
 
 
 running 0 tests
@@ -17,12 +1095,12 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 
 running 4 tests
-test zero_trusted_escape_hatches_audit ... ok
 test provenance_sha256_integrity_audit ... ok
+test zero_trusted_escape_hatches_audit ... ok
 test compiler_self_test_and_reproducibility ... ok
 test test262_and_v8_differential_suite_generates_report ... ok
 
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
 
 
 running 0 tests
@@ -65,7 +1143,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -74,7 +1152,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -86,7 +1164,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -95,7 +1173,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -106,7 +1184,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -115,7 +1193,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -126,7 +1204,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -135,7 +1213,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -146,7 +1224,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -155,7 +1233,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -166,7 +1244,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -175,7 +1253,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -186,7 +1264,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -195,7 +1273,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -206,7 +1284,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -215,7 +1293,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -226,7 +1304,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -235,7 +1313,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -246,7 +1324,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -255,7 +1333,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -338,8 +1416,8 @@ warning: negative impls are experimental
     = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
-   Compiling vjs_spec v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs-spec)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.68s
+   Compiling vjs_spec v0.1.0 (~/conduit-lab/browser/vjs-spec)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.46s
      Running unittests src/lib.rs (target/debug/build/vjs_spec/0f985d975d28987b/out/vjs_spec-0f985d975d28987b)
      Running tests/differential_test262.rs (target/debug/build/vjs_spec/4fea74877a3d1f6c/out/differential_test262-4fea74877a3d1f6c)
    Doc-tests vjs_spec

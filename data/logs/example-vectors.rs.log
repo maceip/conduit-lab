@@ -1,5 +1,5 @@
 $ verus ../examples/vectors.rs
 # cwd: ~/workspaces/verus-stack/verus/source
-# exit: 0  seconds: 0.54
+# exit: 0  seconds: 0.55
 
 verification results:: 9 verified, 0 errors

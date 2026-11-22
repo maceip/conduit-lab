@@ -1,14 +1,722 @@
-$ $VERUS_RELEASE/cargo-verus verify -p vwasm -- --triggers-mode silent
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 3.14
+$ $VERUS_RELEASE/cargo-verus verify -p vwasm --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 3.18
 
-verification results:: 181 verified, 0 errors
-    Checking vwasm v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vwasm)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.04s
+    Checking vwasm v0.1.0 (~/conduit-lab/browser/vwasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.08s
+
+# from Verus --output-json --time-expanded
+{
+ "verus": {
+  "profile": "release",
+  "version": "0.2026.11.19.0dab219",
+  "platform": {
+   "os": "macos",
+   "arch": "aarch64"
+  },
+  "toolchain": "1.100.0-aarch64-apple-darwin",
+  "commit": "0dab219272ac2353320bd177ebb3929453b90a9e"
+ },
+ "verification-results": {
+  "encountered-error": false,
+  "encountered-vir-error": false,
+  "success": true,
+  "verified": 181,
+  "errors": 0,
+  "is-verifying-entire-crate": true
+ },
+ "functions": [
+  {
+   "function": "vwasm::binary::CtrlKind::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::OpenCtrl::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::copy_subslice",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_block_type",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_br_table_raw_instr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_code_section",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_const_expr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_data_section",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_elem_section",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_export_section",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_function_section",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_global_section",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_header",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_i32_bounded",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_i32_leb128",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_i64_bounded",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_i64_leb128",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_limits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_mem_raw_instr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_memarg",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_memory_section",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_module",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_one_raw_instr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_table_section",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_type_section",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_u32_bounded",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_u32_leb128",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_val_type",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_val_type_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::decode_zero_imm_raw_instr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::encode_u32_leb128",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::i64_sign_mask",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::lemma_header_prefix_secure",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::lemma_i32_leb128_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::lemma_i32_leb128_prefix_secure",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::lemma_i64_leb128_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::lemma_i64_leb128_prefix_secure",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::lemma_i64_leb128_step_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::lemma_i64_leb128_step_prefix_secure",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::lemma_open_ctrl_wf_mono",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::lemma_u32_leb128_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::lemma_u32_leb128_prefix_secure",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::lemma_u32_leb128_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::lower_non_ctrl_raw_instr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::read_u32_le",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::read_u64_le",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::resolve_control_flow",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::binary::spec_decode_i64_leb128_step",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::CallFrame::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::CtrlLabel::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::StepOutcome::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::WasmExecState::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::WasmInstance::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::build_callee_frame",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::bytes_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::check_args_match_params",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::check_instance_wf",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::effective_addr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::eval_i32_binop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::eval_i32_rel",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::eval_i32_unop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::eval_i64_binop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::eval_i64_rel",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::eval_i64_unop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::exec_branch_in_frame",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::exec_invoke_callee_from_frame",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::exec_mem_load",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::exec_mem_store",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::exec_memory_grow",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::exec_return_from_frame",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::exec_step_ctrl_op",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::exec_step_global_op",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::exec_step_local_op",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::exec_step_memory_op",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::exec_step_numeric_op",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::extract_top_arity",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::func_type_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::get_export_global_by_name",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::instantiate_module",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::invoke_export_by_name",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::lemma_div_rem_trap_characterization",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::lemma_mem_access_oob_traps_cleanly",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::lemma_mem_store_in_bounds_framing",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::lemma_unfold_wasm_run_steps",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::lemma_wasm_run_steps_sandbox_containment",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::lemma_wasm_step_oob_mem_traps_unchanged",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::lemma_wasm_step_sandbox_containment",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::op_category",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::pop_i32_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::pop_i64_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::pop_val_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::run_sandboxed_wasm_bytes",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::same_wasm_val_type",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::spec_wasm_run_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::theorem_wasm_invoke_sandbox_containment",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::unwind_stack_with_arity",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::val_type_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::val_types_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::wasm_invoke",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::wasm_run_steps",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::interp::wasm_step",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::DataSegment::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::DecodeError::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::ElemSegment::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::ExportDesc::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::ExportKind::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::FuncBody::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::FuncType::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::GlobalDecl::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::I32BinOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::I32UnOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::I64BinOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::I64UnOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::IntRelOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::LoadKind::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::MAX_LOCALS_PER_FUNC",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::MAX_SANDBOX_PAGES",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::MAX_SPEC_PAGES",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::MAX_TABLE_ENTRIES",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::MAX_WASM_CALL_DEPTH",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::MemoryLimits::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::RawInstr::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::StoreKind::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::TableLimits::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::ValType::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::WASM_MAGIC",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::WASM_PAGE_SIZE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::WASM_VERSION_1",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::WasmModule::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::WasmOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::WasmOutcome::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::WasmTrap::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::WasmVal::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::default_val",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::load_width",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::store_width",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vwasm::types::val_has_type",
+   "mode": "exec",
+   "success": true
+  }
+ ]
+}
 
 $ cargo test -p vwasm
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 4.34
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 2.26
 
 
 running 0 tests
@@ -21,15 +729,13 @@ test test_wasm_sandbox_containment_and_leb128_properties ... ok
 test test_provenance_sha256_integrity ... ok
 test test_upstream_wasm_spec_suite_and_write_report ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.11s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.19s
 
 
 running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-   Compiling memchr v2.8.3
-   Compiling leb128 v0.2.7
 warning: negative impls are experimental
    --> ~/workspaces/verus-stack/verus/source/builtin/src/lib.rs:976:6
     |
@@ -60,15 +766,13 @@ warning: negative impls are experimental
     = warning: unstable syntax can change at any point in the future, causing a hard error!
     = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
 
-   Compiling unicode-width v0.2.3
-   Compiling bumpalo v3.20.4
 warning: `verus_builtin` (lib) generated 3 warnings
 warning: unused variable: `perm`
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -77,7 +781,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -89,7 +793,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -98,7 +802,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -109,7 +813,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -118,7 +822,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -129,7 +833,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -138,7 +842,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -149,7 +853,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -158,7 +862,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -169,7 +873,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -178,7 +882,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -189,7 +893,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -198,7 +902,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -209,7 +913,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -218,7 +922,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -229,7 +933,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -238,7 +942,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -249,7 +953,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -258,7 +962,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -341,11 +1045,8 @@ warning: negative impls are experimental
     = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
-   Compiling vwasm v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vwasm)
-   Compiling wasm-encoder v0.220.1
-   Compiling serde_json v1.0.154
-   Compiling wast v220.0.1
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.74s
+   Compiling vwasm v0.1.0 (~/conduit-lab/browser/vwasm)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.51s
      Running unittests src/lib.rs (target/debug/build/vwasm/ac9f2ea35037791b/out/vwasm-ac9f2ea35037791b)
      Running tests/wasm_spec.rs (target/debug/build/vwasm/88d930562b974c33/out/wasm_spec-88d930562b974c33)
    Doc-tests vwasm

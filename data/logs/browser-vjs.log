@@ -1,14 +1,4052 @@
-$ $VERUS_RELEASE/cargo-verus verify -p vjs -- --triggers-mode silent
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 56.26
+$ $VERUS_RELEASE/cargo-verus verify -p vjs --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 56.83
 
-verification results:: 1179 verified, 0 errors
-    Checking vjs v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 56.14s
+    Checking vjs v0.1.0 (~/conduit-lab/browser/vjs)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 56.73s
+
+# from Verus --output-json --time-expanded
+{
+ "verus": {
+  "profile": "release",
+  "version": "0.2026.11.19.0dab219",
+  "platform": {
+   "os": "macos",
+   "arch": "aarch64"
+  },
+  "toolchain": "1.100.0-aarch64-apple-darwin",
+  "commit": "0dab219272ac2353320bd177ebb3929453b90a9e"
+ },
+ "verification-results": {
+  "encountered-error": false,
+  "encountered-vir-error": false,
+  "success": true,
+  "verified": 1179,
+  "errors": 0,
+  "is-verifying-entire-crate": true
+ },
+ "functions": [
+  {
+   "function": "vjs::ast::AssignOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::BinOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::ChainStep::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::ExprId::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::ExprNode::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::ForEachLhs::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::FuncDef::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::FuncId::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::LogicalOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::Program::check_wf",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::Program::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::Program::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::Program::push_expr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::Program::push_func",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::Program::push_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::PropInit::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::PropKeyInit::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::StmtId::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::StmtNode::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::SwitchCase::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::UnaryOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::UnsupportedFeature::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::UpdateOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::VarDeclarator::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::VarKind::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::ast::check_stmt_ids_in_bounds",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::add",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::clone_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::cmp",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::cmp_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::eq_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::from_i64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::from_u64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::is_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::mul",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::neg",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::sub",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::to_string_radix",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::to_string_radix10",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::JsBigInt::zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::add_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::bigint_to_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::clone_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::cmp_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::div_rem_limb",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_bigint_add_associative",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_bigint_add_commutative",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_bigint_add_neg_inverse",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_bigint_add_zero_identity",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_bigint_canonical_unique",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_bigint_distributive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_bigint_from_int_props",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_bigint_mul_commutative",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_bigint_mul_identities",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_bigint_to_string_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_canonical_limbs_of_nat_props",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_diff_at_top_mismatch",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_limbs_canonical_unique",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_limbs_upper_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_limbs_wf_lower_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_limbs_wf_zero_iff_empty",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_nat_to_radix10_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_parse_radix_prefix_none",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_pow2_32",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_pow2_add",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_pow2_pos",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_pow32_add",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_pow32_is_pow2",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_pow32_mono",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_pow32_pos",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_prefix_step",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_prepend_limb_val",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_prepend_zeros_val",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_rev_vec_index",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_rev_vec_len",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_rev_vec_push",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_same_len_limbs_unique",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_u32_shl_is_pow2",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_u32_shl_is_pow2_low16",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::lemma_u32_shl_is_pow2_pub",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::mul_limb_add",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::mul_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::normalize_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::parse_radix_limbs_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::pow2_nat",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::pow32",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::pow_nat",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::pow_u32_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::prepend_zeros",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::radix_digit_u16_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::rev_vec_view",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::shl_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::spec_canonical_limbs_of_nat",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::spec_limbs_nat",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::spec_nat_to_radix_nonempty",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::spec_parse_radix_digits",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::string_to_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::bigint::sub_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::clone_syntax_msg",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::Completion::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::Completion::is_abrupt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::Completion::normal_empty",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::Completion::normal_val",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::CompletionValue::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::ExprStep::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::RunResult::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::ScriptCompletion::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::StmtStep::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::lemma_update_empty_idempotent",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::lemma_update_empty_preserves_return_throw",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::unwrap_or_undefined",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::update_empty",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::completion::update_empty_val",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::Binding::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::BindingStatus::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::alloc_env",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::bind_initialized",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::clone_per_iter_env",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::declare_tdz",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::declare_var",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::delete_identifier",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::find_var_env",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::get_identifier",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::initialize_lexical",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::new_global",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::resolve_binding_loc",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::resolve_this",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::set_identifier",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvArena::sweep_unmarked",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvId::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvKind::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvRecord::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::EnvSlot::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::IdentAssignOutcome::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::IdentLookup::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::clone_binding",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::clone_binding_status",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::clone_env_record",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::find_binding_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::find_free_env_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::lemma_env_wf_outer_valid",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::env::lemma_find_binding_props",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::env::lemma_find_free_env_props",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::env::lemma_resolve_binding_loc_steps_valid",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::env::lemma_update_live_slot_preserves_wf",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::env::lemma_upsert_preserves_unique",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::env::spec_copy_per_iter_bindings",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::spec_find_binding_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::spec_find_free_env_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::spec_find_var_env_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::spec_resolve_binding_loc_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::spec_resolve_this_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::env::upsert_binding_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::DEFAULT_REALM_HEAP_QUOTA",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::VmState::alloc_obj",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::VmState::pop_root",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::VmState::push_env_root",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::VmState::push_root",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::VmState::truncate_env_roots",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::VmState::truncate_roots",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::alloc_arguments_obj_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::alloc_array_from_vals_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::alloc_closure_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::alloc_func_expr_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::array_push_loop_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::assign_op_binop_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::bind_for_each_iter_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::bind_params_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::bootstrap_realm",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::bootstrap_slots_a",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::bootstrap_slots_b",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::bootstrap_slots_c",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::bootstrap_slots_d",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::build_str_index_keys_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::declare_tdz_list_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::delete_val_prop_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::error_proto_for",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_apply_binop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_arg_list",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_array_elems",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_array_join_loop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_array_lit_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_assign_ident_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_assign_member_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_binary_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_binop_add_rel",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_binop_numeric",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_block_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_builtin_array",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_builtin_call",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_builtin_err_fn",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_call",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_call_method_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_call_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_cond_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_delete_ident_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_delete_member_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_do_while_loop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_expr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_expr_seq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_for_in_keys",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_for_in_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_for_iter_step",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_for_loop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_for_of_items",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_for_of_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_for_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_ident_get_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_ident_put_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_if_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_labeled_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_logical_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_loose_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_member_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_new_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_obj_props",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_object_lit_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_opt_chain_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_opt_chain_steps",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_set_property_val",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_stmt_list",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_switch_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_to_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_to_primitive",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_to_primitive_obj",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_to_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_try_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_typeof_ident_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_unary_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_update_ident_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_update_member_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_user_call_body_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_var_decls",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::eval_while_loop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::exec_switch_from",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::expr_abrupt_to_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::find_switch_case_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::get_property_val_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::hoist_block_stmts_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::hoist_one_stmt_decl_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::hoist_switch_cases_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::hoist_vars_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::index_key_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::is_callable_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::iter_target_matches_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::iterable_live_len_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_arguments",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_call",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_colon_space",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_comma",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_constructor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_ctor_array",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_ctor_boolean",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_ctor_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_ctor_object",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_ctor_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_empty",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_error",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_global_this",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_has_own",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_infinity",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_is",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_is_array",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_join",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_keys",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_length",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_message",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_name",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_nan",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_pop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_prototype",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_push",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_range_error",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_ref_error",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_syntax_error",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_to_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_type_error",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_undefined",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::k_value_of",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::loop_target_matches_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::make_prop_data",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::mk_builtin_obj",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::params_contain_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::prim_less_than_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::push_comp_root_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::push_global_props_a",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::push_global_props_b",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::run",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::run_state_with_quota",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::run_with_quota",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::set_property_val_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::setup_user_call_env_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_array_push_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_bind_for_each_iter",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_bind_for_each_iter_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_bind_params",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_build_args_props",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_build_indexed_props",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_declare_tdz_list",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_apply_binop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_apply_binop_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_arg_list",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_array_elems",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_array_join_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_array_lit_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_array_lit_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_assign_ident_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_assign_ident_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_assign_member_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_assign_member_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_binary_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_binary_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_binop_add_rel",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_binop_add_rel_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_binop_numeric",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_binop_numeric_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_block_stmt",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_builtin_array",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_builtin_array_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_builtin_call",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_builtin_call_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_builtin_err_fn",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_builtin_err_fn_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_call",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_call_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_call_method_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_call_method_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_call_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_call_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_cond_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_cond_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_delete_member_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_delete_member_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_do_while_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_expr",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_expr_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_expr_seq",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_for_in_keys",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_for_in_stmt",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_for_in_stmt_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_for_iter_step",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_for_iter_step_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_for_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_for_of_items",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_for_of_stmt",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_for_of_stmt_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_for_stmt",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_for_stmt_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_if_stmt",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_labeled_stmt",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_logical_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_logical_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_loose_eq",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_loose_eq_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_member_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_member_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_new",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_new_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_new_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_obj_props",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_object_lit_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_object_lit_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_opt_chain_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_opt_chain_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_opt_chain_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_set_property_val",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_set_property_val_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_stmt",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_stmt_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_stmt_list",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_switch_stmt",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_to_number",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_to_primitive",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_to_primitive_obj",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_to_primitive_obj_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_to_string",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_try_stmt",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_unary_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_unary_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_update_ident_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_update_ident_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_update_member_node",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_update_member_node_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_user_call_body",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_user_call_body_inner",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_var_decls",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_eval_while_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_exec_switch_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_find_switch_case",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_hoist_block_stmts",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_hoist_switch_cases",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_hoist_vars_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_params_contain",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_str_index_keys",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::spec_unwrap_labeled_stmt",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::strs_to_vals_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::t_boolean",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::t_function",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::t_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::t_object",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::t_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::tag_arr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::tag_bool",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::tag_err",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::tag_fn",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::tag_null",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::tag_num",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::tag_obj",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::tag_str",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::tag_undef",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::theorem_end_to_end_step_refinement",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::throw_error_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::typeof_val_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval::unwrap_labeled_stmt_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval_script",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval_script_parsed",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::eval_script_state",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Kw::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::ParseOutcome::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::advance",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::check_single_stmt_context",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::cur_had_nl",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::cur_kind",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::detect_directive_prologue_strict",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::eat_semi",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::expr_to_foreach_lhs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::find_label",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::finish_c_for",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::make_update_node",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_arg_list",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_arrow_body",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_assign_expr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_bin_expr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_binding_ident",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_cond_expr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_do_while_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_expr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_for_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_function_common",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_ident_name",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_labeled_chain",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_lhs_expr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_primary_expr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_stmt_list_checked",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_sub_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_switch_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_unary_expr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_var_decl_list",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::parse_while_stmt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::peek_kind_at",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::peek_nl_at",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Parser::record_var",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::TokKind::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::Token::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::assign_op_of",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::binop_info",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::check_arrow_dups",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::classify_ident",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::clone_chain_steps",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::clone_expr_id_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::clone_str_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::clone_tok_kind",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::eq_ascii",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::hex_nibble_u16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::is_ident_part_u16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::is_ident_start_u16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::is_radix_digit_u16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::is_strict_restricted_ident",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::lex_number_lit",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::lex_string_lit",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::parse_script",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::parse_script_bytes",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::parse_script_utf16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::push_codepoint_utf16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::push_unique_str",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::scan_arrow_params",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::scan_digits_with_sep",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::skip_regex_literal_u16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::syntax_err_msg",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::tok_can_end_expr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::tokenize",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::tokenize_utf16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::frontend::vec_contains_str",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::AllocRes::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::BuiltinFn::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::ErrorKind::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::alloc_bootstrap",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::alloc_with_gc",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::collect_for_in_candidates",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::count_realm_live",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::define_global_var_prop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::delete_prop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::find_free_slot",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::get_prop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::get_steps",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::has_own_prop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::has_prop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::has_steps",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::insert_object",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::is_for_in_key_live_enumerable",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::is_instance_of_steps",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::is_live_same_realm_array",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::mark_sweep_collect",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::own_enumerable_keys",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::set_array_length",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Heap::set_prop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::HeapObject::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::HeapReadVal::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::HeapWriteRes::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::ObjectKind::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::PropEntry::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::RealmId::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::RealmIntrinsics::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::Slot::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::clone_heap_object",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::clone_prop_entry",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::find_prop_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::gray_bindings_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::gray_env_roots_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::gray_extra_roots_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::gray_intrinsics_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::gray_props_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::gray_slot_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::gray_val_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::is_length_key",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::lemma_count_realm_live_le_len",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::lemma_flip_false_decreases_count",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::lemma_gray_bindings_measure",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::lemma_gray_env_children_measure",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::lemma_gray_env_slot_preserves_closed",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::lemma_gray_object_children_measure",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::lemma_gray_props_measure",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::lemma_gray_slot_measure",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::parse_array_index",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_collect_enum_keys",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_collect_for_in_obj_props",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_collect_for_in_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_count_false",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_count_realm_live_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_filter_props_below_len",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_find_free_slot_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_find_prop_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_gray_bindings",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_gray_env_roots",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_gray_extra_roots",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_gray_props",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_heap_get_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_heap_has_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_is_for_in_key_live_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_is_instance_of_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_parse_array_idx_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_str_seq_contains_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::spec_trace_joint_worklist",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::str_vec_contains_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::theorem_cross_realm_isolation",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::heap::trace_joint_worklist_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::abs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::add",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::canonicalize_nan",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::div",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::equal",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::from_i32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::from_u32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::is_finite",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::is_infinite",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::is_integral_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::is_nan",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::is_neg_infinite",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::is_neg_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::is_pos_infinite",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::is_pos_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::is_safe_integer",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::is_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::less_than",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::mul",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::negate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::same_value",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::same_value_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::sub",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::to_exact_bigint",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::to_int32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::to_js_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::to_uint16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::JsNumber::to_uint32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::bigint_to_number_rne",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::bit_len_limbs_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::bit_len_u128_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::bit_len_u64_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::div_57_limbs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::exp_bits_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::format_ecmascript_decimal_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::impl&%8::EPSILON",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::impl&%8::MAX_SAFE_INTEGER",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::impl&%8::MAX_VALUE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::impl&%8::MIN_SAFE_INTEGER",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::impl&%8::MIN_VALUE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::impl&%8::NAN",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::impl&%8::NEG_INFINITY",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::impl&%8::NEG_ONE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::impl&%8::NEG_ZERO",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::impl&%8::ONE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::impl&%8::POS_INFINITY",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::impl&%8::POS_ZERO",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_bd_high_implies_d_lt_9",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_bit_len_u128_pack_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_bit_len_u64_range",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_from_i32_to_int32_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_from_u32_to_uint32_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_nat_bit_len_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_nat_bit_len_unique",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_neg_mod_u32",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_not_nan_not_inf_is_finite",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_number_add_mul_commutative",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_number_order_properties",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_number_same_value_equivalence",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_number_same_value_zero_equivalence",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_pack_lsh_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_pack_rne_mag32_extract",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_pack_rsh_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_pos_neg_zero_distinction",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_pow10_le_pow32",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_pow10_mul_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_pow10_pos",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_pow2_54_56_57",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_pow2_strict_mono",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_pow32_eq_pow2_local",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_pow5_le_pow32_div8",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_pow5_limbs_len_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_radix_none_propagates_local",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_rational_scaled_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_sig_limbs_len_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_subnormal_shift_range",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_to_int32_matches_ecma_modulo",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_to_uint32_matches_ecma_modulo",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_u64_shl_mod32_is_mul_pow2",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::lemma_u64_shr_is_div_pow2",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::number::mant_bits_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::match_infinity_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::number_to_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::one_limbs_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::pack_rne_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::parse_radix_to_number_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::parse_unsigned_decimal_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::positive_finite_to_string_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::push_slice_u16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::push_zeros_u16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::rational_to_number_rne_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::scan_dec_digits_exec_bounded",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::sign_bit_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::spec_bd_generate_digits",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::spec_bd_scale_down",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::spec_bd_scale_up",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::spec_div_digit_10",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::spec_nat_bit_len",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::spec_repeat_zero_u16",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::spec_scan_dec_digits",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::spec_scan_exp_digits",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::string_to_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::u32_bit_len_loop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::number::unpack_finite_nonzero_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::CodePointRecord::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::clone_str",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::code_point_at",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::code_unit_at",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::concat",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::eq_str",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::from_ascii",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::from_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::index_of",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::is_empty",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::is_less_than",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::is_well_formed_unicode",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::len",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::slice",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::trim",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::trim_end",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::trim_start",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::Utf16Str::utf16_to_wtf8_or_lossless",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::is_leading_surrogate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::is_line_terminator",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::is_str_white_space",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::is_surrogate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::is_trailing_surrogate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::is_white_space",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::lemma_code_point_at_properties",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::lemma_first_non_ws_props",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::lemma_index_of_from_sound_and_minimal",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::lemma_last_non_ws_end_props",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::lemma_slice_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::lemma_trim_clean_and_idempotent",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::lemma_utf16_encode_decode_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::lemma_utf16_lt_from_irreflexive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::lemma_utf16_lt_from_strict_order",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::lemma_utf16_lt_from_transitive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::lemma_utf16_lt_strict_total_order",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::lemma_utf16_lt_transitive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::lemma_utf8_decode_step_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::push_wtf8_code_point",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::spec_first_non_ws",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::spec_index_of_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::spec_is_well_formed_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::spec_last_non_ws_end",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::spec_utf16_lt_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::spec_utf16_to_wtf8_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::spec_utf8_to_utf16_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::utf16_encode_code_point",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::utf8_decode_step_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::utf16::utf8_to_utf16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::JsNum::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::JsNum::nan",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::JsNum::neg_inf",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::JsNum::neg_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::JsNum::one",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::JsNum::pos_inf",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::JsNum::pos_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::JsStr::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::MANT_MOD",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::NAN_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::NEG_INF_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::NEG_ONE_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::NEG_ZERO_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::ONE_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::ObjId::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::POS_INF_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::POS_ZERO_BITS",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::SIG_GRS_HIGH",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::SIG_GRS_LOW",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::SIG_MAX_BOUND",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::Val::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::align_rhs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::ascii_to_js_str",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::clone_js_str",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::clone_val",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::js_str_concat",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::js_str_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::js_str_lt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::lemma_str_eq_from_equiv",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs::value::norm_subnormal_loop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::normalize_finite",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_add",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_bit_and",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_bit_not",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_bit_or",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_bit_xor",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_div",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_equal",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_exact_safe_int",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_exp",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_from_i64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_from_usize",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_is_finite",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_is_infinite",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_is_nan",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_is_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_less_than",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_mul",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_neg",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_rem",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_same_value",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_shl",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_shr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_sub",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_to_int32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_to_uint32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::num_ushr",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::number_to_js_str",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::pack_f64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::pow_loop",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::prim_to_js_str",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::prim_to_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::rem_steps",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::round_pack_grs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::shl_until_55",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::shr_sticky_one",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::shr_until_56",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::spec_align_rhs",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::spec_norm_subnormal_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::spec_pow_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::spec_rem_steps",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::spec_shl_until_55",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::spec_shr_until_56",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::spec_str_eq_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::spec_str_lt_from",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::spec_subnormal_align",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::spec_utf8_to_utf16",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::string_to_js_num",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::subnormal_align",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::unpack_f64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::utf8_to_js_str",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::val_loose_eq_prim",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::val_same_value",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::val_strict_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs::value::val_to_boolean",
+   "mode": "exec",
+   "success": true
+  }
+ ]
+}
 
 $ cargo test -p vjs
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 9.93
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 9.76
 
 
 running 0 tests
@@ -19,7 +4057,7 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 running 1 test
 test full_pipeline_all_11_verified_browser_crates ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
 
 running 6 tests
@@ -30,7 +4068,7 @@ test test_realm_heap_quota_and_mark_sweep_gc_reclamation ... ok
 test test262_conformance_v8_differential_and_report ... ok
 test test_round2_audit_regressions ... ok
 
-test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.56s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.41s
 
 
 running 0 tests
@@ -73,7 +4111,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -82,7 +4120,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -94,7 +4132,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -103,7 +4141,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -114,7 +4152,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -123,7 +4161,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -134,7 +4172,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -143,7 +4181,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -154,7 +4192,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -163,7 +4201,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -174,7 +4212,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -183,7 +4221,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -194,7 +4232,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -203,7 +4241,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -214,7 +4252,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -223,7 +4261,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -234,7 +4272,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -243,7 +4281,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -254,7 +4292,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -263,7 +4301,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -400,9 +4438,10 @@ warning: unexpected `cfg` condition name: `verus_keep_ghost`
    = help: or consider adding `println!("cargo::rustc-check-cfg=cfg(verus_keep_ghost)");` to the top of the `build.rs`
    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
 
-   Compiling vjs v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs)
+   Compiling vjs_vm v0.1.0 (~/conduit-lab/browser/vjs-vm)
+   Compiling vjs v0.1.0 (~/conduit-lab/browser/vjs)
 warning: `vurl` (lib) generated 4 warnings
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.19s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.10s
      Running unittests src/lib.rs (target/debug/build/vjs/fa4522a5d8d3d353/out/vjs-fa4522a5d8d3d353)
      Running tests/full_pipeline_j0_j7.rs (target/debug/build/vjs/87f9d2f61a39b2e4/out/full_pipeline_j0_j7-87f9d2f61a39b2e4)
      Running tests/test262_and_differential.rs (target/debug/build/vjs/a93d3f77d462f10f/out/test262_and_differential-a93d3f77d462f10f)

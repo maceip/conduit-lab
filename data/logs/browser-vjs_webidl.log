@@ -1,14 +1,1547 @@
-$ $VERUS_RELEASE/cargo-verus verify -p vjs_webidl -- --triggers-mode silent
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 11.36
+$ $VERUS_RELEASE/cargo-verus verify -p vjs_webidl --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 12.3
 
-verification results:: 463 verified, 0 errors
-    Checking vjs_webidl v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs-webidl)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.26s
+    Checking vjs_webidl v0.1.0 (~/conduit-lab/browser/vjs-webidl)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 12.21s
+
+# from Verus --output-json --time-expanded
+{
+ "verus": {
+  "profile": "release",
+  "version": "0.2026.11.19.0dab219",
+  "platform": {
+   "os": "macos",
+   "arch": "aarch64"
+  },
+  "toolchain": "1.100.0-aarch64-apple-darwin",
+  "commit": "0dab219272ac2353320bd177ebb3929453b90a9e"
+ },
+ "verification-results": {
+  "encountered-error": false,
+  "encountered-vir-error": false,
+  "success": true,
+  "verified": 463,
+  "errors": 0,
+  "is-verifying-entire-crate": true
+ },
+ "functions": [
+  {
+   "function": "vjs_webidl::caps::CapHandle::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::CapKind::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::CapPerms::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::CapPerms::has_all",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::CapPerms::intersect",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::CapPerms::is_subset_of",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::CapPerms::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::HostError::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::KernelCapSlot::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::KernelCapTable::allocate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::KernelCapTable::attenuate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::KernelCapTable::len",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::KernelCapTable::lookup_entry",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::KernelCapTable::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::KernelCapTable::revoke",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::KernelCapTable::validate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::OriginId::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::PERM_ALL",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::PERM_CREATE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::PERM_DELETE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::PERM_LOG",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::PERM_NETWORK",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::PERM_NONE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::PERM_READ",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::PERM_SCHEDULE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::PERM_WRITE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::RealmId::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::lemma_no_handle_tampering",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::lemma_perms_mask_is_subset",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::lemma_perms_monotonicity",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::lemma_perms_subset_reflexive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::lemma_perms_subset_transitive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::lemma_revoked_handle_permanently_dead",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::lemma_table_evolves_reflexive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::caps::lemma_table_evolves_transitive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::DomExceptionRecord::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::EventInit::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::F64_CANON_NAN",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::F64_NEG_INF",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::F64_NEG_ZERO",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::F64_ONE",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::F64_POS_INF",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::F64_POS_ZERO",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::IdlAny::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::IdlError::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::IntAttr::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::JsIterator::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::JsObjectArena::alloc",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::JsObjectArena::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::JsObjectArena::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::JsObjectRecord::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::JsOwnProp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::JsProtoProp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::JsToStringHook::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::JsValue::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::MAX_SAFE_INT_I64",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::MAX_SAFE_INT_U64",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::MIN_SAFE_INT_I64",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::NodeOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::RequestInit::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::StorageOp::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::UNICODE_REPLACEMENT_CHAR",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::UrlHref::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::ascii_to_utf16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::big_bit_len",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::big_cmp",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::big_div_54",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::big_mul_add_u32",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::big_mul_pow10",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::big_shl_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::big_sub",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::big_trim",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::build_decimal_sig_big_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::check_has_duplicate_own_keys",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::check_lead_surrogate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::check_surrogate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::check_trail_surrogate",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::clone_js_value",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::clone_u16_slice",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::clone_u8_slice",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::compute_int_bounds",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::construct_dom_exception",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::convert_headers_pairs_slice",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::convert_to_int_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::convert_usv_pairs_slice",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::dict_get_member",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::dict_get_member_with_getter_flag",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::dom_exception_legacy_code",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::eq_u16_slice",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::eq_u8_slice",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::exec_pow2_u128",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::exec_pow2_u64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::exec_rational_rne_f64_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::find_highest_bit_u64",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::frac_digits_u128",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::is_es_whitespace",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::is_f64_nan",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::is_f64_zero",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::is_null_or_undefined",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_big_canonical_nonzero_iff_nonempty",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_big_val_push",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_big_val_upper_bound",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_bit_len_nat_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_bit_len_nat_unique",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_boolean_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_byte_string_to_js_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_cand_bounds_binade",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_clamp_rounded_within_bounds",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_digits_to_nat_pos",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_div_mod_by_one",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_dom_string_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_event_init_keys_lexicographic",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_find_key_u16_step",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_find_key_u8_step",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_highest_bit_u64_props",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_ieee754_bit_layout",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_js_to_byte_string_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_large_shift_mod_zero",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_neg_euclidean_mod",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_node_op_keys_lexicographic",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_nullable_dom_string_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_pow10_pos",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_pow2_add",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_pow2_monotonic",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_pow2_pos",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_pow2_strictly_increasing",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_pow2_values",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_pow_base32_eq_pow2",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_radix_loop_overflow_stays_huge",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_radix_loop_some_indep_of_acc",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_request_init_keys_lexicographic",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_safe_int_f64_roundtrip",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_scaled_num_ge_pow2_53_when_normal",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_scaled_num_lt_pow2_54",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_seq_byte_all_ok",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_seq_byte_prefix_err",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_seq_dom_all_ok",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_seq_dom_prefix_err",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_seq_long_all_ok",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_seq_long_prefix_err",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_seq_usv_all_ok",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_seq_usv_prefix_err",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_storage_op_keys_lexicographic",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_url_href_keys_lexicographic",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_usv_fixed_point_if_well_formed",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_usv_idempotent",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_usv_len_preserved",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_usv_no_unpaired_surrogates",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_usv_scalars_all_valid",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_utf16_lt_irreflexive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::lemma_utf16_lt_transitive",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::locate_nonzero_span_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::number_to_string_utf16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::parse_decimal_body_to_f64_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::parse_opt_exponent_saturated",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::parse_radix_to_f64_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::pow10",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::pow2",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::pow_base32",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::record_upsert_u16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::record_upsert_u8",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::scan_decimal_mantissa_exec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::slice_eq_ascii",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_big_val",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_bit_len_nat",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_convert_seq_byte_string",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_convert_seq_dom_string",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_convert_seq_long",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_convert_seq_usv_string",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_digits_to_nat",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_find_own_prop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_find_proto_prop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_first_nonzero",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_frac_digits",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_headers_seq_pairs_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_highest_bit_u64",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_last_nonzero",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_parse_exp_nat",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_parse_radix_nat_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_record_byte_byte_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_record_dom_dom_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_record_find_key",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_record_find_key_u8",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_record_usv_usv_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_scan_digits_only",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_scan_mantissa",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_trim_end",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_trim_start",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_u128_digits",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_usv_normalize_units",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_usv_seq_pairs_loop",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_usv_to_scalars",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::spec_utf16_lt",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::string_to_number_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_any",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_boolean",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_byte",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_byte_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_dom_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_event_init",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_event_init_logged",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_headers_sequence_pairs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_long",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_long_long",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_node_op",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_nullable_byte_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_nullable_dom_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_nullable_long",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_nullable_usv_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_octet",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_record_byte_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_record_dom_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_record_usv_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_request_init",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_sequence_byte_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_sequence_dom_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_sequence_long",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_sequence_usv_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_short",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_storage_op",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_undefined",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_unsigned_long",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_unsigned_long_long",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_unsigned_short",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_url_href",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_usv_sequence_pairs",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_idl_usv_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_any",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_boolean",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_byte",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_byte_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_dom_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_event_init",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_long",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_long_long",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_nullable_dom_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_nullable_long",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_octet",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_record_dom_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_sequence_dom_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_short",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_undefined",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_unsigned_long",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_unsigned_long_long",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_unsigned_short",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_js_usv_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_number",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::to_string_utf16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::trim_utf16",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::u128_to_utf16_digits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::u64_mag_to_f64_bits",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::units_to_byte_string",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::usv_normalize_units",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::usv_to_scalars",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::utf16_lt",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::conversions::validate_dict_container",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::ConsoleLogEntry::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::CookieEntry::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::DomNodeEntry::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::HostRequest::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::HostRequest::expected_kind",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::HostRequest::required_perms",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::HostRequest::target_origin",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::HostState::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::HostState::new",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::QueuedFetchEntry::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::StorageEntry::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::TimerQueueEntry::clone",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::copy_u16_vec",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::dispatch",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::kind_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::lemma_push_console_preserves_other_origins",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::lemma_push_console_preserves_other_realms",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::lemma_push_cookie_preserves_other_origins",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::lemma_push_dom_preserves_other_origins",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::lemma_push_dom_preserves_other_realms",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::lemma_push_fetch_preserves_other_origins",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::lemma_push_storage_preserves_other_origins",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::lemma_push_timer_preserves_other_origins",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::lemma_push_timer_preserves_other_realms",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::lemma_update_dom_preserves_other_nodes",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::lemma_update_dom_preserves_other_origins",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::lemma_update_dom_preserves_other_realms",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::lemma_update_storage_preserves_other_origins",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::slice_u16_eq",
+   "mode": "exec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::spec_filter_console_by_origin",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::spec_filter_console_by_realm",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::spec_filter_cookies_by_origin",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::spec_filter_dom_by_node_id",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::spec_filter_dom_by_origin",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::spec_filter_dom_by_realm",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::spec_filter_fetches_by_origin",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::spec_filter_storage_by_origin",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::spec_filter_timers_by_origin",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::spec_filter_timers_by_realm",
+   "mode": "spec",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::theorem_cross_realm_or_origin_refused",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::theorem_dom_node_confinement",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::theorem_forged_handle_rejected",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::theorem_permission_attenuation_monotonicity",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::theorem_use_after_revoke_and_realloc_rejected",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::theorem_use_after_revoke_rejected",
+   "mode": "proof",
+   "success": true
+  },
+  {
+   "function": "vjs_webidl::dispatch::verified_revoke_then_dispatch_refused",
+   "mode": "exec",
+   "success": true
+  }
+ ]
+}
 
 $ cargo test -p vjs_webidl
-# cwd: /private/tmp/conduit-integrate-j0-j7/browser
-# exit: 0  seconds: 1.79
+# cwd: ~/conduit-lab/browser
+# exit: 0  seconds: 1.57
 
 
 running 0 tests
@@ -17,21 +1550,21 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 
 running 13 tests
-test wpt_event_and_host_dictionaries_lexicographic_order ... ok
-test capability_security_and_non_interference_suite ... ok
-test ambient_authority_scanner_catches_braced_and_nested_imports ... ok
-test wpt_urlsearchparams_records_and_sequences ... ok
 test wpt_usvstring_surrogates_and_idempotence ... ok
 test wpt_enforcerange_conversions ... ok
+test wpt_bytestring_and_headers_records ... ok
+test wpt_event_and_host_dictionaries_lexicographic_order ... ok
+test capability_security_and_non_interference_suite ... ok
+test wpt_urlsearchparams_records_and_sequences ... ok
+test all_eight_integer_types_and_primitives_roundtrip ... ok
 test wpt_dom_exception_and_sequence_conversions ... ok
 test wpt_clamp_ties_to_even_conversions ... ok
-test wpt_bytestring_and_headers_records ... ok
-test all_eight_integer_types_and_primitives_roundtrip ... ok
+test ambient_authority_scanner_catches_braced_and_nested_imports ... ok
 test verify_provenance_manifest_integrity ... ok
 test node_v8_live_differential_oracle_suite ... ok
 test end_to_end_wpt_differential_security_and_ambient_audit ... ok
 
-test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
 
 
 running 0 tests
@@ -74,7 +1607,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -83,7 +1616,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 603 | ptr_atomic_methods!(PAtomicU64, AtomicU64, u64, "64");
@@ -95,7 +1628,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -104,7 +1637,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 605 | ptr_atomic_methods!(PAtomicU32, AtomicU32, u32, "32");
@@ -115,7 +1648,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -124,7 +1657,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 606 | ptr_atomic_methods!(PAtomicU16, AtomicU16, u16, "16");
@@ -135,7 +1668,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -144,7 +1677,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 607 | ptr_atomic_methods!(PAtomicU8, AtomicU8, u8, "8");
@@ -155,7 +1688,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -164,7 +1697,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 608 | ptr_atomic_methods!(PAtomicUsize, AtomicUsize, usize, "ptr");
@@ -175,7 +1708,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -184,7 +1717,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 611 | ptr_atomic_methods!(PAtomicI64, AtomicI64, i64, "64");
@@ -195,7 +1728,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -204,7 +1737,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 613 | ptr_atomic_methods!(PAtomicI32, AtomicI32, i32, "32");
@@ -215,7 +1748,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -224,7 +1757,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 614 | ptr_atomic_methods!(PAtomicI16, AtomicI16, i16, "16");
@@ -235,7 +1768,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -244,7 +1777,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 615 | ptr_atomic_methods!(PAtomicI8, AtomicI8, i8, "8");
@@ -255,7 +1788,7 @@ warning: unused variable: `perm`
     |
 511 | macro_rules! ptr_atomic_methods {
 ...
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -264,7 +1797,7 @@ warning: unused variable: `perm`
 help: `perm` is captured in macro and introduced a unused variable
    --> ~/workspaces/verus-stack/verus/source/vstd/atomic.rs:563:51
     |
-563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&Points...
+563 |         pub fn from_ptr_load(ptr: *mut $value_ty, perm: Tracked<&PointsTo<$value_ty>>) -> (ret: $value_ty)
     |                                                   ^^^^
 ...
 616 | ptr_atomic_methods!(PAtomicIsize, AtomicIsize, isize, "ptr");
@@ -347,8 +1880,8 @@ warning: negative impls are experimental
     = note: for more information, see issue #154045 <https://github.com/rust-lang/rust/issues/154045>
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
-   Compiling vjs_webidl v0.1.0 (/private/tmp/conduit-integrate-j0-j7/browser/vjs-webidl)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.85s
+   Compiling vjs_webidl v0.1.0 (~/conduit-lab/browser/vjs-webidl)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.58s
      Running unittests src/lib.rs (target/debug/build/vjs_webidl/02ad0be6a8c75e7c/out/vjs_webidl-02ad0be6a8c75e7c)
      Running tests/audit_and_wpt.rs (target/debug/build/vjs_webidl/cca6b2be9694ca3c/out/audit_and_wpt-cca6b2be9694ca3c)
    Doc-tests vjs_webidl
