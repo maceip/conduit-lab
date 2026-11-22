@@ -10,3 +10,7 @@ dist/
 
 # Superdesign temporary component scratch files
 .superdesign/tmp/
+
+# Local review scratch (screenshots, playwright MCP state)
+.playwright-mcp/
+/conduit-*.png

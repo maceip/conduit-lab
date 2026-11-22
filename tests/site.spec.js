@@ -75,11 +75,9 @@ test("scoreboard renders live 11-crate totals and enforces adjacent pill density
   expect(verusClipped, "verus revision pill must not clip").toBeLessThanOrEqual(2);
 });
 
-test("all modified illustrations, 3D hardware sculptures, and stickers load cleanly", async ({ page }) => {
+test("all rendered hero and brand images load cleanly", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByTestId("hero-visual").locator("img")).toBeVisible();
-  await expect(page.getByTestId("hardware-strip").locator("a")).toHaveCount(4);
-  await expect(page.getByTestId("iso-architecture").locator("img")).toBeVisible();
 
   const imgStates = await page.locator("img").evaluateAll((imgs) =>
     imgs.map((img) => ({
@@ -88,17 +86,19 @@ test("all modified illustrations, 3D hardware sculptures, and stickers load clea
       naturalWidth: img.naturalWidth,
     }))
   );
-  expect(imgStates.length).toBeGreaterThanOrEqual(12);
+  expect(imgStates.length).toBeGreaterThanOrEqual(3);
   for (const img of imgStates) {
     expect(img.complete, `${img.src} must finish loading`).toBe(true);
     expect(img.naturalWidth, `${img.src} must have naturalWidth > 0`).toBeGreaterThan(0);
   }
 });
 
-test("chapters, navigation, and upgraded copy are consistent and free of stale claims", async ({ page }) => {
+test("sections lead with formal verification, navigation matches order, and copy has zero stale claims", async ({
+  page,
+}) => {
   await page.goto("/");
-  const ids = await page.locator("main section").evaluateAll((ss) => ss.map((s) => s.id));
-  expect(ids).toEqual(["coverage", "proofs", "scope", "arch", "ratchet"]);
+  const ids = await page.locator("main > section").evaluateAll((ss) => ss.map((s) => s.id));
+  expect(ids).toEqual(["proofs", "arch", "ratchet", "scope", "coverage"]);
   const navTargets = await page.locator(".ch-nav a").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
   expect(navTargets).toEqual(ids.map((id) => `#${id}`));
 
@@ -119,32 +119,9 @@ test("chapters, navigation, and upgraded copy are consistent and free of stale c
   }
 });
 
-test("section 1: interactive 20-CVE filters and primary-source detail inspector", async ({ page }) => {
-  await page.goto("/");
-  await expect(page.getByTestId("packet-count")).toHaveText("20 CVEs");
-  await expect(page.locator("#coverage")).toContainText("13/20");
-  await expect(page.locator("#coverage")).toContainText("3/20");
-  await expect(page.locator("#coverage")).toContainText("4/20");
-
-  // Default selected CVE is first row
-  const detail = page.getByTestId("cve-detail");
-  await expect(detail).toContainText("CVE-2026-125350");
-  await expect(detail).toContainText("157.0.8103.50");
-
-  // Filter to graphics gap (4 CVEs) and inspect Skia CVE
-  await page.getByTestId("cve-filter-graphics").click();
-  await expect(page.getByTestId("packet-count")).toHaveText("4 CVEs");
-  await expect(page.getByTestId("cve-table").locator("tbody tr")).toHaveCount(4);
-  await page.getByTestId("cve-row-CVE-2026-3909").click();
-  await expect(detail).toContainText("CVE-2026-3909");
-  await expect(detail).toContainText("Outside formal verification");
-
-  // Filter back to all
-  await page.getByTestId("cve-filter-all").click();
-  await expect(page.getByTestId("cve-table").locator("tbody tr")).toHaveCount(20);
-});
-
-test("section 2: 4-state Verus workbench, fix-typo action, and live 11-crate proof explorer", async ({ page }) => {
+test("section 1 (#proofs): 4-state Verus workbench, fix-typo action, and live 11-crate proof explorer", async ({
+  page,
+}) => {
   await page.goto("/");
   await expect(page.getByTestId("verus-file")).toHaveText("browser/url/src/percent.rs");
   await expect(page.getByTestId("inlay-state-8")).toHaveText("verified");
@@ -178,19 +155,17 @@ test("section 2: 4-state Verus workbench, fix-typo action, and live 11-crate pro
   await expect(page.getByTestId("live-proof-source")).toContainText("CompCert");
 });
 
-test("section 3: live scale bars, constraints, and prior-art table fit cleanly", async ({ page }) => {
+test("section 2 (#arch): trust-boundary diagram fits cleanly without overflow", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByTestId("scale-sel4")).toHaveText("8,700 LOC");
-  await expect(page.getByTestId("scale-conduit")).toHaveText(`${totals.source_lines.toLocaleString("en-US")} LOC`);
-  await expect(page.getByTestId("reasons").locator("details")).toHaveCount(4);
-
-  const table = page.getByTestId("systems-table");
-  await expect(table.locator("tbody tr")).toHaveCount(9);
-  const wrapOverflow = await table.locator("..").evaluate((el) => el.scrollWidth - el.clientWidth);
-  expect(wrapOverflow, "prior-art table must fit its column").toBeLessThanOrEqual(2);
+  const diagram = page.getByTestId("shim-diagram");
+  await expect(diagram).toBeVisible();
+  await expect(diagram).toContainText("VERIFIED SECURITY KERNEL");
+  await expect(diagram).toContainText("Typed Vest IPC");
+  const overflow = await diagram.evaluate((el) => el.scrollWidth - el.clientWidth);
+  expect(overflow, "architecture diagram must not overflow horizontally").toBeLessThanOrEqual(2);
 });
 
-test("section 5: 11-crate ledger, J0-J7 rows, VM benchmarks, suites, tradeoffs, and zero-overlap DAG", async ({
+test("section 3 (#ratchet): 11-crate ledger, scope boundary, and collapsible engineering drawers", async ({
   page,
 }) => {
   await page.goto("/");
@@ -200,12 +175,24 @@ test("section 5: 11-crate ledger, J0-J7 rows, VM benchmarks, suites, tradeoffs, 
     await expect(cratesTable).toContainText(c.name);
   }
 
-  const vjsRows = page.getByTestId("vjs-rows");
-  await expect(vjsRows.locator("details")).toHaveCount(ratchet.j_steps.length);
-  for (const step of ratchet.j_steps) {
-    await expect(vjsRows).toContainText(`${step.test262_passed}/${step.test262_total}`);
-  }
+  // Disclosure card stays accurate and never truncates
+  const card = page.getByTestId("honesty-card");
+  await expect(card).toContainText(`${totals.crates} crates`);
+  await expect(card).toContainText("non-interference theorems");
+  const clipped = await card.evaluate((el) => el.scrollWidth - el.clientWidth);
+  expect(clipped, "scope disclosure card must not truncate").toBeLessThanOrEqual(2);
 
+  // Secondary engineering deep-dives are collapsed by default to keep the page uncluttered
+  const benchDrawer = page.getByTestId("bench-drawer");
+  const dagDrawer = page.getByTestId("dag-drawer");
+  const tradeoffsDrawer = page.getByTestId("tradeoffs-drawer");
+  await expect(benchDrawer).not.toHaveAttribute("open", "");
+  await expect(dagDrawer).not.toHaveAttribute("open", "");
+  await expect(tradeoffsDrawer).not.toHaveAttribute("open", "");
+
+  // Expand benchmarks & conformance drawer
+  await benchDrawer.locator("summary").click();
+  await expect(benchDrawer).toHaveAttribute("open", "");
   const benchCard = page.getByTestId("vm-benchmarks");
   await expect(benchCard).toContainText(`${ratchet.vm_benchmarks_geomean_speedup}×`);
   const benchOverflow = await benchCard
@@ -216,13 +203,13 @@ test("section 5: 11-crate ledger, J0-J7 rows, VM benchmarks, suites, tradeoffs, 
   const suites = page.getByTestId("suites-table");
   await expect(suites.locator("tbody tr")).toHaveCount(ratchet.test262_suites.length);
   await expect(suites).toContainText(totalDiffCases.toLocaleString("en-US"));
-
-  await expect(page.getByTestId("modules").locator("details")).toHaveCount(3);
-  await expect(page.getByTestId("tradeoffs").locator("details")).toHaveCount(9);
   await expect(page.getByTestId("fuel-theorem")).toContainText("Unsupported(f)");
+
+  // Expand obligation DAG drawer and verify zero node overlap + interactive node inspection
+  await dagDrawer.locator("summary").click();
+  await expect(dagDrawer).toHaveAttribute("open", "");
   await expect(page.getByTestId("dag-summary")).toContainText("13 obligations");
 
-  // Verify ZERO overlapping nodes in the Proof Dependency DAG
   const dagOverlap = await page.locator(".ch-dag-node").evaluateAll((nodes) => {
     const rects = nodes.map((n) => n.getBoundingClientRect());
     for (let i = 0; i < rects.length; i++) {
@@ -237,21 +224,61 @@ test("section 5: 11-crate ledger, J0-J7 rows, VM benchmarks, suites, tradeoffs, 
   });
   expect(dagOverlap, "Proof DAG nodes must never overlap").toBeNull();
 
-  // Clicking a DAG node updates the dependency inspector
   await page.getByTestId("dag-node-ipv4_parse").click();
   await expect(page.getByTestId("dag-inspector")).toContainText("ipv4_parse");
   await expect(page.getByTestId("dag-inspector")).toContainText("ipv4_number");
 
-  // Disclosure card stays accurate and never truncates
-  const card = page.getByTestId("honesty-card");
-  await expect(card).toContainText(`${totals.crates} crates`);
-  await expect(card).toContainText("non-interference theorems");
-  const clipped = await card.evaluate((el) => el.scrollWidth - el.clientWidth);
-  expect(clipped, "scope disclosure card must not truncate").toBeLessThanOrEqual(2);
+  // Expand tradeoffs drawer and verify all 9 architectural decisions render cleanly
+  await tradeoffsDrawer.locator("summary").click();
+  await expect(tradeoffsDrawer).toHaveAttribute("open", "");
+  const tradeoffs = page.getByTestId("tradeoffs");
+  await expect(tradeoffs.locator("tbody tr")).toHaveCount(9);
+  await expect(tradeoffs).toContainText("What we give up");
+});
 
-  // Expanding a tradeoff shows real updated engineering tradeoff copy
-  await page.getByTestId("tradeoffs").locator("details").nth(1).locator("summary").click();
-  await expect(page.getByTestId("tradeoffs").locator("details").nth(1)).toContainText("What we give up");
+test("section 4 (#scope): live scale bars and prior-art table fit cleanly", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByTestId("scale-sel4")).toHaveText("8,700 LOC");
+  await expect(page.getByTestId("scale-conduit")).toHaveText(`${totals.source_lines.toLocaleString("en-US")} LOC`);
+
+  const table = page.getByTestId("systems-table");
+  await expect(table.locator("tbody tr")).toHaveCount(9);
+  const wrapOverflow = await table.locator("..").evaluate((el) => el.scrollWidth - el.clientWidth);
+  expect(wrapOverflow, "prior-art table must fit its column").toBeLessThanOrEqual(2);
+});
+
+test("section 5 (#coverage): 20-CVE appendix is collapsed at bottom by default and interactive on expand", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const cveDrawer = page.getByTestId("cve-drawer");
+  await expect(cveDrawer).not.toHaveAttribute("open", "");
+  await expect(page.getByTestId("cve-table")).not.toBeVisible();
+
+  // Expand CVE appendix drawer
+  await cveDrawer.locator("summary").click();
+  await expect(cveDrawer).toHaveAttribute("open", "");
+  await expect(page.getByTestId("packet-count")).toHaveText("20 CVEs");
+  await expect(page.locator("#coverage")).toContainText("13/20");
+  await expect(page.locator("#coverage")).toContainText("3/20");
+  await expect(page.locator("#coverage")).toContainText("4/20");
+
+  // Default selected CVE is first row
+  const detail = page.getByTestId("cve-detail");
+  await expect(detail).toContainText("CVE-2026-125350");
+  await expect(detail).toContainText("157.0.8103.50");
+
+  // Filter to graphics gap (4 CVEs) and inspect Skia CVE
+  await page.getByTestId("cve-filter-graphics").click();
+  await expect(page.getByTestId("packet-count")).toHaveText("4 CVEs");
+  await expect(page.getByTestId("cve-table").locator("tbody tr")).toHaveCount(4);
+  await page.getByTestId("cve-row-CVE-2026-3909").click();
+  await expect(detail).toContainText("CVE-2026-3909");
+  await expect(detail).toContainText("Outside formal verification");
+
+  // Filter back to all
+  await page.getByTestId("cve-filter-all").click();
+  await expect(page.getByTestId("cve-table").locator("tbody tr")).toHaveCount(20);
 });
 
 test("theme switch toggles dark/light mode cleanly and persists", async ({ page }) => {

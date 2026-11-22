@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Badge, Button } from '@clickhouse/click-ui';
+import { Button } from '@clickhouse/click-ui';
 import { loadText, NR, type ProofShowcaseItem, type Ratchet } from './data';
 import {
   ADMIT_LINES,
@@ -15,63 +15,48 @@ import { Source } from './parts';
 interface StateConfig {
   id: ObligationState;
   label: string;
-  summary: string;
   tone: 'proved' | 'fail' | 'warn';
   fileLabel: string;
   lines: VerusCodeLine[];
   defaultLine: number;
-  badgeText: string;
-  badgeState: 'success' | 'danger' | 'warning';
 }
 
 const OBLIGATION_STATES: StateConfig[] = [
   {
     id: 'verified',
     label: 'Verified',
-    summary: 'Z3 proved the spec holds for all inputs',
     tone: 'proved',
     fileLabel: 'browser/url/src/percent.rs',
     lines: VURL_VERIFIED_LINES,
     defaultLine: 8,
-    badgeText: 'PROVED (0 ADMITS)',
-    badgeState: 'success',
   },
   {
     id: 'failed',
     label: 'Counterexample',
-    summary: 'Z3 returned a concrete breaking byte',
     tone: 'fail',
     fileLabel: 'illustrative typo — not in vurl',
     lines: COUNTEREXAMPLE_LINES,
     defaultLine: 4,
-    badgeText: 'FALSIFIED (SAT)',
-    badgeState: 'danger',
   },
   {
     id: 'timeout',
     label: 'Timeout',
-    summary: 'Solver budget ran out; CI rejects it',
     tone: 'warn',
     fileLabel: 'illustrative timeout — not in vurl',
     lines: TIMEOUT_LINES,
     defaultLine: 4,
-    badgeText: 'RLIMIT EXCEEDED',
-    badgeState: 'warning',
   },
   {
     id: 'admit',
     label: 'Admit',
-    summary: 'Manual bypass; rejected by ratchet',
     tone: 'warn',
     fileLabel: 'illustrative bypass — not in vurl',
     lines: ADMIT_LINES,
     defaultLine: 5,
-    badgeText: 'TRUSTED BYPASS',
-    badgeState: 'warning',
   },
 ];
 
-const StateIcon: React.FC<{ state: ObligationState; size?: number }> = ({ state, size = 14 }) => {
+const StateIcon: React.FC<{ state: ObligationState; size?: number }> = ({ state, size = 13 }) => {
   if (state === 'verified') return <IconCheck size={size} />;
   if (state === 'failed') return <IconX size={size} />;
   if (state === 'timeout') return <IconClock size={size} />;
@@ -134,43 +119,26 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
   };
 
   const liveLines = activeProof && sourceCache[activeProof.source]
-    ? sourceCache[activeProof.source].split('\n').slice(0, 42)
+    ? sourceCache[activeProof.source].split('\n').slice(0, 40)
     : [];
 
   return (
     <section className="ch-spec-row" id="proofs">
       <div className="ch-prose-col">
-        <div className="ch-section-lead">
-          <img
-            src="assets/sticker-scroll.webp"
-            alt="Sealed formal specification scroll illustration"
-            className="ch-sticker-medallion"
-            width={72}
-            height={72}
-          />
-          <h2 className="ch-section-title">Tests check examples. Proofs check every input.</h2>
-        </div>
+        <h2 className="ch-section-title">Tests check examples. Proofs check every input.</h2>
 
         <p className="ch-prose-text">
-          A unit test only catches the cases someone thought to write down. Verus hands both your
-          Rust code and its mathematical specification to Z3 and asks a single question: does{' '}
-          <em>any</em> input break this contract? If Z3 answers no (<code>UNSAT</code>), the
-          guarantee holds across all inputs. If it answers yes (<code>SAT</code>), it returns the
-          exact input that breaks it.
+          Verus compiles Rust code and its specification into Z3 queries: does <em>any</em> input
+          violate this contract? An <code>UNSAT</code> verdict proves the implementation across all
+          possible inputs; a <code>SAT</code> verdict returns the concrete breaking value.
         </p>
 
-        <p className="ch-prose-text">
-          Every proof check ends in one of four outcomes, and only the first counts as verified.
-          Try each state below—the failure views inject a one-character typo into a real{' '}
-          <code>vurl</code> helper because all verified crates currently have zero errors.
-        </p>
-
-        <div className="ch-state-selector" role="group" aria-label="Verus obligation states">
+        <div className="ch-state-selector ch-state-compact" role="group" aria-label="Verus obligation states">
           {OBLIGATION_STATES.map((st) => (
             <button
               key={st.id}
               type="button"
-              className="ch-state-btn"
+              className="ch-state-btn ch-state-btn-compact"
               data-testid={`state-${st.id}`}
               data-active={workbenchTab === 'obligations' && mode === st.id}
               data-tone={st.tone}
@@ -178,10 +146,9 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
               onClick={() => switchMode(st.id)}
             >
               <span className="ch-state-title" data-tone={st.tone}>
-                <StateIcon state={st.id} size={14} />
+                <StateIcon state={st.id} size={13} />
                 <span>{st.label}</span>
               </span>
-              <span className="ch-state-summary">{st.summary}</span>
             </button>
           ))}
         </div>
@@ -193,183 +160,155 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
               data-testid="btn-fix-typo"
               onClick={() => switchMode('verified')}
             >
-              Fix the typo (r &lt; 15 → r &lt; 16) &amp; re-verify
+              Fix typo (r &lt; 15 → r &lt; 16) &amp; re-verify
             </Button>
           </div>
         )}
 
         <p className="ch-prose-note">
-          Proofs still trust Verus, Z3, <code>rustc</code>, and the specification itself. To catch
-          spec bugs early, every clause is pinned to an upstream standard commit and cross-checked
-          against WPT, <code>tc39/test262</code>, and <code>WebAssembly/spec</code>.
+          Specs are pinned to upstream WHATWG, ECMA-262, and Wasm commits and differentially tested
+          against WPT and <code>tc39/test262</code> so specification bugs cannot hide behind a valid
+          proof.
         </p>
       </div>
 
       <div className="ch-artifact-col">
-        <div className="ch-workbench-tabs" role="tablist" aria-label="Proof workbench views">
-          <button
-            type="button"
-            role="tab"
-            className="ch-tab-btn"
-            aria-selected={workbenchTab === 'obligations'}
-            data-active={workbenchTab === 'obligations'}
-            data-testid="tab-obligations"
-            onClick={() => setWorkbenchTab('obligations')}
-          >
-            How proofs work (vurl)
-          </button>
-          <button
-            type="button"
-            role="tab"
-            className="ch-tab-btn"
-            aria-selected={workbenchTab === 'live'}
-            data-active={workbenchTab === 'live'}
-            data-testid="tab-live-proofs"
-            onClick={() => setWorkbenchTab('live')}
-          >
-            Live crate proofs ({showcase.length || NR})
-          </button>
-        </div>
+        <div className="ch-code-workbench" data-testid="verus-code-workbench">
+          <div className="ch-code-header">
+            <div className="ch-workbench-tabs" role="tablist" aria-label="Proof workbench views">
+              <button
+                type="button"
+                role="tab"
+                className="ch-tab-btn"
+                aria-selected={workbenchTab === 'obligations'}
+                data-active={workbenchTab === 'obligations'}
+                data-testid="tab-obligations"
+                onClick={() => setWorkbenchTab('obligations')}
+              >
+                Obligation states
+              </button>
+              <button
+                type="button"
+                role="tab"
+                className="ch-tab-btn"
+                aria-selected={workbenchTab === 'live'}
+                data-active={workbenchTab === 'live'}
+                data-testid="tab-live-proofs"
+                onClick={() => setWorkbenchTab('live')}
+              >
+                Live crate proofs ({showcase.length || NR})
+              </button>
+            </div>
 
-        {workbenchTab === 'obligations' ? (
-          <>
-            <div className="ch-verified-strip" data-tone={activeConfig.tone}>
+            {workbenchTab === 'obligations' ? (
               <span className="ch-mono" data-testid="verus-file">
                 {activeConfig.fileLabel}
               </span>
-              <Badge state={activeConfig.badgeState} text={activeConfig.badgeText} />
-            </div>
+            ) : activeProof ? (
+              <span className="ch-proof-links">
+                <Source href={activeProof.source}>
+                  <span data-testid="live-proof-file">{activeProof.file}</span>{' '}
+                  <IconExternal size={11} />
+                </Source>
+                {' · '}
+                <Source href={activeProof.log}>
+                  log <IconExternal size={11} />
+                </Source>
+              </span>
+            ) : null}
+          </div>
 
-            <div className="ch-code-workbench" data-testid="verus-code-workbench">
-              <div className="ch-code-header">
-                <span>Select any marked line to read the Z3 verdict</span>
-                <span className="ch-lane-note">Lanes: spec · exec · proof</span>
-              </div>
+          {workbenchTab === 'obligations' ? (
+            <div className="ch-code-lines">
+              {activeConfig.lines.map((line) => {
+                const hasObl = !!line.obligation;
+                const isOpen = hasObl && expandedLine === line.lineNo;
+                const state = line.obligation?.state;
+                const rowTone =
+                  state === 'verified'
+                    ? 'proved'
+                    : state === 'failed'
+                    ? 'fail'
+                    : state === 'timeout' || state === 'admit'
+                    ? 'warn'
+                    : undefined;
 
-              <div className="ch-code-lines">
-                {activeConfig.lines.map((line) => {
-                  const hasObl = !!line.obligation;
-                  const isOpen = hasObl && expandedLine === line.lineNo;
-                  const state = line.obligation?.state;
-                  const rowTone =
-                    state === 'verified'
-                      ? 'proved'
-                      : state === 'failed'
-                      ? 'fail'
-                      : state === 'timeout' || state === 'admit'
-                      ? 'warn'
-                      : undefined;
-
-                  return (
-                    <div
-                      key={`${mode}-${line.lineNo}`}
-                      className="ch-code-row"
-                      data-state={isOpen ? rowTone : undefined}
-                      data-clickable={hasObl}
-                      onClick={hasObl ? () => setExpandedLine(line.lineNo) : undefined}
-                    >
-                      <span className="ch-lineno">{line.lineNo}</span>
-                      <span className="ch-glyph" data-tone={rowTone}>
-                        {state ? <StateIcon state={state} size={13} /> : null}
-                      </span>
-                      <span className="ch-lane-pill" data-lane={line.lane}>
-                        {line.lane}
-                      </span>
-                      <span
-                        className="ch-code-text"
-                        data-testid={
-                          isOpen ? `active-obligation-line-${line.lineNo}` : undefined
-                        }
-                      >
-                        {line.text || '\u00a0'}
-                      </span>
-
-                      {isOpen && line.obligation && (
-                        <div
-                          className="ch-z3-inlay"
-                          data-tone={rowTone}
-                          data-testid={`inlay-${line.lineNo}`}
-                        >
-                          <div className="ch-inlay-head">
-                            <span
-                              className="ch-inlay-badge"
-                              data-tone={rowTone}
-                              data-testid={`inlay-state-${line.lineNo}`}
-                            >
-                              {line.obligation.state}
-                            </span>
-                            <strong>{line.obligation.summary}</strong>
-                          </div>
-                          <p className="ch-inlay-detail">{line.obligation.detail}</p>
-                          {line.obligation.counterexample && (
-                            <div className="ch-ce-table" data-testid="z3-counterexample">
-                              {line.obligation.counterexample.map((row) => (
-                                <div key={row.symbol} className="ch-ce-row">
-                                  <span className="ch-ce-sym">{row.symbol}</span>
-                                  <span className="ch-ce-sort">{row.sort}</span>
-                                  <span className="ch-ce-val">{row.value}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <p className="ch-prose-note">
-              Real <code>percent.rs</code> code transcribed from WHATWG URL §1.3. Alongside the
-              positive roundtrip proof, <code>vurl</code> also proves a subtle spec edge case: for
-              the six encode sets that omit <code>%</code>, <code>decode(encode(&quot;%41&quot;))</code>{' '}
-              yields <code>&quot;A&quot;</code>, not <code>&quot;%41&quot;</code>.
-            </p>
-          </>
-        ) : (
-          <div className="ch-live-proof-panel" data-testid="live-proof-panel">
-            {showcase.length > 0 && activeProof ? (
-              <>
-                <div className="ch-proof-picker" role="group" aria-label="Select verified crate proof">
-                  {showcase.map((item) => (
-                    <button
-                      key={item.crate}
-                      type="button"
-                      className="ch-proof-pill"
-                      data-testid={`proof-crate-${item.crate}`}
-                      data-active={item.crate === activeProof.crate}
-                      onClick={() => setSelectedProofCrate(item.crate)}
-                    >
-                      {item.label}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="ch-verified-strip" data-tone={activeProof.errors === 0 ? 'proved' : 'fail'}>
-                  <span className="ch-mono" data-testid="live-proof-file">
-                    {activeProof.file}
-                  </span>
-                  <span className="ch-mono ch-proof-meta">
-                    {activeProof.verified.toLocaleString('en-US')} verified · {activeProof.seconds}s
-                  </span>
-                </div>
-
-                <div className="ch-code-workbench">
-                  <div className="ch-code-header">
-                    <span>Fetched live from {activeProof.source}</span>
-                    <span className="ch-proof-links">
-                      <Source href={activeProof.source}>
-                        Full .rs <IconExternal size={11} />
-                      </Source>
-                      {' · '}
-                      <Source href={activeProof.log}>
-                        Raw Z3 log <IconExternal size={11} />
-                      </Source>
+                return (
+                  <div
+                    key={`${mode}-${line.lineNo}`}
+                    className="ch-code-row ch-code-row-clean"
+                    data-state={isOpen ? rowTone : undefined}
+                    data-clickable={hasObl}
+                    onClick={hasObl ? () => setExpandedLine(line.lineNo) : undefined}
+                  >
+                    <span className="ch-lineno">{line.lineNo}</span>
+                    <span className="ch-glyph" data-tone={rowTone}>
+                      {state ? <StateIcon state={state} size={13} /> : null}
                     </span>
+                    <span
+                      className="ch-code-text"
+                      data-testid={
+                        isOpen ? `active-obligation-line-${line.lineNo}` : undefined
+                      }
+                    >
+                      {line.text || '\u00a0'}
+                    </span>
+
+                    {isOpen && line.obligation && (
+                      <div
+                        className="ch-z3-inlay"
+                        data-tone={rowTone}
+                        data-testid={`inlay-${line.lineNo}`}
+                      >
+                        <div className="ch-inlay-head">
+                          <span
+                            className="ch-inlay-badge"
+                            data-tone={rowTone}
+                            data-testid={`inlay-state-${line.lineNo}`}
+                          >
+                            {line.obligation.state}
+                          </span>
+                          <strong>{line.obligation.summary}</strong>
+                        </div>
+                        <p className="ch-inlay-detail">{line.obligation.detail}</p>
+                        {line.obligation.counterexample && (
+                          <div className="ch-ce-table" data-testid="z3-counterexample">
+                            {line.obligation.counterexample.map((row) => (
+                              <div key={row.symbol} className="ch-ce-row">
+                                <span className="ch-ce-sym">{row.symbol}</span>
+                                <span className="ch-ce-sort">{row.sort}</span>
+                                <span className="ch-ce-val">{row.value}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="ch-live-proof-panel" data-testid="live-proof-panel">
+              {showcase.length > 0 && activeProof ? (
+                <>
+                  <div className="ch-proof-picker ch-proof-picker-bar" role="group" aria-label="Select verified crate proof">
+                    {showcase.map((item) => (
+                      <button
+                        key={item.crate}
+                        type="button"
+                        className="ch-proof-pill"
+                        data-testid={`proof-crate-${item.crate}`}
+                        data-active={item.crate === activeProof.crate}
+                        onClick={() => setSelectedProofCrate(item.crate)}
+                      >
+                        {item.crate}
+                      </button>
+                    ))}
+                  </div>
+
                   {loadingSource ? (
-                    <div className="ch-code-empty">Fetching verified source from {activeProof.source}…</div>
+                    <div className="ch-code-empty">Fetching {activeProof.source}…</div>
                   ) : sourceError ? (
                     <div className="ch-code-empty">{sourceError}</div>
                   ) : (
@@ -382,16 +321,15 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
                       ))}
                     </div>
                   )}
+                </>
+              ) : (
+                <div className="ch-code-empty">
+                  Live crate proof files require browser/ratchet.json ({NR}).
                 </div>
-              </>
-            ) : (
-              <div className="ch-disclosure-card">
-                <h3>Proof showcase unavailable</h3>
-                <p>Live crate proof files require browser/ratchet.json ({NR}).</p>
-              </div>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

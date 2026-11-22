@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IconArrowDown, IconArrowRight, IconCheck, IconChevron, IconShieldAlert, IconX } from './icons';
+import { IconArrowDown, IconArrowRight } from './icons';
 import type { ProofDagEdge, ProofDagNode } from './content/vurl';
 
 export type Tone = 'proved' | 'warn' | 'fail' | 'neutral';
@@ -12,13 +12,8 @@ export const StatTile: React.FC<{
   testId?: string;
 }> = ({ value, label, hint, tone = 'neutral', testId }) => (
   <div className="ch-metric-tile" data-tone={tone}>
-    <div className="ch-metric-top">
-      <div className="ch-metric-value" data-tone={tone} data-testid={testId ?? `stat-${label}`}>
-        {value}
-      </div>
-      {tone === 'proved' && <IconCheck size={15} className="ch-metric-icon" />}
-      {tone === 'fail' && <IconX size={15} className="ch-metric-icon" />}
-      {tone === 'warn' && <IconShieldAlert size={15} className="ch-metric-icon" />}
+    <div className="ch-metric-value" data-tone={tone} data-testid={testId ?? `stat-${label}`}>
+      {value}
     </div>
     <div className="ch-metric-label">{label}</div>
     {hint && <div className="ch-metric-hint">{hint}</div>}
@@ -30,28 +25,6 @@ export const Field: React.FC<{ label: string; children: React.ReactNode }> = ({ 
     <dt>{label}</dt>
     <dd>{children}</dd>
   </div>
-);
-
-export const DetailsRow: React.FC<{
-  k: string;
-  v: string;
-  meta?: string;
-  tone?: Tone;
-  open?: boolean;
-  children: React.ReactNode;
-}> = ({ k, v, meta, tone = 'neutral', open = false, children }) => (
-  <details className="ch-det" data-tone={tone} open={open}>
-    <summary className="ch-det-summary">
-      <span className="ch-det-dot" data-tone={tone} aria-hidden="true" />
-      <span className="ch-det-k">{k}</span>
-      <span className="ch-det-v">{v}</span>
-      {meta && <span className="ch-det-meta">{meta}</span>}
-      <IconChevron size={14} className="ch-det-chev" />
-    </summary>
-    <div className="ch-det-body">
-      <dl className="ch-fields">{children}</dl>
-    </div>
-  </details>
 );
 
 export const ScaleCompare: React.FC<{
@@ -80,91 +53,68 @@ export const ScaleCompare: React.FC<{
               style={{ width: `${(Math.log10(Math.max(item.lines, 1)) / maxLog) * 100}%` }}
             />
           </div>
-          <div className="ch-scale-note">{item.note}</div>
         </div>
       ))}
-      <div className="ch-scale-axis">Logarithmic scale — each major step represents 10× more source code.</div>
+      <div className="ch-scale-axis">Logarithmic scale (10× per step).</div>
     </div>
   );
 };
 
 export const ArchitectureDiagram: React.FC = () => (
   <div className="ch-arch-diagram" data-testid="shim-diagram" aria-label="Verified kernel and sandboxed renderer architecture">
-    {/* Tier 1: Network Ingress */}
-    <div className="ch-tier">
-      <div className="ch-tier-head">Ingress · Transport &amp; Certificate Boundary</div>
-      <div className="ch-ingress-row">
-        <div className="ch-node" data-trust="untrusted">
-          <div className="ch-node-title">Network Transport</div>
-          <div className="ch-node-sub">rustls sockets · untrusted I/O</div>
-        </div>
-        <span className="ch-flow-arrow" aria-hidden="true">
-          <IconArrowRight size={15} />
-        </span>
-        <div className="ch-node" data-trust="verified">
-          <div className="ch-node-title">X.509 Path Validation</div>
-          <div className="ch-node-sub">Verdict policy · proved in Verus</div>
-        </div>
+    <div className="ch-ingress-row">
+      <div className="ch-node" data-trust="untrusted">
+        <div className="ch-node-title">TLS &amp; Sockets</div>
+        <div className="ch-node-sub">rustls · untrusted network I/O</div>
+      </div>
+      <span className="ch-flow-arrow" aria-hidden="true">
+        <IconArrowRight size={15} />
+      </span>
+      <div className="ch-node" data-trust="verified">
+        <div className="ch-node-title">X.509 Validation</div>
+        <div className="ch-node-sub">Verdict policy · Verus</div>
       </div>
     </div>
 
     <div className="ch-tier-connector" aria-hidden="true">
-      <IconArrowDown size={15} />
-      <span>validated bytes enter kernel</span>
+      <IconArrowDown size={14} />
     </div>
 
-    {/* Tier 2: Verified Security Kernel */}
     <div className="ch-kernel-shell">
       <div className="ch-kernel-head">
         <span>VERIFIED SECURITY KERNEL (Verus)</span>
-        <span className="ch-kernel-tag">Owns every security decision</span>
       </div>
       <div className="ch-kernel-grid">
         <div className="ch-node" data-trust="verified">
-          <div className="ch-node-title">Network Parsers</div>
-          <div className="ch-node-sub">vurl (proved) · HTTP · MIME · Cookie</div>
+          <div className="ch-node-title">Boundary Parsers</div>
+          <div className="ch-node-sub">vurl · HTTP · Cookie</div>
         </div>
         <div className="ch-node" data-trust="verified">
-          <div className="ch-node-title">Origin &amp; Policy</div>
-          <div className="ch-node-sub">SOP · CSP · CORS · Mixed content</div>
+          <div className="ch-node-title">Origin Policy</div>
+          <div className="ch-node-sub">SOP · CSP · CORS</div>
         </div>
         <div className="ch-node" data-trust="verified">
-          <div className="ch-node-title">Kernel &amp; Chrome</div>
-          <div className="ch-node-sub">Tabs · Cap handles · Address bar</div>
+          <div className="ch-node-title">Capability Table</div>
+          <div className="ch-node-sub">Tabs · Handles · UI</div>
         </div>
-      </div>
-      <div className="ch-kernel-foot">
-        <span>Composited frames &amp; input events route through display output only from the kernel.</span>
       </div>
     </div>
 
-    {/* IPC Capability Boundary */}
     <div className="ch-ipc-rail">
-      <IconArrowDown size={14} />
-      <span>Typed Vest-encoded IPC — capability handles only, zero ambient authority</span>
-      <IconArrowDown size={14} />
+      <IconArrowDown size={13} />
+      <span>Typed Vest IPC · capability handles only</span>
     </div>
 
-    {/* Tier 3: Per-Site Sandboxed Renderers */}
-    <div className="ch-renderers-grid">
-      {[
-        { title: 'Renderer · Origin A', detail: 'vjs (J0–J7 proved) + vjs_webidl + vwasm; unverified html5ever, Stylo, per-site GPU' },
-        { title: 'Renderer · Origin B', detail: 'Isolated Nanvix / OS sandbox — cannot open sockets, read cross-site cookies, or forge handles' },
-        { title: 'Renderer · Origin N', detail: 'Per-site GPU translation & rasterization confines Dawn/Skia/ANGLE flaws to a single origin' },
-      ].map((r) => (
-        <div key={r.title} className="ch-node" data-trust="untrusted">
-          <div className="ch-node-title">{r.title}</div>
-          <div className="ch-node-sub">{r.detail}</div>
-        </div>
-      ))}
+    <div className="ch-renderers-grid ch-renderers-two">
+      <div className="ch-node" data-trust="untrusted">
+        <div className="ch-node-title">Per-Site Renderer (Origin A)</div>
+        <div className="ch-node-sub">Proved vjs (J0–J7) + vjs_webidl + vwasm; sandboxed html5ever, Stylo, GPU</div>
+      </div>
+      <div className="ch-node" data-trust="untrusted">
+        <div className="ch-node-title">Per-Site Renderer (Origin B)</div>
+        <div className="ch-node-sub">Isolated Nanvix / OS process — no ambient sockets, cookies, or cross-origin memory</div>
+      </div>
     </div>
-
-    <p className="ch-arch-caption">
-      <strong>Target isolation theorem:</strong> A compromised renderer can misrender only its own
-      origin. It cannot exfiltrate cross-origin cookies, forge kernel capabilities, or spoof the
-      address bar—making the browser usable while verified components replace unverified layers one
-      crate at a time.
-    </p>
   </div>
 );
 
@@ -204,10 +154,10 @@ export const ProofDag: React.FC<{
     <div className="ch-dag-wrap" data-testid="vurl-dag">
       <div className="ch-dag-bar">
         <span data-testid="dag-summary">
-          <strong>{nodes.length} obligations</strong> · {edges.length} dependency edges
+          <strong>{nodes.length} obligations</strong> · {edges.length} edges
         </span>
         <span className="ch-dag-status" data-tone={verified ? 'proved' : 'fail'}>
-          {verified ? 'All verified (0 errors)' : 'A proof, trust, or test check failed'}
+          {verified ? 'All verified' : 'Check failed'}
         </span>
       </div>
 
@@ -219,13 +169,12 @@ export const ProofDag: React.FC<{
           aria-label="vurl proof obligation dependency graph"
         >
           <text x={colX[0]} y={22} className="ch-dag-colhead">
-            SPECS &amp; VERIFIED PRIMITIVES
+            SPECS &amp; PRIMITIVES
           </text>
           <text x={colX[1]} y={22} className="ch-dag-colhead">
             IMPLEMENTATIONS &amp; THEOREMS
           </text>
 
-          {/* Edges */}
           {edges.map((e) => {
             const a = pos.get(e.from);
             const b = pos.get(e.to);
@@ -235,8 +184,7 @@ export const ProofDag: React.FC<{
             const x2 = b.x;
             const y2 = b.y + nodeH / 2;
             const mx = (x1 + x2) / 2;
-            const active =
-              !selectedId || e.from === selectedId || e.to === selectedId;
+            const active = !selectedId || e.from === selectedId || e.to === selectedId;
             return (
               <path
                 key={`${e.from}-${e.to}`}
@@ -248,7 +196,6 @@ export const ProofDag: React.FC<{
             );
           })}
 
-          {/* Nodes */}
           {nodes.map((n) => {
             const p = pos.get(n.id)!;
             const isSelected = n.id === selectedId;
@@ -292,17 +239,14 @@ export const ProofDag: React.FC<{
       <div className="ch-dag-inspector" data-testid="dag-inspector">
         {selectedNode ? (
           <span>
-            <code>{selectedNode.label}</code> ({selectedNode.subsystem}) ·{' '}
+            <code>{selectedNode.label}</code> ·{' '}
             {upstream.size > 0
               ? `depends on ${Array.from(upstream).join(', ')}`
-              : 'root specification / primitive'}{' '}
-            ·{' '}
-            {downstream.size > 0
-              ? `verified dependents: ${Array.from(downstream).join(', ')}`
-              : 'leaf proved theorem / implementation'}
+              : 'root spec'}{' '}
+            {downstream.size > 0 ? `→ ${Array.from(downstream).join(', ')}` : ''}
           </span>
         ) : (
-          <span>Select any node to trace upstream specifications and downstream proof obligations.</span>
+          <span>Click any node to trace dependencies.</span>
         )}
       </div>
     </div>
