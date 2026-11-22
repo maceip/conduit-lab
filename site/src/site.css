@@ -836,8 +836,7 @@ td[data-tone='fail'] {
 }
 
 .ch-z3-inlay {
-  grid-column: 1 / -1;
-  margin: 6px 0 8px 36px;
+  margin: 6px 14px 8px 72px;
   padding: 12px 14px;
   background: var(--ch-bg-card);
   border: 1px solid var(--ch-border-strong);

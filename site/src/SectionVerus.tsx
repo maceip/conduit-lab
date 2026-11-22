@@ -234,25 +234,26 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
                     : undefined;
 
                 return (
-                  <div
-                    key={`${mode}-${line.lineNo}`}
-                    className="ch-code-row ch-code-row-clean"
-                    data-state={isOpen ? rowTone : undefined}
-                    data-clickable={hasObl}
-                    onClick={hasObl ? () => setExpandedLine(line.lineNo) : undefined}
-                  >
-                    <span className="ch-lineno">{line.lineNo}</span>
-                    <span className="ch-glyph" data-tone={rowTone}>
-                      {state ? <StateIcon state={state} size={13} /> : null}
-                    </span>
-                    <span
-                      className="ch-code-text"
-                      data-testid={
-                        isOpen ? `active-obligation-line-${line.lineNo}` : undefined
-                      }
+                  <React.Fragment key={`${mode}-${line.lineNo}`}>
+                    <div
+                      className="ch-code-row ch-code-row-clean"
+                      data-state={isOpen ? rowTone : undefined}
+                      data-clickable={hasObl}
+                      onClick={hasObl ? () => setExpandedLine(line.lineNo) : undefined}
                     >
-                      {line.text || '\u00a0'}
-                    </span>
+                      <span className="ch-lineno">{line.lineNo}</span>
+                      <span className="ch-glyph" data-tone={rowTone}>
+                        {state ? <StateIcon state={state} size={13} /> : null}
+                      </span>
+                      <span
+                        className="ch-code-text"
+                        data-testid={
+                          isOpen ? `active-obligation-line-${line.lineNo}` : undefined
+                        }
+                      >
+                        {line.text || '\u00a0'}
+                      </span>
+                    </div>
 
                     {isOpen && line.obligation && (
                       <div
@@ -284,7 +285,7 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
                         )}
                       </div>
                     )}
-                  </div>
+                  </React.Fragment>
                 );
               })}
             </div>
