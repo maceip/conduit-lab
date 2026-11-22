@@ -7,3 +7,6 @@ dist/
 # CI checks out maceip/ix-workbench-primitives here for the site build;
 # locally the sibling ~/ix-workbench-primitives checkout is used instead.
 /ix-workbench-primitives/
+
+# Superdesign temporary component scratch files
+.superdesign/tmp/
