@@ -207,7 +207,7 @@ export const ProofDag: React.FC<{
           <strong>{nodes.length} obligations</strong> · {edges.length} dependency edges
         </span>
         <span className="ch-dag-status" data-tone={verified ? 'proved' : 'fail'}>
-          {verified ? 'All verified (0 errors)' : 'Verification failed'}
+          {verified ? 'All verified (0 errors)' : 'A proof, trust, or test check failed'}
         </span>
       </div>
 

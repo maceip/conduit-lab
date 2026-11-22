@@ -265,10 +265,14 @@ export default function App() {
             <div className="ch-metrics-grid">
               <StatTile
                 value={totals ? totals.verified.toLocaleString('en-US') : NR}
-                label="verified functions"
-                hint={totals ? `across ${totals.crates} crates` : undefined}
+                label="verified proof queries"
+                hint={
+                  totals
+                    ? `${totals.functions_by_mode.exec.toLocaleString('en-US')} exec · ${totals.functions_by_mode.proof.toLocaleString('en-US')} proof fns, ${totals.crates} crates`
+                    : undefined
+                }
                 tone={totals ? (ok ? 'proved' : 'fail') : 'neutral'}
-                testId="stat-verified functions"
+                testId="stat-verified queries"
               />
               <StatTile
                 value={trusted === null ? NR : String(trusted)}
@@ -473,7 +477,11 @@ export default function App() {
             </span>
           </div>
           <div className="ch-footer-right" data-testid="footer-generated">
-            ratchet {fmtDate(ratchet?.generated_at)} · stats {fmtDate(stats?.generated_at)}
+            ratchet {fmtDate(ratchet?.generated_at)} · inputs{' '}
+            <span title={ratchet?.inputs_sha256} data-testid="inputs-digest">
+              {ratchet?.inputs_sha256?.slice(0, 12) ?? NR}
+            </span>{' '}
+            · stats {fmtDate(stats?.generated_at)}
           </div>
         </footer>
       </div>
