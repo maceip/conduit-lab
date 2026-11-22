@@ -360,8 +360,9 @@ def verify_crate(spec: CrateSpec, env: dict[str, str], target_dir: Path) -> dict
     report = parse_verus_json(p.stdout)
     problems: list[str] = []
     if p.returncode != 0:
-        errs = re.findall(r"^error.*", p.stderr, re.M)
-        problems.append(f"cargo verus exited {p.returncode}: {errs[0] if errs else p.stderr.strip()[-300:]}")
+        errs = re.findall(r"^error.*(?:\n\s*--> .*)?", p.stderr, re.M)
+        detail = "; ".join(re.sub(r"\s*\n\s*", " ", e) for e in errs[:20]) or p.stderr.strip()[-300:]
+        problems.append(f"cargo verus exited {p.returncode}: {detail}")
 
     res = report["verification-results"] if report else {}
     # absent when Verus stopped before reaching the solver
@@ -825,7 +826,9 @@ def check(only: list[str], skip_tests: bool) -> None:
                 got |= {"tests_exit": t["exit"], "tests_passed": t["passed"], "tests_failed": t["failed"]}
                 fields += TEST_FIELDS
                 if t["exit"] != 0:
-                    problems.append(f"{spec.name}: cargo test exited {t['exit']}: {t['text'].strip()[-600:]}")
+                    why = re.findall(r"^test .* FAILED$|^thread .* panicked at .*(?:\n.*){0,3}", t["text"], re.M)
+                    detail = "\n".join(why)[:4000] or t["text"].strip()[-600:]
+                    problems.append(f"{spec.name}: cargo test exited {t['exit']}: {detail}")
             want = recorded.get(spec.name, {})
             for f in fields:
                 if got[f] != want.get(f):

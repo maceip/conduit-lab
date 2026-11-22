@@ -42,6 +42,25 @@ use vjs_object::ordinary::{
 
 const NODE_BIN: &str = "/Users/mac/.nvm/versions/node/v24.15.0/bin/node";
 
+/// Runs a script of any size on Node/V8 through stdin. Linux limits one argument to 128 KiB, so
+/// `node -e` cannot carry the batched scripts.
+fn run_node_stdin(script: &str) -> std::process::Output {
+    use std::io::Write;
+    use std::process::Stdio;
+    let mut child = Command::new(NODE_BIN)
+        .arg("-")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("failed to start Node.js V8 oracle");
+    // Node reads the whole script before running it, so this cannot deadlock against its output.
+    let mut stdin = child.stdin.take().unwrap();
+    stdin.write_all(script.as_bytes()).expect("failed to send script to Node.js");
+    drop(stdin);
+    child.wait_with_output().expect("failed to execute Node.js V8 oracle")
+}
+
 fn utf16_from_str(s: &str) -> Vec<u16> {
     s.encode_utf16().collect()
 }
@@ -3135,11 +3154,7 @@ const V8_BUG_COUNTER = { count: 0, freezeBypassHits: 0 };
     let mut v8_tail = js_batch.clone();
     v8_tail.push_str("process.stdout.write(JSON.stringify({ results: RESULTS, v8IsFrozenArrayBugHits: V8_BUG_COUNTER.count, v8FreezeBypassHits: V8_BUG_COUNTER.freezeBypassHits }));\n");
 
-    let output = Command::new(NODE_BIN)
-        .arg("-e")
-        .arg(&v8_tail)
-        .output()
-        .expect("failed to execute Node.js V8 oracle");
+    let output = run_node_stdin(&v8_tail);
     assert!(
         output.status.success(),
         "Node.js V8 batch failed: {}",
@@ -3299,11 +3314,7 @@ fn test_test262_suite_and_v8_differential_and_write_report() {
     }
 
     // Verify Node/V8 passes all 99 pinned test262 files as well
-    let v8_out = Command::new(NODE_BIN)
-        .arg("-e")
-        .arg(&v8_batch)
-        .output()
-        .expect("failed to run Node/V8 on pinned test262 suite");
+    let v8_out = run_node_stdin(&v8_batch);
     assert!(
         v8_out.status.success(),
         "Node/V8 failed on pinned test262 file: {}",
