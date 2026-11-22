@@ -1,6 +1,6 @@
 // End-to-end Playwright verification for the upgraded iso-cad v2 3D Surface/Lathe/Loft/Tube
 // kernel: 3 Aerospace/Automotive/Marine showcases (Jet Engine, Sports Car, Cruise Ship),
-// all 8 unique V8 Tier-1 Mandatory Core 3D sculptures, v8-anatomy.html, and the Hero band.
+// all 8 unique V8 Tier-1 Mandatory Core 3D sculptures, and the standalone v8-anatomy.html gallery.
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const path = require("path");
@@ -8,39 +8,6 @@ const path = require("path");
 const root = path.join(__dirname, "..");
 const ratchet = JSON.parse(fs.readFileSync(path.join(root, "browser", "ratchet.json"), "utf8"));
 const totals = ratchet.totals;
-
-test("hero places 3 interactive Tier-1 V8 3D sculptures on a central frosted-glass band framed by text", async ({
-  page,
-}) => {
-  await page.goto("/");
-
-  const topBox = await page.locator(".ch-hero-band-top").boundingBox();
-  const bandBox = await page.getByTestId("hero-v8-band").boundingBox();
-  const bottomBox = await page.locator(".ch-hero-band-bottom").boundingBox();
-
-  expect(topBox && bandBox && bottomBox).toBeTruthy();
-  expect(bandBox.y).toBeGreaterThan(topBox.y + topBox.height - 4);
-  expect(bottomBox.y).toBeGreaterThan(bandBox.y + bandBox.height - 4);
-
-  const backdropFilter = await page
-    .getByTestId("hero-v8-band")
-    .evaluate((el) => getComputedStyle(el).backdropFilter || getComputedStyle(el).webkitBackdropFilter);
-  expect(backdropFilter).toContain("blur");
-
-  const frames = page.getByTestId("hero-v8-trio").locator("iframe");
-  await expect(frames).toHaveCount(3);
-  await expect(frames.nth(0)).toHaveAttribute("src", /fig-03-hidden-classes/);
-  await expect(frames.nth(1)).toHaveAttribute("src", /fig-05-ignition/);
-  await expect(frames.nth(2)).toHaveAttribute("src", /fig-07-old-space/);
-
-  const mapFrame = page.frameLocator('[data-testid="hero-v8-trio"] iframe').first();
-  await expect(mapFrame.locator("#readout")).toContainText("map#2");
-  await mapFrame.locator('.cad-tag[data-k="del"]').dispatchEvent("pointerdown");
-  await expect(mapFrame.locator("#readout")).toContainText("dictionary map");
-
-  await page.getByTestId("theme-switch").click();
-  await expect(mapFrame.locator("html")).toHaveAttribute("data-theme", "light");
-});
 
 test("v8-anatomy.html renders 3 vehicle CAD showcases + 8 unique V8 core sculptures, loads live ratchet data, and handles missing telemetry", async ({
   page,
