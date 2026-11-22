@@ -1,6 +1,6 @@
 $ lake build
 # cwd: ~/workspaces/verus-stack/vero/benchmarks/munkres
-# exit: 0  seconds: 0.16
+# exit: 0  seconds: 0.15
 
 ⚠ [5/8] Replayed Munkres.Spec.Assign
 warning: Munkres/Spec/Assign.lean:294:31: unused variable `impl`

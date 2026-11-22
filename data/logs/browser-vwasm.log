@@ -1,9 +1,9 @@
 $ $VERUS_RELEASE/cargo-verus verify -p vwasm --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 2.62
+# exit: 0  seconds: 3.23
 
     Checking vwasm v0.1.0 (~/conduit-lab/browser/vwasm)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.52s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.13s
 
 # from Verus --output-json --time-expanded
 {
@@ -716,7 +716,7 @@ $ $VERUS_RELEASE/cargo-verus verify -p vwasm --fwd-verus-args-to roots -- --trig
 
 $ cargo test -p vwasm
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 1.99
+# exit: 0  seconds: 2.3
 
 
 running 0 tests
@@ -729,7 +729,7 @@ test test_wasm_sandbox_containment_and_leb128_properties ... ok
 test test_provenance_sha256_integrity ... ok
 test test_upstream_wasm_spec_suite_and_write_report ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.05s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.17s
 
 
 running 0 tests
@@ -1046,7 +1046,7 @@ warning: negative impls are experimental
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
    Compiling vwasm v0.1.0 (~/conduit-lab/browser/vwasm)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.44s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.60s
      Running unittests src/lib.rs (target/debug/build/vwasm/ac9f2ea35037791b/out/vwasm-ac9f2ea35037791b)
      Running tests/wasm_spec.rs (target/debug/build/vwasm/88d930562b974c33/out/wasm_spec-88d930562b974c33)
    Doc-tests vwasm

@@ -1,9 +1,9 @@
 $ $VERUS_RELEASE/cargo-verus verify -p vjs_webidl --fwd-verus-args-to roots -- --triggers-mode silent --no-cheating --no-external-by-default --output-json --time-expanded
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 10.7
+# exit: 0  seconds: 12.11
 
     Checking vjs_webidl v0.1.0 (~/conduit-lab/browser/vjs-webidl)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.61s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 12.01s
 
 # from Verus --output-json --time-expanded
 {
@@ -1541,7 +1541,7 @@ $ $VERUS_RELEASE/cargo-verus verify -p vjs_webidl --fwd-verus-args-to roots -- -
 
 $ cargo test -p vjs_webidl
 # cwd: ~/conduit-lab/browser
-# exit: 0  seconds: 1.46
+# exit: 0  seconds: 1.75
 
 
 running 0 tests
@@ -1550,21 +1550,21 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 
 running 13 tests
-test capability_security_and_non_interference_suite ... ok
 test wpt_event_and_host_dictionaries_lexicographic_order ... ok
-test wpt_enforcerange_conversions ... ok
-test wpt_urlsearchparams_records_and_sequences ... ok
-test wpt_bytestring_and_headers_records ... ok
-test ambient_authority_scanner_catches_braced_and_nested_imports ... ok
-test wpt_dom_exception_and_sequence_conversions ... ok
 test wpt_usvstring_surrogates_and_idempotence ... ok
-test all_eight_integer_types_and_primitives_roundtrip ... ok
+test wpt_urlsearchparams_records_and_sequences ... ok
+test wpt_dom_exception_and_sequence_conversions ... ok
+test wpt_bytestring_and_headers_records ... ok
+test capability_security_and_non_interference_suite ... ok
+test wpt_enforcerange_conversions ... ok
 test wpt_clamp_ties_to_even_conversions ... ok
+test ambient_authority_scanner_catches_braced_and_nested_imports ... ok
+test all_eight_integer_types_and_primitives_roundtrip ... ok
 test verify_provenance_manifest_integrity ... ok
 test node_v8_live_differential_oracle_suite ... ok
 test end_to_end_wpt_differential_security_and_ambient_audit ... ok
 
-test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
 
 
 running 0 tests
@@ -1881,7 +1881,7 @@ warning: negative impls are experimental
 
 warning: `vstd` (lib) generated 18 warnings (run `cargo fix --lib -p vstd` to apply 1 suggestion)
    Compiling vjs_webidl v0.1.0 (~/conduit-lab/browser/vjs-webidl)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.55s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.74s
      Running unittests src/lib.rs (target/debug/build/vjs_webidl/02ad0be6a8c75e7c/out/vjs_webidl-02ad0be6a8c75e7c)
      Running tests/audit_and_wpt.rs (target/debug/build/vjs_webidl/cca6b2be9694ca3c/out/audit_and_wpt-cca6b2be9694ca3c)
    Doc-tests vjs_webidl
