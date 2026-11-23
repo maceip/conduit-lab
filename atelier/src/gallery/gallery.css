@@ -352,16 +352,6 @@
  * which is exactly the unit the component translates by. The window is then
    one em tall so exactly one digit is visible.
  */
-.chOdometerReels [data-reel] {
-  height: 1em !important;
-}
-
-.chOdometerReels [data-reel] > span {
-  line-height: 1em;
-  width: 1ch;
-  word-break: break-all;
-}
-
 /* A stat tile holds strings as well as numbers, and a version string has
    nowhere to break on its own. Let it wrap rather than run over the tile
    next to it. */
@@ -399,18 +389,6 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  pointer-events: none;
-}
-
-.stage-heap-label {
-  position: absolute;
-  top: 0;
-  left: 0;
-  translate: -50% -50%;
-  color: var(--board-ink);
-  font-size: 9px;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
   pointer-events: none;
 }
 

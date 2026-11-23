@@ -175,6 +175,18 @@ export function createGcHeapScene(
       const element = document.createElement('span');
       element.className = 'stage-heap-label';
       element.textContent = object.id;
+      // The scene owns the element's transform, so centring must use the
+      // separate `translate` property. The label owns its own placement —
+      // it must not depend on a stylesheet the component cannot see.
+      element.style.position = 'absolute';
+      element.style.top = '0';
+      element.style.left = '0';
+      element.style.translate = '-50% -50%';
+      element.style.color = BOARD.ink;
+      element.style.fontSize = '9px';
+      element.style.letterSpacing = '0.06em';
+      element.style.whiteSpace = 'nowrap';
+      element.style.pointerEvents = 'none';
       labelLayer.appendChild(element);
       labelById.set(object.id, element);
     }

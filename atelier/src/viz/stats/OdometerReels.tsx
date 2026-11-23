@@ -57,6 +57,12 @@ export function OdometerReels({ value, digits, className }: OdometerReelsProps) 
           <span
             style={{
               display: 'block',
+              // The reel is a one-character window onto the digit strip.
+              // The strip is a single run of text, so it must be broken
+              // per character and the window clipped to one character wide.
+              lineHeight: '1em',
+              width: '1ch',
+              wordBreak: 'break-all',
               transform: `translateY(-${digit}em)`,
               transition: `transform ${DURATION.d2}ms ${EASE.standard}`,
             }}
