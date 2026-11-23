@@ -2,12 +2,13 @@ import { useEffect } from 'react';
 import { create } from 'zustand';
 import { GROUPS, machineById } from '../machines';
 import type { MachineDef } from '../machines/types';
-import { selectMachine } from '../state';
+import { isEmbed, selectMachine } from '../state';
 import { useGuide } from './Guide';
 
 const SEEN = 'gewu-catalogue-seen';
 
 const firstVisit = () => {
+  if (isEmbed) return false;
   try {
     return !window.location.hash && !window.localStorage.getItem(SEEN);
   } catch {

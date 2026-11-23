@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ClickUIProvider, Switch } from '@clickhouse/click-ui';
 import {
   NR,
@@ -30,10 +30,14 @@ export default function App() {
       ? 'light'
       : 'dark',
   );
+  const initialThemeRef = useRef<'dark' | 'light'>(theme);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('conduit-theme', theme);
+    document.querySelectorAll<HTMLIFrameElement>('iframe.ch-inkwork-frame').forEach((fr) => {
+      fr.contentWindow?.postMessage({ type: 'conduit-theme', theme }, '*');
+    });
   }, [theme]);
 
   useEffect(() => {
@@ -79,13 +83,7 @@ export default function App() {
       <div className="ch-page-shell" id="top" data-testid="conduit-shell">
         <header className="ch-topbar">
           <a className="ch-brand" href="#top">
-            <img
-              className="ch-brand-mark"
-              src="assets/conduit-mark.png"
-              alt="CONDUIT emblem"
-              width={24}
-              height={24}
-            />
+            <span className="ch-brand-dot" aria-hidden="true" />
             <span>CONDUIT</span>
           </a>
 
@@ -122,42 +120,49 @@ export default function App() {
           </div>
         </header>
 
-        {/* Opening Hero */}
+        {/* Opening Hero — Copy + Illustration 1: Interactive Turboprop (V8 Engine Mapping) */}
         <section className="ch-hero" data-testid="lede">
-          <div className="ch-hero-backdrop" data-testid="hero-visual" aria-hidden="true">
-            <img
-              src="assets/hero-modules-backdrop.webp"
-              alt=""
-              width={1920}
-              height={1071}
-            />
-          </div>
-
-          <div className="ch-hero-glass">
-            <div className="ch-hero-inner">
-              <div className="ch-hero-copy">
-                <h1 className="ch-h1">
-                  Don’t test a browser engine for memory bugs. Prove they cannot exist.
-                </h1>
-                <p className="ch-hero-prose">
-                  CONDUIT is a browser engine built with machine-checked Rust proofs in Verus and
-                  Z3. {v8Count} of the last {CVES.length} Chrome zero-days exploited unproved V8
-                  memory or object-layout assumptions; here,{' '}
-                  <strong>{totals ? `${totals.crates} crates` : NR}</strong>—spanning URL parsing,
-                  the J0–J7 JavaScript engine, Web IDL capabilities, and WebAssembly 1.0—verify from
-                  scratch with zero <code>unsafe</code> code.
-                </p>
-                <div className="ch-hero-actions">
-                  <a className="ch-cta-primary" href="#proofs">
-                    <span>Inspect a live proof</span>
-                    <IconArrowRight size={14} />
-                  </a>
-                  <a className="ch-cta-secondary" href="#ratchet">
-                    <span>Verified crate ledger</span>
-                  </a>
-                </div>
+          <div className="ch-hero-grid">
+            <div className="ch-hero-copy">
+              <h1 className="ch-h1">
+                Don’t test a browser engine for memory bugs. Prove they cannot exist.
+              </h1>
+              <p className="ch-hero-prose">
+                CONDUIT is a browser engine built with machine-checked Rust proofs in Verus and Z3.{' '}
+                {v8Count} of the last {CVES.length} Chrome zero-days exploited unproved V8 memory or
+                object-layout assumptions; here,{' '}
+                <strong>{totals ? `${totals.crates} crates` : NR}</strong>—spanning URL parsing, the
+                J0–J7 JavaScript engine, Web IDL capabilities, and WebAssembly 1.0—verify from
+                scratch with zero <code>unsafe</code> code.
+              </p>
+              <div className="ch-hero-actions">
+                <a className="ch-cta-primary" href="#proofs">
+                  <span>Inspect a live proof</span>
+                  <IconArrowRight size={14} />
+                </a>
+                <a className="ch-cta-secondary" href="#ratchet">
+                  <span>Verified crate ledger</span>
+                </a>
               </div>
             </div>
+
+            <figure className="ch-plate-frame" data-testid="plate-turboprop">
+              <iframe
+                className="ch-inkwork-frame"
+                src={`inkwork/index.html?embed=1&theme=${initialThemeRef.current}#turboprop`}
+                title="Turboprop Engine — V8 JavaScript pipeline mapped across 31 parts and 6 sub-assemblies"
+                onLoad={(ev) =>
+                  ev.currentTarget.contentWindow?.postMessage({ type: 'conduit-theme', theme }, '*')
+                }
+              />
+              <figcaption className="ch-plate-caption">
+                <span>
+                  <strong>FIG. 01 · Turboprop Engine</strong> — V8 subsystems mapped across 31 parts
+                  &amp; 6 sub-assemblies
+                </span>
+                <span className="ch-mono">GW-TP-00</span>
+              </figcaption>
+            </figure>
           </div>
         </section>
 
@@ -243,7 +248,7 @@ export default function App() {
           </div>
         )}
 
-        {/* Main Specification: Proofs -> Architecture -> Live Crates -> Scope -> Collapsed CVE Appendix */}
+        {/* Main Specification: Proofs -> Architecture (Maglev) -> Crates -> Scope -> Collapsed CVEs */}
         <main className="ch-spec-container">
           <SectionVerus ratchet={ratchet} />
 
@@ -253,20 +258,32 @@ export default function App() {
                 One proved kernel in front of disposable renderers
               </h2>
               <p className="ch-prose-text">
-                Every origin runs in its own isolated renderer process for HTML (
-                <code>html5ever</code>), CSS (<code>Stylo</code>), XML, and GPU rasterization. A
-                renderer cannot open sockets, read cross-site cookies, or touch the address bar—all
-                privileged requests cross typed, capability-checked IPC into the Verus security
-                kernel.
+                Like a maglev car riding a 10 mm non-contact gap over a phase-locked stator beam,
+                every web origin runs in an isolated renderer that never touches sockets, cross-site
+                cookies, or the address bar—all privileged calls cross typed, capability-checked IPC
+                into the Verus security kernel.
               </p>
-              <p className="ch-prose-text">
-                Verified Rust crates replace renderer subsystems incrementally: <code>vurl</code>,{' '}
-                <code>vjs</code> (J0–J7), <code>vjs_webidl</code>, and <code>vwasm</code> verify
-                today; kernel non-interference theorems and Nanvix per-site sandboxing are next.
-              </p>
-            </div>
-            <div className="ch-artifact-col">
               <ArchitectureDiagram />
+            </div>
+
+            <div className="ch-artifact-col">
+              <figure className="ch-plate-frame" data-testid="plate-maglev">
+                <iframe
+                  className="ch-inkwork-frame"
+                  src={`inkwork/index.html?embed=1&theme=${initialThemeRef.current}#maglev`}
+                  title="Shanghai SMT Maglev — 10 mm non-contact levitation gap and synchronous long-stator guideway"
+                  onLoad={(ev) =>
+                    ev.currentTarget.contentWindow?.postMessage({ type: 'conduit-theme', theme }, '*')
+                  }
+                />
+                <figcaption className="ch-plate-caption">
+                  <span>
+                    <strong>FIG. 02 · Shanghai SMT Maglev</strong> — 10 mm non-contact gap &amp;
+                    synchronous stator guideway
+                  </span>
+                  <span className="ch-mono">GW-MV-00</span>
+                </figcaption>
+              </figure>
             </div>
           </section>
 
@@ -277,13 +294,7 @@ export default function App() {
 
         <footer className="ch-footer" data-testid="provenance-footer">
           <div className="ch-footer-left">
-            <img
-              src="assets/conduit-mark.png"
-              alt=""
-              width={18}
-              height={18}
-              className="ch-footer-mark"
-            />
+            <span className="ch-brand-dot" aria-hidden="true" />
             <span>
               <a className="ch-mono-link" href="browser/ratchet.json">
                 browser/ratchet.json
@@ -293,8 +304,8 @@ export default function App() {
                 data/stats.json
               </a>{' '}
               ·{' '}
-              <a className="ch-mono-link" href="v8-anatomy.html">
-                V8 3D anatomy
+              <a className="ch-mono-link" href="inkwork/index.html">
+                Mechanical plates
               </a>{' '}
               ·{' '}
               <a

@@ -36,12 +36,14 @@ export interface Palette {
   cut: string;
 }
 
-export type Theme = 'paper' | 'blueprint';
+export type Theme = 'paper' | 'blueprint' | 'obsidian';
 
 export const PALETTES: Record<Theme, Palette> = {
   paper: { paper: '#f4f0e7', face: '#fbf9f4', shade: '#d9d5cc', ink: '#24221f', rust: '#a8432f', cut: '#e7c3b3' },
   // Cyanotype: pale lines on Prussian blue, amber for what is picked out.
   blueprint: { paper: '#173b63', face: '#1e4672', shade: '#163758', ink: '#e8f0f9', rust: '#ffc35c', cut: '#2f5f90' },
+  // CONDUIT obsidian drafter plate: crisp pale ink on slate with chartreuse selection accent.
+  obsidian: { paper: '#11141c', face: '#1c2230', shade: '#131722', ink: '#edf2fa', rust: '#c8ff2e', cut: '#233626' },
 };
 
 /** The palette in use. setPalette changes it in place, so readers always see the current one. */

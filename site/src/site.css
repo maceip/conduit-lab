@@ -151,10 +151,13 @@ body {
   flex-shrink: 0;
 }
 
-.ch-brand-mark {
-  display: block;
-  border-radius: 5px;
-  border: 1px solid var(--ch-border-subtle);
+.ch-brand-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: var(--ch-accent);
+  flex-shrink: 0;
 }
 
 .ch-nav {
@@ -214,75 +217,60 @@ body {
 }
 
 /* ========================================================================== */
-/* Opening Hero — Isometric Hardware Scene Behind Translucent Frosted Bar     */
+/* Opening Hero & Inkwork Mechanical Plates (Turboprop & Maglev ONLY)         */
 /* ========================================================================== */
 .ch-hero {
-  position: relative;
   border-bottom: 1px solid var(--ch-border-subtle);
-  background-color: #16181f;
-  overflow: hidden;
-  padding: 52px 0;
-  min-height: 400px;
-  display: flex;
+  background: var(--ch-bg-canvas);
+  padding: 36px 28px;
+}
+
+.ch-hero-grid {
+  max-width: 1380px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 440px minmax(0, 1fr);
+  gap: 36px;
   align-items: center;
 }
 
-.ch-hero-backdrop {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
+.ch-plate-frame {
+  margin: 0;
+  background: var(--ch-bg-card);
+  border: 1px solid var(--ch-border-subtle);
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.ch-hero-backdrop img {
+.ch-inkwork-frame {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: right center;
+  height: 430px;
+  border: 0;
+  background: #11141c;
 }
 
-.ch-hero-glass {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(13, 16, 23, 0.88) 0%,
-    rgba(18, 22, 31, 0.78) 50%,
-    rgba(22, 26, 36, 0.34) 74%,
-    rgba(22, 26, 36, 0.16) 100%
-  );
-  backdrop-filter: blur(8px) saturate(1.25);
-  -webkit-backdrop-filter: blur(8px) saturate(1.25);
-  border-top: 1px solid rgba(200, 255, 46, 0.44);
-  border-bottom: 1px solid rgba(200, 255, 46, 0.44);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
-    0 20px 48px rgba(0, 0, 0, 0.42);
+[data-theme='light'] .ch-inkwork-frame {
+  background: #f4f0e7;
 }
 
-[data-theme='light'] .ch-hero-glass {
-  background: linear-gradient(
-    90deg,
-    rgba(250, 252, 255, 0.92) 0%,
-    rgba(248, 250, 253, 0.82) 50%,
-    rgba(246, 249, 253, 0.42) 74%,
-    rgba(246, 249, 253, 0.22) 100%
-  );
-  border-top: 1px solid rgba(255, 255, 255, 0.90);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.90);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 0 rgba(184, 245, 0, 0.55),
-    0 18px 42px rgba(0, 0, 0, 0.26);
+.ch-plate-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 14px;
+  background: var(--ch-bg-bar);
+  border-top: 1px solid var(--ch-border-subtle);
+  font-size: 12px;
+  color: var(--ch-text-muted);
 }
 
-.ch-hero-inner {
-  max-width: 1380px;
-  margin: 0 auto;
-  padding: 26px 28px;
+.ch-plate-caption strong {
+  color: var(--ch-text-primary);
+  font-weight: 600;
 }
 
 .ch-hero-copy {
@@ -983,46 +971,34 @@ td[data-tone='fail'] {
 }
 
 /* ========================================================================== */
-/* Section 02: Non-Wrapping Trust Boundary Architecture Diagram               */
+/* Section 02: Compact Trust Boundary Tiers                                   */
 /* ========================================================================== */
-.ch-arch-diagram {
-  padding: 18px;
+.ch-trust-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ch-tier-item {
+  padding: 10px 13px;
   background: var(--ch-bg-card);
   border: 1px solid var(--ch-border-subtle);
-  border-radius: 5px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.ch-ingress-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  gap: 10px;
-  align-items: center;
-}
-
-.ch-flow-arrow {
-  color: var(--ch-text-muted);
-  display: inline-flex;
-  align-items: center;
-}
-
-.ch-tier-connector {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ch-status-proved);
-}
-
-.ch-kernel-shell {
-  padding: 14px;
-  background: var(--ch-status-proved-dim);
-  border: 1px solid var(--ch-status-proved-bdr);
   border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+}
+
+.ch-tier-item[data-trust='verified'] {
+  background: var(--ch-status-proved-dim);
+  border-color: var(--ch-status-proved-bdr);
+}
+
+.ch-tier-item[data-trust='untrusted'] {
+  border-style: dashed;
+  border-color: var(--ch-border-strong);
+}
+
+.ch-tier-item[data-trust='ipc'] {
+  background: var(--ch-accent-dim);
+  border: 1px dashed var(--ch-accent-bdr);
 }
 
 .ch-kernel-head {
@@ -1031,34 +1007,6 @@ td[data-tone='fail'] {
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--ch-status-proved);
-}
-
-.ch-kernel-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.ch-renderers-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.ch-node {
-  padding: 10px 12px;
-  background: var(--ch-bg-card);
-  border: 1px solid var(--ch-border-subtle);
-  border-radius: 4px;
-}
-
-.ch-node[data-trust='verified'] {
-  border-color: var(--ch-status-proved-bdr);
-}
-
-.ch-node[data-trust='untrusted'] {
-  border-style: dashed;
-  border-color: var(--ch-border-strong);
 }
 
 .ch-node-title {
@@ -1070,24 +1018,9 @@ td[data-tone='fail'] {
 
 .ch-node-sub {
   margin-top: 4px;
-  font-size: 11.5px;
-  line-height: 1.48;
-  color: var(--ch-text-muted);
-}
-
-.ch-ipc-rail {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 6px 12px;
-  background: var(--ch-accent-dim);
-  border: 1px dashed var(--ch-accent-bdr);
-  border-radius: 4px;
-  font-family: var(--ch-font-mono);
-  font-size: 11.5px;
-  color: var(--ch-accent-text);
-  text-align: center;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ch-text-secondary);
 }
 
 /* ========================================================================== */
@@ -1739,33 +1672,15 @@ td[data-tone='fail'] {
 /* Responsive Breakpoints                                                     */
 /* ========================================================================== */
 @media (max-width: 1140px) {
-  .ch-hero {
-    padding: 40px 0;
-    min-height: 360px;
-  }
-  .ch-hero-glass {
-    background: linear-gradient(
-      90deg,
-      rgba(13, 16, 23, 0.90) 0%,
-      rgba(18, 22, 31, 0.82) 66%,
-      rgba(22, 26, 36, 0.44) 86%,
-      rgba(22, 26, 36, 0.24) 100%
-    );
-  }
-  [data-theme='light'] .ch-hero-glass {
-    background: linear-gradient(
-      90deg,
-      rgba(250, 252, 255, 0.94) 0%,
-      rgba(248, 250, 253, 0.86) 66%,
-      rgba(246, 249, 253, 0.54) 86%,
-      rgba(246, 249, 253, 0.30) 100%
-    );
-  }
+  .ch-hero-grid,
   .ch-scoreboard-inner,
   .ch-spec-row,
   .ch-two-col-equal,
   .ch-cve-split {
     grid-template-columns: 1fr;
+  }
+  .ch-inkwork-frame {
+    height: 390px;
   }
   .ch-metrics-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1816,20 +1731,13 @@ td[data-tone='fail'] {
     white-space: nowrap;
   }
   .ch-hero {
-    padding: 32px 0;
-    min-height: 0;
+    padding: 24px 16px;
   }
-  .ch-hero-glass {
-    background: rgba(13, 16, 23, 0.86);
+  .ch-inkwork-frame {
+    height: 320px;
   }
-  [data-theme='light'] .ch-hero-glass {
-    background: rgba(249, 251, 255, 0.90);
-  }
-  .ch-hero-inner {
-    padding: 20px 16px;
-  }
-  .ch-hero-backdrop img {
-    object-position: 66% center;
+  .ch-plate-caption {
+    flex-wrap: wrap;
   }
   .ch-scoreboard-strip {
     padding: 14px 16px;
@@ -1837,15 +1745,6 @@ td[data-tone='fail'] {
   .ch-spec-container {
     padding: 28px 16px 52px;
     gap: 40px;
-  }
-  .ch-kernel-grid,
-  .ch-renderers-grid,
-  .ch-ingress-row {
-    grid-template-columns: 1fr;
-  }
-  .ch-flow-arrow {
-    justify-content: center;
-    transform: rotate(90deg);
   }
   .ch-state-selector {
     grid-template-columns: 1fr;

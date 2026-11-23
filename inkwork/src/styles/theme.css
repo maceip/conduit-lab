@@ -695,3 +695,176 @@ button:focus-visible, input:focus-visible { outline: 1px solid var(--rust); outl
   font-weight: 600;
   opacity: 0.95;
 }
+
+/* ── CONDUIT Obsidian Drafter Theme ────────────────── */
+:root[data-theme="obsidian"] {
+  color-scheme: dark;
+  --paper: #11141c;
+  --paper-hi: #191d27;
+  --ink: #edf2fa;
+  --ink-2: #bcc6d8;
+  --ink-3: #8390a6;
+  --rust: #c8ff2e;
+  --menu: #191d27;
+  --paper-rgb: 17 20 28;
+  --ink-rgb: 237 242 250;
+  --rust-rgb: 200 255 46;
+  --hi-rgb: 25 29 39;
+  --shadow-rgb: 0 0 0;
+  --glow-rgb: 38 48 68;
+  --veil-rgb: 9 12 18;
+  --hair: rgb(var(--ink-rgb) / 0.16);
+  --hair-strong: rgb(var(--ink-rgb) / 0.36);
+}
+
+:root[data-theme="obsidian"] .studio {
+  background:
+    radial-gradient(ellipse at 50% 48%, rgb(var(--glow-rgb) / 0.42), transparent 72%),
+    linear-gradient(rgb(var(--ink-rgb) / 0.045) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, rgb(var(--ink-rgb) / 0.045) 1px, transparent 1px) 0 0 / 28px 28px,
+    var(--paper);
+}
+
+:root[data-theme="obsidian"] .card-thumb {
+  background: none;
+  filter: invert(1) hue-rotate(180deg) brightness(0.92);
+  mix-blend-mode: screen;
+}
+
+/* ── Embedded CONDUIT Plate Mode (?embed=1) ────────── */
+.studio.is-embed {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.studio.is-embed::before,
+.studio.is-embed::after {
+  display: none;
+}
+
+.studio.is-embed .stage {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  border: 0;
+}
+
+.studio.is-embed .sheet-title {
+  display: none;
+}
+
+.embed-bar {
+  position: absolute;
+  z-index: 6;
+  top: 10px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.embed-seg {
+  display: inline-flex;
+  border: 1px solid var(--hair-strong);
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgb(var(--hi-rgb) / 0.86);
+  backdrop-filter: blur(6px);
+}
+
+.embed-seg button {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  transition: background 0.14s, color 0.14s;
+}
+
+.embed-seg button + button {
+  border-left: 1px solid var(--hair);
+}
+
+.embed-seg button.is-on {
+  background: var(--rust);
+  color: #0b1104;
+}
+
+:root[data-theme="paper"] .embed-seg button.is-on {
+  background: var(--ink);
+  color: var(--paper-hi);
+}
+
+.embed-btn,
+.embed-link {
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--hair-strong);
+  border-radius: 4px;
+  background: rgb(var(--hi-rgb) / 0.86);
+  backdrop-filter: blur(6px);
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: border-color 0.14s, background 0.14s, color 0.14s;
+}
+
+.embed-btn:hover,
+.embed-link:hover {
+  color: var(--ink);
+  border-color: var(--rust);
+}
+
+.embed-btn.is-on {
+  border-color: var(--rust);
+  color: var(--rust);
+}
+
+.embed-readout {
+  position: absolute;
+  z-index: 6;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  pointer-events: none;
+  font-size: 11.5px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+}
+
+.embed-readout > span {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 4px;
+  background: rgb(var(--hi-rgb) / 0.84);
+  border: 1px solid var(--hair);
+  backdrop-filter: blur(6px);
+  pointer-events: auto;
+}
+
+.embed-readout strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.embed-idle {
+  color: var(--ink-3);
+}
+
+.embed-sub-link {
+  color: var(--rust);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

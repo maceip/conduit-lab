@@ -75,22 +75,56 @@ test("scoreboard renders live 11-crate totals and enforces adjacent pill density
   expect(verusClipped, "verus revision pill must not clip").toBeLessThanOrEqual(2);
 });
 
-test("all rendered hero and brand images load cleanly", async ({ page }) => {
+test("turboprop and maglev are the only two illustrations on the site and actuate cleanly", async ({
+  page,
+}) => {
   await page.goto("/");
-  await expect(page.getByTestId("hero-visual").locator("img")).toBeVisible();
+  // Zero raster illustrations or stickers anywhere on the page
+  await expect(page.locator("img")).toHaveCount(0);
+  // Strictly two mechanical drawing plates: Turboprop (hero) and Maglev (architecture)
+  await expect(page.locator(".ch-inkwork-frame")).toHaveCount(2);
 
-  const imgStates = await page.locator("img").evaluateAll((imgs) =>
-    imgs.map((img) => ({
-      src: img.getAttribute("src"),
-      complete: img.complete,
-      naturalWidth: img.naturalWidth,
-    }))
-  );
-  expect(imgStates.length).toBeGreaterThanOrEqual(3);
-  for (const img of imgStates) {
-    expect(img.complete, `${img.src} must finish loading`).toBe(true);
-    expect(img.naturalWidth, `${img.src} must have naturalWidth > 0`).toBeGreaterThan(0);
+  const turbopropPlate = page.getByTestId("plate-turboprop");
+  const maglevPlate = page.getByTestId("plate-maglev");
+  await expect(turbopropPlate).toContainText("Turboprop Engine");
+  await expect(turbopropPlate).toContainText("GW-TP-00");
+  await expect(maglevPlate).toContainText("Shanghai SMT Maglev");
+  await expect(maglevPlate).toContainText("GW-MV-00");
+
+  for (const [label, plate] of [
+    ["turboprop", turbopropPlate],
+    ["maglev", maglevPlate],
+  ]) {
+    const frame = plate.frameLocator("iframe.ch-inkwork-frame");
+    await expect(frame.locator("html")).toHaveAttribute("data-theme", "obsidian");
+    await expect(frame.getByTestId("embed-toolbar")).toBeVisible();
+    await expect(frame.locator("canvas")).toBeVisible();
+
+    await expect
+      .poll(() => frame.locator("canvas").evaluate((c) => c.clientWidth))
+      .toBeGreaterThan(300);
+    await expect
+      .poll(() => frame.locator("canvas").evaluate((c) => c.clientHeight))
+      .toBeGreaterThan(300);
+
+    // Interactive plate controls: Drawing, Section, Explode, back to 3D
+    await frame.getByTestId("embed-view-drawing").click();
+    await expect(frame.getByTestId("embed-view-drawing")).toHaveAttribute("aria-pressed", "true");
+    await frame.getByTestId("embed-view-3d").click();
+    await expect(frame.getByTestId("embed-view-3d")).toHaveAttribute("aria-pressed", "true");
+
+    await frame.getByTestId("embed-toggle-section").click();
+    await expect(frame.getByTestId("embed-toggle-section")).toHaveAttribute("aria-pressed", "true");
+    await frame.getByTestId("embed-toggle-explode").click();
+    await expect(frame.getByTestId("embed-toggle-explode")).toHaveAttribute("aria-pressed", "true");
   }
+
+  // Verify standalone /inkwork/ studio exposes strictly turboprop and maglev as top-level machines
+  await page.goto("/inkwork/index.html#turboprop");
+  const topMachines = await page.evaluate(() =>
+    window.gewu.assemblies().filter((a) => !a.parent).map((a) => a.id)
+  );
+  expect(topMachines).toEqual(["turboprop", "maglev"]);
 });
 
 test("sections lead with formal verification, navigation matches order, and copy has zero stale claims", async ({
@@ -281,13 +315,17 @@ test("section 5 (#coverage): 20-CVE appendix is collapsed at bottom by default a
   await expect(page.getByTestId("cve-table").locator("tbody tr")).toHaveCount(20);
 });
 
-test("theme switch toggles dark/light mode cleanly and persists", async ({ page }) => {
+test("theme switch toggles dark/light mode cleanly, syncs Inkwork plates, and persists", async ({ page }) => {
   await page.goto("/");
+  const tpFrame = page.getByTestId("plate-turboprop").frameLocator("iframe.ch-inkwork-frame");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(tpFrame.locator("html")).toHaveAttribute("data-theme", "obsidian");
   await page.getByTestId("theme-switch").click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(tpFrame.locator("html")).toHaveAttribute("data-theme", "paper");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(tpFrame.locator("html")).toHaveAttribute("data-theme", "paper");
 });
 
 test("provenance footer and staged local assets resolve with HTTP 200", async ({ page, request }) => {
@@ -298,6 +336,8 @@ test("provenance footer and staged local assets resolve with HTTP 200", async ({
   for (const h of [
     "browser/ratchet.json",
     "data/stats.json",
+    "inkwork/index.html",
+    "inkwork/fonts/cormorant-500.woff2",
     "irrigation.html",
     "v8-anatomy.html",
     "v8-iso/pages/fig-01-isolate.html",

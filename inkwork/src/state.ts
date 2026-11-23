@@ -38,8 +38,11 @@ export interface StudioState {
   set: (patch: Partial<Omit<StudioState, 'set'>>) => void;
 }
 
+export const isEmbed =
+  typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('embed') === '1';
+
 export const useStudio = create<StudioState>((set) => ({
-  machineId: 'jack',
+  machineId: 'turboprop',
   explode: 0,
   section: false,
   sectionDepth: 0.5,
@@ -51,7 +54,7 @@ export const useStudio = create<StudioState>((set) => ({
   hovered: null,
   localExplode: null,
   step: 0,
-  labels: typeof window === 'undefined' || window.innerWidth >= 700,
+  labels: !isEmbed && (typeof window === 'undefined' || window.innerWidth >= 700),
   hiddenLines: true,
   projection: true,
   moveMode: false,
@@ -69,8 +72,8 @@ export const useStudio = create<StudioState>((set) => ({
  * with each machine.
  */
 export const motion = {
-  /** Starts apart so the machine assembles itself on load. */
-  explode: 1,
+  /** Starts apart in full studio so the machine assembles itself; starts assembled in embedded plates. */
+  explode: isEmbed ? 0 : 1,
   /** Slider units per second; slowed down while recording the teardown. */
   explodeRate: 0.55,
   /** Local explode: which part, and its 0–1 progress. */
@@ -115,7 +118,7 @@ export function restoreAll(first: { state: { running: boolean; select: string | 
   useStudio.setState((s) => ({
     explode: 0, deep: false, section: false, sectionDepth: 0.5, running: first.state.running, focus: first.state.focus,
     viewNonce: s.viewNonce + 1, selected: first.state.select, hovered: null, localExplode: null, step: 0, moveMode: false,
-    labels: typeof window === 'undefined' || window.innerWidth >= 700, hiddenLines: true, projection: true, editNonce: s.editNonce + 1, hidden: [], solo: null,
+    labels: !isEmbed && (typeof window === 'undefined' || window.innerWidth >= 700), hiddenLines: true, projection: true, editNonce: s.editNonce + 1, hidden: [], solo: null,
   }));
   document.body.style.cursor = '';
 }

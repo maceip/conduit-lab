@@ -1,6 +1,5 @@
-// Stage the runtime data and the standalone irrigation demo into dist/ after vite build.
-// The site fetches these at runtime; nothing is bundled into the JS, so the
-// "no hand-typed numbers" guarantee stays intact.
+// Stage runtime telemetry and Inkwork mechanical plates (turboprop + maglev) into dist/.
+// The site fetches ratchet.json and stats.json at runtime; nothing is hard-coded in JS.
 import { cpSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,26 +11,27 @@ if (!existsSync(dist)) {
   process.exit(1);
 }
 
-const files = [
-  'data',
-  'browser/ratchet.json',
-  'irrigation.html',
-  'irrigation.css',
-  'irrigation.js',
-  'styles.css', // irrigation.html still links the legacy stylesheet
-  'v8-anatomy.html',
-  'v8-iso/pages',
-  'assets',
+const entries = [
+  { src: 'data', dest: 'data' },
+  { src: 'browser/ratchet.json', dest: 'browser/ratchet.json' },
+  { src: 'inkwork/dist', dest: 'inkwork' },
+  { src: 'irrigation.html', dest: 'irrigation.html' },
+  { src: 'irrigation.css', dest: 'irrigation.css' },
+  { src: 'irrigation.js', dest: 'irrigation.js' },
+  { src: 'styles.css', dest: 'styles.css' },
+  { src: 'v8-anatomy.html', dest: 'v8-anatomy.html' },
+  { src: 'v8-iso/pages', dest: 'v8-iso/pages' },
+  { src: 'assets', dest: 'assets' },
 ];
 
-for (const rel of files) {
-  const src = resolve(root, rel);
-  if (!existsSync(src)) {
-    console.error(`missing ${rel} — cannot stage a complete site`);
+for (const { src, dest } of entries) {
+  const from = resolve(root, src);
+  if (!existsSync(from)) {
+    console.error(`missing ${src} — cannot stage a complete site`);
     process.exit(1);
   }
-  const dest = resolve(dist, rel);
-  mkdirSync(dirname(dest), { recursive: true });
-  cpSync(src, dest, { recursive: true });
-  console.log(`staged ${rel}`);
+  const to = resolve(dist, dest);
+  mkdirSync(dirname(to), { recursive: true });
+  cpSync(from, to, { recursive: true });
+  console.log(`staged ${src} -> ${dest}`);
 }

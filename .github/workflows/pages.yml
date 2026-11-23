@@ -27,10 +27,13 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: site/package-lock.json
-      - name: Build site (vite + stage runtime data)
+          cache-dependency-path: |
+            site/package-lock.json
+            inkwork/package-lock.json
+      - name: Build site and Inkwork plates (turboprop + maglev)
         working-directory: site
         run: |
+          npm --prefix ../inkwork ci --no-audit --no-fund
           npm ci --no-audit --no-fund
           npm run typecheck
           npm run build

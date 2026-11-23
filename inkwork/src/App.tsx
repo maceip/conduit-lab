@@ -6,9 +6,9 @@ import { Catalogue } from './components/Catalogue';
 import { Guide } from './components/Guide';
 import { Tree } from './components/Tree';
 import { PartsLegend, PlateMeta, TitleColumn } from './components/Plate';
-import { currentMachine, hasMachine, useMachine } from './machines';
+import { currentMachine, hasMachine, lineage, machineById, useMachine } from './machines';
 import { CameraRig, Guides, InkRenderer, MotionDriver } from './scene';
-import { selectMachine, useStudio } from './state';
+import { isEmbed, restoreAll, selectMachine, useStudio } from './state';
 import './theme';
 import { bridge, exportPlate, recordTeardown } from './export';
 import { DrawingRig } from './drawing/DrawingRig';
@@ -43,14 +43,13 @@ function ExportBridge() {
 }
 
 /**
- * The address bar follows the assembly and the selected part (#model-t/engine/crank),
+ * The address bar follows the assembly and the selected part (#turboprop/prop-hub),
  * so a view can be shared; opening such a link goes straight there.
  */
 function useDeepLink() {
   useEffect(() => {
     const open = () => {
       const parts = decodeURIComponent(window.location.hash.slice(1)).split('/');
-      // Assembly ids themselves contain slashes: take the longest prefix that names one.
       for (let n = parts.length; n > 0; n -= 1) {
         const id = parts.slice(0, n).join('/');
         if (hasMachine(id)) {
@@ -83,20 +82,142 @@ function useFirstStep() {
     if (!first) return;
     first.apply?.();
     const { selected, set } = useStudio.getState();
-    set({ section: first.state.section, running: first.state.running, focus: first.state.focus, selected: selected ?? first.state.select });
+    set({
+      section: first.state.section,
+      running: first.state.running,
+      focus: first.state.focus,
+      selected: isEmbed ? null : (selected ?? first.state.select),
+    });
   }, [machine]);
 }
 
-/** Horizontal offset (px) of the projection centre, so the machine clears the text column. */
+/** Horizontal offset (px) of the projection centre, so the machine clears the text column in full studio mode. */
 function useStageShift() {
   const [shift, setShift] = useState(0);
   useEffect(() => {
+    if (isEmbed) {
+      setShift(0);
+      return;
+    }
     const measure = () => setShift(window.innerWidth >= 1100 ? Math.min(60, window.innerWidth * 0.025) : 0);
     measure();
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
   }, []);
   return shift;
+}
+
+/** Minimal single-bar HUD used when embedded inside the CONDUIT specification site (?embed=1). */
+function EmbedHud() {
+  const machine = useMachine();
+  const { view, viewNonce, section, explode, selected, hovered, set } = useStudio();
+  const chain = lineage(machine);
+  const focusId = selected ?? hovered;
+  const part = focusId ? machine.parts.find((p) => p.id === focusId) : undefined;
+  const anno = focusId ? machine.annotations?.[focusId] : undefined;
+  const childId = part ? machine.children?.[part.id] : undefined;
+  const exploded = explode > 0.35;
+
+  return (
+    <>
+      <nav className="embed-bar" aria-label="Plate controls" data-testid="embed-toolbar">
+        {chain.length > 1 && (
+          <button
+            type="button"
+            className="embed-btn"
+            onClick={() => selectMachine(chain[chain.length - 2].id)}
+            title="Return to parent assembly"
+          >
+            ‹ {chain[chain.length - 2].name}
+          </button>
+        )}
+        <div className="embed-seg" role="group" aria-label="View mode">
+          <button
+            type="button"
+            className={view === 'perspective' ? 'is-on' : ''}
+            aria-pressed={view === 'perspective'}
+            data-testid="embed-view-3d"
+            onClick={() => set({ view: 'perspective', focus: null, viewNonce: viewNonce + 1 })}
+          >
+            3D
+          </button>
+          <button
+            type="button"
+            className={view === 'drawing' ? 'is-on' : ''}
+            aria-pressed={view === 'drawing'}
+            data-testid="embed-view-drawing"
+            onClick={() => set({ view: 'drawing', focus: null, viewNonce: viewNonce + 1 })}
+          >
+            Drawing
+          </button>
+        </div>
+
+        <button
+          type="button"
+          className={`embed-btn${section ? ' is-on' : ''}`}
+          aria-pressed={section}
+          data-testid="embed-toggle-section"
+          onClick={() => set({ section: !section })}
+        >
+          Section
+        </button>
+
+        <button
+          type="button"
+          className={`embed-btn${exploded ? ' is-on' : ''}`}
+          aria-pressed={exploded}
+          data-testid="embed-toggle-explode"
+          onClick={() => set({ explode: exploded ? 0 : 1, localExplode: null, deep: false })}
+        >
+          Explode
+        </button>
+
+        {(exploded || section || selected) && (
+          <button
+            type="button"
+            className="embed-btn"
+            onClick={() => {
+              restoreAll(machine.steps[0]);
+              useStudio.setState({ selected: null });
+            }}
+          >
+            Reset
+          </button>
+        )}
+
+        <a
+          className="embed-link"
+          href={`index.html#${machine.id}`}
+          target="_blank"
+          rel="noreferrer"
+          title="Open full interactive studio"
+        >
+          Studio ↗
+        </a>
+      </nav>
+
+      {part && (
+        <div className="embed-readout" data-testid="embed-readout">
+          <span>
+            <strong>{String(part.index).padStart(2, '0')} {part.name}</strong>
+            {anno ? ` · ${anno.label}` : ` · ${part.role}`}
+            {childId && (
+              <>
+                {' · '}
+                <button
+                  type="button"
+                  className="embed-sub-link"
+                  onClick={() => selectMachine(childId)}
+                >
+                  Open {machineById(childId).name} ↘
+                </button>
+              </>
+            )}
+          </span>
+        </div>
+      )}
+    </>
+  );
 }
 
 export default function App() {
@@ -123,10 +244,12 @@ export default function App() {
     }
   };
   return (
-    <div className={`studio${drawingMode ? ' is-drawing' : ''}`}>
-      <div className="paper-drawings" aria-hidden="true">
-        {Backdrop && <Backdrop />}
-      </div>
+    <div className={`studio${drawingMode ? ' is-drawing' : ''}${isEmbed ? ' is-embed' : ''}`}>
+      {!isEmbed && (
+        <div className="paper-drawings" aria-hidden="true">
+          {Backdrop && <Backdrop />}
+        </div>
+      )}
       <div className="stage">
         <Canvas
           camera={{ position: [5.5, 6.45, 11.85], fov: 30, near: 0.5, far: 200 }}
@@ -150,13 +273,19 @@ export default function App() {
         </Canvas>
         <DrawingSheet />
       </div>
-      <TitleColumn />
-      <PlateMeta onExport={onExport} busy={busy} recording={recording} />
-      <PartsLegend />
-      <Catalogue />
-      <Guide />
-      <Tree />
-      <p className="stage-hint">{drawingMode ? 'First-angle projection · hover or click a part to see its projections' : moveMode ? 'Drag a part to move it · drag empty space to rotate · resize once selected' : 'Drag to rotate · scroll to zoom · click a part'}</p>
+      {isEmbed ? (
+        <EmbedHud />
+      ) : (
+        <>
+          <TitleColumn />
+          <PlateMeta onExport={onExport} busy={busy} recording={recording} />
+          <PartsLegend />
+          <Catalogue />
+          <Guide />
+          <Tree />
+          <p className="stage-hint">{drawingMode ? 'First-angle projection · hover or click a part to see its projections' : moveMode ? 'Drag a part to move it · drag empty space to rotate · resize once selected' : 'Drag to rotate · scroll to zoom · click a part'}</p>
+        </>
+      )}
     </div>
   );
 }

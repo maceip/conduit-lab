@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { IconArrowDown, IconArrowRight } from './icons';
 import type { ProofDagEdge, ProofDagNode } from './content/vurl';
 
 export type Tone = 'proved' | 'warn' | 'fail' | 'neutral';
@@ -61,58 +60,24 @@ export const ScaleCompare: React.FC<{
 };
 
 export const ArchitectureDiagram: React.FC = () => (
-  <div className="ch-arch-diagram" data-testid="shim-diagram" aria-label="Verified kernel and sandboxed renderer architecture">
-    <div className="ch-ingress-row">
-      <div className="ch-node" data-trust="untrusted">
-        <div className="ch-node-title">TLS &amp; Sockets</div>
-        <div className="ch-node-sub">rustls · untrusted network I/O</div>
-      </div>
-      <span className="ch-flow-arrow" aria-hidden="true">
-        <IconArrowRight size={15} />
-      </span>
-      <div className="ch-node" data-trust="verified">
-        <div className="ch-node-title">X.509 Validation</div>
-        <div className="ch-node-sub">Verdict policy · Verus</div>
+  <div className="ch-trust-tiers" data-testid="shim-diagram" aria-label="Verified kernel and sandboxed renderer boundaries">
+    <div className="ch-tier-item" data-trust="untrusted">
+      <div className="ch-node-title">1 · Network Ingress</div>
+      <div className="ch-node-sub">Untrusted rustls sockets → Verdict X.509 path validation (Verus)</div>
+    </div>
+
+    <div className="ch-tier-item" data-trust="verified">
+      <div className="ch-kernel-head">2 · VERIFIED SECURITY KERNEL (Verus)</div>
+      <div className="ch-node-sub">
+        <code>vurl</code> boundary parsers · SOP/CSP/CORS origin policy · capability handle table
       </div>
     </div>
 
-    <div className="ch-tier-connector" aria-hidden="true">
-      <IconArrowDown size={14} />
-    </div>
-
-    <div className="ch-kernel-shell">
-      <div className="ch-kernel-head">
-        <span>VERIFIED SECURITY KERNEL (Verus)</span>
-      </div>
-      <div className="ch-kernel-grid">
-        <div className="ch-node" data-trust="verified">
-          <div className="ch-node-title">Boundary Parsers</div>
-          <div className="ch-node-sub">vurl · HTTP · Cookie</div>
-        </div>
-        <div className="ch-node" data-trust="verified">
-          <div className="ch-node-title">Origin Policy</div>
-          <div className="ch-node-sub">SOP · CSP · CORS</div>
-        </div>
-        <div className="ch-node" data-trust="verified">
-          <div className="ch-node-title">Capability Table</div>
-          <div className="ch-node-sub">Tabs · Handles · UI</div>
-        </div>
-      </div>
-    </div>
-
-    <div className="ch-ipc-rail">
-      <IconArrowDown size={13} />
-      <span>Typed Vest IPC · capability handles only</span>
-    </div>
-
-    <div className="ch-renderers-grid ch-renderers-two">
-      <div className="ch-node" data-trust="untrusted">
-        <div className="ch-node-title">Per-Site Renderer (Origin A)</div>
-        <div className="ch-node-sub">Proved vjs (J0–J7) + vjs_webidl + vwasm; sandboxed html5ever, Stylo, GPU</div>
-      </div>
-      <div className="ch-node" data-trust="untrusted">
-        <div className="ch-node-title">Per-Site Renderer (Origin B)</div>
-        <div className="ch-node-sub">Isolated Nanvix / OS process — no ambient sockets, cookies, or cross-origin memory</div>
+    <div className="ch-tier-item" data-trust="ipc">
+      <div className="ch-node-title">3 · Typed Vest IPC → Disposable Per-Site Renderers</div>
+      <div className="ch-node-sub">
+        Proved <code>vjs</code> (J0–J7), <code>vjs_webidl</code> &amp; <code>vwasm</code>; isolated{' '}
+        <code>html5ever</code>, <code>Stylo</code> &amp; GPU per origin
       </div>
     </div>
   </div>
