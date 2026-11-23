@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { GalleryNav, type GalleryTab } from './GalleryNav';
-import { BOARD } from '../contract/tokens';
 
 const TABS: readonly GalleryTab[] = [
   { id: 'icons', label: 'Icons' },
@@ -47,13 +46,5 @@ describe('GalleryNav', () => {
     for (const tab of TABS) {
       expect(html).toContain(`aria-controls="gallery-panel-${tab.id}"`);
     }
-  });
-
-  it('mounts the board palette from the contract tokens', () => {
-    const html = render();
-    expect(html).toContain('--board-page:');
-    expect(html).toContain(BOARD.page);
-    expect(html).toContain(BOARD.plate);
-    expect(html).toContain(BOARD.rib);
   });
 });

@@ -1,6 +1,5 @@
 import { useRef, type KeyboardEvent } from 'react';
 import './gallery.css';
-import { BoardVars } from './theme';
 
 /** One section of the gallery. */
 export interface GalleryTab {
@@ -30,9 +29,6 @@ export interface GalleryNavProps {
  * nothing about icons, plates, stats or scenes. It follows the WAI-ARIA
  * tabs pattern — one tab stop, arrow keys to move, `Home`/`End` to jump — and
  * every tab carries an accessible name from its label.
- *
- * The board palette rides along with the nav so the drafter board is themed
- * as soon as the gallery appears.
  */
 export function GalleryNav({
   tabs,
@@ -84,33 +80,30 @@ export function GalleryNav({
   const navClass = className ? `atelier__nav ${className}` : 'atelier__nav';
 
   return (
-    <>
-      <BoardVars />
-      <div className={navClass} role="tablist" aria-label={label} data-testid="gallery-nav">
-        {tabs.map((tab, index) => {
-          const selected = tab.id === activeTab;
-          return (
-            <button
-              key={tab.id}
-              ref={(element) => {
-                buttons.current[index] = element;
-              }}
-              type="button"
-              role="tab"
-              id={`gallery-tab-${tab.id}`}
-              className="atelier__tab"
-              aria-selected={selected}
-              aria-controls={`gallery-panel-${tab.id}`}
-              tabIndex={index === focusIndex ? 0 : -1}
-              data-tab-id={tab.id}
-              onClick={() => onSelect(tab.id)}
-              onKeyDown={(event) => handleKeyDown(event, index)}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
-    </>
+    <div className={navClass} role="tablist" aria-label={label} data-testid="gallery-nav">
+      {tabs.map((tab, index) => {
+        const selected = tab.id === activeTab;
+        return (
+          <button
+            key={tab.id}
+            ref={(element) => {
+              buttons.current[index] = element;
+            }}
+            type="button"
+            role="tab"
+            id={`gallery-tab-${tab.id}`}
+            className="atelier__tab"
+            aria-selected={selected}
+            aria-controls={`gallery-panel-${tab.id}`}
+            tabIndex={index === focusIndex ? 0 : -1}
+            data-tab-id={tab.id}
+            onClick={() => onSelect(tab.id)}
+            onKeyDown={(event) => handleKeyDown(event, index)}
+          >
+            {tab.label}
+          </button>
+        );
+      })}
+    </div>
   );
 }

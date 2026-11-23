@@ -68,6 +68,16 @@ describe('ratchet facts — the present-field path', () => {
     expect(RATCHET.verusVersion.recorded).toBe(true);
     expect(RATCHET.functionsByMode.exec.recorded).toBe(true);
   });
+
+  it('records the VM benchmark figures', () => {
+    expect(RATCHET.vmBenchmarks.recorded).toBe(true);
+    expect(RATCHET.vmBenchmarksGeomeanSpeedup.recorded).toBe(true);
+    if (!RATCHET.vmBenchmarks.recorded) throw new Error('benchmarks should be recorded');
+    for (const benchmark of RATCHET.vmBenchmarks.value) {
+      expect(benchmark.name).not.toBe('');
+      expect(benchmark.resultVerifiedEqual.value).toBe(true);
+    }
+  });
 });
 
 describe('ratchet facts — the absent-field path', () => {

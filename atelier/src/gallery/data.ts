@@ -207,6 +207,8 @@ export interface RatchetFacts {
   readonly jSteps: Recorded<readonly JStepFacts[]>;
   readonly test262Suites: Recorded<readonly SuiteFacts[]>;
   readonly vmBenchmarks: Recorded<readonly VmBenchmarkFacts[]>;
+  /** Geometric-mean speedup of the bytecode VM over the AST interpreter. */
+  readonly vmBenchmarksGeomeanSpeedup: Recorded<number>;
   readonly specPins: Recorded<readonly string[]>;
 }
 
@@ -338,6 +340,7 @@ export function readRatchetFacts(document: unknown): RatchetFacts {
       benchmarks === null
         ? { recorded: false, value: null }
         : { recorded: true, value: mapArray(benchmarks, readVmBenchmark) },
+    vmBenchmarksGeomeanSpeedup: readNumber(root, 'vm_benchmarks_geomean_speedup'),
     specPins:
       specPins === null
         ? { recorded: false, value: null }

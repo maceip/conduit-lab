@@ -183,6 +183,11 @@
   grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
 }
 
+/* The icon cards carry a 400px annotated reading, so they need more room. */
+.atelier__grid--icons {
+  grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+}
+
 .atelier__card {
   display: flex;
   flex-direction: column;
@@ -235,6 +240,189 @@
 
 .atelier__value--fail {
   color: var(--board-fail);
+}
+
+/* --- Sheet furniture --------------------------------------------------- */
+
+.atelier__hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: var(--atelier-gap);
+  align-items: start;
+  margin-bottom: var(--atelier-gap);
+}
+
+.atelier__tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(184px, 1fr));
+  gap: 12px;
+  margin-bottom: var(--atelier-gap);
+}
+
+.atelier__split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--atelier-gap);
+  align-items: start;
+  margin-bottom: var(--atelier-gap);
+}
+
+.atelier__note {
+  margin: 0;
+  color: var(--board-ink);
+  font-size: 10px;
+  line-height: 1.65;
+  letter-spacing: var(--atelier-track-tight);
+}
+
+/* Hairline-ruled data table. */
+.atelier__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.atelier__table th,
+.atelier__table td {
+  padding: 6px 10px;
+  border-bottom: var(--atelier-hairline) solid var(--board-rib);
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+}
+
+.atelier__table th {
+  color: var(--board-ink);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: var(--atelier-track-label);
+  text-transform: uppercase;
+}
+
+.atelier__table td {
+  color: var(--board-ink-hi);
+}
+
+.atelier__table td[data-numeric='muted'] {
+  color: var(--board-ink);
+}
+
+/* --- Icons ------------------------------------------------------------- */
+
+.atelier__icon-pair {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--atelier-gap);
+}
+
+.atelier__icon-large {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.atelier__icon-large svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.atelier__icon-small {
+  flex: 0 0 auto;
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  padding-top: 4px;
+}
+
+.atelier__icon-small figcaption {
+  color: var(--board-ink);
+  font-size: 9px;
+  letter-spacing: var(--atelier-track-tight);
+  text-transform: uppercase;
+}
+
+/* --- Tier-1 component hooks -------------------------------------------- */
+
+/* The tier-1 components ship class hooks and no stylesheet of their own, so
+   the board supplies the few rules they need.
+ *
+ * `OdometerReels` renders its digit strip as one text run ("0123456789") and
+   slides it with `translateY(-Nem)`. For the reel window to show a single
+   digit, the strip has to be stacked one character per line, one em apart —
+ * which is exactly the unit the component translates by. The window is then
+   one em tall so exactly one digit is visible.
+ */
+.chOdometerReels [data-reel] {
+  height: 1em !important;
+}
+
+.chOdometerReels [data-reel] > span {
+  line-height: 1em;
+  width: 1ch;
+  word-break: break-all;
+}
+
+/* A stat tile holds strings as well as numbers, and a version string has
+   nowhere to break on its own. Let it wrap rather than run over the tile
+   next to it. */
+.chStatTile,
+.chStatTile > span {
+  min-width: 0;
+}
+
+.chStatTile > span:first-child {
+  overflow-wrap: anywhere;
+}
+
+/* The tier-2 heap labels are placed by the scene, which writes a pixel
+   offset into each label's `transform`. They need an absolutely positioned
+   layer over the canvas to land on their objects; `translate` centres each
+   label on the point the scene projected, without touching the transform the
+   scene owns. */
+.stage-gc-heap-viewport {
+  position: relative;
+  display: grid;
+  align-items: center;
+}
+
+.stage-gc-heap-canvas {
+  display: block;
+  /* three writes an inline width/height on the canvas at construction, so the
+     board's own size has to win. The scene measures the canvas before it
+     sizes its buffer, so a canvas that fills the card gets a matching
+     drawing buffer and stays crisp. */
+  width: 100% !important;
+  height: auto !important;
+}
+
+.stage-gc-heap-labels {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.stage-heap-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  translate: -50% -50%;
+  color: var(--board-ink);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* --- Plates and scenes ------------------------------------------------- */
+
+.atelier__plate,
+.atelier__scene {
+  display: grid;
+  gap: var(--atelier-gap);
+  padding: var(--atelier-pad);
+  border: var(--atelier-hairline) solid var(--board-rib);
+  background: var(--board-plate);
 }
 
 /* --- Rules ------------------------------------------------------------- */
