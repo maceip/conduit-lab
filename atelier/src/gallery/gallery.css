@@ -346,13 +346,7 @@
 /* The tier-1 components ship class hooks and no stylesheet of their own, so
    the board supplies the few rules they need.
  *
- * `OdometerReels` renders its digit strip as one text run ("0123456789") and
-   slides it with `translateY(-Nem)`. For the reel window to show a single
-   digit, the strip has to be stacked one character per line, one em apart —
- * which is exactly the unit the component translates by. The window is then
-   one em tall so exactly one digit is visible.
- */
-/* A stat tile holds strings as well as numbers, and a version string has
+ * A stat tile holds strings as well as numbers, and a version string has
    nowhere to break on its own. Let it wrap rather than run over the tile
    next to it. */
 .chStatTile,
