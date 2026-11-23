@@ -3,12 +3,52 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { GcHeapScene } from './GcHeapScene';
 import { findTriColorViolations } from './triColor';
 
+/**
+ * The inline style declarations of one element of a rendered scene.
+ *
+ * The declarations are read from the serialised attribute rather than from
+ * the CSSOM, because jsdom's CSSOM drops properties it does not model — and
+ * because what the component ships is the attribute itself.
+ */
+function styleOf(html: string, className: string): Record<string, string> {
+  const document = new DOMParser().parseFromString(html, 'text/html');
+  const element = document.querySelector(`.${className}`);
+  if (element === null) throw new Error(`no element with class ${className}`);
+  const declarations: Record<string, string> = {};
+  for (const declaration of (element.getAttribute('style') ?? '').split(';')) {
+    const separator = declaration.indexOf(':');
+    if (separator === -1) continue;
+    declarations[declaration.slice(0, separator).trim()] = declaration
+      .slice(separator + 1)
+      .trim();
+  }
+  return declarations;
+}
+
 describe('GcHeapScene', () => {
   it('renders a canvas host element', () => {
     const html = renderToStaticMarkup(
       <GcHeapScene objects={[{ id: 'a', position: [0, 0, 0], color: 'white' }]} edges={[]} />,
     );
     expect(html).toContain('canvas');
+  });
+
+  it('lays out its own label layer, so it needs no stylesheet to read', () => {
+    const html = renderToStaticMarkup(
+      <GcHeapScene objects={[{ id: 'a', position: [0, 0, 0], color: 'white' }]} edges={[]} />,
+    );
+    const layer = styleOf(html, 'stage-gc-heap-labels');
+    expect(layer.position).toBe('absolute');
+    expect(layer.inset).toBe('0');
+    expect(layer.overflow).toBe('hidden');
+    expect(layer['pointer-events']).toBe('none');
+  });
+
+  it('makes the viewport the positioning context of the label layer', () => {
+    const html = renderToStaticMarkup(
+      <GcHeapScene objects={[{ id: 'a', position: [0, 0, 0], color: 'white' }]} edges={[]} />,
+    );
+    expect(styleOf(html, 'stage-gc-heap-viewport').position).toBe('relative');
   });
 
   it('marks a tri-color violation', () => {

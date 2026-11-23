@@ -20,9 +20,17 @@ export const HAIRLINE = {
   vectorEffect: 'non-scaling-stroke',
 } as const;
 
+/**
+ * The drafting register: JetBrains Mono, the only typeface in the atelier.
+ * Shared by the SVG scenes and by the DOM labels of the WebGL scene, so both
+ * tiers read as one set.
+ */
+export const MONO_FONT =
+  "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
+
 /** The register: uppercase mono at 9px with wide tracking. */
 export const MONO: CSSProperties = {
-  fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+  fontFamily: MONO_FONT,
   fontSize: 9,
   letterSpacing: '0.08em',
 };

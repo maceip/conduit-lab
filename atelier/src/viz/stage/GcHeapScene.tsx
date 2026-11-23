@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, type ReactElement } from 'react';
+import { useEffect, useMemo, useRef, type CSSProperties, type ReactElement } from 'react';
 import { useReducedMotion } from '../../contract/motion';
 import { BOARD } from '../../contract/tokens';
 import { createGcHeapScene, type GcHeapSceneHandle } from './threeScene';
@@ -28,6 +28,26 @@ export interface GcHeapSceneProps {
 }
 
 const DEFAULT_TITLE = 'Tri-color garbage collector heap';
+
+/**
+ * The viewport holds the canvas and the label layer, and the label layer is
+ * absolutely positioned over the canvas, so the viewport has to be its
+ * positioning context. The scene carries its own layout: it must read the
+ * same wherever it is mounted, without a stylesheet it cannot see.
+ */
+const VIEWPORT_STYLE: CSSProperties = {
+  position: 'relative',
+  display: 'grid',
+  alignItems: 'center',
+};
+
+/** The label layer: over the canvas, clipped, and never interactive. */
+const LABEL_LAYER_STYLE: CSSProperties = {
+  position: 'absolute',
+  inset: 0,
+  overflow: 'hidden',
+  pointerEvents: 'none',
+};
 
 /**
  * Tier 2 — the interactive tri-color GC heap.
@@ -100,9 +120,14 @@ export function GcHeapScene(props: GcHeapSceneProps): ReactElement {
       role="group"
       aria-label={title}
     >
-      <div className="stage-gc-heap-viewport">
+      <div className="stage-gc-heap-viewport" style={VIEWPORT_STYLE}>
         <canvas ref={canvasRef} className="stage-gc-heap-canvas" aria-hidden="true" />
-        <div ref={labelLayerRef} className="stage-gc-heap-labels" aria-hidden="true" />
+        <div
+          ref={labelLayerRef}
+          className="stage-gc-heap-labels"
+          style={LABEL_LAYER_STYLE}
+          aria-hidden="true"
+        />
       </div>
       <figcaption className="stage-gc-heap-caption">
         <ul className="stage-gc-heap-legend">

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { BOARD } from '../../contract/tokens';
+import { MONO_FONT } from './diagram';
 import { TRI_COLOR_FILL, type GcHeapEdge, type GcHeapObject, type TriColor } from './triColor';
 
 /**
@@ -102,6 +103,17 @@ export function createGcHeapScene(
   // shading ramp and the hairline outlines only.
   renderer.shadowMap.enabled = false;
 
+  // three sizes the canvas through its ATTRIBUTES — the drawing buffer — and
+  // leaves the element itself unstyled. On its own the canvas would then
+  // render at its intrinsic size, and because the scene measures the canvas
+  // before it sizes the buffer, that measurement would feed straight back
+  // into the buffer and grow it. The scene therefore owns the canvas
+  // presentation: fill the card, keep the intrinsic aspect ratio, and let
+  // the drawing buffer follow the measured size so the scene stays crisp.
+  canvas.style.display = 'block';
+  canvas.style.width = '100%';
+  canvas.style.height = 'auto';
+
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(BOARD.page);
 
@@ -183,7 +195,9 @@ export function createGcHeapScene(
       element.style.left = '0';
       element.style.translate = '-50% -50%';
       element.style.color = BOARD.ink;
+      element.style.fontFamily = MONO_FONT;
       element.style.fontSize = '9px';
+      element.style.fontWeight = '500';
       element.style.letterSpacing = '0.06em';
       element.style.whiteSpace = 'nowrap';
       element.style.pointerEvents = 'none';

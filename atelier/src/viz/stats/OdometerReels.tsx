@@ -60,10 +60,12 @@ export function OdometerReels({ value, digits, className }: OdometerReelsProps) 
               // The reel is a one-character window onto the digit strip.
               // The strip is a single run of text, so it must be broken
               // per character and the window clipped to one character wide.
-              lineHeight: '1em',
+              // The cell height must equal the window height exactly, or the
+              // top of the next digit bleeds in as a rule under the digit.
+              lineHeight: `${REEL_HEIGHT}px`,
               width: '1ch',
               wordBreak: 'break-all',
-              transform: `translateY(-${digit}em)`,
+              transform: `translateY(-${Number(digit) * REEL_HEIGHT}px)`,
               transition: `transform ${DURATION.d2}ms ${EASE.standard}`,
             }}
           >
