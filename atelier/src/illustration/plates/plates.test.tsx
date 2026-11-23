@@ -43,4 +43,17 @@ describe('the hatched-versus-clean distinction', () => {
     expect(axis[1]).toBe(0);
     expect(axis[2]).toBe(1);
   });
+
+  it('shows at least three distinguishable tonal bands on the V8 plate', () => {
+    const palettes = new Set(V8_CORE_ASSEMBLY.parts.map((p) => p.palette));
+    expect(palettes.has('hi')).toBe(true);
+    expect(palettes.has('body')).toBe(true);
+    expect(palettes.has('dark')).toBe(true);
+  });
+
+  it('gives every plate part an explicit palette', () => {
+    for (const part of [...V8_CORE_ASSEMBLY.parts, ...KERNEL_RENDERER_ASSEMBLY.parts]) {
+      expect(part.palette).toBeDefined();
+    }
+  });
 });

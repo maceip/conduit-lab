@@ -13,6 +13,10 @@ import { projectAssembly, renderPlate, type Assembly } from '../engine';
  *
  * The memory capsule is a surface of revolution about the origin, exactly as
  * the drum is in the source figure.
+ *
+ * Tones: the ramp is applied within the part's own palette, exactly as the
+ * published figures do it — `hi` for the prominent machined element, `dark`
+ * for understructure, `body` for the main mass. Here: `hi` = capsule, crane; `dark` = floor-rail, column, barrier; the rest `body`.
  */
 export const OLD_SPACE_ASSEMBLY: Assembly = {
   azDeg: 42,
@@ -24,12 +28,14 @@ export const OLD_SPACE_ASSEMBLY: Assembly = {
     {
       id: 'floor-rail',
       label: 'Floor rail',
+      palette: 'dark',
       balloon: 1,
       geometry: { kind: 'box', at: [-170, 76, 0], size: [340, 16, 12] },
     },
     {
       id: 'column',
       label: 'Rack column',
+      palette: 'dark',
       balloon: 2,
       explode: [0, 0, 48],
       geometry: { kind: 'cyl', from: [-120, -20, 0], to: [-120, -20, 176], r0: 8, r1: 8 },
@@ -37,6 +43,7 @@ export const OLD_SPACE_ASSEMBLY: Assembly = {
     {
       id: 'shelf-beam',
       label: 'Shelf beam',
+      palette: 'body',
       balloon: 3,
       explode: [0, 0, 96],
       geometry: { kind: 'box', at: [-170, -26, 0], size: [340, 14, 10] },
@@ -44,6 +51,7 @@ export const OLD_SPACE_ASSEMBLY: Assembly = {
     {
       id: 'capsule',
       label: 'Memory capsule',
+      palette: 'hi',
       balloon: 4,
       explode: [0, 0, 144],
       sectioned: true,
@@ -62,6 +70,7 @@ export const OLD_SPACE_ASSEMBLY: Assembly = {
     {
       id: 'crane',
       label: 'Stacker crane',
+      palette: 'hi',
       balloon: 5,
       explode: [0, 0, 192],
       geometry: { kind: 'box', at: [-40, 36, 0], size: [78, 38, 14] },
@@ -69,6 +78,7 @@ export const OLD_SPACE_ASSEMBLY: Assembly = {
     {
       id: 'mast',
       label: 'Crane mast',
+      palette: 'body',
       balloon: 6,
       explode: [0, 0, 240],
       sectioned: true,
@@ -77,6 +87,7 @@ export const OLD_SPACE_ASSEMBLY: Assembly = {
     {
       id: 'barrier',
       label: 'Remembered-set barrier',
+      palette: 'dark',
       balloon: 7,
       explode: [0, 0, 288],
       geometry: { kind: 'box', at: [-130, -58, 0], size: [260, 10, 38] },

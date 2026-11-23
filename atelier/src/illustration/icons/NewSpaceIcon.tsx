@@ -14,6 +14,10 @@ import { projectAssembly, renderPlate, stadiumLoop, type Assembly } from '../eng
  * helical screw-auger promotion elevator climbing to old space.
  *
  * The belt is a real closed stadium loop, swept as a tube.
+ *
+ * Tones: the ramp is applied within the part's own palette, exactly as the
+ * published figures do it — `hi` for the prominent machined element, `dark`
+ * for understructure, `body` for the main mass. Here: `hi` = drum, knife; `dark` = trestle, funnel; the rest `body`.
  */
 export const NEW_SPACE_ASSEMBLY: Assembly = {
   azDeg: 42,
@@ -25,12 +29,14 @@ export const NEW_SPACE_ASSEMBLY: Assembly = {
     {
       id: 'trestle',
       label: 'A-frame trestle',
+      palette: 'dark',
       balloon: 1,
       geometry: { kind: 'box', at: [-152, -58, 0], size: [304, 116, 14] },
     },
     {
       id: 'belt',
       label: 'From-space belt',
+      palette: 'body',
       balloon: 2,
       explode: [32, 0, 0],
       geometry: {
@@ -42,6 +48,7 @@ export const NEW_SPACE_ASSEMBLY: Assembly = {
     {
       id: 'drum',
       label: 'Eddy-current head drum',
+      palette: 'hi',
       balloon: 3,
       explode: [64, 0, 0],
       sectioned: true,
@@ -50,6 +57,7 @@ export const NEW_SPACE_ASSEMBLY: Assembly = {
     {
       id: 'funnel',
       label: 'Gravity drop funnel',
+      palette: 'dark',
       balloon: 4,
       explode: [96, 0, 0],
       geometry: { kind: 'cyl', from: [70, 0, 0], to: [70, 0, 52], r0: 42, r1: 17 },
@@ -57,6 +65,7 @@ export const NEW_SPACE_ASSEMBLY: Assembly = {
     {
       id: 'knife',
       label: 'Splitter knife',
+      palette: 'hi',
       balloon: 5,
       explode: [128, 0, 0],
       geometry: { kind: 'box', at: [104, -27, 34], size: [8, 54, 38] },
@@ -64,6 +73,7 @@ export const NEW_SPACE_ASSEMBLY: Assembly = {
     {
       id: 'auger',
       label: 'Auger promotion elevator',
+      palette: 'body',
       balloon: 6,
       explode: [160, 0, 0],
       sectioned: true,
@@ -72,6 +82,7 @@ export const NEW_SPACE_ASSEMBLY: Assembly = {
     {
       id: 'chip',
       label: 'Nursery chip',
+      palette: 'body',
       balloon: 7,
       explode: [192, 0, 0],
       geometry: { kind: 'cyl', from: [20, 0, 0], to: [20, 0, 14], r0: 15, r1: 12 },

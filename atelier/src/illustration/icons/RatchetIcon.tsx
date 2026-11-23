@@ -15,6 +15,10 @@ import { gear2D, projectAssembly, renderPlate, type Assembly } from '../engine';
  * the counter drum that reads the count, and the cam post that drives the
  * pawl. No number is baked into the drawing — the counter is the component
  * that carries the live value.
+ *
+ * Tones: the ramp is applied within the part's own palette, exactly as the
+ * published figures do it — `hi` for the prominent machined element, `dark`
+ * for understructure, `body` for the main mass. Here: `hi` = pawl, detent; `dark` = base, post; the rest `body`.
  */
 export const RATCHET_ASSEMBLY: Assembly = {
   azDeg: 42,
@@ -26,12 +30,14 @@ export const RATCHET_ASSEMBLY: Assembly = {
     {
       id: 'base',
       label: 'Ratchet base plate',
+      palette: 'dark',
       balloon: 1,
       geometry: { kind: 'box', at: [-128, -96, 0], size: [256, 192, 14] },
     },
     {
       id: 'wheel',
       label: 'Trusted-item wheel',
+      palette: 'body',
       balloon: 2,
       explode: [0, 0, 42],
       geometry: {
@@ -43,6 +49,7 @@ export const RATCHET_ASSEMBLY: Assembly = {
     {
       id: 'pawl',
       label: 'Locking pawl',
+      palette: 'hi',
       balloon: 3,
       explode: [0, 0, 84],
       geometry: { kind: 'box', at: [46, -12, 0], size: [56, 16, 12] },
@@ -50,6 +57,7 @@ export const RATCHET_ASSEMBLY: Assembly = {
     {
       id: 'detent',
       label: 'Detent post',
+      palette: 'hi',
       balloon: 4,
       explode: [0, 0, 126],
       sectioned: true,
@@ -58,6 +66,7 @@ export const RATCHET_ASSEMBLY: Assembly = {
     {
       id: 'hub',
       label: 'Wheel hub',
+      palette: 'body',
       balloon: 5,
       explode: [0, 0, 168],
       geometry: { kind: 'cyl', from: [0, 0, 0], to: [0, 0, 22], r0: 22, r1: 19 },
@@ -65,6 +74,7 @@ export const RATCHET_ASSEMBLY: Assembly = {
     {
       id: 'counter',
       label: 'Trusted-item counter',
+      palette: 'body',
       balloon: 6,
       explode: [0, 0, 210],
       sectioned: true,
@@ -73,6 +83,7 @@ export const RATCHET_ASSEMBLY: Assembly = {
     {
       id: 'post',
       label: 'Cam post',
+      palette: 'dark',
       balloon: 7,
       explode: [0, 0, 252],
       geometry: { kind: 'cyl', from: [88, -54, 0], to: [88, -54, 38], r0: 9, r1: 9 },

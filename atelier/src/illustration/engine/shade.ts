@@ -1,42 +1,48 @@
-import type { Vec3 } from '../../contract';
+import type { Palette, Vec3 } from '../../contract';
 import { dot } from './camera';
 
 /**
  * Face shading — a port of `shadeClass` in `v8-iso/iso-cad.mjs`.
  *
- * The published plates use the default `body` palette, whose four classes are
- * separated by these thresholds on `dot(normal, light)`:
+ * The published plates are NOT drawn on one ramp. Each part selects a palette
+ * and the shading ramp is applied *within* it, which is where their tonal
+ * range comes from: a dark skid under a bright machined silo. Collapsing
+ * every part onto a single ramp loses the form entirely, so the palette is a
+ * first-class property of a part, not of the drawing.
  *
- *   b >  0.55  -> cad-bd-3
- *   b >  0.16  -> cad-bd-2
- *   b > -0.22  -> cad-bd-1
- *   else       -> cad-bd-0
+ * The thresholds below are the published ones, per palette:
  *
- * The thresholds are reused verbatim so an atelier face and a published face
- * with the same normal land on the same tone. `SHADE[0..3]` in
- * `contract/tokens` are byte-identical to the published `--bd0..--bd3`
- * (`#111315`, `#171a1d`, `#1e2226`, `#262b30`), which is what makes the two
- * sets read as one. `SHADE[4]` is reserved for sectioned material, which the
- * drafting convention draws in a distinct tone.
+ *   body : b >  0.55 -> 3, b >  0.16 -> 2, b > -0.22 -> 1, else 0
+ *   hi   : b >  0.52 -> 3, b >  0.12 -> 2, b > -0.25 -> 1, else 0
+ *   dark : b >  0.35 -> 2, b > -0.15 -> 1, else 0
+ *
+ * and the ramps themselves live in `contract/tokens` as `SHADE_BODY`,
+ * `SHADE_DARK` and `SHADE_HI` — byte-identical to the published
+ * `--bd0..--bd3`, `--dk0..--dk2` and `--hi0..--hi3` custom properties, so an
+ * atelier face and a published face with the same normal and palette land on
+ * the same tone.
  */
 export const SHADE_CLASS = {
-  /** Above this the face is the brightest class. */
-  hi3: 0.55,
-  /** Above this the face is the upper-middle class. */
-  hi2: 0.16,
-  /** Above this the face is the lower-middle class; below it is the darkest. */
-  hi1: -0.22,
-} as const;
+  body: { hi3: 0.55, hi2: 0.16, hi1: -0.22 },
+  hi: { hi3: 0.52, hi2: 0.12, hi1: -0.25 },
+  dark: { hi3: 0.35, hi2: -0.15, hi1: null },
+} as const satisfies Record<Palette, { hi3: number; hi2: number; hi1: number | null }>;
 
-/** The four published body-palette classes, as ramp indices. */
-export type ShadeClass = 0 | 1 | 2 | 3;
-
-/** Classify a raw lambert value with the published thresholds. */
-export function shadeClassIndex(b: number): ShadeClass {
-  if (b > SHADE_CLASS.hi3) return 3;
-  if (b > SHADE_CLASS.hi2) return 2;
-  if (b > SHADE_CLASS.hi1) return 1;
-  return 0;
+/**
+ * Classify a raw lambert value (`dot(normal, light)`) into a ramp index for
+ * the given palette.
+ */
+export function shadeClassIndex(b: number, palette: Palette = 'body'): number {
+  if (palette === 'dark') {
+    const t = SHADE_CLASS.dark;
+    return b > t.hi3 ? 2 : b > t.hi2 ? 1 : 0;
+  }
+  if (palette === 'hi') {
+    const t = SHADE_CLASS.hi;
+    return b > t.hi3 ? 3 : b > t.hi2 ? 2 : b > t.hi1 ? 1 : 0;
+  }
+  const t = SHADE_CLASS.body;
+  return b > t.hi3 ? 3 : b > t.hi2 ? 2 : b > t.hi1 ? 1 : 0;
 }
 
 /**
@@ -46,8 +52,10 @@ export function shadeClassIndex(b: number): ShadeClass {
  *   normal against the world key light, so it is shaded before the view
  *   transform).
  * @param light unit key-light direction.
- * @returns ramp index 0..3 of the six-step `SHADE` ramp.
+ * @param palette the part's body palette; defaults to `body`.
+ * @returns index into the palette's ramp: 0..3 for `body` and `hi`, 0..2 for
+ *   `dark`.
  */
-export function shadeFor(normal: Vec3, light: Vec3): number {
-  return shadeClassIndex(dot(normal, light));
+export function shadeFor(normal: Vec3, light: Vec3, palette: Palette = 'body'): number {
+  return shadeClassIndex(dot(normal, light), palette);
 }

@@ -1,6 +1,6 @@
 import { createElement, type ReactElement, type ReactNode } from 'react';
-import type { Tone, Vec2 } from '../../contract';
-import { BOARD, DASH, SHADE, STROKE } from '../../contract/tokens';
+import type { Palette, Tone, Vec2 } from '../../contract';
+import { BOARD, CUT_FACE, DASH, PALETTES, SHADE_BODY, STROKE } from '../../contract/tokens';
 import { BALLOON_R } from './balloon';
 import { dimensionLine } from './dimension';
 import { hatchPattern } from './hatch';
@@ -63,6 +63,25 @@ function toneColour(tone: Tone): string {
   }
 }
 
+/**
+ * The cut edge bounds a bright machined face, so it is drawn in a mid ink
+ * rather than the light edge colour — a light line would vanish into the cut
+ * it is supposed to define. A status tone still wins where one is set.
+ */
+function cutEdgeColour(tone: Tone): string {
+  return tone === 'neutral' ? BOARD.ink : toneColour(tone);
+}
+
+/**
+ * The colour of a face: the part's own palette ramp, except for a cut face,
+ * which is a bright machined surface in the drawing convention.
+ */
+function faceColour(palette: Palette, shade: number, cut: boolean): string {
+  if (cut) return CUT_FACE;
+  const ramp: readonly string[] = PALETTES[palette];
+  return ramp[shade] ?? ramp[ramp.length - 1] ?? SHADE_BODY[0];
+}
+
 /** Inline style values used by the root `<svg>`. */
 type StyleValue = { [key: string]: string | number };
 
@@ -121,9 +140,11 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
         },
         h('path', {
           d: `M0,0 V${p.size}`,
-          stroke: BOARD.edgeHi,
+          // The hatch lies on a bright cut face, so it is inked rather than
+          // highlighted; a light line would disappear into the cut.
+          stroke: BOARD.ink,
           strokeWidth: STROKE.hatch,
-          opacity: 0.5,
+          opacity: 0.55,
           fill: 'none',
           ...STROKE_ATTRS,
         }),
@@ -138,7 +159,7 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
 
   for (const face of plate.faces) {
     if (face.hidden) continue;
-    const base = face.cut ? SHADE[4] : SHADE[face.shade] ?? SHADE[0];
+    const base = faceColour(face.palette, face.shade, face.cut);
     items.push({
       depth: face.depth,
       node: h('path', {
@@ -168,7 +189,11 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
 
   for (const edge of plate.edges) {
     const stroke =
-      edge.kind === 'cut' ? cutColour : edge.kind === 'hidden' ? BOARD.rib : BOARD.line;
+      edge.kind === 'cut'
+        ? cutEdgeColour(tone)
+        : edge.kind === 'hidden'
+          ? BOARD.rib
+          : BOARD.line;
     const strokeWidth =
       edge.kind === 'cut'
         ? STROKE.cutEdge
@@ -501,17 +526,35 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
         const y = bandTop + 46 + (caption.note ? 16 : 0) + i * 17;
         const swatchX = right - 206;
         drawing.push(
-          h('rect', {
-            key: `legend-swatch-${i}`,
-            x: swatchX,
-            y: y - 11,
-            width: 14,
-            height: 14,
-            fill: entry.hatched && firstPattern ? `url(#${firstPattern.id})` : SHADE[2],
-            stroke: BOARD.line,
-            strokeWidth: STROKE.structure,
-            ...STROKE_ATTRS,
-          }),
+          h(
+            'g',
+            { key: `legend-swatch-${i}` },
+            // A hatched swatch is a cut face: bright machined ground with the
+            // section hatch laid over it, exactly as it appears in the drawing.
+            h('rect', {
+              x: swatchX,
+              y: y - 11,
+              width: 14,
+              height: 14,
+              fill: entry.hatched ? CUT_FACE : SHADE_BODY[2],
+              stroke: BOARD.line,
+              strokeWidth: STROKE.structure,
+              ...STROKE_ATTRS,
+            }),
+            ...(entry.hatched && firstPattern
+              ? [
+                  h('rect', {
+                    key: `legend-hatch-${i}`,
+                    x: swatchX,
+                    y: y - 11,
+                    width: 14,
+                    height: 14,
+                    fill: `url(#${firstPattern.id})`,
+                    stroke: 'none',
+                  }),
+                ]
+              : []),
+          ),
           h(
             'text',
             {

@@ -1,4 +1,4 @@
-import type { Part, Vec2, Vec3 } from '../../contract';
+import type { Palette, Part, Vec2, Vec3 } from '../../contract';
 import { add, cameraFor, dot, norm, sub } from './camera';
 import { centroid, facesFor } from './geometry';
 import { shadeFor } from './shade';
@@ -24,10 +24,11 @@ export { centerlineFor } from './centerline';
 export { explodedOffset } from './explode';
 export { billFor, type BillRow } from './partsList';
 export { shadeFor, shadeClassIndex, SHADE_CLASS } from './shade';
+export { PALETTES, SHADE_BODY, SHADE_DARK, SHADE_HI, CUT_FACE } from '../../contract/tokens';
 export { facesFor, gear2D, helix3D, stadiumLoop, type RawFace } from './geometry';
 export { cameraFor, type Camera } from './camera';
 
-export type { Vec2, Vec3, Part, Tone } from '../../contract';
+export type { Vec2, Vec3, Part, Palette, Tone } from '../../contract';
 
 /**
  * A projected, drawable face.
@@ -42,8 +43,10 @@ export interface Face {
   points: Vec2[];
   /** Unit normal in view space. */
   normal: Vec3;
-  /** Shade ramp index. */
+  /** Shade ramp index, within the part's palette ramp. */
   shade: number;
+  /** Body palette this face is shaded from. */
+  palette: Palette;
   /** True when this face is a cut surface and must be hatched. */
   cut: boolean;
   /** True when the face is back-facing and should be drawn as a hidden edge. */
@@ -214,6 +217,7 @@ export function projectAssembly(assembly: Assembly): RenderedPlate {
   const anchors = new Map<string, Vec2>();
 
   for (const part of assembly.parts) {
+    const palette: Palette = part.palette ?? 'body';
     const offset = explodedOffset(part, assembly);
     const raw = facesFor(part.geometry);
     const world = raw.map((f) => ({
@@ -258,7 +262,8 @@ export function projectAssembly(assembly: Assembly): RenderedPlate {
       return {
         points: f.points.map((p) => camera.project(p)),
         normal: camera.viewNormal(f.normal),
-        shade: shadeFor(f.normal, camera.light),
+        shade: shadeFor(f.normal, camera.light, palette),
+        palette,
         cut: rec?.cut ?? false,
         hidden: !(rec?.visible ?? false),
         partId: part.id,

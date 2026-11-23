@@ -15,6 +15,10 @@ import { projectAssembly, renderPlate, type Assembly } from '../engine';
  *
  * The explode axis is the travel direction of the conveyor, so the machine
  * reads as a line of machinery taken apart along its own axis.
+ *
+ * Tones: the ramp is applied within the part's own palette, exactly as the
+ * published figures do it — `hi` for the prominent machined element, `dark`
+ * for understructure, `body` for the main mass. Here: `hi` = arch, pod; `dark` = deck, carousel; the rest `body`.
  */
 export const POINTER_TAGGING_ASSEMBLY: Assembly = {
   azDeg: 42,
@@ -26,12 +30,14 @@ export const POINTER_TAGGING_ASSEMBLY: Assembly = {
     {
       id: 'deck',
       label: 'Conveyor deck',
+      palette: 'dark',
       balloon: 1,
       geometry: { kind: 'box', at: [-152, -78, 0], size: [304, 156, 14] },
     },
     {
       id: 'roller',
       label: 'Crowned roller',
+      palette: 'body',
       balloon: 2,
       explode: [32, 0, 0],
       sectioned: true,
@@ -40,6 +46,7 @@ export const POINTER_TAGGING_ASSEMBLY: Assembly = {
     {
       id: 'arch',
       label: 'Scanner arch',
+      palette: 'hi',
       balloon: 3,
       explode: [64, 0, 0],
       geometry: {
@@ -59,6 +66,7 @@ export const POINTER_TAGGING_ASSEMBLY: Assembly = {
     {
       id: 'pod',
       label: 'Scan pod',
+      palette: 'hi',
       balloon: 4,
       explode: [96, 0, 0],
       geometry: { kind: 'cyl', from: [-6, 0, 132], to: [-6, 0, 108], r0: 15, r1: 11 },
@@ -66,6 +74,7 @@ export const POINTER_TAGGING_ASSEMBLY: Assembly = {
     {
       id: 'carrier',
       label: 'Carrier tray',
+      palette: 'body',
       balloon: 5,
       explode: [128, 0, 0],
       geometry: { kind: 'box', at: [-54, -38, 46], size: [108, 76, 10] },
@@ -73,6 +82,7 @@ export const POINTER_TAGGING_ASSEMBLY: Assembly = {
     {
       id: 'wafer',
       label: 'RFID tag wafer',
+      palette: 'body',
       balloon: 6,
       explode: [160, 0, 0],
       geometry: { kind: 'cyl', from: [0, 0, 56], to: [0, 0, 63], r0: 29, r1: 29 },
@@ -80,6 +90,7 @@ export const POINTER_TAGGING_ASSEMBLY: Assembly = {
     {
       id: 'carousel',
       label: 'Heap carousel',
+      palette: 'dark',
       balloon: 7,
       explode: [192, 0, 0],
       geometry: { kind: 'cyl', from: [96, 104, 0], to: [96, 104, 30], r0: 36, r1: 31 },

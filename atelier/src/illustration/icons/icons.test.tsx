@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { CUT_FACE, SHADE_DARK, SHADE_HI } from '../../contract/tokens';
 import { IsolateIcon } from './IsolateIcon';
 import { RatchetIcon } from './RatchetIcon';
 import { ISOLATE_ASSEMBLY } from './IsolateIcon';
@@ -112,4 +113,52 @@ describe('icon assemblies', () => {
       }
     },
   );
+});
+
+describe('icon tonal range', () => {
+  const assemblies = [
+    ISOLATE_ASSEMBLY,
+    POINTER_TAGGING_ASSEMBLY,
+    HIDDEN_CLASSES_ASSEMBLY,
+    PARSER_ASSEMBLY,
+    IGNITION_ASSEMBLY,
+    OLD_SPACE_ASSEMBLY,
+    NEW_SPACE_ASSEMBLY,
+    RATCHET_ASSEMBLY,
+  ];
+
+  it.each(assemblies.map((a) => [a.parts[0]?.id ?? '?', a] as const))(
+    'gives every part of %s an explicit palette',
+    (_id, assembly) => {
+      for (const part of assembly.parts) {
+        expect(part.palette).toBeDefined();
+      }
+    },
+  );
+
+  it.each(assemblies.map((a) => [a.parts[0]?.id ?? '?', a] as const))(
+    'gives %s a bright element and dark structure',
+    (_id, assembly) => {
+      const palettes = assembly.parts.map((p) => p.palette);
+      expect(palettes.filter((p) => p === 'hi').length).toBeGreaterThanOrEqual(1);
+      expect(palettes.filter((p) => p === 'hi').length).toBeLessThanOrEqual(2);
+      expect(palettes.filter((p) => p === 'dark').length).toBeGreaterThanOrEqual(2);
+      expect(palettes.filter((p) => p === 'dark').length).toBeLessThanOrEqual(4);
+      expect(palettes.filter((p) => p === 'body').length).toBeGreaterThanOrEqual(1);
+    },
+  );
+
+  it('fills faces from the published palette ramps', () => {
+    const html = renderToStaticMarkup(<IsolateIcon size={48} />);
+    // the bright 'hi' ramp, the dark ramp, and the bright machined cut face
+    expect(html).toContain(SHADE_HI[3]);
+    expect(html).toContain(SHADE_DARK[0]);
+    expect(html).toContain(CUT_FACE);
+  });
+
+  it('draws a cut face bright with the section hatch over it', () => {
+    const html = renderToStaticMarkup(<IsolateIcon size={48} />);
+    expect(html).toContain('url(#');
+    expect(html).toContain(CUT_FACE);
+  });
 });

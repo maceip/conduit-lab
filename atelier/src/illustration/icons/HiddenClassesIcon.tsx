@@ -14,6 +14,10 @@ import { projectAssembly, renderPlate, type Assembly } from '../engine';
  *
  * The C-frame is lofted as a bent web, which is the one part in this package
  * that uses the `loft` primitive.
+ *
+ * Tones: the ramp is applied within the part's own palette, exactly as the
+ * published figures do it — `hi` for the prominent machined element, `dark`
+ * for understructure, `body` for the main mass. Here: `hi` = punch, striker; `dark` = bolster, turret; the rest `body`.
  */
 export const HIDDEN_CLASSES_ASSEMBLY: Assembly = {
   azDeg: 42,
@@ -25,6 +29,7 @@ export const HIDDEN_CLASSES_ASSEMBLY: Assembly = {
     {
       id: 'c-frame',
       label: 'Swan-neck C-frame',
+      palette: 'body',
       balloon: 1,
       geometry: {
         kind: 'loft',
@@ -42,6 +47,7 @@ export const HIDDEN_CLASSES_ASSEMBLY: Assembly = {
     {
       id: 'bolster',
       label: 'Die bolster',
+      palette: 'dark',
       balloon: 2,
       explode: [0, 0, 48],
       sectioned: true,
@@ -50,6 +56,7 @@ export const HIDDEN_CLASSES_ASSEMBLY: Assembly = {
     {
       id: 'turret',
       label: 'Punch turret',
+      palette: 'dark',
       balloon: 3,
       explode: [0, 0, 96],
       geometry: { kind: 'cyl', from: [10, 0, 44], to: [10, 0, 64], r0: 45, r1: 45 },
@@ -57,6 +64,7 @@ export const HIDDEN_CLASSES_ASSEMBLY: Assembly = {
     {
       id: 'die',
       label: 'Die station',
+      palette: 'body',
       balloon: 4,
       explode: [0, 0, 144],
       geometry: { kind: 'cyl', from: [10, 0, 0], to: [10, 0, 22], r0: 16, r1: 13 },
@@ -64,6 +72,7 @@ export const HIDDEN_CLASSES_ASSEMBLY: Assembly = {
     {
       id: 'punch',
       label: 'Punch',
+      palette: 'hi',
       balloon: 5,
       explode: [0, 0, 192],
       geometry: { kind: 'cyl', from: [10, 0, 0], to: [10, 0, 20], r0: 13, r1: 14 },
@@ -71,6 +80,7 @@ export const HIDDEN_CLASSES_ASSEMBLY: Assembly = {
     {
       id: 'sheet',
       label: 'JSObject sheet',
+      palette: 'body',
       balloon: 6,
       explode: [0, 0, 240],
       geometry: { kind: 'box', at: [58, -44, 0], size: [92, 88, 9] },
@@ -78,6 +88,7 @@ export const HIDDEN_CLASSES_ASSEMBLY: Assembly = {
     {
       id: 'striker',
       label: 'Hydraulic striker',
+      palette: 'hi',
       balloon: 7,
       explode: [0, 0, 288],
       geometry: { kind: 'cyl', from: [30, 0, 0], to: [30, 0, 56], r0: 20, r1: 17 },

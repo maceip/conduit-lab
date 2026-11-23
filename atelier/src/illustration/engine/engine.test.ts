@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { projectAssembly } from './index';
 import type { Assembly } from './index';
+import { shadeClassIndex, shadeFor } from './shade';
+import { cameraFor } from './camera';
 
 const base: Assembly = {
   azDeg: 42,
@@ -79,5 +81,54 @@ describe('drawing standard', () => {
     const plate = projectAssembly({ ...base, partsList: true });
     expect(plate.bill.map((row) => row.number)).toEqual([1, 2]);
     expect(plate.bill[0]?.label).toBe('Rotor');
+  });
+});
+
+describe('palette shading', () => {
+  it('classifies into the published sub-ramp for each palette', () => {
+    // body: b > 0.55 -> 3, b > 0.16 -> 2, b > -0.22 -> 1, else 0
+    expect(shadeClassIndex(0.9, 'body')).toBe(3);
+    expect(shadeClassIndex(0.55, 'body')).toBe(2);
+    expect(shadeClassIndex(0.16, 'body')).toBe(1);
+    expect(shadeClassIndex(-0.22, 'body')).toBe(0);
+    // hi: b > 0.52 -> 3, b > 0.12 -> 2, b > -0.25 -> 1, else 0
+    expect(shadeClassIndex(0.9, 'hi')).toBe(3);
+    expect(shadeClassIndex(0.53, 'hi')).toBe(3);
+    expect(shadeClassIndex(0.52, 'hi')).toBe(2);
+    expect(shadeClassIndex(0.12, 'hi')).toBe(1);
+    expect(shadeClassIndex(-0.25, 'hi')).toBe(0);
+    // dark: b > 0.35 -> 2, b > -0.15 -> 1, else 0
+    expect(shadeClassIndex(0.9, 'dark')).toBe(2);
+    expect(shadeClassIndex(0.36, 'dark')).toBe(2);
+    expect(shadeClassIndex(0.35, 'dark')).toBe(1);
+    expect(shadeClassIndex(-0.14, 'dark')).toBe(1);
+    expect(shadeClassIndex(-0.15, 'dark')).toBe(0);
+    expect(shadeClassIndex(-0.16, 'dark')).toBe(0);
+  });
+
+  it('gives the same normal a different ramp index per palette', () => {
+    const cam = cameraFor(42, 30);
+    const normal: [number, number, number] = [0, 0, 1];
+    expect(shadeFor(normal, cam.light, 'hi')).toBe(3);
+    expect(shadeFor(normal, cam.light, 'body')).toBe(3);
+    expect(shadeFor(normal, cam.light, 'dark')).toBe(2);
+  });
+
+  it('keeps the palette on every projected face', () => {
+    const plate = projectAssembly({
+      ...base,
+      parts: [
+        { id: 'hi', label: 'Bright', palette: 'hi', geometry: { kind: 'box', at: [0, 0, 0], size: [10, 10, 4] } },
+        { id: 'dk', label: 'Dark', palette: 'dark', geometry: { kind: 'box', at: [0, 0, 20], size: [10, 10, 4] } },
+      ],
+    });
+    const palettes = plate.faces.filter((f) => !f.hidden).map((f) => f.palette);
+    expect(palettes).toContain('hi');
+    expect(palettes).toContain('dark');
+  });
+
+  it('defaults an unassigned part to the body palette', () => {
+    const plate = projectAssembly(base);
+    expect(plate.faces.every((f) => f.palette === 'body')).toBe(true);
   });
 });

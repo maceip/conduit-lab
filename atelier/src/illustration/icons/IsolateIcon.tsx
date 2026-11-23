@@ -15,6 +15,10 @@ import { projectAssembly, renderPlate, type Assembly } from '../engine';
  * Seven parts here: the skid, both silos, the manifold, the pump, the
  * discharge stack and the cam valve. The main silo is sectioned, so the plate
  * always carries the hatching cue.
+ *
+ * Tones: the ramp is applied within the part's own palette, exactly as the
+ * published figures do it — `hi` for the prominent machined element, `dark`
+ * for understructure, `body` for the main mass. Here: `hi` = silo-realm, manifold; `dark` = skid, pump; the rest `body`.
  */
 export const ISOLATE_ASSEMBLY: Assembly = {
   azDeg: 42,
@@ -26,12 +30,14 @@ export const ISOLATE_ASSEMBLY: Assembly = {
     {
       id: 'skid',
       label: 'Skid base',
+      palette: 'dark',
       balloon: 1,
       geometry: { kind: 'box', at: [-196, -92, 0], size: [392, 184, 16] },
     },
     {
       id: 'silo-main',
       label: 'Main silo',
+      palette: 'body',
       balloon: 2,
       explode: [0, 0, 52],
       sectioned: true,
@@ -40,6 +46,7 @@ export const ISOLATE_ASSEMBLY: Assembly = {
     {
       id: 'silo-realm',
       label: 'Realm silo',
+      palette: 'hi',
       balloon: 3,
       explode: [0, 0, 104],
       geometry: { kind: 'cyl', from: [72, -42, 0], to: [72, -42, 80], r0: 33, r1: 30 },
@@ -47,6 +54,7 @@ export const ISOLATE_ASSEMBLY: Assembly = {
     {
       id: 'manifold',
       label: 'Process manifold',
+      palette: 'hi',
       balloon: 4,
       explode: [0, 0, 156],
       geometry: {
@@ -62,6 +70,7 @@ export const ISOLATE_ASSEMBLY: Assembly = {
     {
       id: 'pump',
       label: 'Microtask pump',
+      palette: 'dark',
       balloon: 5,
       explode: [0, 0, 208],
       geometry: { kind: 'cyl', from: [152, 46, 0], to: [152, 46, 64], r0: 26, r1: 22 },
@@ -69,6 +78,7 @@ export const ISOLATE_ASSEMBLY: Assembly = {
     {
       id: 'discharge',
       label: 'Task discharge',
+      palette: 'body',
       balloon: 6,
       explode: [0, 0, 260],
       geometry: { kind: 'cyl', from: [198, 46, 72], to: [198, 46, 122], r0: 10, r1: 9 },
@@ -76,6 +86,7 @@ export const ISOLATE_ASSEMBLY: Assembly = {
     {
       id: 'valve',
       label: 'Locker cam valve',
+      palette: 'body',
       balloon: 7,
       explode: [0, 0, 312],
       geometry: { kind: 'cyl', from: [-190, 64, 0], to: [-190, 64, 56], r0: 17, r1: 15 },

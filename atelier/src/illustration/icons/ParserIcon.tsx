@@ -14,6 +14,10 @@ import { helix3D, projectAssembly, renderPlate, type Assembly } from '../engine'
  *
  * The token track is the real 3D helix from the source figure, swept as a
  * tube.
+ *
+ * Tones: the ramp is applied within the part's own palette, exactly as the
+ * published figures do it — `hi` for the prominent machined element, `dark`
+ * for understructure, `body` for the main mass. Here: `hi` = spiral, cyclone; `dark` = drive-base, chute; the rest `body`.
  */
 export const PARSER_ASSEMBLY: Assembly = {
   azDeg: 42,
@@ -25,12 +29,14 @@ export const PARSER_ASSEMBLY: Assembly = {
     {
       id: 'drive-base',
       label: 'Drive base',
+      palette: 'dark',
       balloon: 1,
       geometry: { kind: 'cyl', from: [-150, 0, 0], to: [-150, 0, 22], r0: 56, r1: 50 },
     },
     {
       id: 'bowl',
       label: 'Feeder bowl',
+      palette: 'body',
       balloon: 2,
       explode: [34, 0, 0],
       geometry: { kind: 'cyl', from: [-150, 0, 22], to: [-150, 0, 88], r0: 46, r1: 78 },
@@ -38,6 +44,7 @@ export const PARSER_ASSEMBLY: Assembly = {
     {
       id: 'spiral',
       label: 'Token spiral',
+      palette: 'hi',
       balloon: 3,
       explode: [68, 0, 0],
       geometry: {
@@ -49,6 +56,7 @@ export const PARSER_ASSEMBLY: Assembly = {
     {
       id: 'chute',
       label: 'Outfeed chute',
+      palette: 'dark',
       balloon: 4,
       explode: [102, 0, 0],
       geometry: {
@@ -64,6 +72,7 @@ export const PARSER_ASSEMBLY: Assembly = {
     {
       id: 'sensor',
       label: 'Optical ring sensor',
+      palette: 'body',
       balloon: 5,
       explode: [136, 0, 0],
       sectioned: true,
@@ -72,6 +81,7 @@ export const PARSER_ASSEMBLY: Assembly = {
     {
       id: 'vane',
       label: 'Y-diverter vane',
+      palette: 'body',
       balloon: 6,
       explode: [170, 0, 0],
       geometry: { kind: 'box', at: [66, -26, 94], size: [46, 12, 22] },
@@ -79,6 +89,7 @@ export const PARSER_ASSEMBLY: Assembly = {
     {
       id: 'cyclone',
       label: 'AST cyclone',
+      palette: 'hi',
       balloon: 7,
       explode: [204, 0, 0],
       geometry: { kind: 'cyl', from: [150, -52, 0], to: [150, -52, 58], r0: 23, r1: 39 },
