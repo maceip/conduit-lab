@@ -50,6 +50,20 @@ const LABEL_LAYER_STYLE: CSSProperties = {
 };
 
 /**
+ * The canvas fills the card it is given.
+ *
+ * `three` writes an inline width and height on the canvas at construction, so
+ * the board's own size has to win. The scene measures the canvas before it
+ * sizes the drawing buffer, so a canvas that fills the card gets a matching
+ * buffer and stays crisp.
+ */
+const CANVAS_STYLE: CSSProperties = {
+  display: 'block',
+  width: '100% !important',
+  height: 'auto !important',
+};
+
+/**
  * Tier 2 — the interactive tri-color GC heap.
  *
  * Raw `three` inside a React wrapper; `@react-three/fiber` is not used
@@ -121,7 +135,7 @@ export function GcHeapScene(props: GcHeapSceneProps): ReactElement {
       aria-label={title}
     >
       <div className="stage-gc-heap-viewport" style={VIEWPORT_STYLE}>
-        <canvas ref={canvasRef} className="stage-gc-heap-canvas" aria-hidden="true" />
+        <canvas ref={canvasRef} className="stage-gc-heap-canvas" style={CANVAS_STYLE} aria-hidden="true" />
         <div
           ref={labelLayerRef}
           className="stage-gc-heap-labels"
