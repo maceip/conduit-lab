@@ -1,23 +1,24 @@
 :root {
-  --paper: #f5f4f0;
-  --paper-hi: #fcfbf8;
-  --ink: #1c1e21;
-  --ink-2: #525860;
-  --ink-3: #7d8590;
+  --paper: #fcfbf8;
+  --paper-hi: #ffffff;
+  --ink: #181a1c;
+  --ink-2: #4b5158;
+  --ink-3: #767d85;
   --rust: #0f766e;
   --menu: #fcfbf8;
-  /* The same colours as channels, for translucent washes: rgb(var(--ink-rgb) / 0.2). */
-  --paper-rgb: 245 244 240;
-  --ink-rgb: 28 30 33;
+  --paper-rgb: 252 251 248;
+  --ink-rgb: 24 26 28;
   --rust-rgb: 15 118 110;
-  --hi-rgb: 252 251 248;
-  --shadow-rgb: 28 30 33;
+  --hi-rgb: 255 255 255;
+  --shadow-rgb: 24 26 28;
   --glow-rgb: 255 255 255;
   --veil-rgb: 236 234 228;
-  --hair: rgb(var(--ink-rgb) / 0.14);
-  --hair-strong: rgb(var(--ink-rgb) / 0.34);
-  --serif-zh: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", serif;
-  --serif-en: "Cormorant Garamond", "EB Garamond", Garamond, Georgia, serif;
+  --hair: #d5d2c8;
+  --hair-strong: #9e9a8e;
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --serif-zh: var(--font-sans);
+  --serif-en: var(--font-mono);
 }
 
 
@@ -696,25 +697,25 @@ button:focus-visible, input:focus-visible { outline: 1px solid var(--rust); outl
   opacity: 0.95;
 }
 
-/* ── CONDUIT Graphite Drafter Theme ────────────────── */
+/* ── CONDUIT Graphite Drafter Theme (docs/drawing-standard.md BOARD.*) ── */
 :root[data-theme="obsidian"] {
   color-scheme: dark;
-  --paper: #0e1014;
-  --paper-hi: #161a20;
-  --ink: #e8edf2;
-  --ink-2: #a8b2bf;
-  --ink-3: #6e7885;
+  --paper: #141516;
+  --paper-hi: #1a1d20;
+  --ink: #e8ecee;
+  --ink-2: #b2b8be;
+  --ink-3: #8a9096;
   --rust: #74c7b0;
-  --menu: #161a20;
-  --paper-rgb: 14 16 20;
-  --ink-rgb: 232 237 242;
+  --menu: #1a1d20;
+  --paper-rgb: 20 21 22;
+  --ink-rgb: 232 236 238;
   --rust-rgb: 116 199 176;
-  --hi-rgb: 22 26 32;
+  --hi-rgb: 26 29 32;
   --shadow-rgb: 0 0 0;
-  --glow-rgb: 34 42 52;
-  --veil-rgb: 9 12 18;
-  --hair: rgb(var(--ink-rgb) / 0.14);
-  --hair-strong: rgb(var(--ink-rgb) / 0.32);
+  --glow-rgb: 26 29 32;
+  --veil-rgb: 12 13 14;
+  --hair: #2e3338;
+  --hair-strong: #586068;
 }
 
 :root[data-theme="obsidian"] .studio {
@@ -739,11 +740,13 @@ button:focus-visible, input:focus-visible { outline: 1px solid var(--rust); outl
   overflow: hidden;
   display: block;
   background: var(--paper);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: var(--font-mono);
 }
 
 .studio.is-embed .sheet-label {
-  font-size: 10.5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-3);
@@ -764,7 +767,128 @@ button:focus-visible, input:focus-visible { outline: 1px solid var(--rust); outl
 }
 
 .studio.is-embed .sheet-title {
-  display: none;
+  display: table;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.03em;
+  color: var(--ink-2);
+  background: var(--paper-hi);
+  border: 1px solid var(--hair);
+}
+
+.studio.is-embed .sheet-title td {
+  border: 1px solid var(--hair);
+  padding: 2px 7px;
+  height: 16px;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .studio.is-embed .callout.is-drafter:not(.is-selected):not(.is-hovered) {
+    display: none;
+  }
+}
+
+.studio.is-embed .sheet-title-name {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+
+/* Monochrome 3D drafter callouts inside embedded plates */
+.callout.is-drafter .callout-leader {
+  position: absolute;
+  left: -3px;
+  top: -31px;
+  overflow: visible;
+}
+
+.callout.is-drafter.is-down .callout-leader {
+  top: -3px;
+}
+
+.callout.is-drafter.is-left .callout-leader {
+  left: -35px;
+}
+
+.callout.is-drafter .callout-leader circle {
+  fill: var(--ink);
+}
+
+.callout.is-drafter .callout-leader polyline {
+  fill: none;
+  stroke: var(--hair-strong);
+  stroke-width: 0.9;
+  stroke-dasharray: 2.5 2;
+}
+
+.callout.is-drafter.is-selected .callout-leader circle,
+.callout.is-drafter.is-hovered .callout-leader circle {
+  fill: var(--rust);
+}
+
+.callout.is-drafter.is-selected .callout-leader polyline,
+.callout.is-drafter.is-hovered .callout-leader polyline {
+  stroke: var(--rust);
+}
+
+.callout.is-drafter .callout-label {
+  position: absolute;
+  left: 34px;
+  top: -37px;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 2px 7px;
+  background: rgb(var(--hi-rgb) / 0.92);
+  border: 1px solid var(--hair-strong);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  white-space: nowrap;
+  pointer-events: auto;
+}
+
+.callout.is-drafter.is-down .callout-label {
+  top: 19px;
+}
+
+.callout.is-drafter.is-left .callout-label {
+  left: auto;
+  right: 34px;
+}
+
+.callout.is-drafter .callout-num {
+  font: 600 9.5px var(--font-mono);
+  color: var(--ink-3);
+}
+
+.callout.is-drafter .callout-name {
+  font-size: 9.5px;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  max-width: none;
+  opacity: 1;
+}
+
+.callout.is-drafter .callout-sub {
+  font-size: 9px;
+  color: var(--ink-3);
+}
+
+.callout.is-drafter.is-selected .callout-label,
+.callout.is-drafter.is-hovered .callout-label {
+  border-color: var(--rust);
+}
+
+.callout.is-drafter.is-selected .callout-num,
+.callout.is-drafter.is-hovered .callout-num,
+.callout.is-drafter.is-selected .callout-sub {
+  color: var(--rust);
 }
 
 .embed-bar {

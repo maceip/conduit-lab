@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { useMachine } from '../machines';
+import { MACHINE_LANDMARKS, type PrimaryLandmark } from '../machines/landmarks';
 import { isEmbed, motion, useStudio } from '../state';
 import type { BomCallout, DimensionDef } from '../machines/types';
 import { useDrawing } from './DrawingRig';
@@ -20,12 +21,11 @@ function ProjectionLines({ layout, box }: { layout: DrawingLayout; box: THREE.Bo
   const f = viewRect(layout, 'front', box);
   const t = viewRect(layout, 'top', box);
   const l = viewRect(layout, 'left', box);
-  // On the 45° line, a depth z sits at (left x of z, top y of z).
   const miter = (y: number) => layout.anchors.left.x + (y - layout.anchors.top.y);
   const zMin = layout.bounds.min.z;
   const zMax = layout.bounds.max.z;
-  const m0 = project(layout, 'top', new THREE.Vector3(0, 0, zMin)).y - 30;
-  const m1 = project(layout, 'top', new THREE.Vector3(0, 0, zMax)).y + 30;
+  const m0 = project(layout, 'top', new THREE.Vector3(0, 0, zMin)).y - 24;
+  const m1 = project(layout, 'top', new THREE.Vector3(0, 0, zMax)).y + 24;
   return (
     <g className="proj">
       {[f.x0, f.x1].map((x) => <line key={`v${x}`} x1={x} y1={f.y1} x2={x} y2={t.y0} />)}
@@ -46,8 +46,7 @@ function CentreCrosses({ layout, lines }: { layout: DrawingLayout; lines: Array<
     if (!radius) continue;
     const d = new THREE.Vector3(b[0] - a[0], b[1] - a[1], b[2] - a[2]).normalize();
     const p = new THREE.Vector3(...(a as [number, number, number]));
-    const r = radius * layout.scale + 10;
-    // Axis along z faces the front view, along y the top view, along x the left view.
+    const r = radius * layout.scale + 8;
     if (Math.abs(d.z) > 0.99) crosses.push({ ...project(layout, 'front', p), r });
     if (Math.abs(d.y) > 0.99) crosses.push({ ...project(layout, 'top', p), r });
     if (Math.abs(d.x) > 0.99) crosses.push({ ...project(layout, 'left', p), r });
@@ -64,11 +63,7 @@ function CentreCrosses({ layout, lines }: { layout: DrawingLayout; lines: Array<
   );
 }
 
-/**
- * Dimension chains: from–to offset `offset` px in a view, with extension lines,
- * arrows and the number. The length chain sits on the front view, the rotor
- * diameter on the left view beside the centre cross.
- */
+/** Dimension chain with extension lines, 45° arrowheads and mono label. */
 function Dim({ layout, d }: { layout: DrawingLayout; d: DimensionDef }) {
   const a = project(layout, d.view, new THREE.Vector3(...d.from));
   const b = project(layout, d.view, new THREE.Vector3(...d.to));
@@ -79,47 +74,130 @@ function Dim({ layout, d }: { layout: DrawingLayout; d: DimensionDef }) {
   const n = new THREE.Vector2(-dir.y, dir.x).multiplyScalar(d.offset);
   const a2 = a.clone().add(n);
   const b2 = b.clone().add(n);
-  // 45° engineering arrowhead
   const tick = (at: THREE.Vector2, toward: THREE.Vector2) => {
     const t = toward.clone().sub(at).normalize();
-    const w = new THREE.Vector2(-t.y, t.x).multiplyScalar(3.2);
+    const w = new THREE.Vector2(-t.y, t.x).multiplyScalar(2.6);
     const tip = at.clone();
-    const back = at.clone().addScaledVector(t, 11);
+    const back = at.clone().addScaledVector(t, 8.5);
     return `${back.x + w.x},${back.y + w.y} ${tip.x},${tip.y} ${back.x - w.x},${back.y - w.y}`;
   };
   const mid = a2.clone().add(b2).multiplyScalar(0.5);
   return (
-    <g className="dim" stroke="currentColor" fill="none" opacity={0.85}>
-      <line x1={a.x} y1={a.y} x2={a2.x + n.x * 0.12} y2={a2.y + n.y * 0.12} strokeWidth={1} />
-      <line x1={b.x} y1={b.y} x2={b2.x + n.x * 0.12} y2={b2.y + n.y * 0.12} strokeWidth={1} />
-      <line x1={a2.x} y1={a2.y} x2={b2.x} y2={b2.y} strokeWidth={1.4} />
-      <polygon points={tick(a2, b2)} fill="currentColor" stroke="none" />
-      <polygon points={tick(b2, a2)} fill="currentColor" stroke="none" />
-      <rect x={mid.x - 22} y={mid.y - 9} width={44} height={18} fill="var(--paper, #fff)" stroke="none" opacity={0.92} />
-      <text x={mid.x} y={mid.y + 4.5} textAnchor="middle" fill="currentColor" stroke="none" fontSize={12.5} fontFamily="inherit">{d.label}</text>
+    <g className="dim" stroke="var(--hair-strong)" fill="none">
+      <line x1={a.x} y1={a.y} x2={a2.x + n.x * 0.1} y2={a2.y + n.y * 0.1} strokeWidth={0.9} />
+      <line x1={b.x} y1={b.y} x2={b2.x + n.x * 0.1} y2={b2.y + n.y * 0.1} strokeWidth={0.9} />
+      <line x1={a2.x} y1={a2.y} x2={b2.x} y2={b2.y} strokeWidth={1.05} />
+      <polygon points={tick(a2, b2)} fill="var(--ink-2)" stroke="none" />
+      <polygon points={tick(b2, a2)} fill="var(--ink-2)" stroke="none" />
+      <rect x={mid.x - 26} y={mid.y - 8} width={52} height={16} fill="var(--paper)" stroke="none" />
+      <text x={mid.x} y={mid.y + 3.8} textAnchor="middle" fill="var(--ink)" stroke="none" fontSize={10.5} fontFamily="var(--font-mono)">
+        {d.label}
+      </text>
     </g>
   );
 }
 
 /**
- * BOM balloon with a leader-rail route: datum dot on the part, a 45° elbow,
- * then a horizontal landing shelf to the balloon docked on the top rail
- * (above the front view) or the bottom rail (the gap above the top view).
- * Anchors ride each part's explosion travel so leaders track parts t=0→1.
+ * Slotted, collision-free monochrome subsystem callout for embedded Ortho sheets:
+ * 3 top-rail slots + 3 bottom-rail slots across Section Front View, following
+ * docs/drawing-standard.md §3 Rules 2 & 3 (dashed leader, terminal dot, mono tag).
  */
-function Balloon({ layout, b, index, name, tint, explode, stage, unit }: {
+function SheetCallout({
+  layout,
+  lm,
+  unit,
+  active,
+  onSelect,
+  onHover,
+}: {
+  layout: DrawingLayout;
+  lm: PrimaryLandmark;
+  unit: number;
+  active: boolean;
+  onSelect: () => void;
+  onHover: (hovering: boolean) => void;
+}) {
+  const front = layout.views.find((v) => v.id === 'front')!.rect;
+  const leftView = layout.views.find((v) => v.id === 'left')!.rect;
+  const pt = new THREE.Vector3(lm.anchor[0] * unit, lm.anchor[1] * unit, lm.anchor[2] * unit);
+  const anchor = project(layout, 'front', pt);
+
+  // Span callout rail from left margin up to just before Left View / Isometric so 3 pills never overlap
+  const spanLeft = Math.max(12, front.x - 58);
+  const spanRight = Math.max(spanLeft + 360, Math.min(leftView.x - 10, front.x + front.w + 64));
+  const spanW = spanRight - spanLeft;
+  const pillW = Math.min(148, Math.floor((spanW - 20) / 3));
+  const pillH = 19;
+  const step = (spanW - pillW) / 2;
+  const slotX = spanLeft + pillW / 2 + lm.slot * step;
+  const railY = lm.rail === 'top' ? Math.max(25, front.y - 18) : front.y + front.h + 24;
+  const elbowX = anchor.x + Math.sign(slotX - anchor.x) * Math.min(22, Math.abs(slotX - anchor.x) * 0.45);
+  const stroke = active ? 'var(--rust)' : 'var(--hair-strong)';
+  const numStr = String(lm.index).padStart(2, '0');
+
+  return (
+    <g
+      className={`sheet-callout${active ? ' is-active' : ''}`}
+      data-testid={`ortho-callout-${lm.partId}`}
+      onClick={onSelect}
+      onPointerEnter={() => onHover(true)}
+      onPointerLeave={() => onHover(false)}
+      style={{ pointerEvents: 'auto', cursor: 'pointer' }}
+    >
+      <polyline
+        points={`${anchor.x},${anchor.y} ${elbowX},${railY} ${slotX},${railY}`}
+        fill="none"
+        stroke={stroke}
+        strokeWidth={0.95}
+        strokeDasharray="2.5 2"
+      />
+      <circle cx={anchor.x} cy={anchor.y} r={2.2} fill={active ? 'var(--rust)' : 'var(--ink)'} />
+      <rect
+        x={slotX - pillW / 2}
+        y={railY - pillH / 2}
+        width={pillW}
+        height={pillH}
+        rx={2}
+        fill="var(--paper-hi)"
+        stroke={stroke}
+        strokeWidth={1}
+      />
+      <text
+        x={slotX - pillW / 2 + 6}
+        y={railY + 3.4}
+        fill={active ? 'var(--rust)' : 'var(--ink-3)'}
+        fontSize={9}
+        fontWeight={600}
+        fontFamily="var(--font-mono)"
+      >
+        {numStr}
+      </text>
+      <text
+        x={slotX - pillW / 2 + 23}
+        y={railY + 3.4}
+        fill="var(--ink)"
+        fontSize={9}
+        fontFamily="var(--font-mono)"
+      >
+        {lm.short}
+      </text>
+      <title>{`${numStr} ${lm.short} → ${lm.counterpart}`}</title>
+    </g>
+  );
+}
+
+/** Full-studio BOM balloon (used only in standalone un-embedded /inkwork/ mode). */
+function Balloon({ layout, b, index, name, explode, stage, unit }: {
   layout: DrawingLayout;
   b: BomCallout;
   index: number;
   name: string;
-  tint?: string;
   explode: [number, number, number];
   stage: [number, number];
   unit: number;
 }) {
   const front = layout.views.find((v) => v.id === 'front')!.rect;
   const top = layout.views.find((v) => v.id === 'top')!.rect;
-  // Live anchor: assembled position + the part's own explosion travel.
   let w = 0;
   if (stage[1] > stage[0]) {
     const x = Math.min(1, Math.max(0, (motion.explode - stage[0]) / (stage[1] - stage[0])));
@@ -135,55 +213,78 @@ function Balloon({ layout, b, index, name, tint, explode, stage, unit }: {
   const railY = rail === 'top'
     ? Math.max(86, front.y - 24 - (index % 2) * 34)
     : top.y - 30 - (index % 2) * 34;
-  const [edx, edy] = b.elbowOffset ?? [20, rail === 'top' ? -40 : 46];
-  const elbow = { x: anchor.x + edx, y: railY + (edy > 0 ? -Math.abs(edy) * 0.2 : Math.abs(edy) * 0.2) };
-  const bx = elbow.x + (edx >= 0 ? 26 : -26);
-  const stroke = tint ?? 'currentColor';
+  const [edx] = b.elbowOffset ?? [20, rail === 'top' ? -40 : 46];
+  const elbowX = anchor.x + edx;
+  const bx = elbowX + (edx >= 0 ? 26 : -26);
   return (
-    <g className="balloon" stroke={stroke} fill="none" opacity={0.92}>
-      {/* 45° elbow then a horizontal landing shelf */}
-      <polyline points={`${anchor.x},${anchor.y} ${elbow.x},${railY} ${bx},${railY}`} fill="none" strokeWidth={1} />
-      <circle cx={anchor.x} cy={anchor.y} r={2.2} fill={stroke} stroke="none" />
-      <circle cx={bx} cy={railY} r={11} strokeWidth={1.3} fill="var(--paper, #fff)" />
-      <text x={bx} y={railY + 3.9} textAnchor="middle" fill={stroke} stroke="none" fontSize={11} fontFamily="inherit">{String(index).padStart(2, '0')}</text>
-      {b.code && (
-        <text x={bx + (edx >= 0 ? 15 : -15)} y={railY + 3.6} textAnchor={edx >= 0 ? 'start' : 'end'} fill={stroke} stroke="none" fontSize={9} fontFamily="inherit" opacity={0.85}>{b.code}</text>
-      )}
-      <title>{[b.code, name, b.title, b.material, b.qty ? `×${b.qty}` : ''].filter(Boolean).join(' · ')}</title>
+    <g className="balloon" stroke="var(--hair-strong)" fill="none" opacity={0.92}>
+      <polyline points={`${anchor.x},${anchor.y} ${elbowX},${railY} ${bx},${railY}`} fill="none" strokeWidth={1} strokeDasharray="2.5 2" />
+      <circle cx={anchor.x} cy={anchor.y} r={2.2} fill="var(--ink)" stroke="none" />
+      <circle cx={bx} cy={railY} r={10} strokeWidth={1.1} fill="var(--paper)" />
+      <text x={bx} y={railY + 3.6} textAnchor="middle" fill="var(--ink)" stroke="none" fontSize={10} fontFamily="var(--font-mono)">{String(index).padStart(2, '0')}</text>
+      <title>{[b.code, name, b.title, b.material].filter(Boolean).join(' · ')}</title>
     </g>
   );
 }
 
-/** Labels, projection lines and title block over the three-view drawing. */
+/** Labels, slotted subsystem callouts, dimensions, projection lines, and ISO title block. */
 export function DrawingSheet() {
   const machine = useMachine();
   const { layout, box } = useDrawing();
   const projection = useStudio((s) => s.projection);
   const section = useStudio((s) => s.section);
   const labels = useStudio((s) => s.labels);
-  const focus = useStudio((s) => s.hovered ?? s.selected);
+  const selected = useStudio((s) => s.selected);
+  const hovered = useStudio((s) => s.hovered);
+  const set = useStudio((s) => s.set);
   if (!layout) return null;
+
+  const focus = hovered ?? selected;
   const part = focus ? machine.parts.find((p) => p.id === focus) : undefined;
   const tb = layout.titleBlock;
-  // Never dump 30+ circular BOM balloons onto compact/embedded plates; only render monochrome balloons when full-studio labels are explicitly enabled.
-  const showBalloons = !isEmbed && labels && layout.views[0].rect.w > 480;
+  const landmarks = isEmbed ? (MACHINE_LANDMARKS[machine.id] ?? []) : [];
+  const showStudioBalloons = !isEmbed && labels && layout.views[0].rect.w > 480;
+
   const dims = (() => {
     const all = machine.dimensions ?? [];
     if (!isEmbed) return all;
     const overallFront = all.find((d) => d.view === 'front');
     const overallLeft = all.find((d) => d.view === 'left' && d.offset >= 100) ?? all.find((d) => d.view === 'left');
-    return [
-      overallFront ? { ...overallFront, offset: 26 } : null,
-      overallLeft ? { ...overallLeft, offset: 28 } : null,
-    ].filter((d): d is DimensionDef => d !== null);
+    // Place overall length cleanly beneath Top View so the Front↔Top gap stays 100% dedicated to bottom-rail callouts
+    const zBot = layout.bounds.max.z;
+    const topLength: DimensionDef | null = overallFront
+      ? {
+          from: [overallFront.from[0], 0, zBot],
+          to: [overallFront.to[0], 0, zBot],
+          view: 'top',
+          label: `${overallFront.label} mm`,
+          offset: 16,
+        }
+      : null;
+    const leftWidth: DimensionDef | null = overallLeft
+      ? { ...overallLeft, label: `${overallLeft.label} mm`, offset: 20 }
+      : null;
+    return [topLength, leftWidth].filter((d): d is DimensionDef => d !== null);
   })();
+
   return (
     <div className="sheet" aria-hidden="true">
       <svg className="sheet-svg">
         <CentreCrosses layout={layout} lines={machine.centreLines} />
         {projection && box && <ProjectionLines layout={layout} box={box} />}
         {dims.map((d, i) => <Dim key={i} layout={layout} d={d} />)}
-        {showBalloons && machine.bom?.map((b) => {
+        {landmarks.map((lm) => (
+          <SheetCallout
+            key={lm.partId}
+            layout={layout}
+            lm={lm}
+            unit={machine.unit ?? 1}
+            active={focus === lm.partId}
+            onSelect={() => set({ selected: selected === lm.partId ? null : lm.partId })}
+            onHover={(h) => set({ hovered: h ? lm.partId : null })}
+          />
+        ))}
+        {showStudioBalloons && machine.bom?.map((b) => {
           const item = machine.parts.find((pp) => pp.id === b.id);
           return item ? (
             <Balloon
@@ -199,35 +300,54 @@ export function DrawingSheet() {
           ) : null;
         })}
       </svg>
-      {layout.views.map((v) => (
-        <span
-          key={v.id}
-          className={`sheet-label sheet-label--${v.id}`}
-          style={{
-            left: v.rect.x + v.rect.w / 2,
-            top: isEmbed && v.id === 'front' ? Math.max(8, v.rect.y - 16) : v.rect.y + v.rect.h + 4,
-          }}
-        >
-          {v.id === 'front' && section ? 'Section Front View' : v.label}
-        </span>
-      ))}
-      {part && (
+      {layout.views.map((v) => {
+        let style: React.CSSProperties;
+        if (isEmbed) {
+          if (v.id === 'front') style = { left: v.rect.x, top: 6, transform: 'none' };
+          else if (v.id === 'left') style = { left: v.rect.x + v.rect.w / 2, top: 6 };
+          else if (v.id === 'iso') style = { left: v.rect.x + v.rect.w / 2, top: Math.max(8, v.rect.y - 15) };
+          else style = { left: v.rect.x + v.rect.w / 2, top: v.rect.y + v.rect.h + 31 };
+        } else {
+          style = { left: v.rect.x + v.rect.w / 2, top: v.rect.y + v.rect.h + 4 };
+        }
+        return (
+          <span key={v.id} className={`sheet-label sheet-label--${v.id}`} style={style}>
+            {v.id === 'front' && section ? 'Section Front View' : v.label}
+          </span>
+        );
+      })}
+      {!isEmbed && part && (
         <span className="sheet-focus" style={{ left: layout.views[0].rect.x, top: layout.views[0].rect.y - 26 }}>
           {String(part.index).padStart(2, '0')} {part.name}
         </span>
       )}
-      <table className="sheet-title" style={{ left: tb.x, top: tb.y, width: tb.w }}>
+      <table className="sheet-title" data-testid="ortho-title-block" style={{ left: tb.x, top: tb.y, width: tb.w }}>
         <tbody>
-          <tr>
-            <td rowSpan={2} className="sheet-title-name">{machine.name}</td>
-            <td>Scale</td><td>{machine.scale}</td>
-          </tr>
-          <tr>
-            <td>Dwg No</td><td>{machine.drawingNo}</td>
-          </tr>
-          <tr>
-            <td>Inkwork · Engineering Drawing</td><td>Proj</td><td>1st Angle</td>
-          </tr>
+          {isEmbed ? (
+            <>
+              <tr>
+                <td className="sheet-title-name">{machine.name}</td>
+                <td>Scale {machine.scale}</td>
+              </tr>
+              <tr>
+                <td>{machine.parts.length} parts · 1st Angle</td>
+                <td>Dwg {machine.drawingNo}</td>
+              </tr>
+            </>
+          ) : (
+            <>
+              <tr>
+                <td rowSpan={2} className="sheet-title-name">{machine.name}</td>
+                <td>Scale</td><td>{machine.scale}</td>
+              </tr>
+              <tr>
+                <td>Dwg</td><td>{machine.drawingNo}</td>
+              </tr>
+              <tr>
+                <td>{machine.parts.length} parts · 1st Angle</td><td>Unit</td><td>mm</td>
+              </tr>
+            </>
+          )}
         </tbody>
       </table>
     </div>

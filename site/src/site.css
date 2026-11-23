@@ -1,39 +1,39 @@
 /* CONDUIT Verified Browser Engine — Craftsman Drafter Specification
- * Palette aligned with docs/drawing-standard.md & docs/site-redesign-proposal.md:
- * Dark: graphite ground (#0c0e11) + restrained phosphor proved accent (#74c7b0) + amber/coral failure tones.
- * Light: warm drafting paper (#f5f4f0) + deep teal accent (#0f766e) + amber/crimson failure tones.
- * Self-hosted Archivo (headings), Manrope (prose), JetBrains Mono (code & telemetry).
+ * Exact BOARD.* tokens from docs/drawing-standard.md §1:
+ * Dark: #0c0d0e page ground, #141516 plate, #1a1d20 raised bar, #2e3338 rib, #586068 structural line,
+ *       #8a9096 ink, #b2b8be edgeHi, #e8ecee inkHi, #74c7b0 proved ONLY, #d9a441 warn, #d4645c fail.
+ * Strictly 2 self-hosted fonts across site and embedded CAD plates: IBM Plex Sans + JetBrains Mono.
  */
 
 :root,
 [data-theme='dark'] {
-  --ch-bg-canvas: #0c0e11;
-  --ch-bg-bar: #111419;
-  --ch-bg-card: #151920;
-  --ch-bg-card-hover: #1b2029;
-  --ch-bg-code: #090b0e;
-  --ch-border-subtle: #232933;
-  --ch-border-strong: #353e4c;
-  --ch-text-primary: #eceff4;
-  --ch-text-secondary: #adb6c2;
-  --ch-text-muted: #828c9a;
+  --ch-bg-canvas: #0c0d0e;
+  --ch-bg-bar: #1a1d20;
+  --ch-bg-card: #141516;
+  --ch-bg-card-hover: #1e2226;
+  --ch-bg-code: #101214;
+  --ch-border-subtle: #2e3338;
+  --ch-border-strong: #586068;
+  --ch-text-primary: #e8ecee;
+  --ch-text-secondary: #b2b8be;
+  --ch-text-muted: #8a9096;
   --ch-accent: #74c7b0;
   --ch-accent-text: #74c7b0;
   --ch-accent-hover: #8bd4bf;
-  --ch-accent-ink: #071410;
+  --ch-accent-ink: #0c0d0e;
   --ch-accent-dim: rgba(116, 199, 176, 0.10);
-  --ch-accent-bdr: rgba(116, 199, 176, 0.36);
+  --ch-accent-bdr: rgba(116, 199, 176, 0.42);
   --ch-status-proved: #74c7b0;
   --ch-status-proved-dim: rgba(116, 199, 176, 0.09);
-  --ch-status-proved-bdr: rgba(116, 199, 176, 0.34);
-  --ch-status-fail: #e06c64;
-  --ch-status-fail-dim: rgba(224, 108, 100, 0.10);
-  --ch-status-fail-bdr: rgba(224, 108, 100, 0.36);
+  --ch-status-proved-bdr: rgba(116, 199, 176, 0.36);
+  --ch-status-fail: #d4645c;
+  --ch-status-fail-dim: rgba(212, 100, 92, 0.10);
+  --ch-status-fail-bdr: rgba(212, 100, 92, 0.38);
   --ch-status-warn: #d9a441;
   --ch-status-warn-dim: rgba(217, 164, 65, 0.10);
-  --ch-status-warn-bdr: rgba(217, 164, 65, 0.36);
-  --ch-font-display: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --ch-font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ch-status-warn-bdr: rgba(217, 164, 65, 0.38);
+  --ch-font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ch-font-display: var(--ch-font-sans);
   --ch-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -44,16 +44,16 @@
   --ch-bg-card-hover: #f0eee7;
   --ch-bg-code: #edebe4;
   --ch-border-subtle: #d5d2c8;
-  --ch-border-strong: #b4b0a3;
-  --ch-text-primary: #16181c;
-  --ch-text-secondary: #393f47;
-  --ch-text-muted: #59616b;
+  --ch-border-strong: #9e9a8e;
+  --ch-text-primary: #181a1c;
+  --ch-text-secondary: #4b5158;
+  --ch-text-muted: #767d85;
   --ch-accent: #0f766e;
   --ch-accent-text: #0f766e;
   --ch-accent-hover: #115e59;
   --ch-accent-ink: #ffffff;
   --ch-accent-dim: rgba(15, 118, 110, 0.09);
-  --ch-accent-bdr: rgba(15, 118, 110, 0.34);
+  --ch-accent-bdr: rgba(15, 118, 110, 0.36);
   --ch-status-proved: #0f766e;
   --ch-status-proved-dim: rgba(15, 118, 110, 0.08);
   --ch-status-proved-bdr: rgba(15, 118, 110, 0.32);
@@ -236,16 +236,16 @@ body {
 .ch-hero {
   border-bottom: 1px solid var(--ch-border-subtle);
   background: var(--ch-bg-canvas);
-  padding: 40px 28px;
+  padding: 36px 28px 40px;
 }
 
 .ch-hero-grid {
-  max-width: 1380px;
+  max-width: 1420px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 440px minmax(0, 1fr);
-  gap: 40px;
-  align-items: center;
+  grid-template-columns: 380px minmax(0, 1fr);
+  gap: 36px;
+  align-items: start;
 }
 
 .ch-hero-copy {
@@ -305,36 +305,39 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 16px;
-  border-radius: 3px;
-  font-family: var(--ch-font-sans);
-  font-size: 13.5px;
-  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 2px;
+  font-family: var(--ch-font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   text-decoration: none;
   cursor: pointer;
   transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 
 .ch-cta-primary {
-  background: var(--ch-accent);
-  color: var(--ch-accent-ink);
+  background: var(--ch-bg-bar);
+  color: var(--ch-text-primary);
   border: 1px solid var(--ch-accent);
 }
 
 .ch-cta-primary:hover {
-  background: var(--ch-accent-hover);
+  background: var(--ch-accent-dim);
   border-color: var(--ch-accent-hover);
+  color: var(--ch-accent-text);
 }
 
 .ch-cta-secondary {
   background: var(--ch-bg-card);
-  color: var(--ch-text-primary);
-  border: 1px solid var(--ch-border-strong);
+  color: var(--ch-text-secondary);
+  border: 1px solid var(--ch-border-subtle);
 }
 
 .ch-cta-secondary:hover {
   background: var(--ch-bg-card-hover);
-  border-color: var(--ch-accent);
+  border-color: var(--ch-border-strong);
+  color: var(--ch-text-primary);
 }
 
 .ch-btn-inline {
@@ -423,13 +426,119 @@ body {
 .ch-inkwork-frame {
   display: block;
   width: 100%;
-  height: 430px;
+  height: 500px;
   border: 0;
-  background: #0e1014;
+  background: var(--ch-bg-card);
+  transition: height 160ms ease;
 }
 
-[data-theme='light'] .ch-inkwork-frame {
-  background: #f5f4f0;
+.ch-plate-frame[data-preset='drawing'] .ch-inkwork-frame {
+  height: 560px;
+}
+
+/* Interactive Subsystem Legend & Engineering Telemetry Footer */
+.ch-plate-footer {
+  border-top: 1px solid var(--ch-border-subtle);
+  background: var(--ch-bg-bar);
+  display: flex;
+  flex-direction: column;
+}
+
+.ch-plate-legend {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-bottom: 1px solid var(--ch-border-subtle);
+}
+
+.ch-plate-legend-btn {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 6px;
+  padding: 7px 12px;
+  background: transparent;
+  border: 0;
+  border-right: 1px solid var(--ch-border-subtle);
+  border-bottom: 1px solid var(--ch-border-subtle);
+  text-align: left;
+  font-family: var(--ch-font-mono);
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--ch-text-secondary);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.ch-plate-legend-btn:nth-child(3n) {
+  border-right: 0;
+}
+
+.ch-plate-legend-btn:nth-child(n + 4) {
+  border-bottom: 0;
+}
+
+.ch-plate-legend-btn:hover {
+  background: var(--ch-bg-card-hover);
+  color: var(--ch-text-primary);
+}
+
+.ch-plate-legend-btn[data-active='true'] {
+  background: var(--ch-accent-dim);
+  color: var(--ch-text-primary);
+}
+
+.ch-plate-legend-num {
+  color: var(--ch-text-muted);
+  font-weight: 600;
+}
+
+.ch-plate-legend-btn[data-active='true'] .ch-plate-legend-num {
+  color: var(--ch-accent-text);
+}
+
+.ch-plate-legend-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.ch-plate-legend-part {
+  color: var(--ch-text-primary);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ch-plate-legend-map {
+  color: var(--ch-text-muted);
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ch-plate-legend-btn[data-active='true'] .ch-plate-legend-map {
+  color: var(--ch-accent-text);
+}
+
+.ch-plate-specbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 7px 14px;
+  font-family: var(--ch-font-mono);
+  font-size: 11px;
+  color: var(--ch-text-muted);
+  background: var(--ch-bg-card);
+}
+
+.ch-plate-specbar strong {
+  color: var(--ch-text-primary);
+  font-weight: 600;
 }
 
 /* ========================================================================== */
@@ -442,7 +551,7 @@ body {
 }
 
 .ch-scoreboard-inner {
-  max-width: 1380px;
+  max-width: 1420px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
@@ -557,7 +666,7 @@ body {
 /* 2-Column Specification Layout                                              */
 /* ========================================================================== */
 .ch-spec-container {
-  max-width: 1380px;
+  max-width: 1420px;
   width: 100%;
   margin: 0 auto;
   padding: 48px 28px 72px;
@@ -569,8 +678,8 @@ body {
 
 .ch-spec-row {
   display: grid;
-  grid-template-columns: 420px minmax(0, 1fr);
-  gap: 40px;
+  grid-template-columns: 380px minmax(0, 1fr);
+  gap: 36px;
   align-items: start;
   padding-top: 48px;
   border-top: 1px solid var(--ch-border-subtle);
@@ -755,19 +864,23 @@ td[data-tone='fail'] {
   gap: 5px;
   font-family: var(--ch-font-mono);
   font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ch-text-secondary);
+}
+
+.ch-state-btn[data-active='true'] .ch-state-title[data-tone='proved'] {
+  color: var(--ch-status-proved);
   font-weight: 600;
 }
 
-.ch-state-title[data-tone='proved'] {
-  color: var(--ch-status-proved);
-}
-
-.ch-state-title[data-tone='fail'] {
+.ch-state-btn[data-active='true'] .ch-state-title[data-tone='fail'] {
   color: var(--ch-status-fail);
+  font-weight: 600;
 }
 
-.ch-state-title[data-tone='warn'] {
+.ch-state-btn[data-active='true'] .ch-state-title[data-tone='warn'] {
   color: var(--ch-status-warn);
+  font-weight: 600;
 }
 
 .ch-fix-action {
@@ -1757,6 +1870,18 @@ td[data-tone='fail'] {
   }
   .ch-inkwork-frame {
     height: 320px;
+  }
+  .ch-plate-legend {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ch-plate-legend-btn:nth-child(3n) {
+    border-right: 1px solid var(--ch-border-subtle);
+  }
+  .ch-plate-legend-btn:nth-child(2n) {
+    border-right: 0;
+  }
+  .ch-plate-legend-btn:nth-child(4) {
+    border-bottom: 1px solid var(--ch-border-subtle);
   }
   .ch-scoreboard-strip {
     padding: 0 16px;

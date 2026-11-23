@@ -85,7 +85,7 @@ function useFirstStep() {
     // Support initial ?preset=section|exploded|drawing on embedded plates
     const preset = isEmbed ? new URLSearchParams(window.location.search).get('preset') : null;
     set({
-      section: preset === 'section' ? true : first.state.section,
+      section: preset === 'assembled' || preset === 'exploded' ? false : preset === 'section' || preset === 'drawing' ? true : first.state.section,
       explode: preset === 'exploded' ? 1 : 0,
       view: preset === 'drawing' ? 'drawing' : 'perspective',
       running: first.state.running,
@@ -95,28 +95,63 @@ function useFirstStep() {
   }, [machine]);
 }
 
-/** Listen to parent CONDUIT plate header controls via postMessage. */
+/** Listen to parent CONDUIT plate header & legend controls via postMessage, and broadcast active part back. */
 function useParentPlateControl() {
   useEffect(() => {
     if (!isEmbed) return;
     const onMsg = (ev: MessageEvent) => {
-      const data = ev.data as { type?: string; preset?: string } | null;
-      if (data?.type !== 'conduit-plate-state') return;
-      const machine = currentMachine();
-      const { viewNonce, set } = useStudio.getState();
-      if (data.preset === 'assembled') {
-        restoreAll(machine.steps[0]);
-        useStudio.setState({ selected: null, view: 'perspective', section: false, explode: 0, viewNonce: viewNonce + 1 });
-      } else if (data.preset === 'section') {
-        set({ view: 'perspective', section: true, explode: 0, localExplode: null, deep: false, focus: null, viewNonce: viewNonce + 1 });
-      } else if (data.preset === 'exploded') {
-        set({ view: 'perspective', section: false, explode: 1, localExplode: null, deep: false, focus: null, viewNonce: viewNonce + 1 });
-      } else if (data.preset === 'drawing') {
-        set({ view: 'drawing', section: true, explode: 0, localExplode: null, deep: false, focus: null, viewNonce: viewNonce + 1 });
+      const data = ev.data as { type?: string; preset?: string; partId?: string | null } | null;
+      if (!data) return;
+      if (data.type === 'conduit-plate-state') {
+        const machine = currentMachine();
+        const { viewNonce, set } = useStudio.getState();
+        if (data.preset === 'assembled') {
+          restoreAll(machine.steps[0]);
+          useStudio.setState({ selected: null, view: 'perspective', section: false, explode: 0, viewNonce: viewNonce + 1 });
+        } else if (data.preset === 'section') {
+          set({ view: 'perspective', section: true, explode: 0, localExplode: null, deep: false, focus: null, viewNonce: viewNonce + 1 });
+        } else if (data.preset === 'exploded') {
+          set({ view: 'perspective', section: false, explode: 1, localExplode: null, deep: false, focus: null, viewNonce: viewNonce + 1 });
+        } else if (data.preset === 'drawing') {
+          set({ view: 'drawing', section: true, explode: 0, localExplode: null, deep: false, focus: null, viewNonce: viewNonce + 1 });
+        }
+      } else if (data.type === 'conduit-select-part') {
+        const cur = useStudio.getState().selected;
+        const next = data.partId && cur !== data.partId ? data.partId : null;
+        useStudio.getState().set({ selected: next });
+      } else if (data.type === 'conduit-hover-part') {
+        useStudio.getState().set({ hovered: data.partId ?? null });
       }
     };
     window.addEventListener('message', onMsg);
-    return () => window.removeEventListener('message', onMsg);
+
+    const unsub = useStudio.subscribe((s, prev) => {
+      const activeId = s.hovered ?? s.selected;
+      const prevId = prev.hovered ?? prev.selected;
+      if (activeId === prevId && s.machineId === prev.machineId) return;
+      const m = currentMachine();
+      const part = activeId ? m.parts.find((p) => p.id === activeId) : undefined;
+      const anno = activeId ? m.annotations?.[activeId] : undefined;
+      window.parent?.postMessage(
+        {
+          type: 'conduit-active-part',
+          machineId: m.id,
+          partId: activeId ?? null,
+          selectedId: s.selected ?? null,
+          index: part?.index ?? null,
+          name: part?.name ?? null,
+          role: part?.role ?? null,
+          material: part?.material ?? null,
+          counterpart: anno?.label ?? null,
+        },
+        '*',
+      );
+    });
+
+    return () => {
+      window.removeEventListener('message', onMsg);
+      unsub();
+    };
   }, []);
 }
 
@@ -136,50 +171,37 @@ function useStageShift() {
   return shift;
 }
 
-/** Quiet hover/click readout in embedded plates — zero floating buttons inside the canvas. */
+/** Sub-assembly navigation pill in embedded plates (active part specs live in parent PlateFrame footer). */
 function EmbedHud() {
   const machine = useMachine();
-  const { selected, hovered } = useStudio();
+  const { selected } = useStudio();
   const chain = lineage(machine);
-  const focusId = selected ?? hovered;
-  const part = focusId ? machine.parts.find((p) => p.id === focusId) : undefined;
-  const anno = focusId ? machine.annotations?.[focusId] : undefined;
+  const part = selected ? machine.parts.find((p) => p.id === selected) : undefined;
   const childId = part ? machine.children?.[part.id] : undefined;
 
-  if (!part && chain.length <= 1) return null;
+  if (chain.length <= 1 && !childId) return null;
 
   return (
     <div className="embed-readout" data-testid="embed-readout">
       <span>
         {chain.length > 1 && (
-          <>
-            <button
-              type="button"
-              className="embed-sub-link"
-              onClick={() => selectMachine(chain[chain.length - 2].id)}
-            >
-              ‹ {chain[chain.length - 2].name}
-            </button>
-            {part ? ' · ' : ''}
-          </>
+          <button
+            type="button"
+            className="embed-sub-link"
+            onClick={() => selectMachine(chain[chain.length - 2].id)}
+          >
+            ‹ Back to {chain[chain.length - 2].name}
+          </button>
         )}
-        {part && (
-          <>
-            <strong>{String(part.index).padStart(2, '0')} {part.name}</strong>
-            {anno ? ` · ${anno.label}` : ` · ${part.role}`}
-            {childId && (
-              <>
-                {' · '}
-                <button
-                  type="button"
-                  className="embed-sub-link"
-                  onClick={() => selectMachine(childId)}
-                >
-                  Open {machineById(childId).name} ↘
-                </button>
-              </>
-            )}
-          </>
+        {chain.length > 1 && childId ? ' · ' : ''}
+        {childId && (
+          <button
+            type="button"
+            className="embed-sub-link"
+            onClick={() => selectMachine(childId)}
+          >
+            Inspect {machineById(childId).name} sub-assembly ↘
+          </button>
         )}
       </span>
     </div>

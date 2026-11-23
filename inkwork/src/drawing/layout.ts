@@ -52,6 +52,7 @@ export function computeLayout(
   height: number,
   boundsDef: [Vec3, Vec3],
   insets: { left: number; right: number; top: number; bottom: number },
+  compact = false,
 ): DrawingLayout {
   const min = new THREE.Vector3(...boundsDef[0]);
   const max = new THREE.Vector3(...boundsDef[1]);
@@ -60,22 +61,35 @@ export function computeLayout(
 
   const areaW = Math.max(200, width - insets.left - insets.right);
   const areaH = Math.max(200, height - insets.top - insets.bottom);
-  const gap = Math.max(36, Math.min(72, areaW * 0.05));
-  const pad = 18;
-  const scale = Math.min((areaW - gap - pad * 4) / (size.x + size.z), (areaH - gap - pad * 4) / (size.y + size.z));
+  const gapX = compact ? 30 : Math.max(36, Math.min(72, areaW * 0.05));
+  const gapY = compact ? 52 : gapX;
+  const pad = compact ? 8 : 18;
+  const scale = Math.min(
+    (areaW - gapX - pad * 4) / (size.x + size.z),
+    (areaH - gapY - pad * 4) / (size.y + size.z),
+  );
 
   // Centre the whole arrangement in the free area.
-  const used = { w: (size.x + size.z) * scale + gap + pad * 4, h: (size.y + size.z) * scale + gap + pad * 4 };
+  const used = { w: (size.x + size.z) * scale + gapX + pad * 4, h: (size.y + size.z) * scale + gapY + pad * 4 };
   const x0 = insets.left + (areaW - used.w) / 2;
   const y0 = insets.top + (areaH - used.h) / 2;
 
   const front: Rect = { x: x0, y: y0, w: size.x * scale + pad * 2, h: size.y * scale + pad * 2 };
-  const left: Rect = { x: front.x + front.w + gap, y: front.y, w: size.z * scale + pad * 2, h: front.h };
-  const top: Rect = { x: front.x, y: front.y + front.h + gap, w: front.w, h: size.z * scale + pad * 2 };
-  const iso: Rect = { x: left.x, y: top.y, w: Math.max(left.w, width - insets.right - left.x), h: Math.max(top.h, height - insets.bottom - top.y) };
-  const titleBlock: Rect = { x: width - insets.right - 300, y: height - insets.bottom - 64, w: 300, h: 64 };
-  // Keep the axonometric clear of the title block.
-  iso.h = Math.max(80, Math.min(iso.h, titleBlock.y - iso.y - 8));
+  const left: Rect = { x: front.x + front.w + gapX, y: front.y, w: size.z * scale + pad * 2, h: front.h };
+  const top: Rect = { x: front.x, y: front.y + front.h + gapY, w: front.w, h: size.z * scale + pad * 2 };
+  const tbW = compact ? Math.min(284, Math.max(232, width - left.x - 16)) : 300;
+  const tbH = compact ? 38 : 64;
+  const titleBlock: Rect = compact
+    ? { x: width - 16 - tbW, y: height - tbH - 14, w: tbW, h: tbH }
+    : { x: width - insets.right - 300, y: height - insets.bottom - 64, w: 300, h: 64 };
+  const iso: Rect = {
+    x: left.x,
+    y: top.y,
+    w: Math.max(left.w, width - insets.right - left.x),
+    h: compact
+      ? Math.max(top.h, titleBlock.y - top.y - 18)
+      : Math.max(80, Math.min(Math.max(top.h, height - insets.bottom - top.y), titleBlock.y - top.y - 8)),
+  };
 
   const cFront = ortho(front, scale);
   cFront.position.set(centre.x, centre.y, max.z + FAR);

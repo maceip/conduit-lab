@@ -27,6 +27,53 @@ export const Field: React.FC<{ label: string; children: React.ReactNode }> = ({ 
   </div>
 );
 
+interface LegendEntry {
+  partId: string;
+  num: string;
+  part: string;
+  counterpart: string;
+}
+
+const PLATE_SPECS: Record<
+  'turboprop' | 'maglev',
+  { summary: string; hint: string; legend: LegendEntry[] }
+> = {
+  turboprop: {
+    summary: 'Dwg GW-TP-00 · Scale 1:10 · 31 parts · 6 sub-assemblies · 15:1 reduction',
+    hint: 'Drag to orbit · click legend or callout to isolate subsystem',
+    legend: [
+      { partId: 'spinner', num: '01', part: 'Spinner & Intake', counterpart: 'Parser (J3)' },
+      { partId: 'gearbox', num: '08', part: '15:1 Epicyclic Gearbox', counterpart: 'Orinoco GC (J6)' },
+      { partId: 'exhaust', num: '09', part: 'Exhaust & Tailcone', counterpart: 'Deoptimizer' },
+      { partId: 'rotor-1', num: '20', part: '3-Stage Axial Rotor', counterpart: 'Hidden Classes (J2)' },
+      { partId: 'impeller', num: '26', part: 'Centrifugal Core', counterpart: 'TurboFan JIT' },
+      { partId: 'combustor-liner', num: '27', part: 'Reverse-Flow Liner', counterpart: 'Ignition VM (J7)' },
+    ],
+  },
+  maglev: {
+    summary: 'Dwg GW-MV-00 · Scale 1:100 · 31 parts · 6 sub-assemblies · 10 mm EMS gap · 258 mm pitch',
+    hint: 'Drag to orbit · click legend or callout to isolate subsystem',
+    legend: [
+      { partId: 'nose-cone', num: '01', part: 'TR08 Streamlined Nose', counterpart: 'Verdict X.509 Ingress' },
+      { partId: 'roof-fairing', num: '07', part: 'Roof & Bulkhead', counterpart: 'SOP / CSP Policy' },
+      { partId: 'side-shell-left', num: '08', part: 'Torsion Carbody Shell', counterpart: 'Disposable Site Renderer' },
+      { partId: 'lev-magnet-fl', num: '15', part: '10 mm EMS Magnet', counterpart: 'Vest IPC Capability Gap' },
+      { partId: 'stator-pack-left', num: '24', part: '258 mm LSM Stator', counterpart: 'Verus Security Kernel' },
+      { partId: 'beam-shell', num: '30', part: 'Prestressed Guideway', counterpart: 'OS / Hardware Base' },
+    ],
+  },
+};
+
+interface ActivePartInfo {
+  partId: string;
+  selectedId: string | null;
+  index: number | null;
+  name: string | null;
+  role: string | null;
+  material: string | null;
+  counterpart: string | null;
+}
+
 export const PlateFrame: React.FC<{
   machine: 'turboprop' | 'maglev';
   title: string;
@@ -36,17 +83,50 @@ export const PlateFrame: React.FC<{
   testId: string;
 }> = ({ machine, title, subtitle, theme, defaultPreset = 'assembled', testId }) => {
   const [preset, setPreset] = useState<PlatePreset>(defaultPreset);
+  const [activePart, setActivePart] = useState<ActivePartInfo | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const initialThemeRef = useRef<'dark' | 'light'>(theme);
   const initialPresetRef = useRef<PlatePreset>(defaultPreset);
+  const spec = PLATE_SPECS[machine];
 
   useEffect(() => {
     iframeRef.current?.contentWindow?.postMessage({ type: 'conduit-theme', theme }, '*');
   }, [theme]);
 
+  useEffect(() => {
+    const onMsg = (ev: MessageEvent) => {
+      if (!iframeRef.current || ev.source !== iframeRef.current.contentWindow) return;
+      const data = ev.data as ({ type?: string } & Partial<ActivePartInfo>) | null;
+      if (data?.type !== 'conduit-active-part') return;
+      if (!data.partId) {
+        setActivePart(null);
+      } else {
+        setActivePart({
+          partId: data.partId,
+          selectedId: data.selectedId ?? null,
+          index: data.index ?? null,
+          name: data.name ?? null,
+          role: data.role ?? null,
+          material: data.material ?? null,
+          counterpart: data.counterpart ?? null,
+        });
+      }
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
   const selectPreset = (next: PlatePreset) => {
     setPreset(next);
     iframeRef.current?.contentWindow?.postMessage({ type: 'conduit-plate-state', preset: next }, '*');
+  };
+
+  const togglePart = (partId: string) => {
+    iframeRef.current?.contentWindow?.postMessage({ type: 'conduit-select-part', partId }, '*');
+  };
+
+  const hoverPart = (partId: string | null) => {
+    iframeRef.current?.contentWindow?.postMessage({ type: 'conduit-hover-part', partId }, '*');
   };
 
   const modes: Array<{ id: PlatePreset; label: string }> = [
@@ -56,8 +136,12 @@ export const PlateFrame: React.FC<{
     { id: 'drawing', label: 'Ortho' },
   ];
 
+  const matchedLegend = activePart
+    ? spec.legend.find((l) => l.partId === activePart.partId)
+    : undefined;
+
   return (
-    <figure className="ch-plate-frame" data-testid={testId}>
+    <figure className="ch-plate-frame" data-preset={preset} data-testid={testId}>
       <header className="ch-plate-header">
         <div className="ch-plate-heading">
           <strong className="ch-plate-title">{title}</strong>
@@ -91,6 +175,53 @@ export const PlateFrame: React.FC<{
           ev.currentTarget.contentWindow?.postMessage({ type: 'conduit-plate-state', preset }, '*');
         }}
       />
+
+      <footer className="ch-plate-footer" data-testid={`${testId}-footer`}>
+        <div className="ch-plate-legend" role="group" aria-label={`${title} subsystem legend`}>
+          {spec.legend.map((item) => {
+            const isActive = activePart?.partId === item.partId;
+            return (
+              <button
+                key={item.partId}
+                type="button"
+                className="ch-plate-legend-btn"
+                data-active={isActive}
+                data-testid={`${testId}-legend-${item.partId}`}
+                aria-pressed={activePart?.selectedId === item.partId}
+                onClick={() => togglePart(item.partId)}
+                onPointerEnter={() => hoverPart(item.partId)}
+                onPointerLeave={() => hoverPart(null)}
+              >
+                <span className="ch-plate-legend-num">{item.num}</span>
+                <span className="ch-plate-legend-copy">
+                  <span className="ch-plate-legend-part">{item.part}</span>
+                  <span className="ch-plate-legend-map">{item.counterpart}</span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="ch-plate-specbar" data-testid={`${testId}-specbar`}>
+          {activePart && activePart.name ? (
+            <span>
+              <strong>
+                {String(activePart.index ?? 0).padStart(2, '0')} {activePart.name}
+              </strong>
+              {activePart.material ? ` · ${activePart.material}` : ''}
+              {activePart.role ? ` · ${activePart.role}` : ''}
+              {matchedLegend
+                ? ` → ${matchedLegend.counterpart}`
+                : activePart.counterpart
+                  ? ` → ${activePart.counterpart}`
+                  : ''}
+            </span>
+          ) : (
+            <span>{spec.summary}</span>
+          )}
+          <span>{spec.hint}</span>
+        </div>
+      </footer>
     </figure>
   );
 };

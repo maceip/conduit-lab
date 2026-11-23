@@ -17,6 +17,7 @@ const totalDiffCases = ratchet.test262_suites.reduce(
 
 test("built HTML, app JS, and site source contain no hard-coded ratchet results", async () => {
   const html = fs.readFileSync(path.join(root, "dist", "index.html"), "utf8");
+  const workbenchHtml = fs.readFileSync(path.join(root, "dist", "workbench.html"), "utf8");
   const assetsDir = path.join(root, "dist", "assets");
   const appJsFiles = fs
     .readdirSync(assetsDir)
@@ -30,7 +31,12 @@ test("built HTML, app JS, and site source contain no hard-coded ratchet results"
       const full = path.join(dir, ent.name);
       return ent.isDirectory() ? walkSrc(full) : [{ name: path.relative(root, full), text: fs.readFileSync(full, "utf8") }];
     });
-  const checkedFiles = [{ name: "dist/index.html", text: html }, ...appJsFiles, ...walkSrc(srcDir)];
+  const checkedFiles = [
+    { name: "dist/index.html", text: html },
+    { name: "dist/workbench.html", text: workbenchHtml },
+    ...appJsFiles,
+    ...walkSrc(srcDir),
+  ];
 
   const forbidden = [
     String(totals.verified),
@@ -89,9 +95,9 @@ test("turboprop and maglev are the only two illustrations on the site, have top 
   await expect(turbopropPlate.locator(".ch-plate-header")).toContainText("Turboprop Engine");
   await expect(maglevPlate.locator(".ch-plate-header")).toContainText("Shanghai SMT Maglev");
 
-  for (const [id, plate] of [
-    ["plate-turboprop", turbopropPlate],
-    ["plate-maglev", maglevPlate],
+  for (const [id, plate, samplePartId, expectedPartText] of [
+    ["plate-turboprop", turbopropPlate, "gearbox", "Reduction Gearbox Housing"],
+    ["plate-maglev", maglevPlate, "nose-cone", "Aerodynamic Nose Shell"],
   ]) {
     const frame = plate.frameLocator("iframe.ch-inkwork-frame");
     await expect(frame.locator("html")).toHaveAttribute("data-theme", "obsidian");
@@ -99,16 +105,39 @@ test("turboprop and maglev are the only two illustrations on the site, have top 
 
     await expect
       .poll(() => frame.locator("canvas").evaluate((c) => c.clientWidth))
-      .toBeGreaterThan(300);
+      .toBeGreaterThan(360);
     await expect
       .poll(() => frame.locator("canvas").evaluate((c) => c.clientHeight))
-      .toBeGreaterThan(300);
+      .toBeGreaterThan(420);
 
-    // Top plate header controls actuate Cutaway, Exploded, Ortho, and Assembled cleanly
+    // Interactive 6-subsystem legend & engineering specbar are present and actuate live part selection
+    await expect(plate.locator(".ch-plate-legend-btn")).toHaveCount(6);
+    await expect(plate.getByTestId(`${id}-specbar`)).toContainText("Scale");
+    await plate.getByTestId(`${id}-legend-${samplePartId}`).click();
+    await expect(plate.getByTestId(`${id}-specbar`)).toContainText(expectedPartText);
+    await plate.getByTestId(`${id}-legend-${samplePartId}`).click();
+
+    // Top plate header controls actuate Ortho, Exploded, Cutaway, and Assembled cleanly
     await plate.getByTestId(`${id}-mode-drawing`).click();
     await expect(plate.getByTestId(`${id}-mode-drawing`)).toHaveAttribute("aria-pressed", "true");
-    // Ortho view must NEVER dump circular BOM balloons inside embedded plates
+    // Ortho view must NEVER dump 30+ circular BOM balloons, MUST render 6 slotted callouts + title block, and ZERO overlaps
     await expect(frame.locator(".balloon")).toHaveCount(0);
+    await expect(frame.locator(".sheet-callout")).toHaveCount(6);
+    await expect(frame.getByTestId("ortho-title-block")).toBeVisible();
+
+    const calloutOverlap = await frame.locator(".sheet-callout rect").evaluateAll((rects) => {
+      const boxes = rects.map((r) => r.getBoundingClientRect());
+      for (let i = 0; i < boxes.length; i += 1) {
+        for (let j = i + 1; j < boxes.length; j += 1) {
+          const a = boxes[i];
+          const b = boxes[j];
+          const hit = !(a.right <= b.left + 1 || b.right <= a.left + 1 || a.bottom <= b.top + 1 || b.bottom <= a.top + 1);
+          if (hit) return { i, j, a, b };
+        }
+      }
+      return null;
+    });
+    expect(calloutOverlap, `${id} Ortho callouts must never overlap`).toBeNull();
 
     await plate.getByTestId(`${id}-mode-exploded`).click();
     await expect(plate.getByTestId(`${id}-mode-exploded`)).toHaveAttribute("aria-pressed", "true");
@@ -126,12 +155,13 @@ test("turboprop and maglev are the only two illustrations on the site, have top 
   expect(topMachines).toEqual(["turboprop", "maglev"]);
 });
 
-test("sections lead with formal verification, navigation matches order, and copy has zero stale claims", async ({
+test("homepage omits 19-line source tutorial, links to workbench.html, and copy has zero stale claims", async ({
   page,
 }) => {
   await page.goto("/");
+  await expect(page.getByTestId("verus-code-workbench")).toHaveCount(0);
   const ids = await page.locator("main > section").evaluateAll((ss) => ss.map((s) => s.id));
-  expect(ids).toEqual(["proofs", "arch", "ratchet", "scope", "coverage"]);
+  expect(ids).toEqual(["arch", "ratchet", "scope", "coverage"]);
   const navTargets = await page.locator(".ch-nav a").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
   expect(navTargets).toEqual(ids.map((id) => `#${id}`));
 
@@ -139,6 +169,7 @@ test("sections lead with formal verification, navigation matches order, and copy
   await expect(lede).toContainText("Prove they cannot exist");
   await expect(lede).toContainText("13 of the last 20 Chrome zero-days");
   await expect(lede).toContainText(`${totals.crates} crates`);
+  await expect(page.getByTestId("cta-workbench")).toHaveAttribute("href", "workbench.html");
 
   const body = await page.locator("body").innerText();
   for (const stale of [
@@ -152,10 +183,12 @@ test("sections lead with formal verification, navigation matches order, and copy
   }
 });
 
-test("section 1 (#proofs): 4-state Verus workbench, fix-typo action, and live 11-crate proof explorer", async ({
+test("dedicated workbench.html: 4-state Verus workbench, fix-typo action, and live 11-crate proof explorer", async ({
   page,
 }) => {
   await page.goto("/");
+  await page.getByTestId("cta-workbench").click();
+  await expect(page).toHaveURL(/workbench\.html$/);
   await expect(page.getByTestId("verus-file")).toHaveText("browser/url/src/percent.rs");
   await expect(page.getByTestId("inlay-state-8")).toHaveText("verified");
 
@@ -335,8 +368,10 @@ test("provenance footer and staged local assets resolve with HTTP 200", async ({
   for (const h of [
     "browser/ratchet.json",
     "data/stats.json",
+    "workbench.html",
     "inkwork/index.html",
     "inkwork/fonts/cormorant-500.woff2",
+    "assets/fonts/ibm-plex-sans-latin.woff2",
     "irrigation.html",
     "v8-anatomy.html",
     "v8-iso/pages/fig-01-isolate.html",

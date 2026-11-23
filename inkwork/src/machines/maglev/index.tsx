@@ -45,14 +45,31 @@ function Levitating({ children }: { children: ReactNode }) {
   return <group ref={ref}>{children}</group>;
 }
 
-/** Half car-body cross-section (open at z = 0), shape x → y, shape y → z. */
+/** Half car-body cross-section (open at z = 0), matching AeroNose u=0 arch seamlessly. */
 function halfShellShape(side: 1 | -1) {
-  const w = (MG.carWidth / 2) * side;
-  const pts: Array<[number, number]> = [
-    [F, 0], [F, w], [F + 240, w], [R - 700, w], [R - 300, w * 0.92], [R, w * 0.5], [R, 0],
-  ];
-  const inner: Array<[number, number]> = pts.map(([y, z]) => [y + (y < R - 700 ? 90 : -70), z - side * 90]);
-  return poly([...pts, ...inner.reverse()]);
+  const halfW = MG.carWidth / 2;
+  const ySkirt = F - 1020;
+  const hBody = R - ySkirt;
+  const yMid = ySkirt + hBody * 0.36;
+  const aY = R - yMid;
+  const arch: Array<[number, number]> = [];
+  const n = 9;
+  for (let k = 0; k <= n; k += 1) {
+    const theta = ((Math.PI / 2) * k) / n; // 0 (flank) .. pi/2 (crown)
+    const c = Math.cos(theta);
+    const s = Math.sin(theta);
+    const z = side * Math.pow(c, 2 / 2.35) * halfW;
+    const y = yMid + Math.pow(s, 1 / (2 / 1.11)) * aY;
+    arch.push([y, z]);
+  }
+  const outer: Array<[number, number]> = [[F + 100, 0], [F + 100, side * halfW], ...arch];
+  const inner: Array<[number, number]> = outer
+    .map(([y, z]): [number, number] => [
+      y < F + 300 ? y + 95 : y - 90,
+      Math.abs(z) < 50 ? 0 : z - side * 95,
+    ])
+    .reverse();
+  return poly([...outer, ...inner]);
 }
 
 /* ── Track (fixed) ────────────────────────────────────────────────── */
@@ -149,15 +166,15 @@ function Body() {
         <Callout id="door-right" p={[18200, F + 1200, -1940]} />
       </Part>
       <Part id="skirt-left">
-        {/* Scalloped wrap-around aero levitation skirt framing front & rear bogies */}
-        <Box c={[10600, F - 340, 1690]} s={[18600, 640, 340]} />
-        <Box c={[10600, F - 760, 1540]} s={[18600, 260, 420]} />
-        <Callout id="skirt-left" p={[13000, F - 420, 1880]} />
+        {/* Continuous wrap-around aero levitation skirt shrouding guideway beam & rear/front bogies (y = 2380..3500) */}
+        <Box c={[10500, F - 460, 1675]} s={[18600, 1120, 350]} />
+        <Box c={[10500, F - 910, 1590]} s={[18600, 220, 220]} />
+        <Callout id="skirt-left" p={[13000, F - 520, 1880]} />
       </Part>
       <Part id="skirt-right">
-        <Box c={[10600, F - 340, -1690]} s={[18600, 640, 340]} />
-        <Box c={[10600, F - 760, -1540]} s={[18600, 260, 420]} />
-        <Callout id="skirt-right" p={[13000, F - 420, -1880]} />
+        <Box c={[10500, F - 460, -1675]} s={[18600, 1120, 350]} />
+        <Box c={[10500, F - 910, -1590]} s={[18600, 220, 220]} />
+        <Callout id="skirt-right" p={[13000, F - 520, -1880]} />
       </Part>
       <Part id="roof-fairing">
         {/* Streamlined roof HVAC pod + rear inter-car aerodynamic diaphragm */}

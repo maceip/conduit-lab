@@ -39,11 +39,12 @@ export interface Palette {
 export type Theme = 'paper' | 'blueprint' | 'obsidian';
 
 export const PALETTES: Record<Theme, Palette> = {
-  paper: { paper: '#f5f4f0', face: '#fcfbf8', shade: '#dcd9d0', ink: '#1c1e21', rust: '#0f766e', cut: '#e4ebe8' },
+  // Light drafting paper: matches site [data-theme="light"] --ch-bg-card (#fcfbf8) & deep teal accent (#0f766e).
+  paper: { paper: '#fcfbf8', face: '#ffffff', shade: '#e2dfd7', ink: '#181a1c', rust: '#0f766e', cut: '#e6ece9' },
   // Cyanotype: pale lines on Prussian blue, amber for what is picked out.
   blueprint: { paper: '#173b63', face: '#1e4672', shade: '#163758', ink: '#e8f0f9', rust: '#ffc35c', cut: '#2f5f90' },
-  // CONDUIT graphite drafter board: distinct lit/shaded faces + bright machined cut faces + restrained phosphor accent.
-  obsidian: { paper: '#0e1014', face: '#262c35', shade: '#171b21', ink: '#e8edf2', rust: '#74c7b0', cut: '#cfd8df' },
+  // CONDUIT BOARD.* standard (docs/drawing-standard.md §1 & §5): exact #141516 plate, #16191c..#262b30 body ramp, #cfd4d8 cut, #e8ecee inkHi, #74c7b0 proved accent.
+  obsidian: { paper: '#141516', face: '#262b30', shade: '#16191c', ink: '#e8ecee', rust: '#74c7b0', cut: '#cfd4d8' },
 };
 
 /** The palette in use. setPalette changes it in place, so readers always see the current one. */

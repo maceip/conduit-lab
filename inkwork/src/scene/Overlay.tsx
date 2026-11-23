@@ -3,17 +3,24 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useMachine } from '../machines';
+import { findLandmark } from '../machines/landmarks';
 import type { GuideDef, Vec3 } from '../machines/types';
-import { motion, partVisible, useStudio, type ViewMode } from '../state';
+import { isEmbed, motion, partVisible, useStudio, type ViewMode } from '../state';
 import { OVERLAY_LAYER } from './InkRenderer';
 import { tint } from './ink';
 import { SECTION_PLANE, usePartDepth } from './Part';
 import { boltSetDef, partDef, partOffset, stageProgress } from './explode';
 
-/** Numbered balloon with a short curved leader, in the style of a drawing plate. */
+/**
+ * Monochrome drafter callout tag (docs/drawing-standard.md §3 Rules 2 & 3).
+ * In embedded plates, shows the 6 curated primary subsystem landmarks by default
+ * (fanned cleanly above/below the silhouette) plus any hovered or selected part.
+ */
 export function Callout({ id, p }: { id: string; p: Vec3 }) {
+  const machine = useMachine();
   const part = partDef(id);
-  const anno = useMachine().annotations?.[id];
+  const anno = machine.annotations?.[id];
+  const landmark = isEmbed ? findLandmark(machine.id, id) : undefined;
   const selected = useStudio((s) => s.selected === id);
   const hovered = useStudio((s) => s.hovered === id);
   const labels = useStudio((s) => s.labels);
@@ -21,24 +28,56 @@ export function Callout({ id, p }: { id: string; p: Vec3 }) {
   const set = useStudio((s) => s.set);
   const nested = usePartDepth() > 1;
   const shown = useStudio((s) => !s.hidden.includes(id) && (!s.solo || s.solo === id));
-  if (!part || nested || !shown || drawingMode || (!labels && !selected && !hovered)) return null;
+  const visibleByDefault = isEmbed ? Boolean(landmark) : labels;
+  if (!part || nested || !shown || drawingMode || (!visibleByDefault && !selected && !hovered)) return null;
+
+  const down = landmark?.rail === 'bottom';
+  const leftSide = landmark?.slot === 0;
+  const anchorPos: Vec3 = landmark ? landmark.anchor : p;
+  const shortTitle = landmark ? landmark.short : part.name;
+  const subLabel = landmark ? landmark.counterpart : anno?.label;
+
   return (
-    <Html position={p} zIndexRange={[20, 0]} style={{ pointerEvents: 'none' }}>
-      <div className={`callout${selected ? ' is-selected' : ''}${hovered ? ' is-hovered' : ''}`}>
-        <svg className="callout-leader" width="44" height="30" viewBox="0 0 44 30" aria-hidden="true">
-          <circle cx="3" cy="27" r="2.2" />
-          <path d="M3 27 C 10 12, 22 5, 40 4" />
+    <Html position={anchorPos} zIndexRange={[20, 0]} style={{ pointerEvents: 'none' }}>
+      <div className={`callout${isEmbed ? ' is-drafter' : ''}${down ? ' is-down' : ''}${leftSide ? ' is-left' : ''}${selected ? ' is-selected' : ''}${hovered ? ' is-hovered' : ''}`}>
+        <svg className="callout-leader" width="38" height="34" viewBox="0 0 38 34" aria-hidden="true">
+          {leftSide ? (
+            down ? (
+              <>
+                <circle cx="35" cy="3" r="2.1" />
+                <polyline points="35,3 24,30 2,30" />
+              </>
+            ) : (
+              <>
+                <circle cx="35" cy="31" r="2.1" />
+                <polyline points="35,31 24,4 2,4" />
+              </>
+            )
+          ) : down ? (
+            <>
+              <circle cx="3" cy="3" r="2.1" />
+              <polyline points="3,3 14,30 36,30" />
+            </>
+          ) : (
+            <>
+              <circle cx="3" cy="31" r="2.1" />
+              <polyline points="3,31 14,4 36,4" />
+            </>
+          )}
         </svg>
         <button
           type="button"
           className="callout-label"
+          data-testid={`callout-3d-${id}`}
           onClick={() => set({ selected: selected ? null : id })}
           onPointerEnter={() => set({ hovered: id })}
           onPointerLeave={() => set({ hovered: null })}
         >
           <span className="callout-num">{String(part.index).padStart(2, '0')}</span>
-          <span className="callout-name">{part.name}</span>
-          {anno && (selected || hovered) && <span className="callout-anno">{anno.label}</span>}
+          <span className="callout-name">{shortTitle}</span>
+          {subLabel && (selected || hovered) && (
+            <span className="callout-sub">· {subLabel}</span>
+          )}
         </button>
       </div>
     </Html>

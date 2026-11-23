@@ -11,7 +11,7 @@ export const useDrawing = create<{ layout: DrawingLayout | null; box: THREE.Box3
 
 /** Space the title column and title block leave for the views. */
 function insets(width: number) {
-  if (isEmbed) return { left: 20, right: 24, top: 28, bottom: 26 };
+  if (isEmbed) return { left: 18, right: 20, top: 48, bottom: 54 };
   if (width < 1100) return { left: 12, right: 12, top: 12, bottom: 12 };
   return { left: 450, right: 44, top: 96, bottom: 36 };
 }
@@ -39,7 +39,7 @@ export function DrawingRig() {
       useDrawing.setState({ layout: null, box: null });
       return;
     }
-    const layout = computeLayout(size.width, size.height, machine.bounds, insets(size.width));
+    const layout = computeLayout(size.width, size.height, machine.bounds, insets(size.width), isEmbed);
     drawing.layout = layout;
     useDrawing.setState({ layout });
   }, [active, machine, size.width, size.height]);

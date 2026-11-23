@@ -341,7 +341,7 @@ export const STEPS: StepDef[] = [
 
 export const CAMERA: CameraDef = {
   target: [-40, TP.AY - 40, 0],
-  offset: [3650, 1480, 4450],
+  offset: [3380, 1360, 3980],
   orthoDistance: 10000,
   exploded: { target: [-160, TP.AY, 0], scale: 1.62 },
   foci: {

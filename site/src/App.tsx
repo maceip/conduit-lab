@@ -15,7 +15,6 @@ import { CVES } from './content/cves';
 import { IconArrowRight, IconCopy, IconExternal } from './icons';
 import { ArchitectureDiagram, PlateFrame, StatTile } from './parts';
 import SectionCoverage from './SectionCoverage';
-import SectionVerus from './SectionVerus';
 import SectionWhy from './SectionWhy';
 import SectionStatus from './SectionStatus';
 
@@ -82,7 +81,6 @@ export default function App() {
         </a>
 
         <nav className="ch-nav" aria-label="Page sections">
-          <a href="#proofs">Proofs</a>
           <a href="#arch">Architecture</a>
           <a href="#ratchet">Crates</a>
           <a href="#scope">Scope</a>
@@ -90,6 +88,9 @@ export default function App() {
         </nav>
 
         <div className="ch-topbar-right">
+          <a className="ch-nav-link" href="workbench.html" data-testid="nav-workbench">
+            Proof workbench
+          </a>
           <a
             className="ch-nav-link"
             href={blobUrl('docs/verified-browser-engine.md')}
@@ -133,9 +134,9 @@ export default function App() {
               scratch with zero <code>unsafe</code> code.
             </p>
             <div className="ch-hero-actions">
-              <a className="ch-cta-primary" href="#proofs">
-                <span>Inspect a live proof</span>
-                <IconArrowRight size={14} />
+              <a className="ch-cta-primary" href="workbench.html" data-testid="cta-workbench">
+                <span>Open proof workbench</span>
+                <IconArrowRight size={13} />
               </a>
               <a className="ch-cta-secondary" href="#ratchet">
                 <span>Verified crate ledger</span>
@@ -236,10 +237,8 @@ export default function App() {
         </div>
       )}
 
-      {/* Main Specification: Proofs -> Architecture (Maglev) -> Crates -> Scope -> CVE Baseline */}
+      {/* Main Specification: Architecture (Maglev) -> Crates -> Scope -> CVE Baseline */}
       <main className="ch-spec-container">
-        <SectionVerus ratchet={ratchet} />
-
         <section className="ch-spec-row" id="arch">
           <div className="ch-prose-col">
             <h2 className="ch-section-title">
