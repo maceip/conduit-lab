@@ -1,0 +1,282 @@
+/* CONDUIT Atelier — the drafter board.
+ *
+ * The palette arrives as CSS custom properties from `contract/tokens.ts`,
+ * mounted by `theme.tsx` (`<BoardVars />`). No hex is written here: the board
+ * is defined entirely by `var(--board-*)`.
+ *
+ * Craft rules (spec section 5): hairline rules only, uppercase mono labels
+ * with 0.04–0.09em tracking, no drop shadows, no gradient fills used as
+ * pseudo-shadow. Depth comes from the face shading ramp and stroke weight.
+ */
+
+.atelier {
+  /* Board metrics. The palette itself comes from the tokens. */
+  --atelier-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --atelier-track-label: 0.08em;
+  --atelier-track-tight: 0.04em;
+  --atelier-hairline: 1px;
+  --atelier-gap: 16px;
+  --atelier-gap-lg: 28px;
+  --atelier-pad: 20px;
+  --atelier-dur-d1: 120ms;
+  --atelier-dur-d2: 240ms;
+  --atelier-ease-standard: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  box-sizing: border-box;
+  min-height: 100vh;
+  margin: 0;
+  padding: var(--atelier-gap-lg) var(--atelier-pad) 64px;
+
+  background: var(--board-page);
+  color: var(--board-ink);
+  font-family: var(--atelier-mono);
+  font-size: 13px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.atelier *,
+.atelier *::before,
+.atelier *::after {
+  box-sizing: border-box;
+}
+
+/* Every piece of text on the board is JetBrains Mono. */
+.atelier h1,
+.atelier h2,
+.atelier h3,
+.atelier h4,
+.atelier p,
+.atelier span,
+.atelier button,
+.atelier li,
+.atelier td,
+.atelier th,
+.atelier figcaption,
+.atelier code,
+.atelier label {
+  font-family: var(--atelier-mono);
+}
+
+/* --- Masthead / title block ------------------------------------------- */
+
+.atelier__masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--atelier-gap);
+  padding-bottom: 12px;
+  border-bottom: var(--atelier-hairline) solid var(--board-rib);
+}
+
+.atelier__title {
+  margin: 0;
+  color: var(--board-ink-hi);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: var(--atelier-track-label);
+  text-transform: uppercase;
+}
+
+.atelier__subtitle {
+  margin: 0;
+  color: var(--board-ink);
+  font-size: 11px;
+  letter-spacing: var(--atelier-track-tight);
+}
+
+/* --- Navigation -------------------------------------------------------- */
+
+.atelier__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin: var(--atelier-gap) 0;
+  border-bottom: var(--atelier-hairline) solid var(--board-rib);
+}
+
+.atelier__tab {
+  appearance: none;
+  margin: 0;
+  padding: 8px 14px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--board-ink);
+  font-family: var(--atelier-mono);
+  font-size: 11px;
+  letter-spacing: var(--atelier-track-label);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    color var(--atelier-dur-d1) var(--atelier-ease-standard),
+    border-color var(--atelier-dur-d1) var(--atelier-ease-standard);
+}
+
+.atelier__tab:hover {
+  color: var(--board-ink-hi);
+}
+
+.atelier__tab[aria-selected='true'] {
+  color: var(--board-ink-hi);
+  border-bottom-color: var(--board-edge-hi);
+}
+
+.atelier__tab:focus-visible {
+  outline: 1px solid var(--board-line);
+  outline-offset: 2px;
+}
+
+.atelier__tab:disabled {
+  color: var(--board-rib);
+  cursor: not-allowed;
+}
+
+/* --- Panels and sheets ------------------------------------------------- */
+
+.atelier__panel {
+  display: block;
+}
+
+.atelier__sheet {
+  display: block;
+}
+
+.atelier__sheet-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--atelier-gap);
+  margin-bottom: var(--atelier-gap);
+  padding-bottom: 8px;
+  border-bottom: var(--atelier-hairline) solid var(--board-rib);
+}
+
+.atelier__label {
+  margin: 0;
+  color: var(--board-ink);
+  font-size: 10px;
+  letter-spacing: var(--atelier-track-label);
+  text-transform: uppercase;
+}
+
+.atelier__meta {
+  margin: 0;
+  color: var(--board-ink);
+  font-size: 10px;
+  letter-spacing: var(--atelier-track-tight);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Panels on the board ----------------------------------------------- */
+
+.atelier__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--atelier-gap);
+}
+
+.atelier__grid--wide {
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+}
+
+.atelier__card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: var(--atelier-pad);
+  border: var(--atelier-hairline) solid var(--board-rib);
+  background: var(--board-plate);
+}
+
+.atelier__card--raised {
+  background: var(--board-raised);
+}
+
+.atelier__card-figure {
+  display: block;
+  width: 100%;
+}
+
+.atelier__caption {
+  margin: 0;
+  color: var(--board-ink-hi);
+  font-size: 11px;
+  letter-spacing: var(--atelier-track-tight);
+}
+
+.atelier__value {
+  margin: 0;
+  color: var(--board-ink-hi);
+  font-size: 26px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--atelier-track-tight);
+}
+
+.atelier__value--missing {
+  color: var(--board-ink);
+  font-size: 14px;
+  letter-spacing: var(--atelier-track-label);
+  text-transform: uppercase;
+}
+
+/* Status colours. Accent is reserved for live-verified status. */
+.atelier__value--proved {
+  color: var(--board-accent);
+}
+
+.atelier__value--warn {
+  color: var(--board-warn);
+}
+
+.atelier__value--fail {
+  color: var(--board-fail);
+}
+
+/* --- Rules ------------------------------------------------------------- */
+
+.atelier__rule {
+  height: 0;
+  margin: var(--atelier-gap) 0;
+  border: 0;
+  border-top: var(--atelier-hairline) solid var(--board-rib);
+}
+
+/* --- Narrow boards ----------------------------------------------------- */
+
+@media (max-width: 720px) {
+  .atelier {
+    padding: var(--atelier-gap) 12px 48px;
+  }
+
+  .atelier__grid,
+  .atelier__grid--wide {
+    grid-template-columns: 1fr;
+  }
+
+  .atelier__nav {
+    gap: 0;
+  }
+
+  .atelier__tab {
+    padding: 8px 10px;
+    letter-spacing: var(--atelier-track-tight);
+  }
+}
+
+/* --- Reduced motion: the final state, instantly ------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .atelier *,
+  .atelier *::before,
+  .atelier *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
