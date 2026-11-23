@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { useMachine } from '../machines';
-import { motion } from '../state';
+import { isEmbed, motion, useStudio } from '../state';
 import type { BomCallout, DimensionDef } from '../machines/types';
-import { useStudio } from '../state';
 import { useDrawing } from './DrawingRig';
 import { project, type DrawingLayout } from './layout';
 
@@ -161,35 +160,54 @@ export function DrawingSheet() {
   const { layout, box } = useDrawing();
   const projection = useStudio((s) => s.projection);
   const section = useStudio((s) => s.section);
+  const labels = useStudio((s) => s.labels);
   const focus = useStudio((s) => s.hovered ?? s.selected);
   if (!layout) return null;
   const part = focus ? machine.parts.find((p) => p.id === focus) : undefined;
   const tb = layout.titleBlock;
+  // Never dump 30+ circular BOM balloons onto compact/embedded plates; only render monochrome balloons when full-studio labels are explicitly enabled.
+  const showBalloons = !isEmbed && labels && layout.views[0].rect.w > 480;
+  const dims = (() => {
+    const all = machine.dimensions ?? [];
+    if (!isEmbed) return all;
+    const overallFront = all.find((d) => d.view === 'front');
+    const overallLeft = all.find((d) => d.view === 'left' && d.offset >= 100) ?? all.find((d) => d.view === 'left');
+    return [
+      overallFront ? { ...overallFront, offset: 26 } : null,
+      overallLeft ? { ...overallLeft, offset: 28 } : null,
+    ].filter((d): d is DimensionDef => d !== null);
+  })();
   return (
     <div className="sheet" aria-hidden="true">
       <svg className="sheet-svg">
         <CentreCrosses layout={layout} lines={machine.centreLines} />
         {projection && box && <ProjectionLines layout={layout} box={box} />}
-        {machine.dimensions?.map((d, i) => <Dim key={i} layout={layout} d={d} />)}
-        {machine.bom?.map((b, i) => {
-          const part = machine.parts.find((pp) => pp.id === b.id);
-          return part ? (
+        {dims.map((d, i) => <Dim key={i} layout={layout} d={d} />)}
+        {showBalloons && machine.bom?.map((b) => {
+          const item = machine.parts.find((pp) => pp.id === b.id);
+          return item ? (
             <Balloon
               key={b.id}
               layout={layout}
               b={b}
-              index={part.index}
-              name={part.name}
-              tint={machine.annotations?.[b.id]?.colour}
-              explode={part.explode}
-              stage={part.stage}
+              index={item.index}
+              name={item.name}
+              explode={item.explode}
+              stage={item.stage}
               unit={machine.unit ?? 1}
             />
           ) : null;
         })}
       </svg>
       {layout.views.map((v) => (
-        <span key={v.id} className={`sheet-label sheet-label--${v.id}`} style={{ left: v.rect.x + v.rect.w / 2, top: v.rect.y + v.rect.h + 4 }}>
+        <span
+          key={v.id}
+          className={`sheet-label sheet-label--${v.id}`}
+          style={{
+            left: v.rect.x + v.rect.w / 2,
+            top: isEmbed && v.id === 'front' ? Math.max(8, v.rect.y - 16) : v.rect.y + v.rect.h + 4,
+          }}
+        >
           {v.id === 'front' && section ? 'Section Front View' : v.label}
         </span>
       ))}

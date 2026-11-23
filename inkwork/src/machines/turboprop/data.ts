@@ -340,10 +340,10 @@ export const STEPS: StepDef[] = [
 ];
 
 export const CAMERA: CameraDef = {
-  target: [-40, TP.AY, 0],
-  offset: [4300, 1800, 5300],
+  target: [-40, TP.AY - 40, 0],
+  offset: [3650, 1480, 4450],
   orthoDistance: 10000,
-  exploded: { target: [-160, TP.AY, 0], scale: 1.55 },
+  exploded: { target: [-160, TP.AY, 0], scale: 1.62 },
   foci: {
     gearbox: { target: [TP.gearMidX, TP.AY, 0], scale: 0.42 },
     combustor: { target: [-1140, TP.AY, 0], scale: 0.5 },

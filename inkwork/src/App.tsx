@@ -82,13 +82,42 @@ function useFirstStep() {
     if (!first) return;
     first.apply?.();
     const { selected, set } = useStudio.getState();
+    // Support initial ?preset=section|exploded|drawing on embedded plates
+    const preset = isEmbed ? new URLSearchParams(window.location.search).get('preset') : null;
     set({
-      section: first.state.section,
+      section: preset === 'section' ? true : first.state.section,
+      explode: preset === 'exploded' ? 1 : 0,
+      view: preset === 'drawing' ? 'drawing' : 'perspective',
       running: first.state.running,
       focus: first.state.focus,
       selected: isEmbed ? null : (selected ?? first.state.select),
     });
   }, [machine]);
+}
+
+/** Listen to parent CONDUIT plate header controls via postMessage. */
+function useParentPlateControl() {
+  useEffect(() => {
+    if (!isEmbed) return;
+    const onMsg = (ev: MessageEvent) => {
+      const data = ev.data as { type?: string; preset?: string } | null;
+      if (data?.type !== 'conduit-plate-state') return;
+      const machine = currentMachine();
+      const { viewNonce, set } = useStudio.getState();
+      if (data.preset === 'assembled') {
+        restoreAll(machine.steps[0]);
+        useStudio.setState({ selected: null, view: 'perspective', section: false, explode: 0, viewNonce: viewNonce + 1 });
+      } else if (data.preset === 'section') {
+        set({ view: 'perspective', section: true, explode: 0, localExplode: null, deep: false, focus: null, viewNonce: viewNonce + 1 });
+      } else if (data.preset === 'exploded') {
+        set({ view: 'perspective', section: false, explode: 1, localExplode: null, deep: false, focus: null, viewNonce: viewNonce + 1 });
+      } else if (data.preset === 'drawing') {
+        set({ view: 'drawing', section: true, explode: 0, localExplode: null, deep: false, focus: null, viewNonce: viewNonce + 1 });
+      }
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
 }
 
 /** Horizontal offset (px) of the projection centre, so the machine clears the text column in full studio mode. */
@@ -107,98 +136,35 @@ function useStageShift() {
   return shift;
 }
 
-/** Minimal single-bar HUD used when embedded inside the CONDUIT specification site (?embed=1). */
+/** Quiet hover/click readout in embedded plates — zero floating buttons inside the canvas. */
 function EmbedHud() {
   const machine = useMachine();
-  const { view, viewNonce, section, explode, selected, hovered, set } = useStudio();
+  const { selected, hovered } = useStudio();
   const chain = lineage(machine);
   const focusId = selected ?? hovered;
   const part = focusId ? machine.parts.find((p) => p.id === focusId) : undefined;
   const anno = focusId ? machine.annotations?.[focusId] : undefined;
   const childId = part ? machine.children?.[part.id] : undefined;
-  const exploded = explode > 0.35;
+
+  if (!part && chain.length <= 1) return null;
 
   return (
-    <>
-      <nav className="embed-bar" aria-label="Plate controls" data-testid="embed-toolbar">
+    <div className="embed-readout" data-testid="embed-readout">
+      <span>
         {chain.length > 1 && (
-          <button
-            type="button"
-            className="embed-btn"
-            onClick={() => selectMachine(chain[chain.length - 2].id)}
-            title="Return to parent assembly"
-          >
-            ‹ {chain[chain.length - 2].name}
-          </button>
+          <>
+            <button
+              type="button"
+              className="embed-sub-link"
+              onClick={() => selectMachine(chain[chain.length - 2].id)}
+            >
+              ‹ {chain[chain.length - 2].name}
+            </button>
+            {part ? ' · ' : ''}
+          </>
         )}
-        <div className="embed-seg" role="group" aria-label="View mode">
-          <button
-            type="button"
-            className={view === 'perspective' ? 'is-on' : ''}
-            aria-pressed={view === 'perspective'}
-            data-testid="embed-view-3d"
-            onClick={() => set({ view: 'perspective', focus: null, viewNonce: viewNonce + 1 })}
-          >
-            3D
-          </button>
-          <button
-            type="button"
-            className={view === 'drawing' ? 'is-on' : ''}
-            aria-pressed={view === 'drawing'}
-            data-testid="embed-view-drawing"
-            onClick={() => set({ view: 'drawing', focus: null, viewNonce: viewNonce + 1 })}
-          >
-            Drawing
-          </button>
-        </div>
-
-        <button
-          type="button"
-          className={`embed-btn${section ? ' is-on' : ''}`}
-          aria-pressed={section}
-          data-testid="embed-toggle-section"
-          onClick={() => set({ section: !section })}
-        >
-          Section
-        </button>
-
-        <button
-          type="button"
-          className={`embed-btn${exploded ? ' is-on' : ''}`}
-          aria-pressed={exploded}
-          data-testid="embed-toggle-explode"
-          onClick={() => set({ explode: exploded ? 0 : 1, localExplode: null, deep: false })}
-        >
-          Explode
-        </button>
-
-        {(exploded || section || selected) && (
-          <button
-            type="button"
-            className="embed-btn"
-            onClick={() => {
-              restoreAll(machine.steps[0]);
-              useStudio.setState({ selected: null });
-            }}
-          >
-            Reset
-          </button>
-        )}
-
-        <a
-          className="embed-link"
-          href={`index.html#${machine.id}`}
-          target="_blank"
-          rel="noreferrer"
-          title="Open full interactive studio"
-        >
-          Studio ↗
-        </a>
-      </nav>
-
-      {part && (
-        <div className="embed-readout" data-testid="embed-readout">
-          <span>
+        {part && (
+          <>
             <strong>{String(part.index).padStart(2, '0')} {part.name}</strong>
             {anno ? ` · ${anno.label}` : ` · ${part.role}`}
             {childId && (
@@ -213,10 +179,10 @@ function EmbedHud() {
                 </button>
               </>
             )}
-          </span>
-        </div>
-      )}
-    </>
+          </>
+        )}
+      </span>
+    </div>
   );
 }
 
@@ -224,6 +190,7 @@ export default function App() {
   const shift = useStageShift();
   useDeepLink();
   useFirstStep();
+  useParentPlateControl();
   const clear = useStudio((s) => s.set);
   const machine = useMachine();
   const { Model, Driver, Backdrop } = machine;

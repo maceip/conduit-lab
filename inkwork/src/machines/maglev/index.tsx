@@ -5,8 +5,8 @@ import { Part } from '../../scene/Part';
 import { Callout } from '../../scene/Overlay';
 import { useStudio } from '../../state';
 import type { MachineDef } from '../types';
-import { Box, Turn, level, poly, tube } from '../kit';
-import { DoorLeaf, MagnetArray, ProfileShell, SensorHead, StatorPack, Stripe, WrapArm, WindowBand, beamShape } from './kit';
+import { Box, level, poly, tube } from '../kit';
+import { AeroNose, DoorLeaf, FlushWindshield, MagnetArray, ProfileShell, SensorHead, StatorPack, Stripe, WrapArm, WindowBand, beamShape } from './kit';
 import { ANNOTATIONS, BOM, BOLT_SETS, CAMERA, CENTRE_LINES, DIMENSIONS, GUIDES, MG, NEIGHBOURS, PARTS, STEPS } from './data';
 import { guidanceOffset, levitationGap } from './kinematics';
 import { carbody } from './carbody';
@@ -72,11 +72,20 @@ function BeamShell() {
 function PierSegment() {
   return (
     <Part id="pier-segment">
-      <Box c={[11500, 600, 0]} s={[1800, 1200, 2200]} />
-      <Box c={[11500, 1180, 0]} s={[3200, 240, 2600]} />
-      {/* Spherical bearing pockets */}
-      <Box c={[11500, 1310, 0]} s={[2600, 120, 2000]} />
-      <Callout id="pier-segment" p={[11500, 300, 1200]} />
+      {[5500, 20500].map((px) => (
+        <group key={px}>
+          {/* Base footing plinth */}
+          <Box c={[px, 90, 0]} s={[2600, 180, 3200]} />
+          {/* Tapered concrete viaduct column + central rib */}
+          <Box c={[px, 560, 0]} s={[1500, 760, 1700]} />
+          {/* Flared hammerhead pier capital */}
+          <Box c={[px, 1040, 0]} s={[2400, 240, 3100]} />
+          {/* Elastomeric girder bearing pads */}
+          <Box c={[px, 1210, 760]} s={[900, 110, 720]} />
+          <Box c={[px, 1210, -760]} s={[900, 110, 720]} />
+        </group>
+      ))}
+      <Callout id="pier-segment" p={[20500, 480, 1600]} />
     </Part>
   );
 }
@@ -121,50 +130,45 @@ function Body() {
   return (
     <>
       <Part id="nose-cone">
-        {/* Streamlined nose: revolved shell from the cab face to the tip */}
-        <Turn
-          k="mg-nose"
-          axis="x"
-          p={[0, F + 1650, 0]}
-          profile={[
-            [30, 27200], [620, 27060], [1180, 26700], [1620, 26100], [1830, 25300], [1860, 24300], [1860, 23950],
-            [1770, 23950], [1770, 25240], [1560, 26020], [1120, 26600], [580, 26960], [10, 27110],
-          ]}
-          seg={56}
-        />
-        <Callout id="nose-cone" p={[25800, F + 1600, 400]} />
+        {/* Sculpted 7.2 m Transrapid TR08 aerodynamic wedge/duckbill nose */}
+        <AeroNose x0={19800} x1={27000} floorY={F} roofY={R} halfW={MG.carWidth / 2} />
+        <Callout id="nose-cone" p={[25200, F + 1150, 650]} />
       </Part>
       <Part id="windshield">
-        <Box c={[25350, F + 2450, 0]} s={[1500, 900, 1750]} r={[0, 0, -0.32]} />
-        <Box c={[25350, F + 2450, 0]} s={[1560, 200, 1810]} r={[0, 0, -0.32]} />
-        <Callout id="windshield" p={[25350, F + 2950, 700]} />
+        <FlushWindshield x0={19800} x1={27000} floorY={F} roofY={R} halfW={MG.carWidth / 2} />
+        <Callout id="windshield" p={[23400, F + 2650, 500]} />
       </Part>
       <Part id="door-left">
-        <DoorLeaf x={MG.doorFX} y0={F + 120} y1={F + 2170} z={1808} side={1} />
-        <DoorLeaf x={MG.doorRX} y0={F + 120} y1={F + 2170} z={1808} side={1} />
-        <Callout id="door-left" p={[MG.doorFX, F + 1200, 1900]} />
+        <DoorLeaf x={18200} y0={F + 140} y1={F + 2320} z={1850} side={1} />
+        <DoorLeaf x={3400} y0={F + 140} y1={F + 2320} z={1850} side={1} />
+        <Callout id="door-left" p={[18200, F + 1200, 1940]} />
       </Part>
       <Part id="door-right">
-        <DoorLeaf x={MG.doorFX} y0={F + 120} y1={F + 2170} z={-1808} side={-1} />
-        <DoorLeaf x={MG.doorRX} y0={F + 120} y1={F + 2170} z={-1808} side={-1} />
-        <Callout id="door-right" p={[MG.doorFX, F + 1200, -1900]} />
+        <DoorLeaf x={18200} y0={F + 140} y1={F + 2320} z={-1850} side={-1} />
+        <DoorLeaf x={3400} y0={F + 140} y1={F + 2320} z={-1850} side={-1} />
+        <Callout id="door-right" p={[18200, F + 1200, -1940]} />
       </Part>
       <Part id="skirt-left">
-        <Box c={[13500, F - 380, 1560]} s={[21600, 760, 560]} />
-        <Box c={[13500, F - 80, 1560]} s={[21600, 160, 640]} />
-        <Callout id="skirt-left" p={[15000, F - 420, 1750]} />
+        {/* Scalloped wrap-around aero levitation skirt framing front & rear bogies */}
+        <Box c={[10600, F - 340, 1690]} s={[18600, 640, 340]} />
+        <Box c={[10600, F - 760, 1540]} s={[18600, 260, 420]} />
+        <Callout id="skirt-left" p={[13000, F - 420, 1880]} />
       </Part>
       <Part id="skirt-right">
-        <Box c={[13500, F - 380, -1560]} s={[21600, 760, 560]} />
-        <Box c={[13500, F - 80, -1560]} s={[21600, 160, 640]} />
-        <Callout id="skirt-right" p={[15000, F - 420, -1750]} />
+        <Box c={[10600, F - 340, -1690]} s={[18600, 640, 340]} />
+        <Box c={[10600, F - 760, -1540]} s={[18600, 260, 420]} />
+        <Callout id="skirt-right" p={[13000, F - 420, -1880]} />
       </Part>
       <Part id="roof-fairing">
-        <Box c={[14500, R + 120, 0]} s={[3200, 340, 2300]} />
+        {/* Streamlined roof HVAC pod + rear inter-car aerodynamic diaphragm */}
+        <Box c={[11200, R + 110, 0]} s={[5600, 220, 2100]} />
         {[0, 1, 2, 3, 4].map((i) => (
-          <Box key={i} c={[13300 + i * 560, R + 310, 0]} s={[220, 60, 2100]} />
+          <Box key={i} c={[9200 + i * 1000, R + 240, 0]} s={[320, 48, 1860]} />
         ))}
-        <Callout id="roof-fairing" p={[14500, R + 340, 600]} />
+        {/* Rear inter-car bulkhead & gangway bellows at x = 800..1300 */}
+        <Box c={[1050, F + 2000, 0]} s={[480, 3800, 3460]} />
+        <Box c={[620, F + 1900, 0]} s={[380, 2850, 2100]} />
+        <Callout id="roof-fairing" p={[11200, R + 300, 600]} />
       </Part>
     </>
   );
@@ -174,18 +178,38 @@ function Shells() {
   return (
     <>
       <Part id="side-shell-left">
-        <ProfileShell k="shell-l" shape={halfShellShape(1)} x0={3000} x1={25500} />
-        <WindowBand x0={4200} x1={24200} y0={F + 1500} y1={F + 2350} z={1812} side={1} panes={10} />
-        <Stripe x0={3000} x1={25500} y={F + 1350} z={1846} h={110} />
-        <Stripe x0={3000} x1={25500} y={F + 1180} z={1846} h={70} />
-        <Callout id="side-shell-left" p={[10000, F + 2400, 1850]} />
+        <ProfileShell k="shell-l2" shape={halfShellShape(1)} x0={1200} x1={19800} />
+        <WindowBand x0={4400} x1={17100} y0={F + 1520} y1={F + 2420} z={1850} side={1} panes={8} />
+        <Stripe x0={1200} x1={19800} y={F + 1320} z={1868} h={96} />
+        <Stripe x0={1200} x1={19800} y={F + 1140} z={1868} h={58} />
+        <Callout id="side-shell-left" p={[10500, F + 2450, 1920]} />
       </Part>
       <Part id="side-shell-right">
-        <ProfileShell k="shell-r" shape={halfShellShape(-1)} x0={3000} x1={25500} />
-        <WindowBand x0={4200} x1={24200} y0={F + 1500} y1={F + 2350} z={-1812} side={-1} panes={10} />
-        <Stripe x0={3000} x1={25500} y={F + 1350} z={-1846} h={110} />
-        <Stripe x0={3000} x1={25500} y={F + 1180} z={-1846} h={70} />
-        <Callout id="side-shell-right" p={[10000, F + 2400, -1850]} />
+        <ProfileShell k="shell-r2" shape={halfShellShape(-1)} x0={1200} x1={19800} />
+        <WindowBand x0={4400} x1={17100} y0={F + 1520} y1={F + 2420} z={-1850} side={-1} panes={8} />
+        <Stripe x0={1200} x1={19800} y={F + 1320} z={-1868} h={96} />
+        <Stripe x0={1200} x1={19800} y={F + 1140} z={-1868} h={58} />
+        {/* Structural cabin floor deck, cockpit bulkhead, flight console & passenger seating revealed in Cutaway */}
+        <Box c={[11600, F + 95, -860]} s={[20400, 110, 1700]} />
+        <Box c={[19650, F + 1780, -860]} s={[160, 3240, 1680]} />
+        {/* Flight-deck operator console & pilot chair */}
+        <Box c={[21350, F + 780, -680]} s={[920, 620, 1180]} />
+        <Box c={[21550, F + 1180, -680]} s={[420, 220, 1080]} />
+        <Box c={[20550, F + 760, -720]} s={[520, 880, 560]} />
+        {/* Overhead luggage shelf along far cabin wall */}
+        <Box c={[10800, R - 860, -1340]} s={[13400, 90, 620]} />
+        {/* 8 rows of high-speed passenger seat pairs along far cabin flank */}
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((row) => {
+          const sx = 4900 + row * 1650;
+          return (
+            <group key={row}>
+              <Box c={[sx, F + 520, -1120]} s={[620, 140, 980]} />
+              <Box c={[sx - 230, F + 980, -1120]} s={[150, 860, 940]} />
+              <Box c={[sx, F + 310, -1120]} s={[260, 300, 740]} />
+            </group>
+          );
+        })}
+        <Callout id="side-shell-right" p={[10500, F + 2450, -1920]} />
       </Part>
     </>
   );

@@ -39,11 +39,11 @@ export interface Palette {
 export type Theme = 'paper' | 'blueprint' | 'obsidian';
 
 export const PALETTES: Record<Theme, Palette> = {
-  paper: { paper: '#f4f0e7', face: '#fbf9f4', shade: '#d9d5cc', ink: '#24221f', rust: '#a8432f', cut: '#e7c3b3' },
+  paper: { paper: '#f5f4f0', face: '#fcfbf8', shade: '#dcd9d0', ink: '#1c1e21', rust: '#0f766e', cut: '#e4ebe8' },
   // Cyanotype: pale lines on Prussian blue, amber for what is picked out.
   blueprint: { paper: '#173b63', face: '#1e4672', shade: '#163758', ink: '#e8f0f9', rust: '#ffc35c', cut: '#2f5f90' },
-  // CONDUIT obsidian drafter plate: crisp pale ink on slate with chartreuse selection accent.
-  obsidian: { paper: '#11141c', face: '#1c2230', shade: '#131722', ink: '#edf2fa', rust: '#c8ff2e', cut: '#233626' },
+  // CONDUIT graphite drafter board: distinct lit/shaded faces + bright machined cut faces + restrained phosphor accent.
+  obsidian: { paper: '#0e1014', face: '#262c35', shade: '#171b21', ink: '#e8edf2', rust: '#74c7b0', cut: '#cfd8df' },
 };
 
 /** The palette in use. setPalette changes it in place, so readers always see the current one. */

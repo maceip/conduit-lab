@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '@clickhouse/click-ui';
 import { loadText, NR, type ProofShowcaseItem, type Ratchet } from './data';
 import {
   ADMIT_LINES,
@@ -155,13 +154,14 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
 
         {workbenchTab === 'obligations' && mode === 'failed' && (
           <div className="ch-fix-action">
-            <Button
-              type="secondary"
+            <button
+              type="button"
+              className="ch-cta-secondary ch-btn-inline"
               data-testid="btn-fix-typo"
               onClick={() => switchMode('verified')}
             >
               Fix typo (r &lt; 15 → r &lt; 16) &amp; re-verify
-            </Button>
+            </button>
           </div>
         )}
 

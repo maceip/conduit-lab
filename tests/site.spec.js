@@ -75,7 +75,7 @@ test("scoreboard renders live 11-crate totals and enforces adjacent pill density
   expect(verusClipped, "verus revision pill must not clip").toBeLessThanOrEqual(2);
 });
 
-test("turboprop and maglev are the only two illustrations on the site and actuate cleanly", async ({
+test("turboprop and maglev are the only two illustrations on the site, have top headers, zero circular balloons, and actuate cleanly", async ({
   page,
 }) => {
   await page.goto("/");
@@ -86,18 +86,15 @@ test("turboprop and maglev are the only two illustrations on the site and actuat
 
   const turbopropPlate = page.getByTestId("plate-turboprop");
   const maglevPlate = page.getByTestId("plate-maglev");
-  await expect(turbopropPlate).toContainText("Turboprop Engine");
-  await expect(turbopropPlate).toContainText("GW-TP-00");
-  await expect(maglevPlate).toContainText("Shanghai SMT Maglev");
-  await expect(maglevPlate).toContainText("GW-MV-00");
+  await expect(turbopropPlate.locator(".ch-plate-header")).toContainText("Turboprop Engine");
+  await expect(maglevPlate.locator(".ch-plate-header")).toContainText("Shanghai SMT Maglev");
 
-  for (const [label, plate] of [
-    ["turboprop", turbopropPlate],
-    ["maglev", maglevPlate],
+  for (const [id, plate] of [
+    ["plate-turboprop", turbopropPlate],
+    ["plate-maglev", maglevPlate],
   ]) {
     const frame = plate.frameLocator("iframe.ch-inkwork-frame");
     await expect(frame.locator("html")).toHaveAttribute("data-theme", "obsidian");
-    await expect(frame.getByTestId("embed-toolbar")).toBeVisible();
     await expect(frame.locator("canvas")).toBeVisible();
 
     await expect
@@ -107,16 +104,18 @@ test("turboprop and maglev are the only two illustrations on the site and actuat
       .poll(() => frame.locator("canvas").evaluate((c) => c.clientHeight))
       .toBeGreaterThan(300);
 
-    // Interactive plate controls: Drawing, Section, Explode, back to 3D
-    await frame.getByTestId("embed-view-drawing").click();
-    await expect(frame.getByTestId("embed-view-drawing")).toHaveAttribute("aria-pressed", "true");
-    await frame.getByTestId("embed-view-3d").click();
-    await expect(frame.getByTestId("embed-view-3d")).toHaveAttribute("aria-pressed", "true");
+    // Top plate header controls actuate Cutaway, Exploded, Ortho, and Assembled cleanly
+    await plate.getByTestId(`${id}-mode-drawing`).click();
+    await expect(plate.getByTestId(`${id}-mode-drawing`)).toHaveAttribute("aria-pressed", "true");
+    // Ortho view must NEVER dump circular BOM balloons inside embedded plates
+    await expect(frame.locator(".balloon")).toHaveCount(0);
 
-    await frame.getByTestId("embed-toggle-section").click();
-    await expect(frame.getByTestId("embed-toggle-section")).toHaveAttribute("aria-pressed", "true");
-    await frame.getByTestId("embed-toggle-explode").click();
-    await expect(frame.getByTestId("embed-toggle-explode")).toHaveAttribute("aria-pressed", "true");
+    await plate.getByTestId(`${id}-mode-exploded`).click();
+    await expect(plate.getByTestId(`${id}-mode-exploded`)).toHaveAttribute("aria-pressed", "true");
+    await plate.getByTestId(`${id}-mode-section`).click();
+    await expect(plate.getByTestId(`${id}-mode-section`)).toHaveAttribute("aria-pressed", "true");
+    await plate.getByTestId(`${id}-mode-assembled`).click();
+    await expect(plate.getByTestId(`${id}-mode-assembled`)).toHaveAttribute("aria-pressed", "true");
   }
 
   // Verify standalone /inkwork/ studio exposes strictly turboprop and maglev as top-level machines
@@ -189,14 +188,14 @@ test("section 1 (#proofs): 4-state Verus workbench, fix-typo action, and live 11
   await expect(page.getByTestId("live-proof-source")).toContainText("CompCert");
 });
 
-test("section 2 (#arch): trust-boundary diagram fits cleanly without overflow", async ({ page }) => {
+test("section 2 (#arch): trust-boundary specification fits cleanly without overflow", async ({ page }) => {
   await page.goto("/");
   const diagram = page.getByTestId("shim-diagram");
   await expect(diagram).toBeVisible();
-  await expect(diagram).toContainText("VERIFIED SECURITY KERNEL");
+  await expect(diagram).toContainText("Verified security kernel");
   await expect(diagram).toContainText("Typed Vest IPC");
   const overflow = await diagram.evaluate((el) => el.scrollWidth - el.clientWidth);
-  expect(overflow, "architecture diagram must not overflow horizontally").toBeLessThanOrEqual(2);
+  expect(overflow, "architecture specification must not overflow horizontally").toBeLessThanOrEqual(2);
 });
 
 test("section 3 (#ratchet): 11-crate ledger, scope boundary, and collapsible engineering drawers", async ({

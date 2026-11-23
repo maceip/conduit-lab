@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { ProofDagEdge, ProofDagNode } from './content/vurl';
 
 export type Tone = 'proved' | 'warn' | 'fail' | 'neutral';
+export type PlatePreset = 'assembled' | 'section' | 'exploded' | 'drawing';
 
 export const StatTile: React.FC<{
   value: string;
@@ -25,6 +26,74 @@ export const Field: React.FC<{ label: string; children: React.ReactNode }> = ({ 
     <dd>{children}</dd>
   </div>
 );
+
+export const PlateFrame: React.FC<{
+  machine: 'turboprop' | 'maglev';
+  title: string;
+  subtitle: string;
+  theme: 'dark' | 'light';
+  defaultPreset?: PlatePreset;
+  testId: string;
+}> = ({ machine, title, subtitle, theme, defaultPreset = 'assembled', testId }) => {
+  const [preset, setPreset] = useState<PlatePreset>(defaultPreset);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const initialThemeRef = useRef<'dark' | 'light'>(theme);
+  const initialPresetRef = useRef<PlatePreset>(defaultPreset);
+
+  useEffect(() => {
+    iframeRef.current?.contentWindow?.postMessage({ type: 'conduit-theme', theme }, '*');
+  }, [theme]);
+
+  const selectPreset = (next: PlatePreset) => {
+    setPreset(next);
+    iframeRef.current?.contentWindow?.postMessage({ type: 'conduit-plate-state', preset: next }, '*');
+  };
+
+  const modes: Array<{ id: PlatePreset; label: string }> = [
+    { id: 'assembled', label: 'Assembled' },
+    { id: 'section', label: 'Cutaway' },
+    { id: 'exploded', label: 'Exploded' },
+    { id: 'drawing', label: 'Ortho' },
+  ];
+
+  return (
+    <figure className="ch-plate-frame" data-testid={testId}>
+      <header className="ch-plate-header">
+        <div className="ch-plate-heading">
+          <strong className="ch-plate-title">{title}</strong>
+          <span className="ch-plate-sub">{subtitle}</span>
+        </div>
+
+        <div className="ch-plate-modes" role="group" aria-label={`${title} view modes`}>
+          {modes.map((m) => (
+            <button
+              key={m.id}
+              type="button"
+              className="ch-plate-mode-btn"
+              data-active={preset === m.id}
+              data-testid={`${testId}-mode-${m.id}`}
+              aria-pressed={preset === m.id}
+              onClick={() => selectPreset(m.id)}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+      </header>
+
+      <iframe
+        ref={iframeRef}
+        className="ch-inkwork-frame"
+        src={`inkwork/index.html?embed=1&theme=${initialThemeRef.current}&preset=${initialPresetRef.current}#${machine}`}
+        title={`${title} — ${subtitle}`}
+        onLoad={(ev) => {
+          ev.currentTarget.contentWindow?.postMessage({ type: 'conduit-theme', theme }, '*');
+          ev.currentTarget.contentWindow?.postMessage({ type: 'conduit-plate-state', preset }, '*');
+        }}
+      />
+    </figure>
+  );
+};
 
 export const ScaleCompare: React.FC<{
   items: Array<{
@@ -60,27 +129,26 @@ export const ScaleCompare: React.FC<{
 };
 
 export const ArchitectureDiagram: React.FC = () => (
-  <div className="ch-trust-tiers" data-testid="shim-diagram" aria-label="Verified kernel and sandboxed renderer boundaries">
-    <div className="ch-tier-item" data-trust="untrusted">
-      <div className="ch-node-title">1 · Network Ingress</div>
-      <div className="ch-node-sub">Untrusted rustls sockets → Verdict X.509 path validation (Verus)</div>
+  <dl className="ch-arch-ledger" data-testid="shim-diagram" aria-label="Verified kernel and sandboxed renderer boundaries">
+    <div className="ch-arch-row">
+      <dt>Network ingress</dt>
+      <dd>Untrusted <code>rustls</code> sockets feed Verdict X.509 certificate validation in Verus.</dd>
     </div>
-
-    <div className="ch-tier-item" data-trust="verified">
-      <div className="ch-kernel-head">2 · VERIFIED SECURITY KERNEL (Verus)</div>
-      <div className="ch-node-sub">
-        <code>vurl</code> boundary parsers · SOP/CSP/CORS origin policy · capability handle table
-      </div>
+    <div className="ch-arch-row">
+      <dt>Verified security kernel</dt>
+      <dd>
+        <code>vurl</code> boundary parsers, SOP/CSP/CORS origin policy, and capability handle table
+        (Verus).
+      </dd>
     </div>
-
-    <div className="ch-tier-item" data-trust="ipc">
-      <div className="ch-node-title">3 · Typed Vest IPC → Disposable Per-Site Renderers</div>
-      <div className="ch-node-sub">
-        Proved <code>vjs</code> (J0–J7), <code>vjs_webidl</code> &amp; <code>vwasm</code>; isolated{' '}
-        <code>html5ever</code>, <code>Stylo</code> &amp; GPU per origin
-      </div>
+    <div className="ch-arch-row">
+      <dt>Typed Vest IPC</dt>
+      <dd>
+        Capability handles cross into disposable per-site renderers running proved <code>vjs</code>{' '}
+        (J0–J7), <code>vjs_webidl</code>, and <code>vwasm</code> alongside isolated HTML/CSS/GPU.
+      </dd>
     </div>
-  </div>
+  </dl>
 );
 
 export const ProofDag: React.FC<{
@@ -187,7 +255,7 @@ export const ProofDag: React.FC<{
                   }
                 }}
               >
-                <rect width={nodeW} height={nodeH} rx={4} className="ch-dag-rect" />
+                <rect width={nodeW} height={nodeH} rx={3} className="ch-dag-rect" />
                 <circle cx={14} cy={nodeH / 2} r={3.5} className="ch-dag-dot" />
                 <text x={26} y={19} className="ch-dag-title">
                   {n.label}

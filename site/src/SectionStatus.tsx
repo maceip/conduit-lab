@@ -44,8 +44,8 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
         </div>
 
         <div className="ch-artifact-col">
-          <div className="ch-honesty-card" data-testid="honesty-card">
-            <div className="ch-honesty-header">Where verification stops today</div>
+          <div className="ch-scope-note" data-testid="honesty-card">
+            <h3 className="ch-subhead">Scope &amp; unbuilt boundary</h3>
             <p className="ch-prose-text">
               <code>vurl</code>, the J0–J7 JavaScript engine (<code>vjs_spec</code>–
               <code>vjs_vm</code>), <code>vjs_webidl</code>, and <code>vwasm</code> verify today

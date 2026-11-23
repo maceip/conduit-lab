@@ -316,13 +316,13 @@ export const STEPS: StepDef[] = [
 ];
 
 export const CAMERA: CameraDef = {
-  target: [13500, 5200, 0],
-  offset: [48000, 18000, 56000],
-  orthoDistance: 190000,
-  exploded: { target: [13000, 4200, 0], scale: 1.7 },
+  target: [13800, 4450, 0],
+  offset: [31000, 10800, 34500],
+  orthoDistance: 175000,
+  exploded: { target: [13200, 4200, 0], scale: 1.58 },
   foci: {
     bogie: { target: [MG.bogieFX, 2800, 0], scale: 0.32 },
-    nose: { target: [25000, 6000, 0], scale: 0.5 },
+    nose: { target: [24200, 5200, 0], scale: 0.46 },
   },
 };
 

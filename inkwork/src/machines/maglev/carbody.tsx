@@ -2,8 +2,8 @@ import { Part } from '../../scene/Part';
 import { Callout } from '../../scene/Overlay';
 import type { CameraDef, MachineDef, PartDef, StepDef, Vec3 } from '../types';
 import { Box, level, poly } from '../kit';
-import { ProfileShell, Stripe, WindowBand } from './kit';
-import { ANNOTATIONS, MG } from './data';
+import { AeroNose, FlushWindshield, ProfileShell, Stripe, WindowBand } from './kit';
+import { MG } from './data';
 
 const F = MG.floorY;
 const R = MG.roofY;
@@ -38,31 +38,31 @@ export function CarbodyGroup() {
   return (
     <group>
       <Part id="nose-upper">
-        <ProfileShell k="a-noseu" shape={() => poly([[F + 900, -900], [F + 900, 900], [F + 1600, 1400], [F + 2600, 1200], [F + 3100, 400], [F + 3100, -400], [F + 2600, -1200], [F + 1600, -1400]])()} x0={24000} x1={26900} />
-        <Callout id="nose-upper" p={[25600, F + 2200, 700]} />
+        <AeroNose x0={19800} x1={27000} floorY={F} roofY={R} halfW={MG.carWidth / 2} />
+        <Callout id="nose-upper" p={[25200, F + 1400, 700]} />
       </Part>
       <Part id="nose-lower">
-        <ProfileShell k="a-nosel" shape={() => poly([[F - 100, -1200], [F + 900, -900], [F + 900, 900], [F - 100, 1200]])()} x0={24000} x1={26900} />
-        <Callout id="nose-lower" p={[25600, F + 200, -700]} />
+        <ProfileShell k="a-nosel" shape={() => poly([[F - 380, -1450], [F + 380, -1450], [F + 380, 1450], [F - 380, 1450]])()} x0={19800} x1={25200} />
+        <Callout id="nose-lower" p={[23000, F - 200, -700]} />
       </Part>
       <Part id="windshield-panel">
-        <Box c={[25350, F + 2450, 0]} s={[1500, 900, 1750]} r={[0, 0, -0.32]} />
-        <Callout id="windshield-panel" p={[25350, F + 2950, 700]} />
+        <FlushWindshield x0={19800} x1={27000} floorY={F} roofY={R} halfW={MG.carWidth / 2} />
+        <Callout id="windshield-panel" p={[23400, F + 2650, 500]} />
       </Part>
       <Part id="window-band">
-        <WindowBand x0={4200} x1={24200} y0={F + 1500} y1={F + 2350} z={1812} side={1} panes={10} />
-        <WindowBand x0={4200} x1={24200} y0={F + 1500} y1={F + 2350} z={-1812} side={-1} panes={10} />
-        <Callout id="window-band" p={[12000, F + 2000, 1850]} />
+        <WindowBand x0={4400} x1={17100} y0={F + 1520} y1={F + 2420} z={1850} side={1} panes={8} />
+        <WindowBand x0={4400} x1={17100} y0={F + 1520} y1={F + 2420} z={-1850} side={-1} panes={8} />
+        <Callout id="window-band" p={[11000, F + 2000, 1910]} />
       </Part>
       <Part id="livery-blue">
-        <Stripe x0={3000} x1={25500} y={F + 1350} z={1846} h={110} />
-        <Stripe x0={3000} x1={25500} y={F + 1350} z={-1846} h={110} />
-        <Callout id="livery-blue" p={[8000, F + 1350, 1880]} />
+        <Stripe x0={1200} x1={19800} y={F + 1320} z={1868} h={96} />
+        <Stripe x0={1200} x1={19800} y={F + 1320} z={-1868} h={96} />
+        <Callout id="livery-blue" p={[8000, F + 1320, 1900]} />
       </Part>
       <Part id="livery-orange">
-        <Stripe x0={3000} x1={25500} y={F + 1180} z={1846} h={70} />
-        <Stripe x0={3000} x1={25500} y={F + 1180} z={-1846} h={70} />
-        <Callout id="livery-orange" p={[8000, F + 1180, -1880]} />
+        <Stripe x0={1200} x1={19800} y={F + 1140} z={1868} h={58} />
+        <Stripe x0={1200} x1={19800} y={F + 1140} z={-1868} h={58} />
+        <Callout id="livery-orange" p={[8000, F + 1140, -1900]} />
       </Part>
       <Part id="door-leaf">
         <Box c={[MG.doorFX, F + 1150, 1808]} s={[1300, 2050, 130]} />

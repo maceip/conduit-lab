@@ -1,21 +1,21 @@
 :root {
-  --paper: #f4f0e7;
-  --paper-hi: #faf8f2;
-  --ink: #24221f;
-  --ink-2: #57524a;
-  --ink-3: #8c867b;
-  --rust: #a8432f;
-  --menu: #fbf8f1;
+  --paper: #f5f4f0;
+  --paper-hi: #fcfbf8;
+  --ink: #1c1e21;
+  --ink-2: #525860;
+  --ink-3: #7d8590;
+  --rust: #0f766e;
+  --menu: #fcfbf8;
   /* The same colours as channels, for translucent washes: rgb(var(--ink-rgb) / 0.2). */
-  --paper-rgb: 244 240 231;
-  --ink-rgb: 36 34 31;
-  --rust-rgb: 168 67 47;
-  --hi-rgb: 250 248 242;
-  --shadow-rgb: 60 45 30;
+  --paper-rgb: 245 244 240;
+  --ink-rgb: 28 30 33;
+  --rust-rgb: 15 118 110;
+  --hi-rgb: 252 251 248;
+  --shadow-rgb: 28 30 33;
   --glow-rgb: 255 255 255;
-  --veil-rgb: 236 230 216;
-  --hair: rgb(var(--ink-rgb) / 0.16);
-  --hair-strong: rgb(var(--ink-rgb) / 0.42);
+  --veil-rgb: 236 234 228;
+  --hair: rgb(var(--ink-rgb) / 0.14);
+  --hair-strong: rgb(var(--ink-rgb) / 0.34);
   --serif-zh: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", serif;
   --serif-en: "Cormorant Garamond", "EB Garamond", Garamond, Georgia, serif;
 }
@@ -696,33 +696,29 @@ button:focus-visible, input:focus-visible { outline: 1px solid var(--rust); outl
   opacity: 0.95;
 }
 
-/* ── CONDUIT Obsidian Drafter Theme ────────────────── */
+/* ── CONDUIT Graphite Drafter Theme ────────────────── */
 :root[data-theme="obsidian"] {
   color-scheme: dark;
-  --paper: #11141c;
-  --paper-hi: #191d27;
-  --ink: #edf2fa;
-  --ink-2: #bcc6d8;
-  --ink-3: #8390a6;
-  --rust: #c8ff2e;
-  --menu: #191d27;
-  --paper-rgb: 17 20 28;
-  --ink-rgb: 237 242 250;
-  --rust-rgb: 200 255 46;
-  --hi-rgb: 25 29 39;
+  --paper: #0e1014;
+  --paper-hi: #161a20;
+  --ink: #e8edf2;
+  --ink-2: #a8b2bf;
+  --ink-3: #6e7885;
+  --rust: #74c7b0;
+  --menu: #161a20;
+  --paper-rgb: 14 16 20;
+  --ink-rgb: 232 237 242;
+  --rust-rgb: 116 199 176;
+  --hi-rgb: 22 26 32;
   --shadow-rgb: 0 0 0;
-  --glow-rgb: 38 48 68;
+  --glow-rgb: 34 42 52;
   --veil-rgb: 9 12 18;
-  --hair: rgb(var(--ink-rgb) / 0.16);
-  --hair-strong: rgb(var(--ink-rgb) / 0.36);
+  --hair: rgb(var(--ink-rgb) / 0.14);
+  --hair-strong: rgb(var(--ink-rgb) / 0.32);
 }
 
 :root[data-theme="obsidian"] .studio {
-  background:
-    radial-gradient(ellipse at 50% 48%, rgb(var(--glow-rgb) / 0.42), transparent 72%),
-    linear-gradient(rgb(var(--ink-rgb) / 0.045) 1px, transparent 1px) 0 0 / 28px 28px,
-    linear-gradient(90deg, rgb(var(--ink-rgb) / 0.045) 1px, transparent 1px) 0 0 / 28px 28px,
-    var(--paper);
+  background: var(--paper);
 }
 
 :root[data-theme="obsidian"] .card-thumb {
@@ -732,7 +728,9 @@ button:focus-visible, input:focus-visible { outline: 1px solid var(--rust); outl
 }
 
 /* ── Embedded CONDUIT Plate Mode (?embed=1) ────────── */
-.studio.is-embed {
+.studio.is-embed,
+:root[data-theme="obsidian"] .studio.is-embed,
+:root[data-theme="blueprint"] .studio.is-embed {
   position: relative;
   width: 100%;
   height: 100%;
@@ -740,7 +738,15 @@ button:focus-visible, input:focus-visible { outline: 1px solid var(--rust); outl
   padding: 0;
   overflow: hidden;
   display: block;
+  background: var(--paper);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.studio.is-embed .sheet-label {
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
 }
 
 .studio.is-embed::before,
