@@ -12,6 +12,14 @@ Scope: the illustration package (icons and plates) and the board they are drawn 
 tier-1 statistics components in `atelier/src/viz/stats/` follow the same palette,
 stroke and motion grammar but are not drawings and are not covered here.
 
+**Class hooks and the styling home.** The tier-1 and tier-2 components ship `ch*`
+class hooks (`chCountFigure`, `chStatTile`, `chOdometerReels`, `chRatchetCounter`,
+`chSplitBar`, `chRadialGauge`, `chDeltaChip`). Their geometry — the reel window, the
+stat-tile wrapping — lives in the component itself, because a component must read the
+same wherever it is mounted. What remains in `atelier/src/gallery/gallery.css` is
+theming and layout for the gallery specifically. A new tier-1 component should carry
+its own geometry inline and add only its host-agnostic hooks here.
+
 ---
 
 ## 1. The palette
@@ -31,7 +39,7 @@ in a component, not in a test, not in a stylesheet.
 | `BOARD.edgeHi` | `#b2b8be` | Neutral-tone edge highlight |
 | `BOARD.ink` | `#8a9096` | Labels, captions, part names, hatch ink |
 | `BOARD.inkHi` | `#e8ecee` | Primary text |
-| `BOARD.live` | `#f4f6f7` | Leader terminal dot, focus outline |
+| `BOARD.live` | `#f4f6f7` | Leader terminal dot |
 | `BOARD.accent` | `#74c7b0` | **Reserved — live-verified status only** |
 | `BOARD.warn` | `#d9a441` | **Reserved — failure path only** |
 | `BOARD.fail` | `#d4645c` | **Reserved — failure path only** |
@@ -308,8 +316,9 @@ A plate is the same, with `partsList: true` and a `caption`
 2. Assign each part a palette using the heuristic above, and write one line of prose
    naming which parts are `hi` and which are `dark`.
 3. Author `explode` vectors parallel to the assembly `axis`, in assembly order.
-4. Mark at least one part `sectioned: true` so the plate carries the hatching cue, and
-   give each sectioned part a distinct index so the hatch parity alternates.
+4. Mark at least one part `sectioned: true` so the plate carries the hatching cue. The
+   engine numbers the sectioned parts itself, in assembly order, so the hatch parity
+   alternates between neighbours without any field on the part.
 5. Number the balloons in assembly order and set `label` on every part.
 6. Add `palette` to every part — an unassigned part silently defaults to `body`, which
    is exactly the failure mode the tests exist to catch.

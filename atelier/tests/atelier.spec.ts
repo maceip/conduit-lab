@@ -19,21 +19,50 @@ const ICON_SLUGS = [
   'ratchet',
 ] as const;
 
-test('the atelier app boots with no console errors', async ({ page }) => {
-  const errors: string[] = [];
+/**
+ * Collects console errors AND warnings.
+ *
+ * React's key warnings and hydration mismatches surface as `console.warn`, not
+ * `console.error`, so a handler that watches only for errors would pass while
+ * the app was quietly misbehaving. Both are collected here, and the assertions
+ * below require the array to be empty.
+ */
+function collectConsoleProblems(page: import('@playwright/test').Page): string[] {
+  const problems: string[] = [];
   page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
+    if (message.type() === 'error' || message.type() === 'warning') {
+      problems.push(`${message.type()}: ${message.text()}`);
+    }
   });
   page.on('pageerror', (error) => {
-    errors.push(error.message);
+    problems.push(`pageerror: ${error.message}`);
   });
+  return problems;
+}
+
+/**
+ * Messages that come from the environment rather than the application.
+ *
+ * The headless browser rasterises WebGL in software, and the driver reports
+ * its own performance notes ("GPU stall due to ReadPixels"). Vite's dev-server
+ * notices and the React DevTools banner are likewise informational. None of
+ * them say anything about this code, and none of them should fail a build.
+ */
+const ENVIRONMENTAL = /GL Driver Message|GPU stall|\[vite\]|React DevTools/i;
+
+function unexpectedProblems(problems: string[]): string[] {
+  return problems.filter((problem) => !ENVIRONMENTAL.test(problem));
+}
+
+test('the atelier app boots with no console errors', async ({ page }) => {
+  const problems = collectConsoleProblems(page);
 
   await page.goto('/');
   await expect(page.getByTestId('atelier-root')).toBeVisible();
   await expect(page.getByTestId('gallery-root')).toBeVisible();
   await page.waitForTimeout(500);
 
-  expect(errors).toEqual([]);
+  expect(unexpectedProblems(problems)).toEqual([]);
 });
 
 test('the gallery nav renders every section', async ({ page }) => {
@@ -96,13 +125,7 @@ test('the stats sheet shows real values', async ({ page }) => {
 });
 
 test('the scenes mount', async ({ page }) => {
-  const errors: string[] = [];
-  page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
-  });
-  page.on('pageerror', (error) => {
-    errors.push(error.message);
-  });
+  const problems = collectConsoleProblems(page);
 
   await page.goto('/');
   await page.getByRole('tab', { name: /scenes/i }).click();
@@ -117,5 +140,19 @@ test('the scenes mount', async ({ page }) => {
 
   // The WebGL scene starts without logging an error.
   await expect(page.getByTestId('gc-heap-status').first()).toContainText('BARRIER');
-  expect(errors).toEqual([]);
+  expect(unexpectedProblems(problems)).toEqual([]);
+});
+
+test('the gallery stays clean across every tab', async ({ page }) => {
+  const problems = collectConsoleProblems(page);
+
+  await page.goto('/');
+  for (const name of [/icons/i, /plates/i, /stats/i, /scenes/i]) {
+    await page.getByRole('tab', { name }).click();
+    await page.waitForTimeout(350);
+  }
+
+  // Environmental noise is filtered out; everything else — errors, warnings,
+  // hydration mismatches, key warnings — must be silent.
+  expect(unexpectedProblems(problems)).toEqual([]);
 });

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { BOARD } from '../../contract/tokens';
 import { PRATT_PARSER_STEPS, PrattParserScene } from './PrattParserScene';
 import { TRICOLOR_GC_STEPS, TriColorGcScene } from './TriColorGcScene';
 
@@ -137,7 +138,7 @@ describe('TriColorGcScene', () => {
     expect(markup).toContain('closure');
     expect(markup).toContain('orphan');
     // The tricolor step draws the grey-to-black pointer in the fail tone.
-    expect(markup).toContain('#d4645c');
+    expect(markup).toContain(BOARD.fail);
   });
 });
 
