@@ -50,17 +50,13 @@ const LABEL_LAYER_STYLE: CSSProperties = {
 };
 
 /**
- * The canvas fills the card it is given.
- *
- * `three` writes an inline width and height on the canvas at construction, so
- * the board's own size has to win. The scene measures the canvas before it
- * sizes the drawing buffer, so a canvas that fills the card gets a matching
- * buffer and stays crisp.
+ * A `<figure>` carries the browser default `margin: 1em 40px`, which would
+ * hold the canvas 40px in from each side of the card. The rest of the package
+ * zeroes it — `RadialGauge` does the same on its own figure — so the heap
+ * fills the card's content box.
  */
-const CANVAS_STYLE: CSSProperties = {
-  display: 'block',
-  width: '100% !important',
-  height: 'auto !important',
+const FIGURE_STYLE: CSSProperties = {
+  margin: 0,
 };
 
 /**
@@ -127,6 +123,7 @@ export function GcHeapScene(props: GcHeapSceneProps): ReactElement {
   return (
     <figure
       className={className === undefined ? 'stage-gc-heap' : `stage-gc-heap ${className}`}
+      style={FIGURE_STYLE}
       data-testid="gc-heap-scene"
       data-violation={hasViolation ? 'true' : 'false'}
       data-violation-from={activeViolation?.from}
@@ -135,7 +132,16 @@ export function GcHeapScene(props: GcHeapSceneProps): ReactElement {
       aria-label={title}
     >
       <div className="stage-gc-heap-viewport" style={VIEWPORT_STYLE}>
-        <canvas ref={canvasRef} className="stage-gc-heap-canvas" style={CANVAS_STYLE} aria-hidden="true" />
+        {/*
+          The scene sizes the canvas itself: it sets the display and the box
+          on the element before the first measurement, then sizes the drawing
+          buffer from the measured size, so a canvas that fills the card gets
+          a matching buffer and stays crisp. There is deliberately no `style`
+          prop here — a second copy of those properties could only fight the
+          scene's own assignment, and an `!important` inside a React inline
+          style is dropped by the CSSOM anyway.
+        */}
+        <canvas ref={canvasRef} className="stage-gc-heap-canvas" aria-hidden="true" />
         <div
           ref={labelLayerRef}
           className="stage-gc-heap-labels"

@@ -51,6 +51,24 @@ describe('GcHeapScene', () => {
     expect(styleOf(html, 'stage-gc-heap-viewport').position).toBe('relative');
   });
 
+  it('zeroes the figure margin, so the canvas fills the card content box', () => {
+    const html = renderToStaticMarkup(
+      <GcHeapScene objects={[{ id: 'a', position: [0, 0, 0], color: 'white' }]} edges={[]} />,
+    );
+    // The browser default for <figure> is `margin: 1em 40px`.
+    expect(['0', '0px']).toContain(styleOf(html, 'stage-gc-heap').margin);
+  });
+
+  it('ships no !important in any inline style', () => {
+    // React assigns camelCase styles with `style[prop] = value`, and a value
+    // carrying `!important` is invalid for that property, so the assignment
+    // is silently dropped by the CSSOM.
+    const html = renderToStaticMarkup(
+      <GcHeapScene objects={[{ id: 'a', position: [0, 0, 0], color: 'white' }]} edges={[]} />,
+    );
+    expect(html).not.toContain('!important');
+  });
+
   it('marks a tri-color violation', () => {
     const html = renderToStaticMarkup(
       <GcHeapScene
