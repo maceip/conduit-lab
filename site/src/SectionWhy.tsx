@@ -25,10 +25,9 @@ const SectionWhy: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
         </h2>
 
         <p className="ch-prose-text">
-          seL4 took roughly twenty person-years to verify 8,700 lines of C; Chromium and Linux sit
-          near 36 million lines and talk to unformalized GPU silicon. Shipped formal-methods systems
-          succeed by proving high-leverage boundaries—microkernels, compilers, crypto, protocol
-          parsers—and sandboxing unverified code outside the trusted base.
+          seL4 took roughly twenty person-years to prove 8,700 lines of C; Chromium and Linux sit
+          near 36 million lines over unformalized GPU silicon. Shipped systems prove the narrow
+          security boundary and sandbox everything outside it.
         </p>
 
         <ScaleCompare items={scaleItems} />

@@ -34,27 +34,24 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
       {/* Header + Honest Scope Boundary */}
       <div className="ch-spec-row ch-spec-row-flush">
         <div className="ch-prose-col">
-          <h2 className="ch-section-title">Live verification ledger</h2>
+          <h2 className="ch-section-title">What verifies today</h2>
           <p className="ch-prose-text">
-            Every crate below enforces <code>#![forbid(unsafe_code)]</code> and verifies under Verus{' '}
-            <code>--no-cheating</code>, which rejects <code>admit()</code>, <code>assume()</code>,
-            and unproved axioms. CI re-runs <code>browser/scripts/ratchet.py</code> on every change
-            and deploys only when all proofs and crate tests pass.
+            Every row below compiles under <code>#![forbid(unsafe_code)]</code> and passes Verus{' '}
+            <code>--no-cheating</code>—rejecting <code>admit()</code>, <code>assume()</code>, and
+            unproved axioms—on every CI run before deploy.
           </p>
         </div>
 
         <div className="ch-artifact-col">
           <div className="ch-scope-note" data-testid="honesty-card">
-            <h3 className="ch-subhead">Scope &amp; unbuilt boundary</h3>
+            <h3 className="ch-subhead">Unbuilt boundary</h3>
             <p className="ch-prose-text">
-              <code>vurl</code>, the J0–J7 JavaScript engine (<code>vjs_spec</code>–
-              <code>vjs_vm</code>), <code>vjs_webidl</code>, and <code>vwasm</code> verify today
+              URL parsing, ECMAScript, Web IDL capabilities, and WebAssembly 1.0 verify today
               {totals
-                ? ` (${totals.crates} crates, ${totals.verified.toLocaleString('en-US')} queries, ${totalTrusted} trusted items)`
+                ? ` (${totals.verified.toLocaleString('en-US')} queries, ${totalTrusted} trusted items)`
                 : ''}
-              . Browser kernel non-interference theorems, <code>rspec!</code> origin and cookie
-              policies, Nanvix sandboxing, HTML/CSS/XML integration, and browser UI remain in
-              progress.
+              . Browser kernel non-interference theorems, <code>rspec!</code> origin/cookie
+              policies, Nanvix sandboxing, and HTML/CSS layout remain in progress.
             </p>
           </div>
         </div>

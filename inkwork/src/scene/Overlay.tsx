@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { useMachine } from '../machines';
 import { findLandmark } from '../machines/landmarks';
 import type { GuideDef, Vec3 } from '../machines/types';
-import { isEmbed, motion, partVisible, useStudio, type ViewMode } from '../state';
+import { isAmbient, isEmbed, motion, partVisible, useStudio, type ViewMode } from '../state';
 import { OVERLAY_LAYER } from './InkRenderer';
 import { tint } from './ink';
 import { SECTION_PLANE, usePartDepth } from './Part';
@@ -28,8 +28,8 @@ export function Callout({ id, p }: { id: string; p: Vec3 }) {
   const set = useStudio((s) => s.set);
   const nested = usePartDepth() > 1;
   const shown = useStudio((s) => !s.hidden.includes(id) && (!s.solo || s.solo === id));
-  const visibleByDefault = isEmbed ? Boolean(landmark) : labels;
-  if (!part || nested || !shown || drawingMode || (!visibleByDefault && !selected && !hovered)) return null;
+  const visibleByDefault = isAmbient ? false : isEmbed ? Boolean(landmark) : labels;
+  if (isAmbient || !part || nested || !shown || drawingMode || (!visibleByDefault && !selected && !hovered)) return null;
 
   const down = landmark?.rail === 'bottom';
   const leftSide = landmark?.slot === 0;
@@ -317,9 +317,9 @@ export function CameraRig({ shift }: { shift: number }) {
     // Drawing mode renders its own orthographic cameras; the perspective one waits.
     if (view === 'drawing') return;
     const preset = presets[view];
-    // Fit the machine to narrow (portrait) viewports.
-    const visibleWidth = Math.max(0.5, (size.width - shift * 2) / size.height);
-    const fit = Math.max(1, 0.95 / visibleWidth);
+    // Fit the machine to narrow (portrait) viewports; pull closer in ambient hero backdrop mode.
+    const visibleWidth = Math.max(0.5, (size.width - Math.abs(shift) * 1.4) / size.height);
+    const fit = isAmbient ? Math.max(0.90, 0.88 / visibleWidth) : Math.max(1, 0.95 / visibleWidth);
     const close = view === 'perspective' && focus ? foci?.[focus] : null;
     const toTarget = tw.to ? tw.to.target : v3(close ? close.target : target);
     const toPos = tw.to ? tw.to.pos : toTarget.clone().addScaledVector(preset.offset, fit * (close ? close.scale : 1));

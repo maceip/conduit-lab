@@ -81,73 +81,80 @@ test("scoreboard renders live 11-crate totals and enforces adjacent pill density
   expect(verusClipped, "verus revision pill must not clip").toBeLessThanOrEqual(2);
 });
 
-test("turboprop and maglev are the only two illustrations on the site, have top headers, zero circular balloons, and actuate cleanly", async ({
+test("turboprop runs silently as an unlabeled ambient hero backdrop behind liquid glass, while maglev is the interactive architectural plate", async ({
   page,
 }) => {
   await page.goto("/");
-  // Zero raster illustrations or stickers anywhere on the page
   await expect(page.locator("img")).toHaveCount(0);
-  // Strictly two mechanical drawing plates: Turboprop (hero) and Maglev (architecture)
-  await expect(page.locator(".ch-inkwork-frame")).toHaveCount(2);
 
-  const turbopropPlate = page.getByTestId("plate-turboprop");
+  // 1. Ambient hero backdrop: zero header, zero buttons, zero labels, behind frosted liquid-glass card
+  const heroBg = page.getByTestId("hero-turboprop-bg");
+  await expect(heroBg).toBeVisible();
+  await expect(heroBg.locator(".ch-plate-header")).toHaveCount(0);
+  await expect(heroBg.locator("button")).toHaveCount(0);
+
+  const bgFrame = heroBg.frameLocator("iframe.ch-hero-backdrop-frame");
+  await expect(bgFrame.locator("html")).toHaveAttribute("data-theme", "obsidian");
+  await expect(bgFrame.locator("html")).toHaveAttribute("data-ambient", "1");
+  await expect(bgFrame.locator("canvas")).toBeVisible();
+  await expect(bgFrame.locator(".callout")).toHaveCount(0);
+  await expect(bgFrame.locator("button")).toHaveCount(0);
+
+  const glassBackdrop = await page
+    .getByTestId("hero-glass")
+    .evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return cs.backdropFilter || cs.webkitBackdropFilter || "";
+    });
+  expect(glassBackdrop).toContain("blur(");
+
+  // 2. Single interactive mechanical plate on the page: Shanghai SMT Maglev (#arch)
+  await expect(page.locator(".ch-inkwork-frame")).toHaveCount(1);
   const maglevPlate = page.getByTestId("plate-maglev");
-  await expect(turbopropPlate.locator(".ch-plate-header")).toContainText("Turboprop Engine");
   await expect(maglevPlate.locator(".ch-plate-header")).toContainText("Shanghai SMT Maglev");
 
-  for (const [id, plate, samplePartId, expectedPartText] of [
-    ["plate-turboprop", turbopropPlate, "gearbox", "Reduction Gearbox Housing"],
-    ["plate-maglev", maglevPlate, "nose-cone", "Aerodynamic Nose Shell"],
-  ]) {
-    const frame = plate.frameLocator("iframe.ch-inkwork-frame");
-    await expect(frame.locator("html")).toHaveAttribute("data-theme", "obsidian");
-    await expect(frame.locator("canvas")).toBeVisible();
+  const frame = maglevPlate.frameLocator("iframe.ch-inkwork-frame");
+  await expect(frame.locator("html")).toHaveAttribute("data-theme", "obsidian");
+  await expect(frame.locator("canvas")).toBeVisible();
+  await expect.poll(() => frame.locator("canvas").evaluate((c) => c.clientWidth)).toBeGreaterThan(360);
+  await expect.poll(() => frame.locator("canvas").evaluate((c) => c.clientHeight)).toBeGreaterThan(420);
 
-    await expect
-      .poll(() => frame.locator("canvas").evaluate((c) => c.clientWidth))
-      .toBeGreaterThan(360);
-    await expect
-      .poll(() => frame.locator("canvas").evaluate((c) => c.clientHeight))
-      .toBeGreaterThan(420);
+  // Interactive 3x2 subsystem legend & engineering specbar actuate live part selection
+  await expect(maglevPlate.locator(".ch-plate-legend-btn")).toHaveCount(6);
+  await expect(maglevPlate.getByTestId("plate-maglev-specbar")).toContainText("Scale");
+  await maglevPlate.getByTestId("plate-maglev-legend-nose-cone").click();
+  await expect(maglevPlate.getByTestId("plate-maglev-specbar")).toContainText("Aerodynamic Nose Shell");
+  await maglevPlate.getByTestId("plate-maglev-legend-nose-cone").click();
 
-    // Interactive 6-subsystem legend & engineering specbar are present and actuate live part selection
-    await expect(plate.locator(".ch-plate-legend-btn")).toHaveCount(6);
-    await expect(plate.getByTestId(`${id}-specbar`)).toContainText("Scale");
-    await plate.getByTestId(`${id}-legend-${samplePartId}`).click();
-    await expect(plate.getByTestId(`${id}-specbar`)).toContainText(expectedPartText);
-    await plate.getByTestId(`${id}-legend-${samplePartId}`).click();
+  // Top plate header controls actuate Ortho, Exploded, Cutaway, and Assembled cleanly
+  await maglevPlate.getByTestId("plate-maglev-mode-drawing").click();
+  await expect(maglevPlate.getByTestId("plate-maglev-mode-drawing")).toHaveAttribute("aria-pressed", "true");
+  await expect(frame.locator(".balloon")).toHaveCount(0);
+  await expect(frame.locator(".sheet-callout")).toHaveCount(6);
+  await expect(frame.getByTestId("ortho-title-block")).toBeVisible();
 
-    // Top plate header controls actuate Ortho, Exploded, Cutaway, and Assembled cleanly
-    await plate.getByTestId(`${id}-mode-drawing`).click();
-    await expect(plate.getByTestId(`${id}-mode-drawing`)).toHaveAttribute("aria-pressed", "true");
-    // Ortho view must NEVER dump 30+ circular BOM balloons, MUST render 6 slotted callouts + title block, and ZERO overlaps
-    await expect(frame.locator(".balloon")).toHaveCount(0);
-    await expect(frame.locator(".sheet-callout")).toHaveCount(6);
-    await expect(frame.getByTestId("ortho-title-block")).toBeVisible();
-
-    const calloutOverlap = await frame.locator(".sheet-callout rect").evaluateAll((rects) => {
-      const boxes = rects.map((r) => r.getBoundingClientRect());
-      for (let i = 0; i < boxes.length; i += 1) {
-        for (let j = i + 1; j < boxes.length; j += 1) {
-          const a = boxes[i];
-          const b = boxes[j];
-          const hit = !(a.right <= b.left + 1 || b.right <= a.left + 1 || a.bottom <= b.top + 1 || b.bottom <= a.top + 1);
-          if (hit) return { i, j, a, b };
-        }
+  const calloutOverlap = await frame.locator(".sheet-callout rect").evaluateAll((rects) => {
+    const boxes = rects.map((r) => r.getBoundingClientRect());
+    for (let i = 0; i < boxes.length; i += 1) {
+      for (let j = i + 1; j < boxes.length; j += 1) {
+        const a = boxes[i];
+        const b = boxes[j];
+        const hit = !(a.right <= b.left + 1 || b.right <= a.left + 1 || a.bottom <= b.top + 1 || b.bottom <= a.top + 1);
+        if (hit) return { i, j, a, b };
       }
-      return null;
-    });
-    expect(calloutOverlap, `${id} Ortho callouts must never overlap`).toBeNull();
+    }
+    return null;
+  });
+  expect(calloutOverlap, "Maglev Ortho callouts must never overlap").toBeNull();
 
-    await plate.getByTestId(`${id}-mode-exploded`).click();
-    await expect(plate.getByTestId(`${id}-mode-exploded`)).toHaveAttribute("aria-pressed", "true");
-    await plate.getByTestId(`${id}-mode-section`).click();
-    await expect(plate.getByTestId(`${id}-mode-section`)).toHaveAttribute("aria-pressed", "true");
-    await plate.getByTestId(`${id}-mode-assembled`).click();
-    await expect(plate.getByTestId(`${id}-mode-assembled`)).toHaveAttribute("aria-pressed", "true");
-  }
+  await maglevPlate.getByTestId("plate-maglev-mode-exploded").click();
+  await expect(maglevPlate.getByTestId("plate-maglev-mode-exploded")).toHaveAttribute("aria-pressed", "true");
+  await maglevPlate.getByTestId("plate-maglev-mode-section").click();
+  await expect(maglevPlate.getByTestId("plate-maglev-mode-section")).toHaveAttribute("aria-pressed", "true");
+  await maglevPlate.getByTestId("plate-maglev-mode-assembled").click();
+  await expect(maglevPlate.getByTestId("plate-maglev-mode-assembled")).toHaveAttribute("aria-pressed", "true");
 
-  // Verify standalone /inkwork/ studio exposes strictly turboprop and maglev as top-level machines
+  // Verify standalone /inkwork/ studio still exposes strictly turboprop and maglev as top-level machines
   await page.goto("/inkwork/index.html#turboprop");
   const topMachines = await page.evaluate(() =>
     window.gewu.assemblies().filter((a) => !a.parent).map((a) => a.id)
@@ -167,8 +174,8 @@ test("homepage omits 19-line source tutorial, links to workbench.html, and copy 
 
   const lede = page.getByTestId("lede");
   await expect(lede).toContainText("Prove they cannot exist");
-  await expect(lede).toContainText("13 of the last 20 Chrome zero-days");
-  await expect(lede).toContainText(`${totals.crates} crates`);
+  await expect(lede).toContainText("Verus and Z3");
+  await expect(lede).not.toContainText("crates");
   await expect(page.getByTestId("cta-workbench")).toHaveAttribute("href", "workbench.html");
 
   const body = await page.locator("body").innerText();
@@ -243,7 +250,7 @@ test("section 3 (#ratchet): 11-crate ledger, scope boundary, and collapsible eng
 
   // Disclosure card stays accurate and never truncates
   const card = page.getByTestId("honesty-card");
-  await expect(card).toContainText(`${totals.crates} crates`);
+  await expect(card).toContainText("WebAssembly 1.0");
   await expect(card).toContainText("non-interference theorems");
   const clipped = await card.evaluate((el) => el.scrollWidth - el.clientWidth);
   expect(clipped, "scope disclosure card must not truncate").toBeLessThanOrEqual(2);
@@ -349,15 +356,19 @@ test("section 5 (#coverage): 20-CVE appendix is collapsed at bottom by default a
 
 test("theme switch toggles dark/light mode cleanly, syncs Inkwork plates, and persists", async ({ page }) => {
   await page.goto("/");
-  const tpFrame = page.getByTestId("plate-turboprop").frameLocator("iframe.ch-inkwork-frame");
+  const bgFrame = page.getByTestId("hero-turboprop-bg").frameLocator("iframe.ch-hero-backdrop-frame");
+  const mvFrame = page.getByTestId("plate-maglev").frameLocator("iframe.ch-inkwork-frame");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await expect(tpFrame.locator("html")).toHaveAttribute("data-theme", "obsidian");
+  await expect(bgFrame.locator("html")).toHaveAttribute("data-theme", "obsidian");
+  await expect(mvFrame.locator("html")).toHaveAttribute("data-theme", "obsidian");
   await page.getByTestId("theme-switch").click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
-  await expect(tpFrame.locator("html")).toHaveAttribute("data-theme", "paper");
+  await expect(bgFrame.locator("html")).toHaveAttribute("data-theme", "paper");
+  await expect(mvFrame.locator("html")).toHaveAttribute("data-theme", "paper");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
-  await expect(tpFrame.locator("html")).toHaveAttribute("data-theme", "paper");
+  await expect(bgFrame.locator("html")).toHaveAttribute("data-theme", "paper");
+  await expect(mvFrame.locator("html")).toHaveAttribute("data-theme", "paper");
 });
 
 test("provenance footer and staged local assets resolve with HTTP 200", async ({ page, request }) => {

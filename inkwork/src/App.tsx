@@ -8,7 +8,7 @@ import { Tree } from './components/Tree';
 import { PartsLegend, PlateMeta, TitleColumn } from './components/Plate';
 import { currentMachine, hasMachine, lineage, machineById, useMachine } from './machines';
 import { CameraRig, Guides, InkRenderer, MotionDriver } from './scene';
-import { isEmbed, restoreAll, selectMachine, useStudio } from './state';
+import { isAmbient, isEmbed, restoreAll, selectMachine, useStudio } from './state';
 import './theme';
 import { bridge, exportPlate, recordTeardown } from './export';
 import { DrawingRig } from './drawing/DrawingRig';
@@ -155,10 +155,18 @@ function useParentPlateControl() {
   }, []);
 }
 
-/** Horizontal offset (px) of the projection centre, so the machine clears the text column in full studio mode. */
+/** Horizontal offset (px) of the projection centre: shifts ambient hero engine right so its aft half blurs under the glass card and its propeller/core emerge cleanly on the right. */
 function useStageShift() {
   const [shift, setShift] = useState(0);
   useEffect(() => {
+    if (isAmbient) {
+      document.documentElement.dataset.ambient = '1';
+      const measureAmbient = () =>
+        setShift(window.innerWidth >= 960 ? Math.round(window.innerWidth * 0.055) : 0);
+      measureAmbient();
+      window.addEventListener('resize', measureAmbient);
+      return () => window.removeEventListener('resize', measureAmbient);
+    }
     if (isEmbed) {
       setShift(0);
       return;
@@ -233,7 +241,7 @@ export default function App() {
     }
   };
   return (
-    <div className={`studio${drawingMode ? ' is-drawing' : ''}${isEmbed ? ' is-embed' : ''}`}>
+    <div className={`studio${drawingMode ? ' is-drawing' : ''}${isEmbed ? ' is-embed' : ''}${isAmbient ? ' is-ambient' : ''}`}>
       {!isEmbed && (
         <div className="paper-drawings" aria-hidden="true">
           {Backdrop && <Backdrop />}
@@ -254,7 +262,7 @@ export default function App() {
             <Model />
           </group>
           <Guides />
-          <OrbitControls makeDefault enabled={!drawingMode} enablePan={false} minDistance={3} maxDistance={160} maxPolarAngle={Math.PI * 0.49} enableDamping dampingFactor={0.08} />
+          <OrbitControls makeDefault enabled={!drawingMode && !isAmbient} enablePan={false} minDistance={3} maxDistance={160} maxPolarAngle={Math.PI * 0.49} enableDamping dampingFactor={0.08} />
           <CameraRig shift={shift} />
           <InkRenderer />
           <ExportBridge />
@@ -262,7 +270,7 @@ export default function App() {
         </Canvas>
         <DrawingSheet />
       </div>
-      {isEmbed ? (
+      {isAmbient ? null : isEmbed ? (
         <EmbedHud />
       ) : (
         <>

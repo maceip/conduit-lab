@@ -47,7 +47,7 @@ const SectionCoverage: React.FC = () => {
       <div className="ch-prose-col">
         <h2 className="ch-section-title">Twenty exploited Chrome zero-days</h2>
         <p className="ch-prose-text">
-          Of Google-confirmed in-the-wild Chrome zero-days through November 2026,{' '}
+          Across the last {CVES.length} exploited Chrome zero-days (CISA KEV),{' '}
           <strong>
             {tally.construction}/{CVES.length}
           </strong>{' '}
@@ -55,11 +55,11 @@ const SectionCoverage: React.FC = () => {
           <strong>
             {tally.containment}/{CVES.length}
           </strong>{' '}
-          hit Blink/Mojo IPC boundaries, and{' '}
+          hit IPC boundaries, and{' '}
           <strong>
             {tally.graphics}/{CVES.length}
           </strong>{' '}
-          sat in unverified GPU drivers isolated per site.
+          hit isolated per-site GPU drivers.
         </p>
       </div>
 

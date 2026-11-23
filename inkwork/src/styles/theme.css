@@ -743,6 +743,19 @@ button:focus-visible, input:focus-visible { outline: 1px solid var(--rust); outl
   font-family: var(--font-mono);
 }
 
+html[data-ambient="1"],
+html[data-ambient="1"] body,
+.studio.is-ambient,
+:root[data-theme="obsidian"] .studio.is-ambient,
+:root[data-theme="paper"] .studio.is-ambient {
+  background: transparent !important;
+  pointer-events: none;
+}
+
+.studio.is-ambient canvas {
+  pointer-events: none !important;
+}
+
 .studio.is-embed .sheet-label {
   font-family: var(--font-mono);
   font-size: 10px;

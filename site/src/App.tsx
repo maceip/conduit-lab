@@ -11,9 +11,8 @@ import {
   type Ratchet,
   type Stats,
 } from './data';
-import { CVES } from './content/cves';
 import { IconArrowRight, IconCopy, IconExternal } from './icons';
-import { ArchitectureDiagram, PlateFrame, StatTile } from './parts';
+import { AmbientMachineBackdrop, ArchitectureDiagram, PlateFrame, StatTile } from './parts';
 import SectionCoverage from './SectionCoverage';
 import SectionWhy from './SectionWhy';
 import SectionStatus from './SectionStatus';
@@ -63,7 +62,6 @@ export default function App() {
   const trusted = sumTrusted(totals?.trusted);
   const z3 = stats?.toolchains?.z3;
   const z3ver = z3 ? (z3.match(/version ([\d.]+)/) ?? [null, z3])[1] ?? z3 : null;
-  const v8Count = CVES.filter((c) => c.component.startsWith('V8')).length;
 
   const copyDigest = (id: string, value: string | null) => {
     if (!value) return;
@@ -118,20 +116,23 @@ export default function App() {
         </div>
       </header>
 
-      {/* Opening Hero — Thesis + Plate 1: Turboprop Engine */}
+      {/* Opening Hero — Ambient Cutaway Turboprop Backdrop + Liquid Glass Thesis Card */}
       <section className="ch-hero" data-testid="lede">
-        <div className="ch-hero-grid">
-          <div className="ch-hero-copy">
+        <AmbientMachineBackdrop
+          machine="turboprop"
+          theme={theme}
+          testId="hero-turboprop-bg"
+        />
+
+        <div className="ch-hero-inner">
+          <div className="ch-hero-glass" data-testid="hero-glass">
             <h1 className="ch-h1">
               Don’t test a browser engine for memory bugs. Prove they cannot exist.
             </h1>
             <p className="ch-hero-prose">
-              CONDUIT is a browser engine built with machine-checked Rust proofs in Verus and Z3.{' '}
-              {v8Count} of the last {CVES.length} Chrome zero-days exploited unproved V8 memory or
-              object-layout assumptions; here,{' '}
-              <strong>{totals ? `${totals.crates} crates` : NR}</strong>—spanning URL parsing, the
-              J0–J7 JavaScript engine, Web IDL capabilities, and WebAssembly 1.0—verify from
-              scratch with zero <code>unsafe</code> code.
+              CONDUIT proves URL parsing, JavaScript, Web IDL, and WebAssembly in Verus and
+              Z3—eliminating memory-corruption and type-confusion bug classes across every input,
+              with zero <code>unsafe</code> Rust.
             </p>
             <div className="ch-hero-actions">
               <a className="ch-cta-primary" href="workbench.html" data-testid="cta-workbench">
@@ -139,19 +140,10 @@ export default function App() {
                 <IconArrowRight size={13} />
               </a>
               <a className="ch-cta-secondary" href="#ratchet">
-                <span>Verified crate ledger</span>
+                <span>Verified ledger</span>
               </a>
             </div>
           </div>
-
-          <PlateFrame
-            machine="turboprop"
-            title="Turboprop Engine"
-            subtitle="V8 execution pipeline · 31 parts & 6 sub-assemblies"
-            theme={theme}
-            defaultPreset="section"
-            testId="plate-turboprop"
-          />
         </div>
       </section>
 
@@ -245,10 +237,9 @@ export default function App() {
               One proved kernel in front of disposable renderers
             </h2>
             <p className="ch-prose-text">
-              Like a maglev car riding a 10 mm non-contact gap over a phase-locked stator beam,
-              every web origin runs in an isolated renderer that never touches sockets, cross-site
-              cookies, or the address bar—all privileged calls cross typed, capability-checked IPC
-              into the Verus security kernel.
+              Each web origin runs in a disposable renderer with zero socket, cookie, or
+              cross-origin memory access. Privileged calls cross a narrow capability gap into the
+              proved Verus kernel.
             </p>
             <ArchitectureDiagram />
           </div>

@@ -74,6 +74,34 @@ interface ActivePartInfo {
   counterpart: string | null;
 }
 
+export const AmbientMachineBackdrop: React.FC<{
+  machine: 'turboprop' | 'maglev';
+  theme: 'dark' | 'light';
+  testId: string;
+}> = ({ machine, theme, testId }) => {
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const initialThemeRef = useRef<'dark' | 'light'>(theme);
+
+  useEffect(() => {
+    iframeRef.current?.contentWindow?.postMessage({ type: 'conduit-theme', theme }, '*');
+  }, [theme]);
+
+  return (
+    <div className="ch-hero-backdrop" aria-hidden="true" data-testid={testId}>
+      <iframe
+        ref={iframeRef}
+        className="ch-hero-backdrop-frame"
+        src={`inkwork/index.html?embed=1&ambient=1&preset=section&theme=${initialThemeRef.current}#${machine}`}
+        title=""
+        tabIndex={-1}
+        onLoad={(ev) => {
+          ev.currentTarget.contentWindow?.postMessage({ type: 'conduit-theme', theme }, '*');
+        }}
+      />
+    </div>
+  );
+};
+
 export const PlateFrame: React.FC<{
   machine: 'turboprop' | 'maglev';
   title: string;

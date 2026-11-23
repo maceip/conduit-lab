@@ -41,6 +41,9 @@ export interface StudioState {
 export const isEmbed =
   typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('embed') === '1';
 
+export const isAmbient =
+  typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('ambient') === '1';
+
 export const useStudio = create<StudioState>((set) => ({
   machineId: 'turboprop',
   explode: 0,
