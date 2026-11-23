@@ -364,34 +364,6 @@
   overflow-wrap: anywhere;
 }
 
-/* The tier-2 heap labels are placed by the scene, which writes a pixel
-   offset into each label's `transform`. They need an absolutely positioned
-   layer over the canvas to land on their objects; `translate` centres each
-   label on the point the scene projected, without touching the transform the
-   scene owns. */
-.stage-gc-heap-viewport {
-  position: relative;
-  display: grid;
-  align-items: center;
-}
-
-.stage-gc-heap-canvas {
-  display: block;
-  /* three writes an inline width/height on the canvas at construction, so the
-     board's own size has to win. The scene measures the canvas before it
-     sizes its buffer, so a canvas that fills the card gets a matching
-     drawing buffer and stays crisp. */
-  width: 100% !important;
-  height: auto !important;
-}
-
-.stage-gc-heap-labels {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
 /* --- Plates and scenes ------------------------------------------------- */
 
 .atelier__plate,
