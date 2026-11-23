@@ -33,7 +33,7 @@
   --ch-status-warn-dim: rgba(217, 164, 65, 0.10);
   --ch-status-warn-bdr: rgba(217, 164, 65, 0.38);
   --ch-font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --ch-font-display: var(--ch-font-sans);
+  --ch-font-display: 'Goldman', 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --ch-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -145,9 +145,10 @@ body {
   align-items: center;
   gap: 9px;
   font-family: var(--ch-font-display);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
   color: var(--ch-text-primary);
   text-decoration: none;
   flex-shrink: 0;
@@ -294,7 +295,7 @@ body {
   flex-direction: column;
   gap: 18px;
   padding: 32px 34px;
-  border-radius: 10px;
+  border-radius: 4px;
   background: linear-gradient(
     145deg,
     rgba(22, 26, 32, 0.24) 0%,
@@ -303,6 +304,7 @@ body {
   backdrop-filter: blur(9px) saturate(150%);
   -webkit-backdrop-filter: blur(9px) saturate(150%);
   border: 1px solid rgba(255, 255, 255, 0.16);
+  border-top: 2px solid var(--ch-accent-bdr);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
     inset 1px 0 0 rgba(255, 255, 255, 0.08),
@@ -324,6 +326,7 @@ body {
   backdrop-filter: blur(9px) saturate(135%);
   -webkit-backdrop-filter: blur(9px) saturate(135%);
   border: 1px solid rgba(24, 26, 28, 0.14);
+  border-top: 2px solid var(--ch-accent-bdr);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.88),
     inset 1px 0 0 rgba(255, 255, 255, 0.52),
@@ -333,10 +336,10 @@ body {
 .ch-h1 {
   margin: 0;
   font-family: var(--ch-font-display);
-  font-size: clamp(1.9rem, 2.95vw, 2.65rem);
+  font-size: clamp(2.05rem, 3.1vw, 2.82rem);
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.028em;
+  line-height: 1.05;
+  letter-spacing: 0.006em;
   text-wrap: balance;
   color: var(--ch-text-primary);
   text-shadow: 0 1px 14px rgba(10, 12, 14, 0.62);
@@ -399,15 +402,16 @@ body {
 }
 
 .ch-cta-primary {
-  background: var(--ch-bg-bar);
-  color: var(--ch-text-primary);
+  background: var(--ch-accent);
+  color: var(--ch-accent-ink);
   border: 1px solid var(--ch-accent);
+  font-weight: 600;
 }
 
 .ch-cta-primary:hover {
-  background: var(--ch-accent-dim);
+  background: var(--ch-accent-hover);
   border-color: var(--ch-accent-hover);
-  color: var(--ch-accent-text);
+  color: var(--ch-accent-ink);
 }
 
 .ch-cta-secondary {
@@ -659,11 +663,12 @@ body {
 }
 
 .ch-metric-value {
-  font-family: var(--ch-font-mono);
-  font-size: 20px;
+  font-family: var(--ch-font-display);
+  font-size: 25px;
   font-weight: 700;
+  letter-spacing: 0.015em;
   font-variant-numeric: tabular-nums;
-  line-height: 1.15;
+  line-height: 1.1;
   color: var(--ch-text-primary);
 }
 
@@ -791,10 +796,10 @@ body {
 .ch-section-title {
   margin: 0;
   font-family: var(--ch-font-display);
-  font-size: 24px;
+  font-size: 25px;
   font-weight: 700;
-  letter-spacing: -0.022em;
-  line-height: 1.18;
+  letter-spacing: 0.01em;
+  line-height: 1.12;
   text-wrap: balance;
   color: var(--ch-text-primary);
 }
@@ -802,8 +807,9 @@ body {
 .ch-subhead {
   margin: 0 0 6px;
   font-family: var(--ch-font-display);
-  font-size: 16px;
+  font-size: 16.5px;
   font-weight: 700;
+  letter-spacing: 0.015em;
   color: var(--ch-text-primary);
 }
 

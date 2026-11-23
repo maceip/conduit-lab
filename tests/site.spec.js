@@ -177,9 +177,11 @@ test("navbar, hero pitch, section headers, and footer theme toggle match streaml
   await expect(githubLink.locator("svg")).toBeVisible();
   await expect(githubLink).toHaveText("");
 
-  // Clear first-principles hero pitch & section headers
+  // Clear first-principles hero pitch, Goldman industrial display font & section headers
   const lede = page.getByTestId("lede");
   await expect(lede.locator("h1")).toHaveText("A formally verified browser engine.");
+  const h1Font = await lede.locator("h1").evaluate((el) => getComputedStyle(el).fontFamily);
+  expect(h1Font).toContain("Goldman");
   await expect(lede).toContainText("workbench for learning what formal verification can do");
   await expect(lede).not.toContainText("Don’t test");
   await expect(page.getByTestId("cta-workbench")).toHaveAttribute("href", "workbench.html");
@@ -392,6 +394,8 @@ test("provenance footer and staged local assets resolve with HTTP 200", async ({
     "inkwork/index.html",
     "inkwork/fonts/cormorant-500.woff2",
     "assets/fonts/ibm-plex-sans-latin.woff2",
+    "assets/fonts/goldman-700-latin.woff2",
+    "assets/fonts/goldman-400-latin.woff2",
     "irrigation.html",
     "v8-anatomy.html",
     "v8-iso/pages/fig-01-isolate.html",
