@@ -19,3 +19,15 @@ export {
   TRI_COLOR_LABEL,
 } from './triColor';
 export type { GcHeapEdge, GcHeapObject, TriColor, TriColorViolation } from './triColor';
+
+export { Stepper } from './stepper';
+export type { Step, StepperProps } from './stepper';
+
+export { PrattParserScene, PRATT_PARSER_STEPS } from './PrattParserScene';
+export type { PrattParserSceneProps } from './PrattParserScene';
+
+export { TriColorGcScene, TRICOLOR_GC_STEPS } from './TriColorGcScene';
+export type { TriColorGcSceneProps } from './TriColorGcScene';
+
+export { Box, Label, Line, DIAGRAM_VIEWBOX } from './diagram';
+export type { BoxProps, LabelProps, LineProps } from './diagram';
