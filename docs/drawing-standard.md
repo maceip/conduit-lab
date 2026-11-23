@@ -30,7 +30,7 @@ in a component, not in a test, not in a stylesheet.
 | `BOARD.rib` | `#2e3338` | Hidden edges, panel borders, list dividers |
 | `BOARD.edgeHi` | `#b2b8be` | Neutral-tone edge highlight |
 | `BOARD.ink` | `#8a9096` | Labels, captions, part names, hatch ink |
-| `BOARD.inkHi` | `#e8ecee` | Primary text, cut-face ground (`CUT_FACE`) |
+| `BOARD.inkHi` | `#e8ecee` | Primary text |
 | `BOARD.live` | `#f4f6f7` | Leader terminal dot, focus outline |
 | `BOARD.accent` | `#74c7b0` | **Reserved — live-verified status only** |
 | `BOARD.warn` | `#d9a441` | **Reserved — failure path only** |
@@ -187,10 +187,15 @@ tonal range comes from — a dark skid under a bright machined silo.
 | --- | --- | --- | --- |
 | `dark` | Understructure: skids, frames, pedestals, pumps | `#0b0c0e` → `#101214` → `#16191c` | `--dk0..--dk2` |
 | `body` | The main mass | `#111315` → `#171a1d` → `#1e2226` → `#262b30` | `--bd0..--bd3` |
-| `hi` | The prominent machined element | `#8e959c` → `#b2b8be` → `#cfd4d8` → `#e8ecee` | `--hi0..--hi3` |
+| `hi` | The prominent machined element | `#8e959c` → `#b2b8be` → `#cfd4d8` → `#e8ecef` | `--hi0..--hi3` |
 
 Access them as `PALETTES.dark` / `PALETTES.body` / `PALETTES.hi`, or `SHADE_DARK` /
 `SHADE_BODY` / `SHADE_HI`. The `dark` ramp has three steps; `body` and `hi` have four.
+
+> The ramps are byte-identical to the published custom properties, so an atelier face and
+> a published face with the same normal land on the same tone. There is deliberately no
+> flat ramp in `tokens.ts` — collapsing every part onto one ramp is what destroys the
+> form.
 
 > The published `--hi3` is `#e8ecef`; the atelier's is `#e8ecee`. The difference is 1/255
 > in one channel and is invisible, but `tokens.ts` claims the ramps are byte-identical
@@ -215,7 +220,7 @@ constant.
 ### Cut faces
 
 A cut face is a **bright machined surface**, not a shaded one. It takes `CUT_FACE`
-(`#e8ecee`) regardless of the part's palette, and the section hatch is laid **over** it.
+(`#e8ecef`) regardless of the part's palette, and the section hatch is laid **over** it.
 The hatch is inked (`BOARD.ink` at 0.55 opacity), not highlighted — a light line would
 disappear into the cut.
 
