@@ -1,7 +1,42 @@
 import { describe, expect, it } from 'vitest';
+import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { PRATT_PARSER_STEPS, PrattParserScene } from './PrattParserScene';
 import { TRICOLOR_GC_STEPS, TriColorGcScene } from './TriColorGcScene';
+
+/**
+ * The width of a mono label, in viewBox units. JetBrains Mono advances
+ * 0.6em per glyph and the register adds 0.08em of tracking, so a label of
+ * `n` characters at `size` pixels is `n * 0.68 * size` wide.
+ */
+function labelWidth(text: string, size: number): number {
+  return text.length * 0.68 * size;
+}
+
+/**
+ * Every `<text>` label of a rendered diagram, with the box it occupies.
+ * A label that leaves the 720-wide frame is a drafting fault: the caption
+ * is the only thing the reader can fall back on.
+ */
+function overflowingLabels(markup: string): string[] {
+  const document = new DOMParser().parseFromString(markup, 'image/svg+xml');
+  const problems: string[] = [];
+  for (const text of Array.from(document.querySelectorAll('text'))) {
+    const x = Number(text.getAttribute('x') ?? '0');
+    const anchor = text.getAttribute('text-anchor') ?? 'start';
+    const style = text.getAttribute('style') ?? '';
+    const size = /font-size:\s*([\d.]+)px/.exec(style);
+    const fontSize = size === null ? 9 : Number(size[1]);
+    const content = text.textContent ?? '';
+    const width = labelWidth(content, fontSize);
+    const left = anchor === 'middle' ? x - width / 2 : anchor === 'end' ? x - width : x;
+    const right = left + width;
+    if (left < 0 || right > 720) {
+      problems.push(`"${content.slice(0, 60)}" occupies [${left.toFixed(0)}, ${right.toFixed(0)}]`);
+    }
+  }
+  return problems;
+}
 
 /**
  * The two Tier 3 scenes are the part of the stage that Proof's gallery will
@@ -103,5 +138,14 @@ describe('TriColorGcScene', () => {
     expect(markup).toContain('orphan');
     // The tricolor step draws the grey-to-black pointer in the fail tone.
     expect(markup).toContain('#d4645c');
+  });
+});
+
+describe('diagram framing', () => {
+  it('keeps every label of every step inside the 720-wide frame', () => {
+    const problems = [...PRATT_PARSER_STEPS, ...TRICOLOR_GC_STEPS].flatMap((step) =>
+      overflowingLabels(renderToStaticMarkup(h('div', null, step.render(1)))),
+    );
+    expect(problems).toEqual([]);
   });
 });

@@ -163,7 +163,7 @@ function HeapDiagram(props: {
             />
             <Label
               x={x + SLOT_W / 2}
-              y={y + 22}
+              y={y + 17}
               anchor="middle"
               color={tone.label}
               size={10}
@@ -173,7 +173,7 @@ function HeapDiagram(props: {
             </Label>
             <Label
               x={x + SLOT_W / 2}
-              y={y + 48}
+              y={y + 30}
               anchor="middle"
               color={BOARD.rib}
               size={8}
@@ -253,7 +253,7 @@ function GcStep(props: {
       {props.notes.map((note, index) => (
         <Label
           key={note}
-          x={120}
+          x={20}
           y={268 + index * 17}
           color={index === 0 ? BOARD.ink : BOARD.rib}
           size={9}
