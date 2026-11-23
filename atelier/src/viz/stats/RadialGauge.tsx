@@ -1,5 +1,6 @@
-import { BOARD } from '../../contract/tokens';
+import { BOARD, DURATION, EASE } from '../../contract/tokens';
 import { cx, formatNumber } from './format';
+import { useReveal } from './reveal';
 
 export interface RadialGaugeProps {
   /** Current value. */
@@ -18,26 +19,32 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
  *
  * A non-positive `max` would make the ratio meaningless, so the gauge stays
  * empty rather than emitting `NaN` into the path.
+ *
+ * The arc sweeps open from empty. Under reduced motion it is drawn at its
+ * final sweep immediately.
  */
 export function RadialGauge({ value, max, label, className }: RadialGaugeProps) {
   const ratio = max > 0 ? Math.min(1, Math.max(0, value / max)) : 0;
   const sweep = CIRCUMFERENCE * (1 - ratio);
+  const [swept] = useReveal(1);
+
+  const shown = swept === true;
 
   return (
     <figure
       className={cx('chRadialGauge', className)}
       data-ratio={ratio.toFixed(4)}
+      data-revealed={swept === true ? 'true' : 'false'}
       style={{ margin: 0, display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}
     >
-      <svg width="88" height="88" viewBox="0 0 88 88" role="img" aria-label={label ?? 'gauge'}>
-        <circle
-          cx="44"
-          cy="44"
-          r={RADIUS}
-          fill="none"
-          stroke={BOARD.rib}
-          strokeWidth="6"
-        />
+      <svg
+        width="88"
+        height="88"
+        viewBox="0 0 88 88"
+        role="img"
+        aria-label={label ? `${formatNumber(value)} ${label}` : `${formatNumber(value)} of ${formatNumber(max)}`}
+      >
+        <circle cx="44" cy="44" r={RADIUS} fill="none" stroke={BOARD.rib} strokeWidth="6" />
         <circle
           cx="44"
           cy="44"
@@ -47,8 +54,9 @@ export function RadialGauge({ value, max, label, className }: RadialGaugeProps) 
           strokeWidth="6"
           strokeLinecap="round"
           strokeDasharray={CIRCUMFERENCE}
-          strokeDashoffset={sweep}
+          strokeDashoffset={shown ? sweep : CIRCUMFERENCE}
           transform="rotate(-90 44 44)"
+          style={{ transition: `stroke-dashoffset ${DURATION.d3}ms ${EASE.standard}` }}
         />
         <text
           x="44"
@@ -57,6 +65,7 @@ export function RadialGauge({ value, max, label, className }: RadialGaugeProps) 
           fill={BOARD.inkHi}
           fontFamily="inherit"
           fontSize="16"
+          aria-hidden="true"
           style={{ fontVariantNumeric: 'tabular-nums' }}
         >
           {formatNumber(value)}
@@ -64,6 +73,7 @@ export function RadialGauge({ value, max, label, className }: RadialGaugeProps) 
       </svg>
       {label ? (
         <figcaption
+          aria-hidden="true"
           style={{
             color: BOARD.ink,
             fontSize: 9,

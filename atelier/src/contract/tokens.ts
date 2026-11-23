@@ -13,15 +13,6 @@ export const BOARD = {
   fail: '#d4645c',
 } as const;
 
-export const SHADE = [
-  '#111315',
-  '#171a1d',
-  '#1e2226',
-  '#262b30',
-  '#343a40',
-  '#454c53',
-] as const;
-
 /**
  * The three published body palettes from `v8-iso/iso-cad.mjs`.
  *
@@ -29,10 +20,13 @@ export const SHADE = [
  * and `--hi0..--hi3` custom properties, so an atelier face and a published
  * face with the same normal land on the same tone. A part selects its
  * palette; the ramp is applied within it.
+ *
+ * There is deliberately no single flat ramp here. Collapsing every part onto
+ * one ramp is what destroys the form — see `docs/drawing-standard.md` §5.
  */
 export const SHADE_BODY = ['#111315', '#171a1d', '#1e2226', '#262b30'] as const;
 export const SHADE_DARK = ['#0b0c0e', '#101214', '#16191c'] as const;
-export const SHADE_HI = ['#8e959c', '#b2b8be', '#cfd4d8', '#e8ecee'] as const;
+export const SHADE_HI = ['#8e959c', '#b2b8be', '#cfd4d8', '#e8ecef'] as const;
 
 export const PALETTES = {
   dark: SHADE_DARK,
@@ -45,7 +39,7 @@ export const PALETTES = {
  * the drawing convention, so section faces take the top of the `hi` ramp with
  * the section hatch laid over them.
  */
-export const CUT_FACE = '#e8ecee';
+export const CUT_FACE = '#e8ecef';
 
 export const STROKE = {
   structure: 1.05,

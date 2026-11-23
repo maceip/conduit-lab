@@ -31,6 +31,17 @@ describe('DeltaChip', () => {
   it('groups thousands', () => {
     expect(textOf(renderToStaticMarkup(<DeltaChip delta={12480} />))).toBe('+12,480');
   });
+
+  it('lets the caller state the verdict instead of inferring it from the sign', () => {
+    // A falling verification time is good news and must not read as a failure.
+    const good = renderToStaticMarkup(<DeltaChip delta={-44} unit="%" tone="proved" />);
+    expect(good).toContain('data-tone="proved"');
+    expect(good).not.toContain('data-tone="fail"');
+
+    // A rising trusted-item count is a failure even though the sign is positive.
+    const bad = renderToStaticMarkup(<DeltaChip delta={12} tone="fail" />);
+    expect(bad).toContain('data-tone="fail"');
+  });
 });
 
 describe('RadialGauge', () => {
@@ -49,6 +60,18 @@ describe('RadialGauge', () => {
   it('clamps a value above the maximum to a full sweep', () => {
     const html = renderToStaticMarkup(<RadialGauge value={150} max={100} />);
     expect(html).toContain('data-ratio="1.0000"');
+  });
+
+  it('exposes the value to assistive technology, not the arc geometry', () => {
+    const html = renderToStaticMarkup(<RadialGauge value={38} max={100} label="Pass rate" />);
+    expect(html).toContain('aria-label="38 Pass rate"');
+    expect(html).toContain('aria-hidden="true"');
+  });
+
+  it('reports its motion state so the sweep is verifiable', () => {
+    expect(renderToStaticMarkup(<RadialGauge value={38} max={100} />)).toContain(
+      'data-revealed="false"',
+    );
   });
 });
 
@@ -78,6 +101,21 @@ describe('SplitBar', () => {
     );
     expect(html).toContain('data-total="2263"');
   });
+
+  it('shows the total as a visible figure, not only as an attribute', () => {
+    const html = renderToStaticMarkup(
+      <SplitBar segments={[{ id: 'a', label: 'A', value: 1760 }]} />,
+    );
+    expect(textOf(html)).toContain('total');
+    expect(textOf(html)).toContain('1,760');
+  });
+
+  it('reports its motion state so the sweep is verifiable', () => {
+    const html = renderToStaticMarkup(
+      <SplitBar segments={[{ id: 'a', label: 'A', value: 10 }]} />,
+    );
+    expect(html).toContain('data-revealed="false"');
+  });
 });
 
 describe('StatTile', () => {
@@ -93,6 +131,11 @@ describe('StatTile', () => {
   it('renders a not-recorded value verbatim', () => {
     const html = renderToStaticMarkup(<StatTile value="not recorded" label="Trusted items" />);
     expect(textOf(html)).toContain('not recorded');
+  });
+
+  it('reports its motion state so the reveal is verifiable', () => {
+    const html = renderToStaticMarkup(<StatTile value="1" label="L" />);
+    expect(html).toContain('data-revealed="false"');
   });
 });
 
@@ -113,6 +156,14 @@ describe('OdometerReels', () => {
     const html = renderToStaticMarkup(<OdometerReels value={1} />);
     expect(html).toContain('0123456789');
   });
+
+  it('gives assistive technology the figure, not the digit strip', () => {
+    const html = renderToStaticMarkup(<OdometerReels value={4102} />);
+    expect(html).toContain('aria-label="4,102"');
+    expect(html).toContain('role="img"');
+    // The strip itself must not be announced.
+    expect(html).toContain('data-reel="0" aria-hidden="true"');
+  });
 });
 
 describe('CountFigure', () => {
@@ -131,5 +182,12 @@ describe('CountFigure', () => {
     const html = renderToStaticMarkup(<CountFigure value={7} />);
     expect(html).toContain('data-target="7"');
     expect(html).toContain('data-settled="true"');
+  });
+
+  it('exposes the TRUE figure to assistive technology, not the rolling digit', () => {
+    const html = renderToStaticMarkup(<CountFigure value={12480} label="Verified queries" />);
+    expect(html).toContain('aria-label="12,480 Verified queries"');
+    // The rolling digits must not be announced.
+    expect(html).toContain('aria-hidden="true"');
   });
 });

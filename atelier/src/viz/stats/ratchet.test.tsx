@@ -80,4 +80,15 @@ describe('RatchetCounter', () => {
     const html = renderToStaticMarkup(<RatchetCounter trusted={0} previous={4} />);
     expect(html).toContain('data-previous="4"');
   });
+
+  it('exposes the true count to assistive technology', () => {
+    const html = renderToStaticMarkup(<RatchetCounter trusted={0} label="Trusted items" />);
+    expect(html).toContain('aria-label="0 Trusted items"');
+    expect(html).toContain('aria-hidden="true"');
+  });
+
+  it('tells assistive technology when the ratchet is broken', () => {
+    const html = renderToStaticMarkup(<RatchetCounter trusted={12} previous={4} />);
+    expect(html).toContain('Ratchet broken');
+  });
 });

@@ -1,5 +1,5 @@
 import { BOARD, DURATION, EASE } from '../../contract/tokens';
-import { cx } from './format';
+import { cx, formatNumber } from './format';
 import { useCountUp } from './countUp';
 
 export interface OdometerReelsProps {
@@ -19,6 +19,11 @@ const DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
  * Every reel starts and stops at the same moment — no per-digit stagger — and
  * each reel carries the full 0-9 strip so a roll can pass through the digits
  * between two values.
+ *
+ * ACCESSIBILITY: the reel strip is ten digits of geometry, not prose, so it
+ * is hidden from the accessibility tree. The root carries the final figure as
+ * its accessible name, so a screen reader hears "4,102" rather than thirty-six
+ * characters of digit strip.
  */
 export function OdometerReels({ value, digits, className }: OdometerReelsProps) {
   const { display, settled } = useCountUp(value, { from: 0 });
@@ -31,12 +36,15 @@ export function OdometerReels({ value, digits, className }: OdometerReelsProps) 
       className={cx('chOdometerReels', className)}
       data-settled={settled ? 'true' : 'false'}
       data-digits={width}
+      aria-label={formatNumber(value)}
+      role="img"
       style={{ display: 'inline-flex', gap: 1, color: BOARD.inkHi }}
     >
       {padded.split('').map((digit, index) => (
         <span
           key={index}
           data-reel={index}
+          aria-hidden="true"
           style={{
             display: 'block',
             height: REEL_HEIGHT,

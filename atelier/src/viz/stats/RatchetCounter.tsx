@@ -70,7 +70,12 @@ export function RatchetCounter({ trusted, previous, label, className, testId }: 
   });
 
   const color = violation ? BOARD.fail : BOARD.accent;
-  const text = formatNumber(display);
+  const rollingText = formatNumber(display);
+  const finalText = formatNumber(trusted);
+  const caption = label ?? 'trusted items';
+  const accessibleName = violation
+    ? `${finalText} ${caption}. Ratchet broken: the trusted count rose.`
+    : `${finalText} ${caption}`;
 
   return (
     <div
@@ -80,9 +85,11 @@ export function RatchetCounter({ trusted, previous, label, className, testId }: 
       data-violation={violation ? 'true' : 'false'}
       data-settled={settled ? 'true' : 'false'}
       data-testid={testId}
+      aria-label={accessibleName}
       style={{ display: 'grid', gap: 4 }}
     >
       <span
+        aria-hidden="true"
         style={{
           color,
           fontSize: 32,
@@ -90,9 +97,10 @@ export function RatchetCounter({ trusted, previous, label, className, testId }: 
           fontVariantNumeric: 'tabular-nums',
         }}
       >
-        {text}
+        {rollingText}
       </span>
       <span
+        aria-hidden="true"
         style={{
           color: BOARD.ink,
           fontSize: 9,
@@ -100,11 +108,12 @@ export function RatchetCounter({ trusted, previous, label, className, testId }: 
           textTransform: 'uppercase',
         }}
       >
-        {label ?? 'trusted items'}
+        {caption}
       </span>
       {violation ? (
         <span
           data-violation-mark="true"
+          aria-hidden="true"
           style={{
             color: BOARD.fail,
             fontSize: 9,
