@@ -24,7 +24,7 @@ export { centerlineFor } from './centerline';
 export { explodedOffset } from './explode';
 export { billFor, type BillRow } from './partsList';
 export { shadeFor, shadeClassIndex, SHADE_CLASS } from './shade';
-export { facesFor, type RawFace } from './geometry';
+export { facesFor, gear2D, helix3D, stadiumLoop, type RawFace } from './geometry';
 export { cameraFor, type Camera } from './camera';
 
 export type { Vec2, Vec3, Part, Tone } from '../../contract';
@@ -72,6 +72,13 @@ export interface Caption {
   name: string;
   /** Scale statement, e.g. "NTS". */
   scale: string;
+  /** A single line of framing under the title. */
+  note?: string;
+  /**
+   * Legend entries. `hatched: true` draws the section-hatch swatch, which is
+   * how a plate states "this component is design only" rather than proved.
+   */
+  legend?: Array<{ label: string; hatched: boolean }>;
 }
 
 export interface Assembly {
@@ -415,7 +422,10 @@ export function projectAssembly(assembly: Assembly): RenderedPlate {
   }
 
   const bill = assembly.partsList ? billFor(assembly.parts) : [];
-  const bandHeight = Math.max(bill.length > 0 ? 26 + bill.length * 15 : 0, assembly.caption ? 46 : 0);
+  const captionHeight = assembly.caption
+    ? 46 + (assembly.caption.legend ? assembly.caption.legend.length * 17 + 6 : 0)
+    : 0;
+  const bandHeight = Math.max(bill.length > 0 ? 26 + bill.length * 15 : 0, captionHeight);
 
   const spanX = Math.max(80, contentMaxX - contentMinX);
   const spanY = Math.max(80, contentMaxY - contentMinY);

@@ -22,11 +22,11 @@ import { add, cross, dot, mul, norm, sub } from './camera';
  */
 
 /** Facet count used for cylinders and swept tubes. */
-export const CYL_SEGMENTS = 20;
+export const CYL_SEGMENTS = 14;
 /** Facet count used for swept tubes. */
-export const TUBE_SEGMENTS = 12;
+export const TUBE_SEGMENTS = 8;
 /** Half-width of a lofted web, in world units. */
-export const LOFT_HALF_WIDTH = 4;
+export const LOFT_HALF_WIDTH = 12;
 
 export interface RawFace {
   /** World-space polygon (3 or 4 points, wound counter-clockwise seen from outside). */
@@ -299,18 +299,12 @@ function extrudeFaces(poly: Vec2[], depth: number): RawFace[] {
     if (!fi || !fj || !bi || !bj) continue;
     faces.push(face(ccw ? [fj, fi, bi, bj] : [fi, fj, bj, bi]));
   }
-  const tris = triangulate2D(poly);
-  for (const [ia, ib, ic] of tris) {
-    const pa = front[ia];
-    const pb = front[ib];
-    const pc = front[ic];
-    const qa = back[ia];
-    const qb = back[ib];
-    const qc = back[ic];
-    if (!pa || !pb || !pc || !qa || !qb || !qc) continue;
-    faces.push(face([pa, pc, pb]));
-    faces.push(face([qa, qb, qc]));
-  }
+  // The caps are flat polygons: one face each, wound so the front cap faces
+  // -z and the back cap faces +z. iso-cad triangulates them because it sorts
+  // per triangle, but a flat cap has a single depth, so one polygon is
+  // equivalent and far cheaper to draw.
+  faces.push(face([...front].reverse()));
+  faces.push(face([...back]));
   return faces;
 }
 
@@ -318,27 +312,45 @@ function extrudeFaces(poly: Vec2[], depth: number): RawFace[] {
 function tubeFaces(points: Vec3[], radius: number): RawFace[] {
   if (points.length < 2) return [];
   const segs = TUBE_SEGMENTS;
-  const tangents: Vec3[] = points.map((_, i): Vec3 => {
+
+  // A tube whose last point repeats its first is a closed loop (the belt of a
+  // conveyor, the rim of a ring). `sweepTube` in iso-cad.mjs takes the same
+  // `closed` option.
+  const first0 = points[0];
+  const last0 = points[points.length - 1];
+  const closed =
+    !!first0 &&
+    !!last0 &&
+    Math.hypot(first0[0] - last0[0], first0[1] - last0[1], first0[2] - last0[2]) < 1e-6;
+  const path = closed ? points.slice(0, points.length - 1) : points;
+  if (path.length < 2) return [];
+
+  const tangents: Vec3[] = path.map((_, i) => {
+    if (closed) {
+      const a = path[(i + 1) % path.length];
+      const b = path[(i - 1 + path.length) % path.length];
+      return a && b ? norm(sub(a, b)) : [0, 0, 1];
+    }
     if (i === 0) {
-      const p0 = points[0];
-      const p1 = points[1];
+      const p0 = path[0];
+      const p1 = path[1];
       return p0 && p1 ? norm(sub(p1, p0)) : [0, 0, 1];
     }
-    if (i === points.length - 1) {
-      const pn = points[i];
-      const pp = points[i - 1];
+    if (i === path.length - 1) {
+      const pn = path[i];
+      const pp = path[i - 1];
       return pn && pp ? norm(sub(pn, pp)) : [0, 0, 1];
     }
-    const a = points[i + 1];
-    const b = points[i - 1];
+    const a = path[i + 1];
+    const b = path[i - 1];
     return a && b ? norm(sub(a, b)) : [0, 0, 1];
   });
 
   let t0: Vec3 = tangents[0] ?? [0, 0, 1];
   let n0: Vec3 = norm(cross(Math.abs(t0[2]) < 0.85 ? [0, 0, 1] : [1, 0, 0], t0));
   const rings: Vec3[][] = [];
-  for (let i = 0; i < points.length; i++) {
-    const centre = points[i];
+  for (let i = 0; i < path.length; i++) {
+    const centre = path[i];
     const ti = tangents[i];
     if (!centre || !ti) continue;
     if (i > 0) {
@@ -374,9 +386,10 @@ function tubeFaces(points: Vec3[], radius: number): RawFace[] {
   if (rings.length < 2) return [];
 
   const faces: RawFace[] = [];
-  for (let s = 0; s < rings.length - 1; s++) {
+  const ringPairs = closed ? rings.length : rings.length - 1;
+  for (let s = 0; s < ringPairs; s++) {
     const A = rings[s];
-    const B = rings[s + 1];
+    const B = rings[(s + 1) % rings.length];
     if (!A || !B) continue;
     const cA = centroid(A);
     const cB = centroid(B);
@@ -395,11 +408,82 @@ function tubeFaces(points: Vec3[], radius: number): RawFace[] {
       faces.push(face(quad));
     }
   }
-  const firstRing = rings[0];
-  const lastRing = rings[rings.length - 1];
-  if (firstRing) faces.push(face([...firstRing].reverse()));
-  if (lastRing) faces.push(face([...lastRing]));
+  if (!closed) {
+    const firstRing = rings[0];
+    const lastRing = rings[rings.length - 1];
+    if (firstRing) faces.push(face([...firstRing].reverse()));
+    if (lastRing) faces.push(face([...lastRing]));
+  }
   return faces;
+}
+
+/**
+ * Toothed wheel profile — port of `gear2D` in iso-cad.mjs.
+ *
+ * @param teeth number of teeth.
+ * @param rRoot root radius (between the teeth).
+ * @param rTip tip radius (at the teeth).
+ */
+export function gear2D(teeth: number, rRoot: number, rTip: number): Vec2[] {
+  const out: Vec2[] = [];
+  const step = (Math.PI * 2) / teeth;
+  for (let i = 0; i < teeth; i++) {
+    const a = i * step;
+    out.push([Math.cos(a) * rRoot, Math.sin(a) * rRoot]);
+    out.push([Math.cos(a + step * 0.18) * rTip, Math.sin(a + step * 0.18) * rTip]);
+    out.push([Math.cos(a + step * 0.46) * rTip, Math.sin(a + step * 0.46) * rTip]);
+    out.push([Math.cos(a + step * 0.64) * rRoot, Math.sin(a + step * 0.64) * rRoot]);
+  }
+  return out;
+}
+
+/**
+ * Helical spiral — port of `helix3D` in iso-cad.mjs.
+ */
+export function helix3D(
+  cx: number,
+  cy: number,
+  r0: number,
+  r1: number,
+  z0: number,
+  z1: number,
+  turns: number,
+  steps = 48,
+): Vec3[] {
+  const pts: Vec3[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const a = t * turns * Math.PI * 2;
+    const r = r0 + (r1 - r0) * t;
+    pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r, z0 + (z1 - z0) * t]);
+  }
+  return pts;
+}
+
+/**
+ * Stadium (rounded rectangle) loop as a closed 3D path — the belt of a
+ * conveyor. `stadium2D` in iso-cad.mjs returns the same profile as a 2D
+ * outline; this returns it as a closed polyline ready for a swept tube.
+ */
+export function stadiumLoop(
+  cx: number,
+  cy: number,
+  cz: number,
+  len: number,
+  r: number,
+  segs = 10,
+): Vec3[] {
+  const pts: Vec3[] = [];
+  for (let i = 0; i <= segs; i++) {
+    const a = -Math.PI / 2 + (Math.PI * i) / segs;
+    pts.push([cx + len / 2 + Math.cos(a) * r, cy, cz + Math.sin(a) * r]);
+  }
+  for (let i = 0; i <= segs; i++) {
+    const a = Math.PI / 2 + (Math.PI * i) / segs;
+    pts.push([cx - len / 2 + Math.cos(a) * r, cy, cz + Math.sin(a) * r]);
+  }
+  pts.push([pts[0]![0], pts[0]![1], pts[0]![2]]);
+  return pts;
 }
 
 /** Build the world-space faces of a geometry spec. */

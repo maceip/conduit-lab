@@ -35,11 +35,14 @@ export interface RenderOptions {
 /** The register: mono, uppercase, tracked (Drawing Standard 5.4). */
 const MONO = "'JetBrains Mono','SF Mono',ui-monospace,Menlo,Consolas,monospace";
 
-/** Stroke attributes every stroked element carries. */
+/**
+ * Stroke attributes every stroked element carries. `stroke-linecap` and
+ * `stroke-linejoin` are inherited, so they are set once on the drawing group
+ * rather than repeated on every path; `vector-effect` is not inherited and
+ * stays per element.
+ */
 const STROKE_ATTRS = {
   vectorEffect: 'non-scaling-stroke',
-  strokeLinecap: 'round',
-  strokeLinejoin: 'round',
 } as const;
 
 /** Depth key for annotation drawn over the drawing (centrelines, dimensions). */
@@ -74,7 +77,7 @@ function h(
 function pathOf(points: Vec2[]): string {
   let d = '';
   points.forEach((p, i) => {
-    d += `${i === 0 ? 'M' : 'L'}${p[0].toFixed(2)},${p[1].toFixed(2)}`;
+    d += `${i === 0 ? 'M' : 'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`;
   });
   return `${d}Z`;
 }
@@ -109,6 +112,7 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
       h(
         'pattern',
         {
+          key: `pattern-${p.id}`,
           id: p.id,
           width: p.size,
           height: p.size,
@@ -138,6 +142,7 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
     items.push({
       depth: face.depth,
       node: h('path', {
+        key: `face-${face.partId}-${items.length}`,
         d: pathOf(face.points),
         fill: base,
         stroke: base,
@@ -151,6 +156,7 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
         items.push({
           depth: face.depth,
           node: h('path', {
+            key: `hatch-${face.partId}-${items.length}`,
             d: pathOf(face.points),
             fill: `url(#${pattern.id})`,
             stroke: 'none',
@@ -172,6 +178,7 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
     items.push({
       depth: edge.depth,
       node: h('line', {
+        key: `edge-${items.length}`,
         x1: edge.a[0].toFixed(2),
         y1: edge.a[1].toFixed(2),
         x2: edge.b[0].toFixed(2),
@@ -189,6 +196,7 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
     items.push({
       depth: OVERLAY_DEPTH,
       node: h('line', {
+        key: `centreline-${plate.centerlines.indexOf(cl)}`,
         x1: cl.a[0].toFixed(2),
         y1: cl.a[1].toFixed(2),
         x2: cl.b[0].toFixed(2),
@@ -208,6 +216,7 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
       items.push({
         depth: OVERLAY_DEPTH,
         node: h('line', {
+          key: `dim-ext-${plate.dimensions.indexOf(d)}-${ext.a[0]}`,
           x1: ext.a[0].toFixed(2),
           y1: ext.a[1].toFixed(2),
           x2: ext.b[0].toFixed(2),
@@ -221,6 +230,7 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
     items.push({
       depth: OVERLAY_DEPTH,
       node: h('line', {
+        key: `dim-line-${plate.dimensions.indexOf(d)}`,
         x1: dim.line.a[0].toFixed(2),
         y1: dim.line.a[1].toFixed(2),
         x2: dim.line.b[0].toFixed(2),
@@ -234,6 +244,7 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
       items.push({
         depth: OVERLAY_DEPTH,
         node: h('line', {
+          key: `dim-tick-${plate.dimensions.indexOf(d)}-${t.a[0]}`,
           x1: t.a[0].toFixed(2),
           y1: t.a[1].toFixed(2),
           x2: t.b[0].toFixed(2),
@@ -249,6 +260,7 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
       node: h(
         'text',
         {
+          key: `dim-label-${plate.dimensions.indexOf(d)}`,
           x: dim.labelAt[0].toFixed(2),
           y: dim.labelAt[1].toFixed(2),
           fill: BOARD.ink,
@@ -264,13 +276,17 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
 
   items.sort((a, b) => a.depth - b.depth);
 
-  const children: ReactNode[] = [defs, ...items.map((i) => i.node)];
+  // Every stroked element inside the drawing group inherits the round cap and
+  // join; `vector-effect` stays on the elements themselves.
+  const children: ReactNode[] = [defs];
+  const drawing: ReactNode[] = items.map((i) => i.node);
 
   // Balloons and leaders.
   if (annotated) {
     for (const leader of plate.leaders) {
-      children.push(
+      drawing.push(
         h('polyline', {
+          key: `leader-${leader.partId}`,
           points: leader.points.map((p) => `${p[0].toFixed(2)},${p[1].toFixed(2)}`).join(' '),
           fill: 'none',
           stroke: BOARD.line,
@@ -281,8 +297,9 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
       );
       const start = leader.points[0];
       if (start) {
-        children.push(
+        drawing.push(
           h('circle', {
+            key: `leader-dot-${leader.partId}`,
             cx: start[0].toFixed(2),
             cy: start[1].toFixed(2),
             r: 2,
@@ -292,10 +309,10 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
       }
     }
     for (const balloon of plate.balloons) {
-      children.push(
+      drawing.push(
         h(
           'g',
-          null,
+          { key: `balloon-${balloon.partId}` },
           h('circle', {
             cx: balloon.at[0].toFixed(2),
             cy: balloon.at[1].toFixed(2),
@@ -308,6 +325,7 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
           h(
             'text',
             {
+              key: `balloon-num-${balloon.partId}`,
               x: balloon.at[0].toFixed(2),
               y: (balloon.at[1] + 3.2).toFixed(2),
               fill: BOARD.inkHi,
@@ -327,10 +345,12 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
   const bill = plate.bill;
   const caption = plate.caption;
   if (bill.length > 0 || caption) {
-    const bandTop = vh - Math.max(bill.length > 0 ? 26 + bill.length * 15 : 0, caption ? 46 : 0);
+    const captionHeight = caption ? 46 + (caption.legend ? caption.legend.length * 17 + 6 : 0) : 0;
+    const bandTop = vh - Math.max(bill.length > 0 ? 26 + bill.length * 15 : 0, captionHeight);
     const listWidth = bill.length > 0 ? Math.min(vw * 0.55, 320) : 0;
-    children.push(
+    drawing.push(
       h('line', {
+        key: 'band-rule',
         x1: 0,
         y1: bandTop.toFixed(2),
         x2: vw,
@@ -341,10 +361,11 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
       }),
     );
     if (bill.length > 0) {
-      children.push(
+      drawing.push(
         h(
           'text',
           {
+            key: 'bill-header',
             x: 4,
             y: (bandTop + 15).toFixed(2),
             fill: BOARD.ink,
@@ -357,57 +378,62 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
       );
       bill.forEach((row, i) => {
         const y = bandTop + 30 + i * 15;
-        children.push(
+        drawing.push(
           h(
-            'text',
-            {
-              x: 4,
-              y: y.toFixed(2),
-              fill: BOARD.inkHi,
-              fontFamily: MONO,
-              fontSize: 9,
-              letterSpacing: '0.04em',
-            },
-            String(row.number),
+            'g',
+            { key: `bill-row-${row.number}` },
+            h(
+              'text',
+              {
+                x: 4,
+                y: y.toFixed(2),
+                fill: BOARD.inkHi,
+                fontFamily: MONO,
+                fontSize: 9,
+                letterSpacing: '0.04em',
+              },
+              String(row.number),
+            ),
+            h(
+              'text',
+              {
+                x: 26,
+                y: y.toFixed(2),
+                fill: BOARD.ink,
+                fontFamily: MONO,
+                fontSize: 9,
+                letterSpacing: '0.06em',
+              },
+              row.label.toUpperCase(),
+            ),
+            h(
+              'text',
+              {
+                x: listWidth - 8,
+                y: y.toFixed(2),
+                fill: BOARD.ink,
+                fontFamily: MONO,
+                fontSize: 9,
+                letterSpacing: '0.06em',
+                textAnchor: 'end',
+              },
+              `x${row.count}`,
+            ),
+            h('line', {
+              x1: 4,
+              y1: (y + 4).toFixed(2),
+              x2: listWidth - 8,
+              y2: (y + 4).toFixed(2),
+              stroke: BOARD.rib,
+              strokeWidth: STROKE.hatch,
+              ...STROKE_ATTRS,
+            }),
           ),
-          h(
-            'text',
-            {
-              x: 26,
-              y: y.toFixed(2),
-              fill: BOARD.ink,
-              fontFamily: MONO,
-              fontSize: 9,
-              letterSpacing: '0.06em',
-            },
-            row.label.toUpperCase(),
-          ),
-          h(
-            'text',
-            {
-              x: listWidth - 8,
-              y: y.toFixed(2),
-              fill: BOARD.ink,
-              fontFamily: MONO,
-              fontSize: 9,
-              letterSpacing: '0.06em',
-              textAnchor: 'end',
-            },
-            `x${row.count}`,
-          ),
-          h('line', {
-            x1: 4,
-            y1: (y + 4).toFixed(2),
-            x2: listWidth - 8,
-            y2: (y + 4).toFixed(2),
-            stroke: BOARD.rib,
-            strokeWidth: STROKE.hatch,
-            ...STROKE_ATTRS,
-          }),
         );
       });
-      children.push(
+      drawing.push(
         h('line', {
+          key: 'bill-rule',
           x1: listWidth,
           y1: (bandTop + 4).toFixed(2),
           x2: listWidth,
@@ -420,10 +446,11 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
     }
     if (caption) {
       const right = vw - 8;
-      children.push(
+      drawing.push(
         h(
           'text',
           {
+            key: 'caption-name',
             x: right,
             y: (bandTop + 16).toFixed(2),
             fill: BOARD.inkHi,
@@ -437,6 +464,7 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
         h(
           'text',
           {
+            key: 'caption-figure',
             x: right,
             y: (bandTop + 30).toFixed(2),
             fill: BOARD.ink,
@@ -445,22 +473,60 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
             letterSpacing: '0.08em',
             textAnchor: 'end',
           },
-          `${caption.figure} · SCALE ${caption.scale}`,
-        ),
-        h(
-          'text',
-          {
-            x: right,
-            y: (bandTop + 43).toFixed(2),
-            fill: BOARD.ink,
-            fontFamily: MONO,
-            fontSize: 9,
-            letterSpacing: '0.08em',
-            textAnchor: 'end',
-          },
-          `${plate.partCount} PARTS · EXPLODED VIEW`,
+          `${caption.figure} · SCALE ${caption.scale} · ${plate.partCount} PARTS`,
         ),
       );
+      if (caption.note) {
+        drawing.push(
+          h(
+            'text',
+            {
+              key: 'caption-note',
+              x: right,
+              y: (bandTop + 43).toFixed(2),
+              fill: BOARD.ink,
+              fontFamily: MONO,
+              fontSize: 9,
+              letterSpacing: '0.08em',
+              textAnchor: 'end',
+            },
+            caption.note.toUpperCase(),
+          ),
+        );
+      }
+      // Legend: the swatch states what the hatching means on this plate.
+      const legend = caption.legend ?? [];
+      const firstPattern = patterns.values().next().value;
+      legend.forEach((entry, i) => {
+        const y = bandTop + 46 + (caption.note ? 16 : 0) + i * 17;
+        const swatchX = right - 206;
+        drawing.push(
+          h('rect', {
+            key: `legend-swatch-${i}`,
+            x: swatchX,
+            y: y - 11,
+            width: 14,
+            height: 14,
+            fill: entry.hatched && firstPattern ? `url(#${firstPattern.id})` : SHADE[2],
+            stroke: BOARD.line,
+            strokeWidth: STROKE.structure,
+            ...STROKE_ATTRS,
+          }),
+          h(
+            'text',
+            {
+              key: `legend-label-${i}`,
+              x: swatchX + 20,
+              y: y,
+              fill: BOARD.ink,
+              fontFamily: MONO,
+              fontSize: 9,
+              letterSpacing: '0.08em',
+            },
+            entry.label.toUpperCase(),
+          ),
+        );
+      });
     }
   }
 
@@ -477,10 +543,18 @@ export function renderPlate(plate: RenderedPlate, options: RenderOptions): React
       : { 'aria-hidden': true, focusable: false }),
   };
 
+  children.push(
+    h(
+      'g',
+      { key: 'drawing', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      ...drawing,
+    ),
+  );
+
   return h(
     'svg',
     rootProps,
-    ...(title ? [h('title', null, title)] : []),
+    ...(title ? [h('title', { key: 'svg-title' }, title)] : []),
     ...children,
   );
 }
