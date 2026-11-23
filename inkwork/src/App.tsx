@@ -162,11 +162,8 @@ function useStageShift() {
   useEffect(() => {
     if (isAmbient) {
       document.documentElement.dataset.ambient = '1';
-      const measureAmbient = () =>
-        setShift(window.innerWidth >= 960 ? -Math.round(window.innerWidth * 0.018) : 0);
-      measureAmbient();
-      window.addEventListener('resize', measureAmbient);
-      return () => window.removeEventListener('resize', measureAmbient);
+      setShift(0);
+      return;
     }
     if (isEmbed) {
       setShift(0);
@@ -259,11 +256,16 @@ export default function App() {
         >
           <MotionDriver />
           {Driver && <Driver key={`driver-${machine.id}`} />}
-          <group key={machine.id} name="machine-root" scale={machine.unit ?? 1}>
+          <group
+            key={machine.id}
+            name="machine-root"
+            position={isAmbient ? [-31.5, -13.2, -24.3] : [0, 0, 0]}
+            scale={(machine.unit ?? 1) * (isAmbient ? 2.62 : 1)}
+          >
             <Model />
           </group>
           {isAmbient && <AmbientWorld />}
-          <Guides />
+          {!isAmbient && <Guides />}
           <OrbitControls makeDefault enabled={!drawingMode && !isAmbient} enablePan={false} minDistance={3} maxDistance={160} maxPolarAngle={Math.PI * 0.49} enableDamping dampingFactor={0.08} />
           <CameraRig shift={shift} />
           <InkRenderer />

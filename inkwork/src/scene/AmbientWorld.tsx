@@ -113,7 +113,7 @@ function InfiniteFloorGrid() {
         void main() {
           vec2 uv = gl_FragCoord.xy / uRes;
           float sceneZ = texture2D(tSceneDepth, uv).x;
-          if (gl_FragCoord.z > sceneZ + 0.00018) discard;
+          if (sceneZ < 0.99999) discard;
           float r = length(vWorld.xz - vec2(-4.0, -6.0));
           float radial = exp(-r * 0.021);
           float farFade = 1.0 - smoothstep(85.0, 175.0, vViewZ);
@@ -246,7 +246,6 @@ export function AmbientWorld() {
 
         {/* Coupled 3-car Shanghai SMT Maglev (Transrapid TR08) trainset */}
         <group ref={trainRef}>
-          {/* Lead TR08 nose car (apex clears foreground propeller blade tip cleanly in right background) */}
           <group position={[-85000, 0, 0]}>
             <AmbientPart partId={0.145} tone={0.82}>
               <AeroNose x0={19800} x1={27000} floorY={F} roofY={R} halfW={MG.carWidth / 2} />
@@ -267,7 +266,6 @@ export function AmbientWorld() {
             </AmbientPart>
           </group>
 
-          {/* Coupled middle & third coaches receding toward the horizon */}
           <TrailingCoach keyTag="c2" x0={-109700} x1={-84500} />
           <TrailingCoach keyTag="c3" x0={-134900} x1={-110200} />
         </group>

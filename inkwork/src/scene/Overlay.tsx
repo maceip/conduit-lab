@@ -175,14 +175,13 @@ const cutBox = new THREE.Box3();
  */
 export function sectionConstant(depth: number) {
   const { near, far } = cutRange;
-  const span = Math.max(near - far, 1e-3);
-  const n = Math.max(near, span * 0.02);
-  const f = Math.min(far, -span * 0.02);
-  // Never quite reach either skin, so a sliver of the part always remains to read.
+  const center = (near + far) * 0.5;
+  const halfSpan = Math.max((near - far) * 0.5, 1e-3);
   const d = THREE.MathUtils.clamp(depth, 0.02, 0.98);
-  // Squared, so the slider is fine near the centre line, where the insides are,
-  // and coarse out at the skins (a 747's wings would otherwise eat most of it).
-  return d <= 0.5 ? n * (1 - d * 2) ** 2 : f * ((d - 0.5) * 2) ** 2;
+  // 0.5 sits on the machine's symmetry plane (center), whether at z = 0 or offset in ambient space.
+  return d <= 0.5
+    ? center + halfSpan * (1 - d * 2) ** 2
+    : center - halfSpan * ((d - 0.5) * 2) ** 2;
 }
 
 /** Eases the explode, local explode and section sweep toward the store. */
@@ -218,9 +217,9 @@ export function MotionDriver() {
     }
 
     // Off is just beyond the near skin; past it the plane is parked far away.
-    const off = Math.max(cutRange.near, 0) + 0.1;
+    const off = cutRange.near + 0.25;
     const cutTarget = section ? sectionConstant(sectionDepth) : off;
-    const current = SECTION_PLANE.constant > 50 ? off : SECTION_PLANE.constant;
+    const current = SECTION_PLANE.constant > 90 ? off : SECTION_PLANE.constant;
     const next = current + (cutTarget - current) * (1 - Math.exp(-dt * 3));
     SECTION_PLANE.constant = !section && next > off - 0.02 ? 100 : next;
   }, -1);
