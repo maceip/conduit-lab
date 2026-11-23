@@ -52,16 +52,16 @@ test("built HTML, app JS, and site source contain no hard-coded ratchet results"
   }
 });
 
-test("scoreboard renders live 11-crate totals and enforces adjacent pill density <= 2", async ({ page }) => {
+test("scoreboard renders live proof & differential totals and enforces adjacent pill density <= 2", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByTestId("stat-verified queries")).toHaveText(totals.verified.toLocaleString("en-US"));
   await expect(page.getByTestId("stat-trusted items")).toHaveText(String(totalTrusted));
   await expect(page.getByTestId("stat-re-verify time")).toHaveText(`${totals.verify_seconds}s`);
-  await expect(page.getByTestId("stat-crate tests")).toHaveText(
-    `${totals.tests_passed}/${totals.tests_passed + totals.tests_failed}`
+  await expect(page.getByTestId("stat-differential cases")).toHaveText(
+    totalDiffCases.toLocaleString("en-US")
   );
   await expect(page.getByTestId("ratchet-stats")).toContainText(`verus ${ratchet.verus}`);
-  await expect(page.getByTestId("ratchet-stats")).toContainText(`${totals.crates} crates`);
+  await expect(page.getByTestId("ratchet-stats")).toContainText(ratchet.inputs_sha256.slice(0, 8));
   await expect(page.getByTestId("ratchet-stats")).toContainText(
     `${totals.functions_by_mode.exec.toLocaleString("en-US")} exec · ${totals.functions_by_mode.proof.toLocaleString("en-US")} proof fns`
   );
@@ -429,7 +429,7 @@ test("missing ratchet.json and stats.json show load-error and not recorded", asy
   await expect(page.getByTestId("stat-verified queries")).toHaveText("not recorded");
   await expect(page.getByTestId("stat-trusted items")).toHaveText("not recorded");
   await expect(page.getByTestId("stat-re-verify time")).toHaveText("not recorded");
-  await expect(page.getByTestId("stat-crate tests")).toHaveText("not recorded");
+  await expect(page.getByTestId("stat-differential cases")).toHaveText("not recorded");
   await expect(page.getByTestId("scale-conduit")).toHaveText("not recorded");
   await expect(page.getByTestId("crates-table-missing")).toContainText("not recorded");
 });

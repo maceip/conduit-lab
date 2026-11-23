@@ -7,6 +7,7 @@ import {
   fmtDate,
   loadJson,
   ratchetTotals,
+  sumDifferentialCases,
   sumTrusted,
   type Ratchet,
   type Stats,
@@ -60,6 +61,7 @@ export default function App() {
   const totals = ratchetTotals(ratchet);
   const ok = allCratesOk(ratchet);
   const trusted = sumTrusted(totals?.trusted);
+  const diffCases = sumDifferentialCases(ratchet?.test262_suites);
   const z3 = stats?.toolchains?.z3;
   const z3ver = z3 ? (z3.match(/version ([\d.]+)/) ?? [null, z3])[1] ?? z3 : null;
 
@@ -80,7 +82,7 @@ export default function App() {
 
         <nav className="ch-nav" aria-label="Page sections">
           <a href="#arch">Architecture</a>
-          <a href="#ratchet">Crates</a>
+          <a href="#ratchet">Proofs</a>
           <a href="#scope">Scope</a>
           <a href="#coverage">CVEs</a>
         </nav>
@@ -181,15 +183,11 @@ export default function App() {
               testId="stat-re-verify time"
             />
             <StatTile
-              value={
-                totals
-                  ? `${totals.tests_passed}/${totals.tests_passed + totals.tests_failed}`
-                  : NR
-              }
-              label="crate tests"
-              hint={totals ? `${totals.crates} crates` : undefined}
-              tone={totals ? (totals.tests_failed === 0 ? 'proved' : 'fail') : 'neutral'}
-              testId="stat-crate tests"
+              value={diffCases !== null ? diffCases.toLocaleString('en-US') : NR}
+              label="differential spec cases"
+              hint="tc39/test262 · WHATWG · Wasm"
+              tone={diffCases !== null ? (ok ? 'proved' : 'fail') : 'neutral'}
+              testId="stat-differential cases"
             />
           </div>
 
@@ -216,7 +214,7 @@ export default function App() {
                 {copiedId === 'z3' ? 'copied' : `z3 ${z3ver ?? NR}`}
               </span>
               <span className="ch-digest-meta">
-                {totals ? `${totals.crates} crates` : NR}
+                {ratchet?.inputs_sha256 ? ratchet.inputs_sha256.slice(0, 8) : NR}
               </span>
             </button>
           </div>

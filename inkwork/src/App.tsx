@@ -162,7 +162,7 @@ function useStageShift() {
     if (isAmbient) {
       document.documentElement.dataset.ambient = '1';
       const measureAmbient = () =>
-        setShift(window.innerWidth >= 960 ? Math.round(window.innerWidth * 0.055) : 0);
+        setShift(window.innerWidth >= 960 ? Math.round(window.innerWidth * 0.012) : 0);
       measureAmbient();
       window.addEventListener('resize', measureAmbient);
       return () => window.removeEventListener('resize', measureAmbient);

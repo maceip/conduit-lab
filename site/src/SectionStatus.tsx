@@ -63,8 +63,7 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
           <table className="ch-table" data-testid="crates-table">
             <thead>
               <tr>
-                <th>Crate</th>
-                <th>Step</th>
+                <th>Module</th>
                 <th>Verified contract</th>
                 <th className="ch-num">Queries</th>
                 <th className="ch-num">Trusted</th>
@@ -87,7 +86,6 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
                       />
                       <strong>{c.name}</strong>
                     </td>
-                    <td className="ch-mono ch-nowrap">{c.step ?? NR}</td>
                     <td>
                       <div className="ch-cell-primary">{c.scope ?? NR}</div>
                       {c.theorem && <div className="ch-cell-sub">{c.theorem}</div>}
@@ -123,7 +121,6 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
               <tfoot>
                 <tr className="ch-total-row">
                   <td className="ch-mono">Total</td>
-                  <td className="ch-mono">{totals.crates} crates</td>
                   <td>
                     {allOk
                       ? 'All crates verified with zero errors and zero unsafe code'
@@ -256,7 +253,6 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
                       <table className="ch-table ch-table-compact">
                         <thead>
                           <tr>
-                            <th>Stage</th>
                             <th>Suite</th>
                             <th className="ch-num">Pass</th>
                             <th className="ch-num">Diff cases</th>
@@ -265,7 +261,6 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
                         <tbody>
                           {ratchet.test262_suites.map((s) => (
                             <tr key={`${s.step}-${s.suite}`}>
-                              <td className="ch-mono ch-nowrap">{s.step}</td>
                               <td>{s.suite}</td>
                               <td className="ch-mono ch-num ch-nowrap" data-tone="proved">
                                 {s.passed}/{s.total}

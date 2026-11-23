@@ -303,8 +303,8 @@ export const ArchitectureDiagram: React.FC = () => (
     <div className="ch-arch-row">
       <dt>Typed Vest IPC</dt>
       <dd>
-        Capability handles cross into disposable per-site renderers running proved <code>vjs</code>{' '}
-        (J0–J7), <code>vjs_webidl</code>, and <code>vwasm</code> alongside isolated HTML/CSS/GPU.
+        Capability handles cross into disposable per-site renderers running proved <code>vjs</code>,{' '}
+        <code>vjs_webidl</code>, and <code>vwasm</code> alongside isolated HTML/CSS/GPU.
       </dd>
     </div>
   </dl>
