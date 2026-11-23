@@ -20,7 +20,7 @@ export const SYSTEMS: VerifiedSystem[] = [
     href: 'https://compcert.org/',
     proved: 'Semantics preservation across an optimizing C compiler pipeline',
     scale: 'Tens of thousands of lines of Coq',
-    role: 'Simulation-proof pattern used in J7 vjs_vm',
+    role: 'Simulation-proof pattern used in vjs_vm',
   },
   {
     name: 'fiat-crypto (2017)',
@@ -55,21 +55,21 @@ export const SYSTEMS: VerifiedSystem[] = [
     href: 'https://github.com/jscert/jscert',
     proved: 'Mechanized ES5 semantics and verified extracted reference interpreter',
     scale: 'ES5 ch. 8–14 in Coq; surfaced spec & test262 bugs',
-    role: 'Cautionary lesson: left parsing unverified (vjs verifies J3)',
+    role: 'Cautionary lesson: left parsing unverified (vjs_syntax proves lexer & parser)',
   },
   {
     name: 'Warblre (2024)',
     href: 'https://arxiv.org/abs/2403.11919',
     proved: 'ECMAScript 2023 RegExp compilation and matching always terminate cleanly',
     scale: 'Coq spec interleaved line by line · 495/498 test262',
-    role: 'Terminating RegExp model ported into J5 vjs_builtins',
+    role: 'Terminating RegExp model ported into vjs_builtins',
   },
   {
     name: 'WasmCert / vWasm',
     href: 'https://github.com/WasmCert/WasmCert-Coq',
     proved: 'WebAssembly type soundness and provably safe linear-memory sandboxing',
     scale: 'Coq / Isabelle mechanized semantics & SFI',
-    role: 'Linear-memory containment model proved in J7 vwasm',
+    role: 'Linear-memory containment model proved in vwasm',
   },
 ];
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './site.css';
 import { NR, REPO, blobUrl, fmtDate, loadJson, type Ratchet } from './data';
-import { IconExternal } from './icons';
+import { IconGitHub } from './icons';
 import SectionVerus from './SectionVerus';
 
 function WorkbenchApp() {
@@ -45,12 +45,10 @@ function WorkbenchApp() {
           <span>← CONDUIT</span>
         </a>
 
-        <nav className="ch-nav" aria-label="Workbench navigation">
-          <a href="./#arch">Architecture</a>
-          <a href="./#ratchet">Crate ledger</a>
-        </nav>
-
         <div className="ch-topbar-right">
+          <nav className="ch-nav" aria-label="Workbench navigation">
+            <a href="./#ratchet">Proofs</a>
+          </nav>
           <a
             className="ch-nav-link"
             href={blobUrl('docs/verified-browser-engine.md')}
@@ -59,21 +57,17 @@ function WorkbenchApp() {
           >
             Design doc
           </a>
-          <a className="ch-nav-link" href={REPO} target="_blank" rel="noreferrer">
-            GitHub <IconExternal size={11} />
-          </a>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={theme === 'light'}
-            aria-label="Toggle light theme"
-            className="ch-theme-btn"
-            data-testid="theme-switch"
-            onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+          <a
+            className="ch-nav-icon-link"
+            href={REPO}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="CONDUIT on GitHub"
+            title="GitHub repository"
+            data-testid="nav-github"
           >
-            <span className="ch-theme-dot" aria-hidden="true" />
-            <span>{theme === 'dark' ? 'Dark' : 'Light'}</span>
-          </button>
+            <IconGitHub size={16} />
+          </a>
         </div>
       </header>
 
@@ -97,8 +91,22 @@ function WorkbenchApp() {
           </span>
         </div>
         <div className="ch-footer-right">
-          ratchet {fmtDate(ratchet?.generated_at)} · sha256{' '}
-          <span title={ratchet?.inputs_sha256}>{ratchet?.inputs_sha256?.slice(0, 12) ?? NR}</span>
+          <span>
+            ratchet {fmtDate(ratchet?.generated_at)} · sha256{' '}
+            <span title={ratchet?.inputs_sha256}>{ratchet?.inputs_sha256?.slice(0, 12) ?? NR}</span>
+          </span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={theme === 'light'}
+            aria-label="Toggle light theme"
+            className="ch-theme-btn"
+            data-testid="theme-switch"
+            onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+          >
+            <span className="ch-theme-dot" aria-hidden="true" />
+            <span>{theme === 'dark' ? 'Dark' : 'Light'}</span>
+          </button>
         </div>
       </footer>
     </div>

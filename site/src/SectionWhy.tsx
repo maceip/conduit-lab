@@ -21,13 +21,14 @@ const SectionWhy: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
     <section className="ch-spec-row" id="scope">
       <div className="ch-prose-col">
         <h2 className="ch-section-title">
-          Prove the security boundary, isolate the rest
+          Scale &amp; Limits of Formal Verification
         </h2>
 
         <p className="ch-prose-text">
-          seL4 took roughly twenty person-years to prove 8,700 lines of C; Chromium and Linux sit
-          near 36 million lines over unformalized GPU silicon. Shipped systems prove the narrow
-          security boundary and sandbox everything outside it.
+          seL4 took roughly twenty person-years to prove 8,700 lines of C, while Chromium and Linux
+          sit near 36 million lines over unformalized GPU silicon. Comparing CONDUIT against prior
+          verified systems shows what machine-checked proofs can cover—and what must remain isolated
+          at runtime.
         </p>
 
         <ScaleCompare items={scaleItems} />

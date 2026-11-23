@@ -8,6 +8,7 @@ import { Tree } from './components/Tree';
 import { PartsLegend, PlateMeta, TitleColumn } from './components/Plate';
 import { currentMachine, hasMachine, lineage, machineById, useMachine } from './machines';
 import { CameraRig, Guides, InkRenderer, MotionDriver } from './scene';
+import { AmbientWorld } from './scene/AmbientWorld';
 import { isAmbient, isEmbed, restoreAll, selectMachine, useStudio } from './state';
 import './theme';
 import { bridge, exportPlate, recordTeardown } from './export';
@@ -162,7 +163,7 @@ function useStageShift() {
     if (isAmbient) {
       document.documentElement.dataset.ambient = '1';
       const measureAmbient = () =>
-        setShift(window.innerWidth >= 960 ? Math.round(window.innerWidth * 0.012) : 0);
+        setShift(window.innerWidth >= 960 ? -Math.round(window.innerWidth * 0.018) : 0);
       measureAmbient();
       window.addEventListener('resize', measureAmbient);
       return () => window.removeEventListener('resize', measureAmbient);
@@ -249,7 +250,7 @@ export default function App() {
       )}
       <div className="stage">
         <Canvas
-          camera={{ position: [5.5, 6.45, 11.85], fov: 30, near: 0.5, far: 200 }}
+          camera={{ position: [5.5, 6.45, 11.85], fov: 30, near: 0.5, far: 320 }}
           dpr={[1, 2]}
           gl={{ antialias: false, alpha: true, preserveDrawingBuffer: true, toneMapping: THREE.NoToneMapping }}
           linear
@@ -261,6 +262,7 @@ export default function App() {
           <group key={machine.id} name="machine-root" scale={machine.unit ?? 1}>
             <Model />
           </group>
+          {isAmbient && <AmbientWorld />}
           <Guides />
           <OrbitControls makeDefault enabled={!drawingMode && !isAmbient} enablePan={false} minDistance={3} maxDistance={160} maxPolarAngle={Math.PI * 0.49} enableDamping dampingFactor={0.08} />
           <CameraRig shift={shift} />

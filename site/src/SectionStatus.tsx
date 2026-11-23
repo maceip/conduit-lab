@@ -31,27 +31,28 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
 
   return (
     <section className="ch-status-section" id="ratchet">
-      {/* Header + Honest Scope Boundary */}
+      {/* Header + Evolving Verification Process Components */}
       <div className="ch-spec-row ch-spec-row-flush">
         <div className="ch-prose-col">
-          <h2 className="ch-section-title">What verifies today</h2>
+          <h2 className="ch-section-title">Browser Engine Components</h2>
           <p className="ch-prose-text">
-            Every row below compiles under <code>#![forbid(unsafe_code)]</code> and passes Verus{' '}
-            <code>--no-cheating</code>—rejecting <code>admit()</code>, <code>assume()</code>, and
-            unproved axioms—on every CI run before deploy.
+            Eleven Rust crates implement URL parsing, JavaScript execution, Web IDL bindings,
+            WebAssembly 1.0, and HTML/CSS core—compiled under <code>#![forbid(unsafe_code)]</code>{' '}
+            and checked with Verus <code>--no-cheating</code> on every CI run.
           </p>
         </div>
 
         <div className="ch-artifact-col">
           <div className="ch-scope-note" data-testid="honesty-card">
-            <h3 className="ch-subhead">Unbuilt boundary</h3>
+            <h3 className="ch-subhead">Evolving Verification Process Components</h3>
             <p className="ch-prose-text">
-              URL parsing, ECMAScript, Web IDL capabilities, and WebAssembly 1.0 verify today
+              URL parsing, ECMAScript, Web IDL capabilities, and WebAssembly 1.0 verify end-to-end
+              today
               {totals
                 ? ` (${totals.verified.toLocaleString('en-US')} queries, ${totalTrusted} trusted items)`
                 : ''}
               . Browser kernel non-interference theorems, <code>rspec!</code> origin/cookie
-              policies, Nanvix sandboxing, and HTML/CSS layout remain in progress.
+              policies, Nanvix sandboxing, and full HTML/CSS layout remain in active development.
             </p>
           </div>
         </div>

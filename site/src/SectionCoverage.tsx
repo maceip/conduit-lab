@@ -45,7 +45,7 @@ const SectionCoverage: React.FC = () => {
   return (
     <section className="ch-spec-row" id="coverage">
       <div className="ch-prose-col">
-        <h2 className="ch-section-title">Twenty exploited Chrome zero-days</h2>
+        <h2 className="ch-section-title">Real-World Browser Vulnerability Baseline</h2>
         <p className="ch-prose-text">
           Across the last {CVES.length} exploited Chrome zero-days (CISA KEV),{' '}
           <strong>

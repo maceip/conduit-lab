@@ -194,6 +194,8 @@ export const compositeFragment = /* glsl */ `
   uniform float uHidden;
   /** 0 = illustrated plate, 1 = engineering drawing (flat paper, section hatching, heavy outlines). */
   uniform float uDrawing;
+  /** 1 = hero ambient proving-ground mode: distance-fades background viaduct & maglev into horizon. */
+  uniform float uAmbient;
   uniform vec2 uResolution;
   uniform float uLine;
   uniform float uNear;
@@ -276,6 +278,7 @@ export const compositeFragment = /* glsl */ `
     vec4 s = texture2D(tNormal, vUv);
     vec3 n0 = s.rgb * 2.0 - 1.0;
     float d0 = bg ? 1.0 : linearDepth(vUv);
+    float sceneD = bg ? 1e5 : d0;
 
     vec2 o = px * uLine;
     vec3 e = vec3(0.0);
@@ -284,11 +287,15 @@ export const compositeFragment = /* glsl */ `
     dirs[4] = vec2(0.7, 0.7); dirs[5] = vec2(-0.7, -0.7); dirs[6] = vec2(0.7, -0.7); dirs[7] = vec2(-0.7, 0.7);
     for (int i = 0; i < 8; i++) {
       float w = i < 4 ? 1.0 : 0.6;
+      vec2 uvN = vUv + dirs[i] * o;
+      if (texture2D(tDepth, uvN).x < 0.99999) sceneD = min(sceneD, linearDepth(uvN));
       vec3 r = edgeAt(vUv, dirs[i] * o, n0, s.a, d0, bg);
       e = max(e, vec3(r.xy * w, r.z * step(0.01, r.x)));
     }
     // Outlines get a second, wider ring so silhouettes read heavier than creases.
     for (int i = 0; i < 4; i++) {
+      vec2 uvW = vUv + dirs[i] * o * 1.45;
+      if (texture2D(tDepth, uvW).x < 0.99999) sceneD = min(sceneD, linearDepth(uvW));
       vec3 r = edgeAt(vUv, dirs[i] * o * 1.45, n0, s.a, d0, bg);
       e.x = max(e.x, r.x * 0.45);
       e.z = max(e.z, r.z * step(0.01, r.x));
@@ -340,6 +347,13 @@ export const compositeFragment = /* glsl */ `
 
     col = bg ? inkCol : mix(col, inkCol, ink);
     alpha = max(alpha, ink);
+    if (uAmbient > 0.5 && sceneD < 1e4) {
+      // Keep foreground turboprop (sceneD <= 21) at full 1.0 ink; smoothly attenuate
+      // background viaduct & distant maglev into atmospheric depth toward the horizon.
+      float midFade = mix(1.0, 0.34, smoothstep(21.5, 90.0, sceneD));
+      float farVanish = 1.0 - smoothstep(105.0, 215.0, sceneD);
+      alpha *= midFade * farVanish;
+    }
     gl_FragColor = vec4(col * alpha, alpha);
   }
 `;

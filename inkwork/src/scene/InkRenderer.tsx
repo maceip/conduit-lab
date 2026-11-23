@@ -4,11 +4,14 @@ import * as THREE from 'three';
 import { compositeFragment, compositeVertex, inkUniforms, paletteUniforms } from './ink';
 import { partDef } from './explode';
 import { SECTION_PLANE } from './Part';
-import { useStudio } from '../state';
+import { isAmbient, useStudio } from '../state';
 import { drawing, type Rect } from '../drawing/layout';
 
 /** Layer used for construction lines drawn on top of the ink composite. */
 export const OVERLAY_LAYER = 1;
+
+/** Shared reference to the active normal-pass depth texture for depth-occluded ambient floor lines. */
+export const ambientSceneDepth = { value: null as THREE.DepthTexture | null };
 
 interface Pass {
   camera: THREE.Camera;
@@ -63,6 +66,7 @@ export function InkRenderer({ lineWidth = 1.15, hatch = 1 }: { lineWidth?: numbe
         tHidden2D: { value: targets.hidden2.depthTexture },
         uHidden: { value: 0 },
         uDrawing: { value: 0 },
+        uAmbient: { value: 0 },
         uResolution: { value: new THREE.Vector2(1, 1) },
         uLine: { value: lineWidth },
         uNear: { value: 0.1 },
@@ -86,6 +90,7 @@ export function InkRenderer({ lineWidth = 1.15, hatch = 1 }: { lineWidth?: numbe
     const w = Math.max(1, Math.floor(size.width * dpr));
     const h = Math.max(1, Math.floor(size.height * dpr));
     Object.values(targets).forEach((t) => t.setSize(w, h));
+    ambientSceneDepth.value = targets.normal.depthTexture;
     composite.material.uniforms.uResolution.value.set(w, h);
     inkUniforms.uRes.value.set(w, h);
   }, [size, dpr, targets, composite]);
@@ -111,6 +116,7 @@ export function InkRenderer({ lineWidth = 1.15, hatch = 1 }: { lineWidth?: numbe
     uniforms.uOrtho.value = (cam as THREE.OrthographicCamera).isOrthographicCamera ? 1 : 0;
     uniforms.uSelId.value = selected ? (partDef(selected)?.index ?? -64) / 64 : -1;
     uniforms.uDrawing.value = layout ? 1 : 0;
+    uniforms.uAmbient.value = isAmbient && !layout ? 1 : 0;
     uniforms.uHidden.value = anyHidden ? 1 : 0;
     uniforms.uHatch.value = layout ? 0 : hatch;
     // Small screens (phones) get finer drawing lines so the views do not clog up.

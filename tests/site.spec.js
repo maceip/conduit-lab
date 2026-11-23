@@ -81,13 +81,14 @@ test("scoreboard renders live proof & differential totals and enforces adjacent 
   expect(verusClipped, "verus revision pill must not clip").toBeLessThanOrEqual(2);
 });
 
-test("turboprop runs silently as an unlabeled ambient hero backdrop behind liquid glass, while maglev is the interactive architectural plate", async ({
+test("unified hero renders turboprop + diagonal maglev viaduct behind translucent liquid glass, with zero standalone isometric plates in body", async ({
   page,
 }) => {
   await page.goto("/");
   await expect(page.locator("img")).toHaveCount(0);
+  await expect(page.locator(".ch-inkwork-frame")).toHaveCount(0);
 
-  // 1. Ambient hero backdrop: zero header, zero buttons, zero labels, behind frosted liquid-glass card
+  // 1. Ambient hero backdrop: zero header, zero buttons, zero labels, behind translucent liquid-glass card
   const heroBg = page.getByTestId("hero-turboprop-bg");
   await expect(heroBg).toBeVisible();
   await expect(heroBg.locator(".ch-plate-header")).toHaveCount(0);
@@ -100,40 +101,28 @@ test("turboprop runs silently as an unlabeled ambient hero backdrop behind liqui
   await expect(bgFrame.locator(".callout")).toHaveCount(0);
   await expect(bgFrame.locator("button")).toHaveCount(0);
 
-  const glassBackdrop = await page
-    .getByTestId("hero-glass")
-    .evaluate((el) => {
-      const cs = getComputedStyle(el);
-      return cs.backdropFilter || cs.webkitBackdropFilter || "";
-    });
-  expect(glassBackdrop).toContain("blur(");
+  const glassStyle = await page.getByTestId("hero-glass").evaluate((el) => {
+    const cs = getComputedStyle(el);
+    return {
+      backdrop: cs.backdropFilter || cs.webkitBackdropFilter || "",
+      bgImage: cs.backgroundImage || "",
+    };
+  });
+  expect(glassStyle.backdrop).toContain("blur(");
+  expect(glassStyle.bgImage).toContain("0.24");
 
-  // 2. Single interactive mechanical plate on the page: Shanghai SMT Maglev (#arch)
-  await expect(page.locator(".ch-inkwork-frame")).toHaveCount(1);
-  const maglevPlate = page.getByTestId("plate-maglev");
-  await expect(maglevPlate.locator(".ch-plate-header")).toContainText("Shanghai SMT Maglev");
+  // 2. Verify standalone /inkwork/ studio still exposes strictly turboprop and maglev as top-level machines and Ortho callouts do not overlap
+  await page.goto("/inkwork/index.html#turboprop");
+  const topMachines = await page.evaluate(() =>
+    window.gewu.assemblies().filter((a) => !a.parent).map((a) => a.id)
+  );
+  expect(topMachines).toEqual(["turboprop", "maglev"]);
 
-  const frame = maglevPlate.frameLocator("iframe.ch-inkwork-frame");
-  await expect(frame.locator("html")).toHaveAttribute("data-theme", "obsidian");
-  await expect(frame.locator("canvas")).toBeVisible();
-  await expect.poll(() => frame.locator("canvas").evaluate((c) => c.clientWidth)).toBeGreaterThan(360);
-  await expect.poll(() => frame.locator("canvas").evaluate((c) => c.clientHeight)).toBeGreaterThan(420);
-
-  // Interactive 3x2 subsystem legend & engineering specbar actuate live part selection
-  await expect(maglevPlate.locator(".ch-plate-legend-btn")).toHaveCount(6);
-  await expect(maglevPlate.getByTestId("plate-maglev-specbar")).toContainText("Scale");
-  await maglevPlate.getByTestId("plate-maglev-legend-nose-cone").click();
-  await expect(maglevPlate.getByTestId("plate-maglev-specbar")).toContainText("Aerodynamic Nose Shell");
-  await maglevPlate.getByTestId("plate-maglev-legend-nose-cone").click();
-
-  // Top plate header controls actuate Ortho, Exploded, Cutaway, and Assembled cleanly
-  await maglevPlate.getByTestId("plate-maglev-mode-drawing").click();
-  await expect(maglevPlate.getByTestId("plate-maglev-mode-drawing")).toHaveAttribute("aria-pressed", "true");
-  await expect(frame.locator(".balloon")).toHaveCount(0);
-  await expect(frame.locator(".sheet-callout")).toHaveCount(6);
-  await expect(frame.getByTestId("ortho-title-block")).toBeVisible();
-
-  const calloutOverlap = await frame.locator(".sheet-callout rect").evaluateAll((rects) => {
+  await page.goto("/inkwork/index.html?embed=1&preset=drawing#maglev");
+  await expect(page.locator(".balloon")).toHaveCount(0);
+  await expect(page.locator(".sheet-callout")).toHaveCount(6);
+  await expect(page.getByTestId("ortho-title-block")).toBeVisible();
+  const calloutOverlap = await page.locator(".sheet-callout rect").evaluateAll((rects) => {
     const boxes = rects.map((r) => r.getBoundingClientRect());
     for (let i = 0; i < boxes.length; i += 1) {
       for (let j = i + 1; j < boxes.length; j += 1) {
@@ -146,37 +135,36 @@ test("turboprop runs silently as an unlabeled ambient hero backdrop behind liqui
     return null;
   });
   expect(calloutOverlap, "Maglev Ortho callouts must never overlap").toBeNull();
-
-  await maglevPlate.getByTestId("plate-maglev-mode-exploded").click();
-  await expect(maglevPlate.getByTestId("plate-maglev-mode-exploded")).toHaveAttribute("aria-pressed", "true");
-  await maglevPlate.getByTestId("plate-maglev-mode-section").click();
-  await expect(maglevPlate.getByTestId("plate-maglev-mode-section")).toHaveAttribute("aria-pressed", "true");
-  await maglevPlate.getByTestId("plate-maglev-mode-assembled").click();
-  await expect(maglevPlate.getByTestId("plate-maglev-mode-assembled")).toHaveAttribute("aria-pressed", "true");
-
-  // Verify standalone /inkwork/ studio still exposes strictly turboprop and maglev as top-level machines
-  await page.goto("/inkwork/index.html#turboprop");
-  const topMachines = await page.evaluate(() =>
-    window.gewu.assemblies().filter((a) => !a.parent).map((a) => a.id)
-  );
-  expect(topMachines).toEqual(["turboprop", "maglev"]);
 });
 
-test("homepage omits 19-line source tutorial, links to workbench.html, and copy has zero stale claims", async ({
+test("navbar, hero pitch, section headers, and footer theme toggle match streamlined layout", async ({
   page,
 }) => {
   await page.goto("/");
   await expect(page.getByTestId("verus-code-workbench")).toHaveCount(0);
   const ids = await page.locator("main > section").evaluateAll((ss) => ss.map((s) => s.id));
-  expect(ids).toEqual(["arch", "ratchet", "scope", "coverage"]);
-  const navTargets = await page.locator(".ch-nav a").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
-  expect(navTargets).toEqual(ids.map((id) => `#${id}`));
+  expect(ids).toEqual(["ratchet", "scope", "coverage"]);
 
+  // Navbar dropped Architecture, Scope, CVEs; GitHub is an icon; theme switcher moved to footer
+  const navTargets = await page.locator(".ch-nav a").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
+  expect(navTargets).toEqual(["#ratchet"]);
+  await expect(page.locator(".ch-topbar [data-testid='theme-switch']")).toHaveCount(0);
+  await expect(page.locator(".ch-footer [data-testid='theme-switch']")).toBeVisible();
+  const githubLink = page.getByTestId("nav-github");
+  await expect(githubLink.locator("svg")).toBeVisible();
+  await expect(githubLink).toHaveText("");
+
+  // Clear first-principles hero pitch & section headers
   const lede = page.getByTestId("lede");
-  await expect(lede).toContainText("Prove they cannot exist");
-  await expect(lede).toContainText("Verus and Z3");
-  await expect(lede).not.toContainText("crates");
+  await expect(lede.locator("h1")).toHaveText("A formally verified browser engine.");
+  await expect(lede).toContainText("workbench for learning what formal verification can do");
+  await expect(lede).not.toContainText("Don’t test");
   await expect(page.getByTestId("cta-workbench")).toHaveAttribute("href", "workbench.html");
+
+  await expect(page.locator("#ratchet h2.ch-section-title")).toHaveText("Browser Engine Components");
+  await expect(page.getByTestId("honesty-card").locator("h3")).toHaveText(
+    "Evolving Verification Process Components"
+  );
 
   const body = await page.locator("body").innerText();
   for (const stale of [
@@ -185,6 +173,9 @@ test("homepage omits 19-line source tutorial, links to workbench.html, and copy 
     "Bytecode + simulation proof deferred to J7",
     "Honesty clause",
     "Apple Silicon",
+    "One proved kernel in front of disposable renderers",
+    "What verifies today",
+    "Unbuilt boundary",
   ]) {
     expect(body, `stale phrase must not appear: ${stale}`).not.toContain(stale);
   }
@@ -228,14 +219,17 @@ test("dedicated workbench.html: 4-state Verus workbench, fix-typo action, and li
   await expect(page.getByTestId("live-proof-source")).toContainText("CompCert");
 });
 
-test("section 2 (#arch): trust-boundary specification fits cleanly without overflow", async ({ page }) => {
+test("footer theme switch toggles dark/light mode cleanly, syncs Inkwork hero backdrop, and persists", async ({ page }) => {
   await page.goto("/");
-  const diagram = page.getByTestId("shim-diagram");
-  await expect(diagram).toBeVisible();
-  await expect(diagram).toContainText("Verified security kernel");
-  await expect(diagram).toContainText("Typed Vest IPC");
-  const overflow = await diagram.evaluate((el) => el.scrollWidth - el.clientWidth);
-  expect(overflow, "architecture specification must not overflow horizontally").toBeLessThanOrEqual(2);
+  const bgFrame = page.getByTestId("hero-turboprop-bg").frameLocator("iframe.ch-hero-backdrop-frame");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(bgFrame.locator("html")).toHaveAttribute("data-theme", "obsidian");
+  await page.locator(".ch-footer").getByTestId("theme-switch").click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(bgFrame.locator("html")).toHaveAttribute("data-theme", "paper");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(bgFrame.locator("html")).toHaveAttribute("data-theme", "paper");
 });
 
 test("section 3 (#ratchet): 11-crate ledger, scope boundary, and collapsible engineering drawers", async ({
@@ -354,21 +348,13 @@ test("section 5 (#coverage): 20-CVE appendix is collapsed at bottom by default a
   await expect(page.getByTestId("cve-table").locator("tbody tr")).toHaveCount(20);
 });
 
-test("theme switch toggles dark/light mode cleanly, syncs Inkwork plates, and persists", async ({ page }) => {
-  await page.goto("/");
-  const bgFrame = page.getByTestId("hero-turboprop-bg").frameLocator("iframe.ch-hero-backdrop-frame");
-  const mvFrame = page.getByTestId("plate-maglev").frameLocator("iframe.ch-inkwork-frame");
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await expect(bgFrame.locator("html")).toHaveAttribute("data-theme", "obsidian");
-  await expect(mvFrame.locator("html")).toHaveAttribute("data-theme", "obsidian");
-  await page.getByTestId("theme-switch").click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
-  await expect(bgFrame.locator("html")).toHaveAttribute("data-theme", "paper");
-  await expect(mvFrame.locator("html")).toHaveAttribute("data-theme", "paper");
-  await page.reload();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
-  await expect(bgFrame.locator("html")).toHaveAttribute("data-theme", "paper");
-  await expect(mvFrame.locator("html")).toHaveAttribute("data-theme", "paper");
+test("workbench.html navbar uses GitHub icon and places theme toggle in footer", async ({ page }) => {
+  await page.goto("/workbench.html");
+  await expect(page.locator(".ch-topbar [data-testid='theme-switch']")).toHaveCount(0);
+  await expect(page.locator(".ch-footer [data-testid='theme-switch']")).toBeVisible();
+  const githubLink = page.getByTestId("nav-github");
+  await expect(githubLink.locator("svg")).toBeVisible();
+  await expect(githubLink).toHaveText("");
 });
 
 test("provenance footer and staged local assets resolve with HTTP 200", async ({ page, request }) => {

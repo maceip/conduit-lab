@@ -194,3 +194,17 @@ export function M({ geo, p, r, s, clip = false }: { geo: THREE.BufferGeometry; p
   const materials = useContext(PartContext)!;
   return <mesh geometry={geo} material={clip ? materials.clipped : materials.solid} position={p} rotation={r} scale={s} />;
 }
+
+/** Non-interactive, unclipped ink material group for distant ambient architecture/vehicles. */
+export function AmbientPart({ partId, tone = 0.85, children }: { partId: number; tone?: number; children: ReactNode }) {
+  const materials = useMemo<PartMaterials>(() => {
+    const mat = createInkMaterial({ partId, tone });
+    return { solid: mat, clipped: mat };
+  }, [partId, tone]);
+
+  useEffect(() => () => {
+    materials.solid.dispose();
+  }, [materials]);
+
+  return <PartContext.Provider value={materials}>{children}</PartContext.Provider>;
+}

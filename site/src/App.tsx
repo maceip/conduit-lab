@@ -12,8 +12,8 @@ import {
   type Ratchet,
   type Stats,
 } from './data';
-import { IconArrowRight, IconCopy, IconExternal } from './icons';
-import { AmbientMachineBackdrop, ArchitectureDiagram, PlateFrame, StatTile } from './parts';
+import { IconArrowRight, IconCopy, IconGitHub } from './icons';
+import { AmbientMachineBackdrop, StatTile } from './parts';
 import SectionCoverage from './SectionCoverage';
 import SectionWhy from './SectionWhy';
 import SectionStatus from './SectionStatus';
@@ -80,14 +80,10 @@ export default function App() {
           <span>CONDUIT</span>
         </a>
 
-        <nav className="ch-nav" aria-label="Page sections">
-          <a href="#arch">Architecture</a>
-          <a href="#ratchet">Proofs</a>
-          <a href="#scope">Scope</a>
-          <a href="#coverage">CVEs</a>
-        </nav>
-
         <div className="ch-topbar-right">
+          <nav className="ch-nav" aria-label="Page sections">
+            <a href="#ratchet">Proofs</a>
+          </nav>
           <a className="ch-nav-link" href="workbench.html" data-testid="nav-workbench">
             Proof workbench
           </a>
@@ -99,22 +95,17 @@ export default function App() {
           >
             Design doc
           </a>
-          <a className="ch-nav-link" href={REPO} target="_blank" rel="noreferrer">
-            GitHub <IconExternal size={11} />
-          </a>
-
-          <button
-            type="button"
-            role="switch"
-            aria-checked={theme === 'light'}
-            aria-label="Toggle light theme"
-            className="ch-theme-btn"
-            data-testid="theme-switch"
-            onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+          <a
+            className="ch-nav-icon-link"
+            href={REPO}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="CONDUIT on GitHub"
+            title="GitHub repository"
+            data-testid="nav-github"
           >
-            <span className="ch-theme-dot" aria-hidden="true" />
-            <span>{theme === 'dark' ? 'Dark' : 'Light'}</span>
-          </button>
+            <IconGitHub size={16} />
+          </a>
         </div>
       </header>
 
@@ -128,13 +119,10 @@ export default function App() {
 
         <div className="ch-hero-inner">
           <div className="ch-hero-glass" data-testid="hero-glass">
-            <h1 className="ch-h1">
-              Don’t test a browser engine for memory bugs. Prove they cannot exist.
-            </h1>
+            <h1 className="ch-h1">A formally verified browser engine.</h1>
             <p className="ch-hero-prose">
-              CONDUIT proves URL parsing, JavaScript, Web IDL, and WebAssembly in Verus and
-              Z3—eliminating memory-corruption and type-confusion bug classes across every input,
-              with zero <code>unsafe</code> Rust.
+              CONDUIT is a browser engine built in Rust and proved with Verus and Z3—and an open
+              workbench for learning what formal verification can do, and where its limits are.
             </p>
             <div className="ch-hero-actions">
               <a className="ch-cta-primary" href="workbench.html" data-testid="cta-workbench">
@@ -142,7 +130,7 @@ export default function App() {
                 <IconArrowRight size={13} />
               </a>
               <a className="ch-cta-secondary" href="#ratchet">
-                <span>Verified ledger</span>
+                <span>Browser engine components</span>
               </a>
             </div>
           </div>
@@ -227,33 +215,8 @@ export default function App() {
         </div>
       )}
 
-      {/* Main Specification: Architecture (Maglev) -> Crates -> Scope -> CVE Baseline */}
+      {/* Main Specification: Browser Engine Components -> Scale & Limits -> CVE Baseline */}
       <main className="ch-spec-container">
-        <section className="ch-spec-row" id="arch">
-          <div className="ch-prose-col">
-            <h2 className="ch-section-title">
-              One proved kernel in front of disposable renderers
-            </h2>
-            <p className="ch-prose-text">
-              Each web origin runs in a disposable renderer with zero socket, cookie, or
-              cross-origin memory access. Privileged calls cross a narrow capability gap into the
-              proved Verus kernel.
-            </p>
-            <ArchitectureDiagram />
-          </div>
-
-          <div className="ch-artifact-col">
-            <PlateFrame
-              machine="maglev"
-              title="Shanghai SMT Maglev"
-              subtitle="10 mm non-contact gap & phase-locked guideway"
-              theme={theme}
-              defaultPreset="assembled"
-              testId="plate-maglev"
-            />
-          </div>
-        </section>
-
         <SectionStatus ratchet={ratchet} />
         <SectionWhy ratchet={ratchet} />
         <SectionCoverage />
@@ -282,10 +245,24 @@ export default function App() {
           </span>
         </div>
         <div className="ch-footer-right" data-testid="footer-generated">
-          ratchet {fmtDate(ratchet?.generated_at)} · sha256{' '}
-          <span title={ratchet?.inputs_sha256} data-testid="inputs-digest">
-            {ratchet?.inputs_sha256?.slice(0, 12) ?? NR}
+          <span>
+            ratchet {fmtDate(ratchet?.generated_at)} · sha256{' '}
+            <span title={ratchet?.inputs_sha256} data-testid="inputs-digest">
+              {ratchet?.inputs_sha256?.slice(0, 12) ?? NR}
+            </span>
           </span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={theme === 'light'}
+            aria-label="Toggle light theme"
+            className="ch-theme-btn"
+            data-testid="theme-switch"
+            onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+          >
+            <span className="ch-theme-dot" aria-hidden="true" />
+            <span>{theme === 'dark' ? 'Dark' : 'Light'}</span>
+          </button>
         </div>
       </footer>
     </div>
