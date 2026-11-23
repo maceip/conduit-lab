@@ -197,11 +197,6 @@ Access them as `PALETTES.dark` / `PALETTES.body` / `PALETTES.hi`, or `SHADE_DARK
 > flat ramp in `tokens.ts` — collapsing every part onto one ramp is what destroys the
 > form.
 
-> The published `--hi3` is `#e8ecef`; the atelier's is `#e8ecee`. The difference is 1/255
-> in one channel and is invisible, but `tokens.ts` claims the ramps are byte-identical
-> to the published properties and they are not quite — do not rely on that claim when
-> comparing a face against a published plate pixel by pixel.
-
 ### Classifying a face into a sub-ramp
 
 `b` is the lambert value, `dot(worldNormal, keyLight)`. The thresholds are the
@@ -226,9 +221,10 @@ disappear into the cut.
 
 ### Two traps
 
-1. **`SHADE` is not a ramp to use.** `contract/tokens.ts` still exports a six-step
-   single ramp called `SHADE`. It is the collapsed ramp that caused the defect below,
-   and nothing in the package imports it. Use `PALETTES`.
+1. **Never introduce a flat ramp.** `contract/tokens.ts` used to export a six-step
+   single ramp called `SHADE`. It was the collapsed ramp that caused the defect below,
+   and it has been removed. If you find yourself wanting one ramp for every part, that
+   is the bug, not the design. Use `PALETTES`.
 2. **The published engine's fourth palette.** `iso-cad.mjs` has a `live` ramp
    (`--hi1..--hi3` with thresholds `b > 0.45` / `b > 0.05`). The atelier deliberately
    drops it: live-verified status is carried by `BOARD.accent` through `Tone`, not by a
