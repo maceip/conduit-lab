@@ -22,6 +22,31 @@ export const SHADE = [
   '#454c53',
 ] as const;
 
+/**
+ * The three published body palettes from `v8-iso/iso-cad.mjs`.
+ *
+ * These are byte-identical to the published `--bd0..--bd3`, `--dk0..--dk2`
+ * and `--hi0..--hi3` custom properties, so an atelier face and a published
+ * face with the same normal land on the same tone. A part selects its
+ * palette; the ramp is applied within it.
+ */
+export const SHADE_BODY = ['#111315', '#171a1d', '#1e2226', '#262b30'] as const;
+export const SHADE_DARK = ['#0b0c0e', '#101214', '#16191c'] as const;
+export const SHADE_HI = ['#8e959c', '#b2b8be', '#cfd4d8', '#e8ecee'] as const;
+
+export const PALETTES = {
+  dark: SHADE_DARK,
+  body: SHADE_BODY,
+  hi: SHADE_HI,
+} as const;
+
+/**
+ * The tone of a machined cut face. A cut surface is a bright machined face in
+ * the drawing convention, so section faces take the top of the `hi` ramp with
+ * the section hatch laid over them.
+ */
+export const CUT_FACE = '#e8ecee';
+
 export const STROKE = {
   structure: 1.05,
   cutEdge: 1.35,
