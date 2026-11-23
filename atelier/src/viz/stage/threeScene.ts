@@ -263,6 +263,7 @@ export function createGcHeapScene(
 
     const pointerPositions: number[] = [];
     const violationPositions: number[] = [];
+    let violationDrawn = false;
     for (const edge of edges) {
       const from = meshById.get(edge.from);
       const to = meshById.get(edge.to);
@@ -273,8 +274,25 @@ export function createGcHeapScene(
       ];
       const isViolation =
         violation !== null && violation.from === edge.from && violation.to === edge.to;
-      if (isViolation) violationPositions.push(...segment);
-      else pointerPositions.push(...segment);
+      if (isViolation) {
+        violationPositions.push(...segment);
+        violationDrawn = true;
+      } else {
+        pointerPositions.push(...segment);
+      }
+    }
+
+    // A violation reported for a pointer that is not in the edge list still
+    // has to be visible, so it is drawn on its own.
+    if (violation !== null && !violationDrawn) {
+      const from = meshById.get(violation.from);
+      const to = meshById.get(violation.to);
+      if (from && to) {
+        violationPositions.push(
+          from.position.x, from.position.y, from.position.z,
+          to.position.x, to.position.y, to.position.z,
+        );
+      }
     }
 
     if (pointerPositions.length > 0) {

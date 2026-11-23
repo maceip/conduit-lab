@@ -132,12 +132,16 @@ export function Stepper(props: StepperProps): ReactElement {
   // render (SSR, or reduced motion) is never a half-drawn diagram.
   const isFirstStep = useRef(true);
   useEffect(() => {
-    if (reduced) {
+    if (isFirstStep.current) {
+      // The first step is shown already drawn, so a static render — SSR, or
+      // reduced motion — is never a half-drawn diagram.
+      isFirstStep.current = false;
       setProgress(1);
       return;
     }
-    if (isFirstStep.current) {
-      isFirstStep.current = false;
+    if (reduced) {
+      // Reduced motion: the step appears in its final state, with no
+      // intermediate frame (spec 7).
       setProgress(1);
       return;
     }
