@@ -111,6 +111,29 @@ test("unified hero renders turboprop + diagonal maglev viaduct behind translucen
   expect(glassStyle.backdrop).toContain("blur(");
   expect(glassStyle.bgImage).toContain("0.24");
 
+  // Verify propeller stays strictly between the right edge of .ch-hero-glass and the right edge of the page across narrow split-pane & wide viewports
+  for (const vw of [760, 850, 1080, 1440]) {
+    await page.setViewportSize({ width: vw, height: 720 });
+    await expect
+      .poll(async () => {
+        const glassRight = await page
+          .getByTestId("hero-glass")
+          .evaluate((el) => el.getBoundingClientRect().right);
+        const propDebug = await bgFrame
+          .locator("html")
+          .evaluate(() => window.__conduitPropDebug || null);
+        if (!propDebug) return false;
+        return (
+          propDebug.pageWidth === vw &&
+          propDebug.targetPropPx > glassRight + 30 &&
+          propDebug.targetPropPx < vw - 35 &&
+          propDebug.zView > propDebug.railZView + 4
+        );
+      })
+      .toBe(true);
+  }
+  await page.setViewportSize({ width: 1280, height: 720 });
+
   // 2. Verify standalone /inkwork/ studio still exposes strictly turboprop and maglev as top-level machines and Ortho callouts do not overlap
   await page.goto("/inkwork/index.html#turboprop");
   const topMachines = await page.evaluate(() =>

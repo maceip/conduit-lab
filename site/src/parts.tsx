@@ -79,15 +79,43 @@ export const AmbientMachineBackdrop: React.FC<{
   theme: 'dark' | 'light';
   testId: string;
 }> = ({ machine, theme, testId }) => {
+  const wrapRef = useRef<HTMLDivElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const initialThemeRef = useRef<'dark' | 'light'>(theme);
+
+  const syncHeroLayout = () => {
+    const wrap = wrapRef.current;
+    const win = iframeRef.current?.contentWindow;
+    if (!wrap || !win) return;
+    const heroRect = wrap.getBoundingClientRect();
+    if (heroRect.width <= 0) return;
+    const glass = wrap.parentElement?.querySelector('[data-testid="hero-glass"]');
+    const glassRect = glass?.getBoundingClientRect();
+    if (!glassRect) return;
+    const modalRightRatio = (glassRect.right - heroRect.left) / heroRect.width;
+    win.postMessage({ type: 'conduit-hero-layout', modalRightRatio }, '*');
+  };
 
   useEffect(() => {
     iframeRef.current?.contentWindow?.postMessage({ type: 'conduit-theme', theme }, '*');
   }, [theme]);
 
+  useEffect(() => {
+    const wrap = wrapRef.current;
+    if (!wrap || typeof ResizeObserver === 'undefined') return;
+    const glass = wrap.parentElement?.querySelector('[data-testid="hero-glass"]');
+    const ro = new ResizeObserver(() => syncHeroLayout());
+    ro.observe(wrap);
+    if (glass) ro.observe(glass);
+    window.addEventListener('resize', syncHeroLayout);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', syncHeroLayout);
+    };
+  }, []);
+
   return (
-    <div className="ch-hero-backdrop" aria-hidden="true" data-testid={testId}>
+    <div ref={wrapRef} className="ch-hero-backdrop" aria-hidden="true" data-testid={testId}>
       <iframe
         ref={iframeRef}
         className="ch-hero-backdrop-frame"
@@ -96,6 +124,7 @@ export const AmbientMachineBackdrop: React.FC<{
         tabIndex={-1}
         onLoad={(ev) => {
           ev.currentTarget.contentWindow?.postMessage({ type: 'conduit-theme', theme }, '*');
+          syncHeroLayout();
         }}
       />
     </div>

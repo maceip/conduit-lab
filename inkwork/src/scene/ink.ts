@@ -348,10 +348,10 @@ export const compositeFragment = /* glsl */ `
     col = bg ? inkCol : mix(col, inkCol, ink);
     alpha = max(alpha, ink);
     if (uAmbient > 0.5 && sceneD < 1e4) {
-      // Keep foreground rail & middle-left turboprop crisp; smoothly attenuate
-      // distant maglev & horizon viaduct piers into atmospheric depth.
-      float midFade = mix(1.0, 0.36, smoothstep(58.0, 108.0, sceneD));
-      float farVanish = 1.0 - smoothstep(115.0, 220.0, sceneD);
+      // Keep foreground rail & middle-left turboprop crisp across all viewport widths;
+      // smoothly attenuate distant maglev coaches & horizon viaduct piers into depth.
+      float midFade = mix(1.0, 0.38, smoothstep(76.0, 134.0, sceneD));
+      float farVanish = 1.0 - smoothstep(132.0, 225.0, sceneD);
       alpha *= midFade * farVanish;
     }
     gl_FragColor = vec4(col * alpha, alpha);

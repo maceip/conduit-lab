@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
+import { useEffect, useRef, useState } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { Catalogue } from './components/Catalogue';
@@ -9,6 +9,8 @@ import { PartsLegend, PlateMeta, TitleColumn } from './components/Plate';
 import { currentMachine, hasMachine, lineage, machineById, useMachine } from './machines';
 import { CameraRig, Guides, InkRenderer, MotionDriver } from './scene';
 import { AmbientWorld } from './scene/AmbientWorld';
+import { SECTION_PLANE } from './scene/Part';
+import { TP } from './machines/turboprop/data';
 import { isAmbient, isEmbed, restoreAll, selectMachine, useStudio } from './state';
 import './theme';
 import { bridge, exportPlate, recordTeardown } from './export';
@@ -156,7 +158,125 @@ function useParentPlateControl() {
   }, []);
 }
 
-/** Horizontal offset (px) of the projection centre: shifts ambient hero engine right so its aft half blurs under the glass card and its propeller/core emerge cleanly on the right. */
+const VIA_P0 = new THREE.Vector3(-24.9, 0, -7.7);
+const VIA_NORMAL = new THREE.Vector3(0.979, 0, 0.201).normalize();
+const ambientLayout = { modalRightRatio: null as number | null };
+const ambHubWorld = new THREE.Vector3();
+const ambRayPerZ = new THREE.Vector3();
+const ambScratch = new THREE.Vector3();
+
+function fallbackModalRightPx(w: number): number {
+  if (w < 680) return w - 16;
+  const pad = w <= 760 ? 16 : 28;
+  const innerLeft = pad + Math.max(0, (w - pad * 2 - 1420) * 0.5);
+  const glassW = Math.min(575, w - pad * 2 - 235);
+  return innerLeft + Math.max(240, glassW);
+}
+
+/**
+ * Anchors `machine-root` in ambient hero mode so the propeller (TP.hubX, TP.AY)
+ * always sits horizontally in the open gap between `.ch-hero-glass`'s right edge
+ * and the right edge of the page, while staying strictly behind the diagonal Maglev rail.
+ */
+function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group | null> }) {
+  const { camera, size } = useThree() as unknown as {
+    camera: THREE.PerspectiveCamera;
+    size: { width: number; height: number };
+  };
+
+  useEffect(() => {
+    const onMsg = (ev: MessageEvent) => {
+      const data = ev.data as { type?: string; modalRightRatio?: number } | null;
+      if (data?.type === 'conduit-hero-layout' && typeof data.modalRightRatio === 'number') {
+        ambientLayout.modalRightRatio = data.modalRightRatio;
+      }
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  useFrame(() => {
+    const root = rootRef.current;
+    if (!root || size.width <= 0 || size.height <= 0) return;
+
+    camera.updateMatrixWorld();
+    const w = size.width;
+    const h = size.height;
+    const modalRightPx =
+      ambientLayout.modalRightRatio !== null
+        ? ambientLayout.modalRightRatio * w
+        : fallbackModalRightPx(w);
+    const gapPx = w - modalRightPx;
+
+    let targetPropPx: number;
+    let targetDiamPx: number;
+    if (gapPx >= 110) {
+      // Place propeller hub squarely inside [modalRightPx, w] so the entire spinning
+      // propeller stays between the modal edge and page edge while the aft core blurs under the modal.
+      targetDiamPx = THREE.MathUtils.clamp(gapPx * 0.86, 150, 278);
+      const rightReachPx = 0.34 * targetDiamPx;
+      const leftClearPx = 0.33 * targetDiamPx;
+      const minHubPx = modalRightPx + leftClearPx + 14;
+      const maxHubPx = w - rightReachPx - 16;
+      const idealHubPx = modalRightPx + Math.min(192, gapPx * 0.54);
+      targetPropPx = maxHubPx >= minHubPx ? THREE.MathUtils.clamp(idealHubPx, minHubPx, maxHubPx) : modalRightPx + gapPx * 0.53;
+    } else {
+      // Narrow phone fallback where modal spans full width
+      targetDiamPx = Math.min(h * 0.48, 210);
+      targetPropPx = w * 0.72;
+    }
+
+    const targetPropPy = h * 0.55;
+    const ndcX = (targetPropPx / w) * 2 - 1;
+    const ndcY = 1 - (targetPropPy / h) * 2;
+    const tanHalfFov = Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5));
+    const aspect = w / h;
+
+    // Direction vector in world space per +1 unit of view-space depth Z_view
+    ambRayPerZ
+      .set(ndcX * tanHalfFov * aspect, ndcY * tanHalfFov, -1)
+      .transformDirection(camera.matrixWorld)
+      .multiplyScalar(Math.hypot(ndcX * tanHalfFov * aspect, ndcY * tanHalfFov, 1));
+
+    // Exact Z_view of the Maglev viaduct plane along this pixel ray, plus +7.6 clearance behind the rail
+    const numer = ambScratch.copy(VIA_P0).sub(camera.position).dot(VIA_NORMAL);
+    const denom = ambRayPerZ.dot(VIA_NORMAL);
+    const railZView = Math.abs(denom) > 1e-4 ? numer / denom : 46;
+    const zView = THREE.MathUtils.clamp(railZView + 7.6, 36, 76);
+
+    // Exact 3D world point projecting to (targetPropPx, targetPropPy) at depth zView
+    ambHubWorld
+      .set(ndcX * zView * tanHalfFov * aspect, ndcY * zView * tanHalfFov, -zView)
+      .applyMatrix4(camera.matrixWorld);
+
+    // Scale S (world units per mm) so 2 * TP.propR (2160 mm) spans targetDiamPx vertically
+    const scalePerMm = ((targetDiamPx / h) * (2 * zView * tanHalfFov)) / (2 * TP.propR);
+    root.scale.setScalar(scalePerMm);
+    root.position.set(
+      ambHubWorld.x - TP.hubX * scalePerMm,
+      ambHubWorld.y - TP.AY * scalePerMm,
+      ambHubWorld.z,
+    );
+    root.updateMatrixWorld();
+
+    if (useStudio.getState().section) {
+      SECTION_PLANE.constant = root.position.z;
+    }
+
+    (window as unknown as { __conduitPropDebug?: unknown }).__conduitPropDebug = {
+      modalRightPx,
+      targetPropPx,
+      pageWidth: w,
+      targetDiamPx,
+      railZView,
+      zView,
+    };
+  }, 0);
+
+  return null;
+}
+
+/** Horizontal offset (px) of the projection centre: shifts standalone studio machine beside its text column. */
 function useStageShift() {
   const [shift, setShift] = useState(0);
   useEffect(() => {
@@ -224,6 +344,7 @@ export default function App() {
   const { Model, Driver, Backdrop } = machine;
   const drawingMode = useStudio((s) => s.view === 'drawing');
   const moveMode = useStudio((s) => s.moveMode);
+  const rootRef = useRef<THREE.Group>(null);
   const [recording, setRecording] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const onExport = async (kind: 'plate' | 'video' | 'json') => {
@@ -257,10 +378,10 @@ export default function App() {
           <MotionDriver />
           {Driver && <Driver key={`driver-${machine.id}`} />}
           <group
+            ref={rootRef}
             key={machine.id}
             name="machine-root"
-            position={isAmbient ? [-31.5, -13.2, -24.3] : [0, 0, 0]}
-            scale={(machine.unit ?? 1) * (isAmbient ? 2.62 : 1)}
+            scale={machine.unit ?? 1}
           >
             <Model />
           </group>
@@ -268,6 +389,7 @@ export default function App() {
           {!isAmbient && <Guides />}
           <OrbitControls makeDefault enabled={!drawingMode && !isAmbient} enablePan={false} minDistance={3} maxDistance={160} maxPolarAngle={Math.PI * 0.49} enableDamping dampingFactor={0.08} />
           <CameraRig shift={shift} />
+          {isAmbient && <AmbientTurbopropRig rootRef={rootRef} />}
           <InkRenderer />
           <ExportBridge />
           <DrawingRig />
