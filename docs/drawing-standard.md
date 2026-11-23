@@ -14,11 +14,12 @@ stroke and motion grammar but are not drawings and are not covered here.
 
 **Class hooks and the styling home.** The tier-1 and tier-2 components ship `ch*`
 class hooks (`chCountFigure`, `chStatTile`, `chOdometerReels`, `chRatchetCounter`,
-`chSplitBar`, `chRadialGauge`, `chDeltaChip`). Their geometry — the reel window, the
-stat-tile wrapping — lives in the component itself, because a component must read the
-same wherever it is mounted. What remains in `atelier/src/gallery/gallery.css` is
-theming and layout for the gallery specifically. A new tier-1 component should carry
-its own geometry inline and add only its host-agnostic hooks here.
+`chSplitBar`, `chRadialGauge`, `chDeltaChip`). A component's own geometry lives in the
+component, because a component must read the same wherever it is mounted — the odometer
+reel sets its own window and strip, and the tier-2 scene sets its own label layer and
+canvas size. What remains in `atelier/src/gallery/gallery.css` is theming and layout for
+the gallery specifically. A new tier-1 component should carry its own geometry inline and
+add only its host-agnostic hooks here.
 
 ---
 
