@@ -471,7 +471,11 @@ export const BrowserAnatomyTreemap: React.FC<{
                 ? `${activeLive.verifiedQueries.toLocaleString('en-US')} q · ${activeLive.sourceLines?.toLocaleString('en-US')} LOC`
                 : `${activeLive.verifiedQueries.toLocaleString('en-US')} proof queries · ${activeLive.sourceLines?.toLocaleString('en-US')} LOC`
               : `Live proof telemetry: ${NR}`
-            : activeSub.boundary}
+            : compact
+              ? activeSub.ownership === 'implementing'
+                ? 'Active Rust + Verus work'
+                : 'Isolated outside Verus TCB'
+              : activeSub.boundary}
         </div>
       </div>
     </aside>

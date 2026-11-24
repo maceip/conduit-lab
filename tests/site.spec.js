@@ -574,6 +574,54 @@ test("hero synchronized browser flowchart and browser wireframe treemap mirror c
   await expect(page.getByTestId("flowchart-node-vurl")).toHaveAttribute("data-active", "true");
   await expect(inspector).toContainText(`${vurlCrate.verified.toLocaleString("en-US")} proof queries`);
 
+  // Hovering individual items in BrowserAnatomyTreemap must NEVER scroll the page or shift layout heights
+  for (const vw of [1280, 850]) {
+    await page.setViewportSize({ width: vw, height: 860 });
+    for (const scrollTarget of [0, 320, 560, 920]) {
+      await page.evaluate(
+        (y) =>
+          new Promise((resolve) => {
+            window.scrollTo({ top: y, behavior: "instant" });
+            setTimeout(resolve, 250);
+          }),
+        scrollTarget
+      );
+      const baseline = await page.evaluate(() => ({
+        scrollY: Math.round(window.scrollY),
+        docH: document.documentElement.scrollHeight,
+        heroH: document.querySelector('[data-testid="lede"]').getBoundingClientRect().height,
+        tmapH: document.querySelector('[data-testid="browser-treemap"]').getBoundingClientRect().height,
+      }));
+      for (const id of expectedIds) {
+        const box = await page.getByTestId(`treemap-cell-${id}`).boundingBox();
+        expect(box, `treemap-cell-${id} must be in viewport`).not.toBeNull();
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        const after = await page.evaluate(() => ({
+          scrollY: Math.round(window.scrollY),
+          docH: document.documentElement.scrollHeight,
+          heroH: document.querySelector('[data-testid="lede"]').getBoundingClientRect().height,
+          tmapH: document.querySelector('[data-testid="browser-treemap"]').getBoundingClientRect().height,
+        }));
+        expect(
+          after.scrollY,
+          `hovering treemap-cell-${id} at vw=${vw}, scrollY=${scrollTarget} must not scroll page`
+        ).toBe(baseline.scrollY);
+        expect(after.docH, `document scrollHeight must not change on ${id} hover at vw=${vw}`).toBe(baseline.docH);
+        expect(
+          Math.abs(after.heroH - baseline.heroH),
+          `hero height must stay constant on ${id} hover at vw=${vw}`
+        ).toBeLessThanOrEqual(0.5);
+        expect(
+          Math.abs(after.tmapH - baseline.tmapH),
+          `treemap height must stay constant on ${id} hover at vw=${vw}`
+        ).toBeLessThanOrEqual(0.5);
+      }
+    }
+  }
+  await page.mouse.move(10, 10);
+  await page.setViewportSize({ width: 1280, height: 860 });
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+
   // Verify zero horizontal overflow and unclipped crates-table + Evolving Verification Process Components across desktop, split-pane, and mobile
   for (const vw of [1440, 1280, 1050, 850]) {
     await page.setViewportSize({ width: vw, height: 860 });
@@ -600,6 +648,7 @@ test("hero synchronized browser flowchart and browser wireframe treemap mirror c
 
   // Mobile (390x844): inline 1-column treemap below hero, zero page overflow, touch-synchronized selection
   await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByTestId("browser-treemap")).toHaveAttribute("data-compact", "true");
   const mobileState = await page.evaluate(() => {
     const rail = document.querySelector('[data-testid="sticky-treemap-rail"]');
     const tmap = document.querySelector('[data-testid="browser-treemap"]');
