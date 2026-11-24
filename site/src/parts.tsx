@@ -88,12 +88,17 @@ export const AmbientMachineBackdrop: React.FC<{
     const win = iframeRef.current?.contentWindow;
     if (!wrap || !win) return;
     const heroRect = wrap.getBoundingClientRect();
-    if (heroRect.width <= 0) return;
+    if (heroRect.width <= 0 || heroRect.height <= 0) return;
     const glass = wrap.parentElement?.querySelector('[data-testid="hero-glass"]');
     const glassRect = glass?.getBoundingClientRect();
     if (!glassRect) return;
+    const modalLeftRatio = (glassRect.left - heroRect.left) / heroRect.width;
+    const modalTopRatio = (glassRect.top - heroRect.top) / heroRect.height;
     const modalRightRatio = (glassRect.right - heroRect.left) / heroRect.width;
-    win.postMessage({ type: 'conduit-hero-layout', modalRightRatio }, '*');
+    win.postMessage(
+      { type: 'conduit-hero-layout', modalLeftRatio, modalTopRatio, modalRightRatio },
+      '*',
+    );
   };
 
   useEffect(() => {

@@ -14,6 +14,7 @@ import {
 } from './data';
 import { IconArrowRight, IconCopy, IconGitHub } from './icons';
 import { AmbientMachineBackdrop, StatTile } from './parts';
+import HeroArchitecturePair from './HeroArchitecture';
 import SectionCoverage from './SectionCoverage';
 import SectionWhy from './SectionWhy';
 import SectionStatus from './SectionStatus';
@@ -74,21 +75,29 @@ export default function App() {
 
   return (
     <div className="ch-page-shell" id="top" data-testid="conduit-shell">
-      <header className="ch-topbar">
-        <a className="ch-brand" href="#top">
+      <header className="ch-topbar" data-testid="machined-topbar">
+        <a className="ch-brand ch-alu-panel" href="#top">
           <span className="ch-brand-dot" aria-hidden="true" />
           <span>CONDUIT</span>
         </a>
 
+        <div className="ch-topbar-spacer" aria-hidden="true" />
+
         <div className="ch-topbar-right">
           <nav className="ch-nav" aria-label="Page sections">
-            <a href="#ratchet">Proofs</a>
+            <a className="ch-alu-btn" href="#ratchet">
+              Proofs
+            </a>
           </nav>
-          <a className="ch-nav-link" href="workbench.html" data-testid="nav-workbench">
+          <a
+            className="ch-nav-link ch-alu-btn"
+            href="workbench.html"
+            data-testid="nav-workbench"
+          >
             Proof workbench
           </a>
           <a
-            className="ch-nav-link"
+            className="ch-nav-link ch-alu-btn"
             href={blobUrl('docs/verified-browser-engine.md')}
             target="_blank"
             rel="noreferrer"
@@ -96,7 +105,7 @@ export default function App() {
             Design doc
           </a>
           <a
-            className="ch-nav-icon-link"
+            className="ch-nav-icon-link ch-alu-btn ch-alu-icon"
             href={REPO}
             target="_blank"
             rel="noreferrer"
@@ -109,7 +118,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* Opening Hero — Ambient Cutaway Turboprop Backdrop + Liquid Glass Thesis Card */}
+      {/* Opening Hero — Ambient Cutaway Turboprop Behind Maglev Tracks + Liquid Glass Card + Synchronized Flowchart & Browser Treemap */}
       <section className="ch-hero" data-testid="lede">
         <AmbientMachineBackdrop
           machine="turboprop"
@@ -118,22 +127,27 @@ export default function App() {
         />
 
         <div className="ch-hero-inner">
-          <div className="ch-hero-glass" data-testid="hero-glass">
-            <h1 className="ch-h1">A formally verified browser engine.</h1>
-            <p className="ch-hero-prose">
-              CONDUIT is a browser engine built in Rust and proved with Verus and Z3—and an open
-              workbench for learning what formal verification can do, and where its limits are.
-            </p>
-            <div className="ch-hero-actions">
-              <a className="ch-cta-primary" href="workbench.html" data-testid="cta-workbench">
-                <span>Open proof workbench</span>
-                <IconArrowRight size={13} />
-              </a>
-              <a className="ch-cta-secondary" href="#ratchet">
-                <span>Browser engine components</span>
-              </a>
-            </div>
-          </div>
+          <HeroArchitecturePair
+            ratchet={ratchet}
+            leftSlotTop={
+              <div className="ch-hero-glass" data-testid="hero-glass">
+                <h1 className="ch-h1">A formally verified browser engine.</h1>
+                <p className="ch-hero-prose">
+                  CONDUIT is a browser engine built in Rust and proved with Verus and Z3—and an open
+                  workbench for learning what formal verification can do, and where its limits are.
+                </p>
+                <div className="ch-hero-actions">
+                  <a className="ch-cta-primary" href="workbench.html" data-testid="cta-workbench">
+                    <span>Open proof workbench</span>
+                    <IconArrowRight size={13} />
+                  </a>
+                  <a className="ch-cta-secondary" href="#ratchet">
+                    <span>Browser engine components</span>
+                  </a>
+                </div>
+              </div>
+            }
+          />
         </div>
       </section>
 

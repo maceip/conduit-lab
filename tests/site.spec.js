@@ -111,28 +111,26 @@ test("unified hero renders turboprop + diagonal maglev viaduct behind translucen
   expect(glassStyle.backdrop).toContain("blur(");
   expect(glassStyle.bgImage).toContain("0.24");
 
-  // Verify propeller stays strictly between the right edge of .ch-hero-glass and the right edge of the page across narrow split-pane & wide viewports
+  // Verify turboprop stays in the upper-left strictly behind the diagonal Maglev train tracks across viewports
   for (const vw of [760, 850, 1080, 1440]) {
-    await page.setViewportSize({ width: vw, height: 720 });
+    await page.setViewportSize({ width: vw, height: 780 });
     await expect
       .poll(async () => {
-        const glassRight = await page
-          .getByTestId("hero-glass")
-          .evaluate((el) => el.getBoundingClientRect().right);
         const propDebug = await bgFrame
           .locator("html")
           .evaluate(() => window.__conduitPropDebug || null);
         if (!propDebug) return false;
         return (
           propDebug.pageWidth === vw &&
-          propDebug.targetPropPx > glassRight + 30 &&
-          propDebug.targetPropPx < vw - 35 &&
+          propDebug.targetPropPx > 60 &&
+          propDebug.targetPropPx < vw * 0.5 &&
+          propDebug.targetPropPy < 200 &&
           propDebug.zView > propDebug.railZView + 4
         );
       })
       .toBe(true);
   }
-  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.setViewportSize({ width: 1280, height: 780 });
 
   // 2. Verify standalone /inkwork/ studio still exposes strictly turboprop and maglev as top-level machines and Ortho callouts do not overlap
   await page.goto("/inkwork/index.html#turboprop");
@@ -176,6 +174,23 @@ test("navbar, hero pitch, section headers, and footer theme toggle match streaml
   const githubLink = page.getByTestId("nav-github");
   await expect(githubLink.locator("svg")).toBeVisible();
   await expect(githubLink).toHaveText("");
+
+  // Machined aircraft-aluminum nav panels span the full vertical height of the topbar with flush screw styling
+  const aluCheck = await page.getByTestId("machined-topbar").evaluate((bar) => {
+    const barRect = bar.getBoundingClientRect();
+    const btns = Array.from(bar.querySelectorAll(".ch-alu-btn"));
+    return {
+      barHeight: Math.round(barRect.height),
+      count: btns.length,
+      allFullHeight: btns.every((b) => Math.abs(b.getBoundingClientRect().height - barRect.height) <= 2),
+      allScrewed: btns.every((b) => getComputedStyle(b).backgroundImage.includes("data:image/svg+xml")),
+      allDivided: btns.every((b) => parseFloat(getComputedStyle(b).borderLeftWidth) >= 1),
+    };
+  });
+  expect(aluCheck.count).toBe(4);
+  expect(aluCheck.allFullHeight, "machined nav buttons must split the full vertical height of the bar").toBe(true);
+  expect(aluCheck.allScrewed, "machined nav buttons must render flush screw/rivet details").toBe(true);
+  expect(aluCheck.allDivided, "machined nav buttons must have vertical panel seam dividers").toBe(true);
 
   // Clear first-principles hero pitch, Goldman industrial display font & section headers
   const lede = page.getByTestId("lede");
@@ -380,6 +395,23 @@ test("workbench.html navbar uses GitHub icon and places theme toggle in footer",
   const githubLink = page.getByTestId("nav-github");
   await expect(githubLink.locator("svg")).toBeVisible();
   await expect(githubLink).toHaveText("");
+
+  // Machined aircraft-aluminum nav panels span the full vertical height of the topbar with flush screw styling
+  const aluCheck = await page.getByTestId("machined-topbar").evaluate((bar) => {
+    const barRect = bar.getBoundingClientRect();
+    const btns = Array.from(bar.querySelectorAll(".ch-alu-btn"));
+    return {
+      barHeight: Math.round(barRect.height),
+      count: btns.length,
+      allFullHeight: btns.every((b) => Math.abs(b.getBoundingClientRect().height - barRect.height) <= 2),
+      allScrewed: btns.every((b) => getComputedStyle(b).backgroundImage.includes("data:image/svg+xml")),
+      allDivided: btns.every((b) => parseFloat(getComputedStyle(b).borderLeftWidth) >= 1),
+    };
+  });
+  expect(aluCheck.count).toBe(3);
+  expect(aluCheck.allFullHeight, "machined nav buttons must split the full vertical height of the bar").toBe(true);
+  expect(aluCheck.allScrewed, "machined nav buttons must render flush screw/rivet details").toBe(true);
+  expect(aluCheck.allDivided, "machined nav buttons must have vertical panel seam dividers").toBe(true);
 });
 
 test("provenance footer and staged local assets resolve with HTTP 200", async ({ page, request }) => {
@@ -445,6 +477,63 @@ test("missing ratchet.json and stats.json show load-error and not recorded", asy
   await expect(page.getByTestId("stat-differential cases")).toHaveText("not recorded");
   await expect(page.getByTestId("scale-conduit")).toHaveText("not recorded");
   await expect(page.getByTestId("crates-table-missing")).toContainText("not recorded");
+  await expect(page.getByTestId("treemap-cell-vjs")).toContainText("not recorded");
+  await expect(page.getByTestId("arch-inspector")).toContainText("not recorded");
+});
+
+test("hero synchronized browser flowchart and browser wireframe treemap mirror components and live telemetry", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const flowchart = page.getByTestId("browser-flowchart");
+  const treemap = page.getByTestId("browser-treemap");
+  const inspector = page.getByTestId("arch-inspector");
+  await expect(flowchart).toBeVisible();
+  await expect(treemap).toBeVisible();
+
+  const expectedIds = ["net", "vurl", "kernel", "html_css", "vjs", "webidl", "vwasm", "dawn", "sandbox"];
+  for (const id of expectedIds) {
+    await expect(page.getByTestId(`flowchart-node-${id}`)).toBeVisible();
+    await expect(page.getByTestId(`treemap-cell-${id}`)).toBeVisible();
+  }
+
+  // Color-coordinated ownership classes match verified vs in-progress vs delegated
+  await expect(page.getByTestId("flowchart-node-vjs")).toHaveAttribute("data-tone", "proved");
+  await expect(page.getByTestId("treemap-cell-vjs")).toHaveAttribute("data-tone", "proved");
+  await expect(page.getByTestId("flowchart-node-kernel")).toHaveAttribute("data-tone", "implementing");
+  await expect(page.getByTestId("treemap-cell-kernel")).toHaveAttribute("data-tone", "implementing");
+  await expect(page.getByTestId("flowchart-node-dawn")).toHaveAttribute("data-tone", "delegated");
+  await expect(page.getByTestId("treemap-cell-dawn")).toHaveAttribute("data-tone", "delegated");
+
+  // Default selection is vjs with live computed sum across its 8 crates
+  const vjsCrates = ratchet.crates.filter((c) => c.name.startsWith("vjs") && c.name !== "vjs_webidl");
+  const vjsQueries = vjsCrates.reduce((acc, c) => acc + c.verified, 0);
+  await expect(page.getByTestId("treemap-cell-vjs")).toContainText(`${vjsQueries.toLocaleString("en-US")} q`);
+  await expect(inspector).toContainText(`${vjsQueries.toLocaleString("en-US")} proof queries`);
+
+  // Click dawn in left flowchart -> synchronizes active state to right browser wireframe treemap
+  await page.getByTestId("flowchart-node-dawn").click();
+  await expect(page.getByTestId("flowchart-node-dawn")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByTestId("treemap-cell-dawn")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByTestId("treemap-cell-dawn")).toHaveAttribute("data-active", "true");
+  await expect(inspector).toContainText("Not implementing directly");
+
+  // Click vurl in right treemap -> synchronizes active state back to left flowchart & shows live vurl count
+  const vurlCrate = ratchet.crates.find((c) => c.name === "vurl");
+  await page.getByTestId("treemap-cell-vurl").click();
+  await expect(page.getByTestId("flowchart-node-vurl")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByTestId("flowchart-node-vurl")).toHaveAttribute("data-active", "true");
+  await expect(inspector).toContainText(`${vurlCrate.verified.toLocaleString("en-US")} proof queries`);
+
+  // Verify zero horizontal overflow on desktop and mobile
+  for (const vp of [
+    { width: 1280, height: 860 },
+    { width: 390, height: 844 },
+  ]) {
+    await page.setViewportSize(vp);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow, `page must not overflow horizontally at ${vp.width}px`).toBeLessThanOrEqual(1);
+  }
 });
 
 // Each of these alone must turn the crate's dot, its count, the workspace total and (for vurl) the DAG red.
@@ -472,6 +561,8 @@ for (const [why, mutate] of [
     await page.reload();
     await expect(row).toContainText("vurl");
     await expect(row.locator(".ch-status-dot")).toHaveAttribute("data-tone", "fail");
+    await expect(page.getByTestId("flowchart-node-vurl")).toHaveAttribute("data-tone", "fail");
+    await expect(page.getByTestId("treemap-cell-vurl")).toHaveAttribute("data-tone", "fail");
     await expect(total).toContainText("Some crates fail a proof, trust, or test check");
     const dagAfter = await page.locator(".ch-dag-node").evaluateAll((ns) => ns.map((n) => n.outerHTML));
     expect(dagAfter, "DAG must stop showing its nodes as verified").not.toEqual(dagBefore);

@@ -39,18 +39,22 @@ function WorkbenchApp() {
 
   return (
     <div className="ch-page-shell" data-testid="workbench-shell">
-      <header className="ch-topbar">
-        <a className="ch-brand" href="./" data-testid="workbench-back">
+      <header className="ch-topbar" data-testid="machined-topbar">
+        <a className="ch-brand ch-alu-panel" href="./" data-testid="workbench-back">
           <span className="ch-brand-dot" aria-hidden="true" />
           <span>← CONDUIT</span>
         </a>
 
+        <div className="ch-topbar-spacer" aria-hidden="true" />
+
         <div className="ch-topbar-right">
           <nav className="ch-nav" aria-label="Workbench navigation">
-            <a href="./#ratchet">Proofs</a>
+            <a className="ch-alu-btn" href="./#ratchet">
+              Proofs
+            </a>
           </nav>
           <a
-            className="ch-nav-link"
+            className="ch-nav-link ch-alu-btn"
             href={blobUrl('docs/verified-browser-engine.md')}
             target="_blank"
             rel="noreferrer"
@@ -58,7 +62,7 @@ function WorkbenchApp() {
             Design doc
           </a>
           <a
-            className="ch-nav-icon-link"
+            className="ch-nav-icon-link ch-alu-btn ch-alu-icon"
             href={REPO}
             target="_blank"
             rel="noreferrer"

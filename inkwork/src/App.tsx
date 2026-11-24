@@ -160,23 +160,30 @@ function useParentPlateControl() {
 
 const VIA_P0 = new THREE.Vector3(-24.9, 0, -7.7);
 const VIA_NORMAL = new THREE.Vector3(0.979, 0, 0.201).normalize();
-const ambientLayout = { modalRightRatio: null as number | null };
+const ambientLayout = {
+  modalLeftRatio: null as number | null,
+  modalTopRatio: null as number | null,
+  modalRightRatio: null as number | null,
+};
 const ambHubWorld = new THREE.Vector3();
 const ambRayPerZ = new THREE.Vector3();
 const ambScratch = new THREE.Vector3();
 
-function fallbackModalRightPx(w: number): number {
-  if (w < 680) return w - 16;
+function fallbackModalBounds(w: number, h: number): { left: number; top: number; right: number } {
   const pad = w <= 760 ? 16 : 28;
   const innerLeft = pad + Math.max(0, (w - pad * 2 - 1420) * 0.5);
-  const glassW = Math.min(575, w - pad * 2 - 235);
-  return innerLeft + Math.max(240, glassW);
+  const glassW = w < 680 ? w - pad * 2 : Math.min(575, w - pad * 2 - 235);
+  return {
+    left: innerLeft,
+    top: Math.min(92, h * 0.14),
+    right: innerLeft + Math.max(240, glassW),
+  };
 }
 
 /**
- * Anchors `machine-root` in ambient hero mode so the propeller (TP.hubX, TP.AY)
- * always sits horizontally in the open gap between `.ch-hero-glass`'s right edge
- * and the right edge of the page, while staying strictly behind the diagonal Maglev rail.
+ * Anchors `machine-root` in ambient hero mode in the upper-left quadrant strictly
+ * behind the diagonal elevated Maglev viaduct rail (zView > railZView), leaving the
+ * right side clear for the Maglev trainset and browser wireframe treemap.
  */
 function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group | null> }) {
   const { camera, size } = useThree() as unknown as {
@@ -186,9 +193,16 @@ function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group
 
   useEffect(() => {
     const onMsg = (ev: MessageEvent) => {
-      const data = ev.data as { type?: string; modalRightRatio?: number } | null;
-      if (data?.type === 'conduit-hero-layout' && typeof data.modalRightRatio === 'number') {
-        ambientLayout.modalRightRatio = data.modalRightRatio;
+      const data = ev.data as {
+        type?: string;
+        modalLeftRatio?: number;
+        modalTopRatio?: number;
+        modalRightRatio?: number;
+      } | null;
+      if (data?.type === 'conduit-hero-layout') {
+        if (typeof data.modalLeftRatio === 'number') ambientLayout.modalLeftRatio = data.modalLeftRatio;
+        if (typeof data.modalTopRatio === 'number') ambientLayout.modalTopRatio = data.modalTopRatio;
+        if (typeof data.modalRightRatio === 'number') ambientLayout.modalRightRatio = data.modalRightRatio;
       }
     };
     window.addEventListener('message', onMsg);
@@ -202,31 +216,19 @@ function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group
     camera.updateMatrixWorld();
     const w = size.width;
     const h = size.height;
-    const modalRightPx =
-      ambientLayout.modalRightRatio !== null
-        ? ambientLayout.modalRightRatio * w
-        : fallbackModalRightPx(w);
-    const gapPx = w - modalRightPx;
+    const fb = fallbackModalBounds(w, h);
+    const modalLeftPx = ambientLayout.modalLeftRatio !== null ? ambientLayout.modalLeftRatio * w : fb.left;
+    const modalTopPx = ambientLayout.modalTopRatio !== null ? ambientLayout.modalTopRatio * h : fb.top;
+    const modalRightPx = ambientLayout.modalRightRatio !== null ? ambientLayout.modalRightRatio * w : fb.right;
 
-    let targetPropPx: number;
-    let targetDiamPx: number;
-    if (gapPx >= 110) {
-      // Place propeller hub squarely inside [modalRightPx, w] so the entire spinning
-      // propeller stays between the modal edge and page edge while the aft core blurs under the modal.
-      targetDiamPx = THREE.MathUtils.clamp(gapPx * 0.86, 150, 278);
-      const rightReachPx = 0.34 * targetDiamPx;
-      const leftClearPx = 0.33 * targetDiamPx;
-      const minHubPx = modalRightPx + leftClearPx + 14;
-      const maxHubPx = w - rightReachPx - 16;
-      const idealHubPx = modalRightPx + Math.min(192, gapPx * 0.54);
-      targetPropPx = maxHubPx >= minHubPx ? THREE.MathUtils.clamp(idealHubPx, minHubPx, maxHubPx) : modalRightPx + gapPx * 0.53;
-    } else {
-      // Narrow phone fallback where modal spans full width
-      targetDiamPx = Math.min(h * 0.48, 210);
-      targetPropPx = w * 0.72;
-    }
+    // Position the cutaway turboprop in the upper-left sky directly behind the diagonal
+    // Maglev train tracks so the elevated guideway passes cleanly in front of it and
+    // the engine silhouette reads clearly above the top edge of the hero glass card.
+    const targetDiamPx = THREE.MathUtils.clamp(Math.min(w * 0.16, h * 0.28), 115, 192);
+    const idealHubPx = modalLeftPx + Math.min(350, w * 0.30);
+    const targetPropPx = THREE.MathUtils.clamp(idealHubPx, Math.min(w * 0.28, 220), Math.min(w * 0.46, modalRightPx + 18));
+    const targetPropPy = THREE.MathUtils.clamp(Math.max(modalTopPx * 0.72, h * 0.135), 76, Math.min(h * 0.21, 136));
 
-    const targetPropPy = h * 0.55;
     const ndcX = (targetPropPx / w) * 2 - 1;
     const ndcY = 1 - (targetPropPy / h) * 2;
     const tanHalfFov = Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5));
@@ -238,11 +240,11 @@ function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group
       .transformDirection(camera.matrixWorld)
       .multiplyScalar(Math.hypot(ndcX * tanHalfFov * aspect, ndcY * tanHalfFov, 1));
 
-    // Exact Z_view of the Maglev viaduct plane along this pixel ray, plus +7.6 clearance behind the rail
+    // Exact Z_view of the Maglev viaduct plane along this pixel ray, plus +9.5 clearance behind the rail
     const numer = ambScratch.copy(VIA_P0).sub(camera.position).dot(VIA_NORMAL);
     const denom = ambRayPerZ.dot(VIA_NORMAL);
-    const railZView = Math.abs(denom) > 1e-4 ? numer / denom : 46;
-    const zView = THREE.MathUtils.clamp(railZView + 7.6, 36, 76);
+    const railZView = Math.abs(denom) > 1e-4 ? numer / denom : 48;
+    const zView = THREE.MathUtils.clamp(railZView + 9.5, 42, 84);
 
     // Exact 3D world point projecting to (targetPropPx, targetPropPy) at depth zView
     ambHubWorld
@@ -264,9 +266,13 @@ function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group
     }
 
     (window as unknown as { __conduitPropDebug?: unknown }).__conduitPropDebug = {
+      modalLeftPx,
+      modalTopPx,
       modalRightPx,
       targetPropPx,
+      targetPropPy,
       pageWidth: w,
+      pageHeight: h,
       targetDiamPx,
       railZView,
       zView,
