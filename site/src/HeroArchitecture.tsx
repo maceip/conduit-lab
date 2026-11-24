@@ -326,10 +326,22 @@ export const BrowserPipelinePanel: React.FC<{
   );
 };
 
+const COMPACT_STACK_ORDER = [
+  'webidl',
+  'vwasm',
+  'vurl',
+  'kernel',
+  'html_css',
+  'net',
+  'dawn',
+  'sandbox',
+] as const;
+
 export const BrowserAnatomyTreemap: React.FC<{
   ratchet: Ratchet | null;
   selection: SubsystemSelection;
-}> = ({ ratchet, selection }) => {
+  compact?: boolean;
+}> = ({ ratchet, selection, compact = false }) => {
   const { selectedId, setSelectedId, hoveredId, setHoveredId } = selection;
   const activeId = hoveredId ?? selectedId;
   const states = new Map<string, LiveSubsystemState>(
@@ -338,7 +350,7 @@ export const BrowserAnatomyTreemap: React.FC<{
   const activeSub = BROWSER_SUBSYSTEMS.find((s) => s.id === activeId) ?? BROWSER_SUBSYSTEMS[4];
   const activeLive = states.get(activeSub.id)!;
 
-  const renderMapCell = (id: string, extraClass = '', compact = false) => {
+  const renderMapCell = (id: string, extraClass = '', hideMeta = false, shortMeta = false) => {
     const sub = BROWSER_SUBSYSTEMS.find((s) => s.id === id)!;
     const live = states.get(sub.id)!;
     const isActive = activeId === sub.id;
@@ -349,10 +361,15 @@ export const BrowserAnatomyTreemap: React.FC<{
           ? `${live.verifiedQueries.toLocaleString('en-US')} q`
           : NR
         : sub.ownership === 'implementing'
-          ? 'rust · wip'
-          : 'external';
+          ? shortMeta
+            ? 'wip'
+            : 'rust · wip'
+          : shortMeta
+            ? 'ext'
+            : 'external';
     return (
       <button
+        key={sub.id}
         type="button"
         className={`ch-tmap-cell ${extraClass}`.trim()}
         data-ownership={sub.ownership}
@@ -367,7 +384,7 @@ export const BrowserAnatomyTreemap: React.FC<{
         onBlur={() => setHoveredId(null)}
       >
         <span className="ch-tmap-name">{sub.label}</span>
-        {!compact && <span className="ch-tmap-meta">{subMeta}</span>}
+        {!hideMeta && <span className="ch-tmap-meta">{subMeta}</span>}
       </button>
     );
   };
@@ -377,58 +394,82 @@ export const BrowserAnatomyTreemap: React.FC<{
       className="ch-arch-panel ch-browser-map-panel"
       aria-label="Browser wireframe subsystem treemap"
       data-testid="browser-treemap"
+      data-compact={compact ? 'true' : 'false'}
     >
       <header className="ch-arch-panel-head">
-        <span className="ch-arch-panel-title">Browser anatomy treemap</span>
-        <span className="ch-arch-panel-hint">Synchronized · click cell</span>
+        <span className="ch-arch-panel-title">
+          {compact ? 'Browser anatomy' : 'Browser anatomy treemap'}
+        </span>
+        {!compact && <span className="ch-arch-panel-hint">Synchronized · click cell</span>}
       </header>
 
-      <div className="ch-wireframe-shell">
-        <div className="ch-wf-chrome">
-          <div className="ch-wf-tabbar">
-            <div className="ch-wf-dots" aria-hidden="true">
-              <span />
-              <span />
-              <span />
+      {compact ? (
+        <div className="ch-wireframe-shell ch-wireframe-shell-compact">
+          <div className="ch-tmap-compact-col" role="group" aria-label="Single-column browser subsystem stack">
+            {renderMapCell('vjs', 'ch-tmap-vjs-featured')}
+            <div className="ch-tmap-compact-list">
+              {COMPACT_STACK_ORDER.map((id) =>
+                renderMapCell(id, 'ch-tmap-compact-row', false, true),
+              )}
             </div>
-            {renderMapCell('kernel', 'ch-tmap-kernel')}
-          </div>
-
-          <div className="ch-wf-addrbar">
-            {renderMapCell('net', 'ch-tmap-net', true)}
-            {renderMapCell('vurl', 'ch-tmap-vurl')}
           </div>
         </div>
+      ) : (
+        <div className="ch-wireframe-shell">
+          <div className="ch-wf-chrome">
+            <div className="ch-wf-tabbar">
+              <div className="ch-wf-dots" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+              </div>
+              {renderMapCell('kernel', 'ch-tmap-kernel')}
+            </div>
 
-        <div className="ch-wf-viewport" role="group" aria-label="Browser viewport subsystem map">
-          <div className="ch-tmap-grid">
-            <div className="ch-tmap-col-left">
-              {renderMapCell('vjs', 'ch-tmap-vjs')}
-              <div className="ch-tmap-subrow">
-                {renderMapCell('webidl', 'ch-tmap-webidl')}
-                {renderMapCell('vwasm', 'ch-tmap-vwasm')}
+            <div className="ch-wf-addrbar">
+              {renderMapCell('net', 'ch-tmap-net', true)}
+              {renderMapCell('vurl', 'ch-tmap-vurl')}
+            </div>
+          </div>
+
+          <div className="ch-wf-viewport" role="group" aria-label="Browser viewport subsystem map">
+            <div className="ch-tmap-grid">
+              <div className="ch-tmap-col-left">
+                {renderMapCell('vjs', 'ch-tmap-vjs')}
+                <div className="ch-tmap-subrow">
+                  {renderMapCell('webidl', 'ch-tmap-webidl')}
+                  {renderMapCell('vwasm', 'ch-tmap-vwasm')}
+                </div>
+              </div>
+              <div className="ch-tmap-col-right">
+                {renderMapCell('html_css', 'ch-tmap-html')}
+                {renderMapCell('dawn', 'ch-tmap-dawn')}
               </div>
             </div>
-            <div className="ch-tmap-col-right">
-              {renderMapCell('html_css', 'ch-tmap-html')}
-              {renderMapCell('dawn', 'ch-tmap-dawn')}
-            </div>
+            {renderMapCell('sandbox', 'ch-tmap-sandbox')}
           </div>
-          {renderMapCell('sandbox', 'ch-tmap-sandbox')}
         </div>
-      </div>
+      )}
 
       <div className="ch-tmap-readout" data-testid="treemap-readout">
         <div className="ch-tmap-readout-top">
-          <strong>{activeSub.title}</strong>
+          <strong>{compact ? activeSub.label : activeSub.title}</strong>
           <span className="ch-arch-inspector-status" data-tone={activeLive.tone}>
-            {activeLive.statusText}
+            {compact
+              ? activeSub.ownership === 'verified'
+                ? liveStatusShort(activeLive.tone)
+                : activeSub.ownership === 'implementing'
+                  ? 'rust · wip'
+                  : 'isolated'
+              : activeLive.statusText}
           </span>
         </div>
         <div className="ch-tmap-readout-sub">
           {activeSub.ownership === 'verified'
             ? activeLive.verifiedQueries !== null
-              ? `${activeLive.verifiedQueries.toLocaleString('en-US')} proof queries · ${activeLive.sourceLines?.toLocaleString('en-US')} LOC`
+              ? compact
+                ? `${activeLive.verifiedQueries.toLocaleString('en-US')} q · ${activeLive.sourceLines?.toLocaleString('en-US')} LOC`
+                : `${activeLive.verifiedQueries.toLocaleString('en-US')} proof queries · ${activeLive.sourceLines?.toLocaleString('en-US')} LOC`
               : `Live proof telemetry: ${NR}`
             : activeSub.boundary}
         </div>
@@ -436,3 +477,9 @@ export const BrowserAnatomyTreemap: React.FC<{
     </aside>
   );
 };
+
+function liveStatusShort(tone: LiveSubsystemState['tone']): string {
+  if (tone === 'proved') return 'verified';
+  if (tone === 'fail') return 'check failed';
+  return NR;
+}

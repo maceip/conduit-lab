@@ -29,11 +29,40 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const archSelection = useSubsystemSelection();
+  const [treemapCompact, setTreemapCompact] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.innerWidth <= 760 : false,
+  );
   const [theme, setTheme] = useState<'dark' | 'light'>(() =>
     typeof window !== 'undefined' && localStorage.getItem('conduit-theme') === 'light'
       ? 'light'
       : 'dark',
   );
+
+  useEffect(() => {
+    const syncCompact = () => {
+      if (window.innerWidth <= 760) {
+        setTreemapCompact(true);
+        return;
+      }
+      if (window.scrollY <= 36) {
+        setTreemapCompact(false);
+        return;
+      }
+      const target =
+        document.querySelector('[data-testid="honesty-card"]') ??
+        document.getElementById('ratchet');
+      if (!target) return;
+      const top = target.getBoundingClientRect().top;
+      setTreemapCompact((prev) => (prev ? top < 585 : top <= 550));
+    };
+    syncCompact();
+    window.addEventListener('scroll', syncCompact, { passive: true });
+    window.addEventListener('resize', syncCompact);
+    return () => {
+      window.removeEventListener('scroll', syncCompact);
+      window.removeEventListener('resize', syncCompact);
+    };
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -157,7 +186,11 @@ export default function App() {
         </section>
 
         <div className="ch-sticky-treemap-rail" data-testid="sticky-treemap-rail">
-          <BrowserAnatomyTreemap ratchet={ratchet} selection={archSelection} />
+          <BrowserAnatomyTreemap
+            ratchet={ratchet}
+            selection={archSelection}
+            compact={treemapCompact}
+          />
         </div>
 
         <div className="ch-scoreboard-bg" aria-hidden="true" />
@@ -238,7 +271,7 @@ export default function App() {
               {error}
             </div>
           )}
-          <SectionStatus ratchet={ratchet} />
+          <SectionStatus ratchet={ratchet} selection={archSelection} />
           <SectionWhy ratchet={ratchet} />
           <SectionCoverage />
         </main>

@@ -13,10 +13,19 @@ import {
 import { TRADEOFFS } from './content/tradeoffs';
 import { FUEL_THEOREM } from './content/vjs';
 import { VURL_DAG_EDGES, VURL_DAG_NODES } from './content/vurl';
+import { BROWSER_SUBSYSTEMS, type SubsystemSelection } from './HeroArchitecture';
 import { IconChevron, IconExternal } from './icons';
 import { ProofDag, Source } from './parts';
 
-const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
+const CRATE_TO_SUBSYSTEM = new Map<string, string>(
+  BROWSER_SUBSYSTEMS.flatMap((s) => s.crates.map((crateName) => [crateName, s.id] as const)),
+);
+
+const SectionStatus: React.FC<{
+  ratchet: Ratchet | null;
+  selection?: SubsystemSelection;
+}> = ({ ratchet, selection }) => {
+  const activeSubId = selection ? (selection.hoveredId ?? selection.selectedId) : null;
   const vurl = ratchet?.crates.find((c) => c.name === 'vurl');
   const vurlOk = crateOk(vurl);
   const allOk = allCratesOk(ratchet);
@@ -77,8 +86,19 @@ const SectionStatus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
               {ratchet.crates.map((c) => {
                 const t = trustedTotal(c);
                 const ok = crateOk(c);
+                const subId = CRATE_TO_SUBSYSTEM.get(c.name) ?? null;
+                const isSubActive = Boolean(subId && activeSubId === subId);
                 return (
-                  <tr key={c.name}>
+                  <tr
+                    key={c.name}
+                    data-sub-active={isSubActive ? 'true' : undefined}
+                    onMouseEnter={() => {
+                      if (subId && selection) selection.setHoveredId(subId);
+                    }}
+                    onMouseLeave={() => {
+                      if (subId && selection) selection.setHoveredId(null);
+                    }}
+                  >
                     <td className="ch-mono ch-nowrap">
                       <span
                         className="ch-status-dot"

@@ -145,20 +145,41 @@ test("unified hero renders turboprop + diagonal maglev viaduct behind translucen
   }
   await page.setViewportSize({ width: 1280, height: 820 });
 
-  // Verify Browser Anatomy Treemap scrolls down with the page (position: sticky) without overlapping the crate ledger
-  await page.evaluate(() => window.scrollTo(0, 950));
+  // Verify Browser Anatomy Treemap starts 2-column at top, then shrinks to 1 column (vjs on top, others stacked below) when scrolled down to Evolving Verification Process Components
+  await expect(page.getByTestId("browser-treemap")).toHaveAttribute("data-compact", "false");
+  const topWidth = await page.getByTestId("browser-treemap").evaluate((el) => el.getBoundingClientRect().width);
+  expect(topWidth).toBeGreaterThan(280);
+
+  await page.getByTestId("honesty-card").scrollIntoViewIfNeeded();
+  await page.evaluate(() => window.scrollBy(0, 120));
+  await expect(page.getByTestId("browser-treemap")).toHaveAttribute("data-compact", "true");
+
   const stickyState = await page.evaluate(() => {
     const tmap = document.querySelector('[data-testid="browser-treemap"]').getBoundingClientRect();
     const crates = document.querySelector('[data-testid="crates-table"]').getBoundingClientRect();
+    const honesty = document.querySelector('[data-testid="honesty-card"]').getBoundingClientRect();
+    const vjs = document.querySelector('[data-testid="treemap-cell-vjs"]').getBoundingClientRect();
+    const others = ["webidl", "vwasm", "vurl", "kernel", "html_css", "net", "dawn", "sandbox"].map((id) =>
+      document.querySelector(`[data-testid="treemap-cell-${id}"]`).getBoundingClientRect()
+    );
     return {
       tmapTop: tmap.top,
-      nonOverlapping: crates.right <= tmap.left + 1,
+      tmapWidth: tmap.width,
+      nonOverlappingCrates: crates.right <= tmap.left + 1,
+      nonOverlappingHonesty: honesty.right <= tmap.left + 1,
+      allBelowVjsSingleCol: others.every(
+        (r) => r.top >= vjs.bottom - 1 && Math.abs(r.left - vjs.left) <= 2 && Math.abs(r.width - vjs.width) <= 2
+      ),
     };
   });
   expect(stickyState.tmapTop).toBeGreaterThanOrEqual(60);
   expect(stickyState.tmapTop).toBeLessThanOrEqual(76);
-  expect(stickyState.nonOverlapping, "sticky treemap must never overlap crates-table").toBe(true);
+  expect(stickyState.tmapWidth, "shrunk 1-col treemap must narrow significantly").toBeLessThan(205);
+  expect(stickyState.nonOverlappingCrates, "sticky treemap must never overlap crates-table").toBe(true);
+  expect(stickyState.nonOverlappingHonesty, "sticky treemap must never overlap Evolving Verification Process Components").toBe(true);
+  expect(stickyState.allBelowVjsSingleCol, "shrunk treemap must stack all other cells in 1 column below vjs").toBe(true);
   await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(page.getByTestId("browser-treemap")).toHaveAttribute("data-compact", "false");
 
   // 2. Verify standalone /inkwork/ studio still exposes strictly turboprop and maglev as top-level machines and Ortho callouts do not overlap
   await page.goto("/inkwork/index.html#turboprop");
@@ -553,22 +574,50 @@ test("hero synchronized browser flowchart and browser wireframe treemap mirror c
   await expect(page.getByTestId("flowchart-node-vurl")).toHaveAttribute("data-active", "true");
   await expect(inspector).toContainText(`${vurlCrate.verified.toLocaleString("en-US")} proof queries`);
 
-  // Verify zero horizontal overflow on desktop, split-pane, and mobile
-  for (const vp of [
-    { width: 1280, height: 860 },
-    { width: 850, height: 860 },
-    { width: 390, height: 844 },
-  ]) {
-    await page.setViewportSize(vp);
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-    expect(overflow, `page must not overflow horizontally at ${vp.width}px`).toBeLessThanOrEqual(1);
+  // Verify zero horizontal overflow and unclipped crates-table + Evolving Verification Process Components across desktop, split-pane, and mobile
+  for (const vw of [1440, 1280, 1050, 850]) {
+    await page.setViewportSize({ width: vw, height: 860 });
+    const pageOverflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(pageOverflow, `page must not overflow horizontally at ${vw}px`).toBeLessThanOrEqual(1);
+
+    const tableOverflow = await page
+      .getByTestId("crates-table")
+      .locator("..")
+      .evaluate((el) => el.scrollWidth - el.clientWidth);
+    expect(tableOverflow, `crates-table must not clip horizontally at ${vw}px`).toBeLessThanOrEqual(2);
+
+    const visibleHeaders = await page
+      .getByTestId("crates-table")
+      .locator("thead th")
+      .evaluateAll((ths) => ths.filter((th) => getComputedStyle(th).display !== "none").length);
+    expect(visibleHeaders, `all 7 crates-table columns must render at ${vw}px`).toBe(7);
+
+    const honestyOverflow = await page
+      .getByTestId("honesty-card")
+      .evaluate((el) => el.scrollWidth - el.clientWidth);
+    expect(honestyOverflow, `honesty-card must not clip at ${vw}px`).toBeLessThanOrEqual(2);
   }
-  await page.setViewportSize({ width: 850, height: 860 });
-  const cratesOverflow850 = await page
-    .getByTestId("crates-table")
-    .locator("..")
-    .evaluate((el) => el.scrollWidth - el.clientWidth);
-  expect(cratesOverflow850, "crates-table must fit beside sticky treemap at 850px").toBeLessThanOrEqual(2);
+
+  // Mobile (390x844): inline 1-column treemap below hero, zero page overflow, touch-synchronized selection
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobileState = await page.evaluate(() => {
+    const rail = document.querySelector('[data-testid="sticky-treemap-rail"]');
+    const tmap = document.querySelector('[data-testid="browser-treemap"]');
+    const flow = document.querySelector('[data-testid="browser-flowchart"]').getBoundingClientRect();
+    const tmapRect = tmap.getBoundingClientRect();
+    return {
+      overflow: document.documentElement.scrollWidth - window.innerWidth,
+      railPosition: getComputedStyle(rail).position,
+      compact: tmap.getAttribute("data-compact"),
+      belowFlowchart: tmapRect.top >= flow.bottom - 1,
+    };
+  });
+  expect(mobileState.overflow, "page must not overflow horizontally at 390px").toBeLessThanOrEqual(1);
+  expect(mobileState.railPosition).toBe("static");
+  expect(mobileState.compact).toBe("true");
+  expect(mobileState.belowFlowchart).toBe(true);
+  await page.getByTestId("treemap-cell-vwasm").click();
+  await expect(page.getByTestId("flowchart-node-vwasm")).toHaveAttribute("aria-pressed", "true");
   await page.setViewportSize({ width: 1280, height: 860 });
 });
 
