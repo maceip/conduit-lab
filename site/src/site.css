@@ -343,17 +343,60 @@ body {
 }
 
 /* ========================================================================== */
-/* Opening Hero — Ambient Turboprop Behind Tracks + Glass Card + Sync Views   */
+/* 2-Column Stage Layout + Sticky Right Browser Anatomy Treemap               */
 /* ========================================================================== */
-.ch-hero {
+.ch-stage-layout {
+  position: relative;
+  width: 100%;
+  flex: 1 0 auto;
+  display: grid;
+  grid-template-columns:
+    max(20px, calc((100% - 1420px) / 2 + 28px))
+    minmax(0, 1fr)
+    clamp(286px, 28.5vw, 388px)
+    max(20px, calc((100% - 1420px) / 2 + 28px));
+}
+
+.ch-hero-backdrop-shell {
+  grid-column: 1 / -1;
+  grid-row: 1;
   position: relative;
   overflow: hidden;
-  min-height: 620px;
-  display: flex;
-  align-items: flex-end;
   border-bottom: 1px solid var(--ch-border-subtle);
   background: var(--ch-bg-canvas);
-  padding: 108px 28px 34px;
+  z-index: 0;
+}
+
+.ch-hero {
+  grid-column: 2 / 3;
+  grid-row: 1;
+  position: relative;
+  z-index: 2;
+  min-height: 620px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 152px 24px 34px 0;
+  pointer-events: none;
+}
+
+.ch-sticky-treemap-rail {
+  grid-column: 3 / 4;
+  grid-row: 1 / 4;
+  z-index: 6;
+  align-self: start;
+  position: sticky;
+  top: 68px;
+  margin-top: 152px;
+  margin-bottom: 48px;
+}
+
+.ch-scoreboard-bg {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  background: var(--ch-bg-bar);
+  border-bottom: 1px solid var(--ch-border-subtle);
+  z-index: 0;
 }
 
 .ch-hero-backdrop {
@@ -371,22 +414,6 @@ body {
   border: 0;
   background: transparent;
   pointer-events: none;
-}
-
-.ch-hero-inner {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  max-width: 1420px;
-  margin: 0 auto;
-  pointer-events: none;
-}
-
-.ch-hero-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr);
-  gap: 22px;
-  align-items: end;
 }
 
 .ch-hero-left-col {
@@ -914,6 +941,35 @@ body {
   border-top: 1px solid var(--ch-border-strong);
 }
 
+.ch-tmap-readout {
+  padding: 9px 12px 11px;
+  border-top: 1px solid var(--ch-border-subtle);
+  background: rgba(18, 20, 23, 0.52);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+[data-theme='light'] .ch-tmap-readout {
+  background: rgba(238, 236, 230, 0.68);
+}
+
+.ch-tmap-readout-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  color: var(--ch-text-primary);
+}
+
+.ch-tmap-readout-sub {
+  font-family: var(--ch-font-mono);
+  font-size: 11px;
+  color: var(--ch-text-muted);
+}
+
 .ch-tmap-name {
   font-size: 11.5px;
   font-weight: 600;
@@ -1316,6 +1372,16 @@ body {
   padding: 0 28px;
 }
 
+.ch-stage-layout .ch-scoreboard-strip {
+  grid-column: 2 / 3;
+  grid-row: 2;
+  position: relative;
+  z-index: 2;
+  background: transparent;
+  border-bottom: 0;
+  padding: 0 24px 0 0;
+}
+
 .ch-scoreboard-inner {
   max-width: 1420px;
   margin: 0 auto;
@@ -1323,6 +1389,27 @@ body {
   grid-template-columns: minmax(0, 1fr) 320px;
   gap: 20px;
   align-items: center;
+}
+
+.ch-stage-layout .ch-scoreboard-inner {
+  max-width: none;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+.ch-stage-layout .ch-metric-tile:last-child {
+  border-right: 0;
+}
+
+.ch-stage-layout .ch-digest-stack {
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 0 0 12px;
+  gap: 8px;
+}
+
+.ch-stage-layout .ch-digest-pill {
+  flex: 1 1 265px;
 }
 
 .ch-metrics-grid {
@@ -1441,6 +1528,30 @@ body {
   flex-direction: column;
   gap: 56px;
   flex: 1 0 auto;
+}
+
+.ch-stage-layout .ch-spec-container {
+  grid-column: 2 / 3;
+  grid-row: 3;
+  position: relative;
+  z-index: 2;
+  max-width: none;
+  margin: 0;
+  padding: 44px 24px 72px 0;
+  min-width: 0;
+}
+
+.ch-stage-layout .ch-spec-row,
+.ch-stage-layout .ch-two-col-equal {
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 1120px) {
+  .ch-stage-layout .ch-spec-row-flush {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 28px;
+  }
 }
 
 .ch-spec-row {
@@ -2612,13 +2723,59 @@ td[data-tone='fail'] {
   }
 }
 
-@media (max-width: 900px) {
-  .ch-hero-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 1120px) {
+  .ch-stage-layout .ch-table th,
+  .ch-stage-layout .ch-table td {
+    padding: 7px 6px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 1040px) {
+  .ch-stage-layout .ch-metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ch-stage-layout .ch-metric-tile:nth-child(2n) {
+    border-right: none;
+    margin-right: 0;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1020px) {
+  .ch-stage-layout {
+    grid-template-columns: 16px minmax(0, 1fr) clamp(260px, 28vw, 310px) 16px;
+  }
+  .ch-stage-layout .ch-hero {
+    padding-right: 16px;
+  }
+  .ch-stage-layout .ch-scoreboard-strip {
+    padding-right: 16px;
+  }
+  .ch-stage-layout .ch-spec-container {
+    padding-right: 16px;
+  }
+  [data-testid='crates-table'] th,
+  [data-testid='crates-table'] td {
+    padding: 6px 5px;
+    font-size: 11.5px;
+  }
+  [data-testid='crates-table'] tr > th:nth-child(4),
+  [data-testid='crates-table'] tr > td:nth-child(4),
+  [data-testid='crates-table'] tr > th:nth-child(5),
+  [data-testid='crates-table'] tr > td:nth-child(5),
+  [data-testid='crates-table'] tr > th:nth-child(6),
+  [data-testid='crates-table'] tr > td:nth-child(6) {
+    display: none;
+  }
+  [data-testid='crates-table'] tr > td:nth-child(7) {
+    white-space: normal;
   }
 }
 
 @media (max-width: 760px) {
+  .ch-stage-layout {
+    grid-template-columns: 16px minmax(0, 1fr) 16px;
+  }
   .ch-topbar {
     position: static;
     height: auto;
@@ -2657,7 +2814,24 @@ td[data-tone='fail'] {
   }
   .ch-hero {
     min-height: 0;
-    padding: 48px 16px 28px;
+    padding: 96px 0 22px;
+  }
+  .ch-sticky-treemap-rail {
+    grid-column: 2 / 3;
+    grid-row: 2;
+    position: static;
+    margin: 18px 0 24px;
+  }
+  .ch-scoreboard-bg {
+    grid-row: 3;
+  }
+  .ch-stage-layout .ch-scoreboard-strip {
+    grid-row: 3;
+    padding: 0;
+  }
+  .ch-stage-layout .ch-spec-container {
+    grid-row: 4;
+    padding: 32px 0 52px;
   }
   .ch-hero-glass {
     max-width: 100%;

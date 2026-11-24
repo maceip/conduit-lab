@@ -111,26 +111,54 @@ test("unified hero renders turboprop + diagonal maglev viaduct behind translucen
   expect(glassStyle.backdrop).toContain("blur(");
   expect(glassStyle.bgImage).toContain("0.24");
 
-  // Verify turboprop stays in the upper-left strictly behind the diagonal Maglev train tracks across viewports
-  for (const vw of [760, 850, 1080, 1440]) {
-    await page.setViewportSize({ width: vw, height: 780 });
+  // Verify turboprop stays behind tracks AND closer Maglev stays clearly visible across viewports, while Browser Anatomy Treemap sits directly next to hero modal
+  for (const vw of [800, 850, 1080, 1440]) {
+    await page.setViewportSize({ width: vw, height: 820 });
     await expect
       .poll(async () => {
         const propDebug = await bgFrame
           .locator("html")
           .evaluate(() => window.__conduitPropDebug || null);
-        if (!propDebug) return false;
+        const maglevDebug = await bgFrame
+          .locator("html")
+          .evaluate(() => window.__conduitMaglevDebug || null);
+        const sideBySide = await page.evaluate(() => {
+          const glass = document.querySelector('[data-testid="hero-glass"]')?.getBoundingClientRect();
+          const tmap = document.querySelector('[data-testid="browser-treemap"]')?.getBoundingClientRect();
+          if (!glass || !tmap) return false;
+          return Math.abs(tmap.top - glass.top) <= 6 && tmap.left >= glass.right - 1;
+        });
+        if (!propDebug || !maglevDebug || !sideBySide) return false;
         return (
           propDebug.pageWidth === vw &&
-          propDebug.targetPropPx > 60 &&
-          propDebug.targetPropPx < vw * 0.5 &&
+          propDebug.targetPropPx > 50 &&
+          propDebug.targetPropPx < vw * 0.48 &&
           propDebug.targetPropPy < 200 &&
-          propDebug.zView > propDebug.railZView + 4
+          propDebug.zView > propDebug.railZView + 4 &&
+          maglevDebug.pageWidth === vw &&
+          maglevDebug.noseScreenPx > vw * 0.38 &&
+          maglevDebug.noseScreenPx < vw * 0.78 &&
+          maglevDebug.noseZView < 54
         );
       })
       .toBe(true);
   }
-  await page.setViewportSize({ width: 1280, height: 780 });
+  await page.setViewportSize({ width: 1280, height: 820 });
+
+  // Verify Browser Anatomy Treemap scrolls down with the page (position: sticky) without overlapping the crate ledger
+  await page.evaluate(() => window.scrollTo(0, 950));
+  const stickyState = await page.evaluate(() => {
+    const tmap = document.querySelector('[data-testid="browser-treemap"]').getBoundingClientRect();
+    const crates = document.querySelector('[data-testid="crates-table"]').getBoundingClientRect();
+    return {
+      tmapTop: tmap.top,
+      nonOverlapping: crates.right <= tmap.left + 1,
+    };
+  });
+  expect(stickyState.tmapTop).toBeGreaterThanOrEqual(60);
+  expect(stickyState.tmapTop).toBeLessThanOrEqual(76);
+  expect(stickyState.nonOverlapping, "sticky treemap must never overlap crates-table").toBe(true);
+  await page.evaluate(() => window.scrollTo(0, 0));
 
   // 2. Verify standalone /inkwork/ studio still exposes strictly turboprop and maglev as top-level machines and Ortho callouts do not overlap
   await page.goto("/inkwork/index.html#turboprop");
@@ -525,15 +553,23 @@ test("hero synchronized browser flowchart and browser wireframe treemap mirror c
   await expect(page.getByTestId("flowchart-node-vurl")).toHaveAttribute("data-active", "true");
   await expect(inspector).toContainText(`${vurlCrate.verified.toLocaleString("en-US")} proof queries`);
 
-  // Verify zero horizontal overflow on desktop and mobile
+  // Verify zero horizontal overflow on desktop, split-pane, and mobile
   for (const vp of [
     { width: 1280, height: 860 },
+    { width: 850, height: 860 },
     { width: 390, height: 844 },
   ]) {
     await page.setViewportSize(vp);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow, `page must not overflow horizontally at ${vp.width}px`).toBeLessThanOrEqual(1);
   }
+  await page.setViewportSize({ width: 850, height: 860 });
+  const cratesOverflow850 = await page
+    .getByTestId("crates-table")
+    .locator("..")
+    .evaluate((el) => el.scrollWidth - el.clientWidth);
+  expect(cratesOverflow850, "crates-table must fit beside sticky treemap at 850px").toBeLessThanOrEqual(2);
+  await page.setViewportSize({ width: 1280, height: 860 });
 });
 
 // Each of these alone must turn the crate's dot, its count, the workspace total and (for vurl) the DAG red.

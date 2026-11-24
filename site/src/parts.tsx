@@ -89,7 +89,7 @@ export const AmbientMachineBackdrop: React.FC<{
     if (!wrap || !win) return;
     const heroRect = wrap.getBoundingClientRect();
     if (heroRect.width <= 0 || heroRect.height <= 0) return;
-    const glass = wrap.parentElement?.querySelector('[data-testid="hero-glass"]');
+    const glass = document.querySelector('[data-testid="hero-glass"]');
     const glassRect = glass?.getBoundingClientRect();
     if (!glassRect) return;
     const modalLeftRatio = (glassRect.left - heroRect.left) / heroRect.width;
@@ -108,7 +108,7 @@ export const AmbientMachineBackdrop: React.FC<{
   useEffect(() => {
     const wrap = wrapRef.current;
     if (!wrap || typeof ResizeObserver === 'undefined') return;
-    const glass = wrap.parentElement?.querySelector('[data-testid="hero-glass"]');
+    const glass = document.querySelector('[data-testid="hero-glass"]');
     const ro = new ResizeObserver(() => syncHeroLayout());
     ro.observe(wrap);
     if (glass) ro.observe(glass);

@@ -16,7 +16,7 @@ export interface BrowserSubsystem {
 
 /**
  * Canonical browser engine component map shared 1-to-1 between the left pipeline
- * flowchart and the right browser wireframe treemap (docs/verified-browser-engine.md §3.2).
+ * flowchart and the sticky right browser wireframe treemap (docs/verified-browser-engine.md §3.2).
  */
 export const BROWSER_SUBSYSTEMS: BrowserSubsystem[] = [
   {
@@ -178,13 +178,24 @@ function resolveLiveState(sub: BrowserSubsystem, ratchet: Ratchet | null): LiveS
   };
 }
 
-export const HeroArchitecturePair: React.FC<{
-  ratchet: Ratchet | null;
-  leftSlotTop?: React.ReactNode;
-}> = ({ ratchet, leftSlotTop }) => {
+export interface SubsystemSelection {
+  selectedId: string;
+  setSelectedId: React.Dispatch<React.SetStateAction<string>>;
+  hoveredId: string | null;
+  setHoveredId: React.Dispatch<React.SetStateAction<string | null>>;
+}
+
+export function useSubsystemSelection(): SubsystemSelection {
   const [selectedId, setSelectedId] = useState<string>('vjs');
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  return { selectedId, setSelectedId, hoveredId, setHoveredId };
+}
 
+export const BrowserPipelinePanel: React.FC<{
+  ratchet: Ratchet | null;
+  selection: SubsystemSelection;
+}> = ({ ratchet, selection }) => {
+  const { selectedId, setSelectedId, hoveredId, setHoveredId } = selection;
   const activeId = hoveredId ?? selectedId;
   const states = new Map<string, LiveSubsystemState>(
     BROWSER_SUBSYSTEMS.map((s) => [s.id, resolveLiveState(s, ratchet)]),
@@ -221,6 +232,112 @@ export const HeroArchitecturePair: React.FC<{
     );
   };
 
+  return (
+    <section
+      className="ch-arch-panel ch-flowchart-panel"
+      aria-label="Browser component flowchart"
+      data-testid="browser-flowchart"
+    >
+      <header className="ch-arch-panel-head">
+        <span className="ch-arch-panel-title">Browser pipeline</span>
+        <div className="ch-arch-legend" aria-label="Component ownership legend">
+          <span className="ch-arch-key">
+            <i className="ch-arch-swatch" data-swatch="verified" aria-hidden="true" />
+            Verified
+          </span>
+          <span className="ch-arch-key">
+            <i className="ch-arch-swatch" data-swatch="implementing" aria-hidden="true" />
+            In progress
+          </span>
+          <span className="ch-arch-key">
+            <i className="ch-arch-swatch" data-swatch="delegated" aria-hidden="true" />
+            Not direct
+          </span>
+        </div>
+      </header>
+
+      <div className="ch-flow-body">
+        <div className="ch-flow-track" aria-label="Ingress and kernel flow">
+          <span className="ch-flow-track-tag">Host</span>
+          <div className="ch-flow-chain">
+            {ingressFlow.map((sub, i) => (
+              <React.Fragment key={sub.id}>
+                {renderFlowNode(sub)}
+                {i < ingressFlow.length - 1 && (
+                  <span className="ch-flow-arrow" aria-hidden="true">
+                    →
+                  </span>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+
+        <div className="ch-flow-ipc-bridge" aria-hidden="true">
+          <span className="ch-flow-ipc-line" />
+          <span className="ch-flow-ipc-label">typed IPC</span>
+          <span className="ch-flow-ipc-line" />
+        </div>
+
+        <div className="ch-flow-track" aria-label="Per-site renderer flow">
+          <span className="ch-flow-track-tag">Site</span>
+          <div className="ch-flow-chain">
+            {rendererFlow.map((sub, i) => (
+              <React.Fragment key={sub.id}>
+                {renderFlowNode(sub)}
+                {i < rendererFlow.length - 1 && (
+                  <span className="ch-flow-arrow" aria-hidden="true">
+                    →
+                  </span>
+                )}
+              </React.Fragment>
+            ))}
+            <span className="ch-flow-sandbox-slot">{renderFlowNode(sandboxSub)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="ch-arch-inspector" data-testid="arch-inspector">
+        <div className="ch-arch-inspector-head">
+          <strong className="ch-arch-inspector-name">{activeSub.title}</strong>
+          <span className="ch-arch-inspector-status" data-tone={activeLive.tone}>
+            {activeLive.statusText}
+          </span>
+        </div>
+        <p className="ch-arch-inspector-role">{activeSub.role}</p>
+        <div className="ch-arch-inspector-foot">
+          {activeSub.ownership === 'verified' ? (
+            <span>
+              {activeLive.verifiedQueries !== null
+                ? `${activeSub.crates.length} ${activeSub.crates.length === 1 ? 'crate' : 'crates'} · ${activeLive.verifiedQueries.toLocaleString('en-US')} proof queries · ${activeLive.sourceLines?.toLocaleString('en-US')} LOC · ${activeLive.trustedCount} trusted`
+                : `Live proof telemetry: ${NR}`}
+            </span>
+          ) : (
+            <span>{activeSub.boundary}</span>
+          )}
+          {activeSub.ownership === 'verified' && (
+            <a className="ch-mono-link" href="#ratchet">
+              Crate ledger →
+            </a>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export const BrowserAnatomyTreemap: React.FC<{
+  ratchet: Ratchet | null;
+  selection: SubsystemSelection;
+}> = ({ ratchet, selection }) => {
+  const { selectedId, setSelectedId, hoveredId, setHoveredId } = selection;
+  const activeId = hoveredId ?? selectedId;
+  const states = new Map<string, LiveSubsystemState>(
+    BROWSER_SUBSYSTEMS.map((s) => [s.id, resolveLiveState(s, ratchet)]),
+  );
+  const activeSub = BROWSER_SUBSYSTEMS.find((s) => s.id === activeId) ?? BROWSER_SUBSYSTEMS[4];
+  const activeLive = states.get(activeSub.id)!;
+
   const renderMapCell = (id: string, extraClass = '', compact = false) => {
     const sub = BROWSER_SUBSYSTEMS.find((s) => s.id === id)!;
     const live = states.get(sub.id)!;
@@ -256,153 +373,66 @@ export const HeroArchitecturePair: React.FC<{
   };
 
   return (
-    <div className="ch-hero-grid" data-testid="hero-architecture-grid">
-      {/* Left Column: Hero Liquid-Glass Thesis Card + Synchronized Component Flowchart */}
-      <div className="ch-hero-left-col">
-        {leftSlotTop}
+    <aside
+      className="ch-arch-panel ch-browser-map-panel"
+      aria-label="Browser wireframe subsystem treemap"
+      data-testid="browser-treemap"
+    >
+      <header className="ch-arch-panel-head">
+        <span className="ch-arch-panel-title">Browser anatomy treemap</span>
+        <span className="ch-arch-panel-hint">Synchronized · click cell</span>
+      </header>
 
-        <section
-          className="ch-arch-panel ch-flowchart-panel"
-          aria-label="Browser component flowchart"
-          data-testid="browser-flowchart"
-        >
-          <header className="ch-arch-panel-head">
-            <span className="ch-arch-panel-title">Browser pipeline</span>
-            <div className="ch-arch-legend" aria-label="Component ownership legend">
-              <span className="ch-arch-key">
-                <i className="ch-arch-swatch" data-swatch="verified" aria-hidden="true" />
-                Verified
-              </span>
-              <span className="ch-arch-key">
-                <i className="ch-arch-swatch" data-swatch="implementing" aria-hidden="true" />
-                In progress
-              </span>
-              <span className="ch-arch-key">
-                <i className="ch-arch-swatch" data-swatch="delegated" aria-hidden="true" />
-                Not direct
-              </span>
+      <div className="ch-wireframe-shell">
+        <div className="ch-wf-chrome">
+          <div className="ch-wf-tabbar">
+            <div className="ch-wf-dots" aria-hidden="true">
+              <span />
+              <span />
+              <span />
             </div>
-          </header>
-
-          <div className="ch-flow-body">
-            <div className="ch-flow-track" aria-label="Ingress and kernel flow">
-              <span className="ch-flow-track-tag">Host</span>
-              <div className="ch-flow-chain">
-                {ingressFlow.map((sub, i) => (
-                  <React.Fragment key={sub.id}>
-                    {renderFlowNode(sub)}
-                    {i < ingressFlow.length - 1 && (
-                      <span className="ch-flow-arrow" aria-hidden="true">
-                        →
-                      </span>
-                    )}
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-
-            <div className="ch-flow-ipc-bridge" aria-hidden="true">
-              <span className="ch-flow-ipc-line" />
-              <span className="ch-flow-ipc-label">typed IPC</span>
-              <span className="ch-flow-ipc-line" />
-            </div>
-
-            <div className="ch-flow-track" aria-label="Per-site renderer flow">
-              <span className="ch-flow-track-tag">Site</span>
-              <div className="ch-flow-chain">
-                {rendererFlow.map((sub, i) => (
-                  <React.Fragment key={sub.id}>
-                    {renderFlowNode(sub)}
-                    {i < rendererFlow.length - 1 && (
-                      <span className="ch-flow-arrow" aria-hidden="true">
-                        →
-                      </span>
-                    )}
-                  </React.Fragment>
-                ))}
-                <span className="ch-flow-sandbox-slot">{renderFlowNode(sandboxSub)}</span>
-              </div>
-            </div>
+            {renderMapCell('kernel', 'ch-tmap-kernel')}
           </div>
 
-          <div className="ch-arch-inspector" data-testid="arch-inspector">
-            <div className="ch-arch-inspector-head">
-              <strong className="ch-arch-inspector-name">{activeSub.title}</strong>
-              <span className="ch-arch-inspector-status" data-tone={activeLive.tone}>
-                {activeLive.statusText}
-              </span>
-            </div>
-            <p className="ch-arch-inspector-role">{activeSub.role}</p>
-            <div className="ch-arch-inspector-foot">
-              {activeSub.ownership === 'verified' ? (
-                <span>
-                  {activeLive.verifiedQueries !== null
-                    ? `${activeSub.crates.length} ${activeSub.crates.length === 1 ? 'crate' : 'crates'} · ${activeLive.verifiedQueries.toLocaleString('en-US')} proof queries · ${activeLive.sourceLines?.toLocaleString('en-US')} LOC · ${activeLive.trustedCount} trusted`
-                    : `Live proof telemetry: ${NR}`}
-                </span>
-              ) : (
-                <span>{activeSub.boundary}</span>
-              )}
-              {activeSub.ownership === 'verified' && (
-                <a className="ch-mono-link" href="#ratchet">
-                  Crate ledger →
-                </a>
-              )}
-            </div>
-          </div>
-        </section>
-      </div>
-
-      {/* Right Column: Interactive Browser Wireframe Treemap */}
-      <aside
-        className="ch-arch-panel ch-browser-map-panel"
-        aria-label="Browser wireframe subsystem treemap"
-        data-testid="browser-treemap"
-      >
-        <header className="ch-arch-panel-head">
-          <span className="ch-arch-panel-title">Browser anatomy treemap</span>
-          <span className="ch-arch-panel-hint">Synchronized · hover or click</span>
-        </header>
-
-        <div className="ch-wireframe-shell">
-          {/* Browser Window Chrome: Tab Strip (Kernel) + Address Bar (TLS/Net + vurl) */}
-          <div className="ch-wf-chrome">
-            <div className="ch-wf-tabbar">
-              <div className="ch-wf-dots" aria-hidden="true">
-                <span />
-                <span />
-                <span />
-              </div>
-              {renderMapCell('kernel', 'ch-tmap-kernel')}
-            </div>
-
-            <div className="ch-wf-addrbar">
-              {renderMapCell('net', 'ch-tmap-net', true)}
-              {renderMapCell('vurl', 'ch-tmap-vurl')}
-            </div>
-          </div>
-
-          {/* Browser Viewport: Squarified Proportional Treemap of Renderer Subsystems */}
-          <div className="ch-wf-viewport" role="group" aria-label="Browser viewport subsystem map">
-            <div className="ch-tmap-grid">
-              <div className="ch-tmap-col-left">
-                {renderMapCell('vjs', 'ch-tmap-vjs')}
-                <div className="ch-tmap-subrow">
-                  {renderMapCell('webidl', 'ch-tmap-webidl')}
-                  {renderMapCell('vwasm', 'ch-tmap-vwasm')}
-                </div>
-              </div>
-              <div className="ch-tmap-col-right">
-                {renderMapCell('html_css', 'ch-tmap-html')}
-                {renderMapCell('dawn', 'ch-tmap-dawn')}
-              </div>
-            </div>
-            {renderMapCell('sandbox', 'ch-tmap-sandbox')}
+          <div className="ch-wf-addrbar">
+            {renderMapCell('net', 'ch-tmap-net', true)}
+            {renderMapCell('vurl', 'ch-tmap-vurl')}
           </div>
         </div>
-      </aside>
-    </div>
+
+        <div className="ch-wf-viewport" role="group" aria-label="Browser viewport subsystem map">
+          <div className="ch-tmap-grid">
+            <div className="ch-tmap-col-left">
+              {renderMapCell('vjs', 'ch-tmap-vjs')}
+              <div className="ch-tmap-subrow">
+                {renderMapCell('webidl', 'ch-tmap-webidl')}
+                {renderMapCell('vwasm', 'ch-tmap-vwasm')}
+              </div>
+            </div>
+            <div className="ch-tmap-col-right">
+              {renderMapCell('html_css', 'ch-tmap-html')}
+              {renderMapCell('dawn', 'ch-tmap-dawn')}
+            </div>
+          </div>
+          {renderMapCell('sandbox', 'ch-tmap-sandbox')}
+        </div>
+      </div>
+
+      <div className="ch-tmap-readout" data-testid="treemap-readout">
+        <div className="ch-tmap-readout-top">
+          <strong>{activeSub.title}</strong>
+          <span className="ch-arch-inspector-status" data-tone={activeLive.tone}>
+            {activeLive.statusText}
+          </span>
+        </div>
+        <div className="ch-tmap-readout-sub">
+          {activeSub.ownership === 'verified'
+            ? activeLive.verifiedQueries !== null
+              ? `${activeLive.verifiedQueries.toLocaleString('en-US')} proof queries · ${activeLive.sourceLines?.toLocaleString('en-US')} LOC`
+              : `Live proof telemetry: ${NR}`
+            : activeSub.boundary}
+        </div>
+      </div>
+    </aside>
   );
 };
-
-export default HeroArchitecturePair;

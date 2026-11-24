@@ -19,7 +19,15 @@ import { AmbientPart } from './Part';
 
 const F = MG.floorY;
 const R = MG.roofY;
-const M_SCALE = 0.00072;
+export const VIA_ORIGIN: [number, number, number] = [-19.6, -0.5, -2.8];
+export const VIA_YAW = -1.773;
+const M_SCALE = 0.0009;
+const viaOriginVec = new THREE.Vector3(...VIA_ORIGIN);
+const viaPlusXWorld = new THREE.Vector3(Math.cos(VIA_YAW), 0, -Math.sin(VIA_YAW)).normalize();
+const p0Cam = new THREE.Vector3();
+const uCam = new THREE.Vector3();
+const noseWorldCheck = new THREE.Vector3();
+const noseNdcCheck = new THREE.Vector3();
 
 /** Closed exterior carbody cross-section matching AeroNose u=0 arch. */
 function fullShellShape() {
@@ -69,7 +77,7 @@ function InfiniteFloorGrid() {
       for (let i = 0; i < segs; i += 1) {
         const z0 = -span + ((span * 2) * i) / segs;
         const z1 = -span + ((span * 2) * (i + 1)) / segs;
-        positions.push(x, 0.008, z0, x, 0.008, z1);
+        positions.push(x, -0.492, z0, x, -0.492, z1);
       }
     }
     for (let z = -span; z <= span; z += step) {
@@ -77,7 +85,7 @@ function InfiniteFloorGrid() {
       for (let i = 0; i < segs; i += 1) {
         const x0 = -span + ((span * 2) * i) / segs;
         const x1 = -span + ((span * 2) * (i + 1)) / segs;
-        positions.push(x0, 0.008, z, x1, 0.008, z);
+        positions.push(x0, -0.492, z, x1, -0.492, z);
       }
     }
 
@@ -183,21 +191,62 @@ function TrailingCoach({ x0, x1, keyTag }: { x0: number; x1: number; keyTag: str
  */
 export function AmbientWorld() {
   const trainRef = useRef<THREE.Group>(null);
+  const statorRef = useRef<THREE.Group>(null);
 
-  useFrame(({ clock }) => {
-    if (!trainRef.current) return;
-    // Subtle 10 mm EMS non-contact levitation hover
+  useFrame(({ clock, camera, size }) => {
+    if (!trainRef.current || size.width <= 0 || size.height <= 0) return;
+    const persp = camera as THREE.PerspectiveCamera;
+    persp.updateMatrixWorld();
+    persp.updateProjectionMatrix();
+
+    // Solve along the viaduct's own X axis so the TR08 nose apex (+27,000 mm) always
+    // projects into the upper-right stage (~53% from left edge), keeping the Maglev
+    // close and unobstructed at every viewport width (760px split-pane through 4K).
+    const tanHalfFov = Math.tan(THREE.MathUtils.degToRad(persp.fov * 0.5));
+    const aspect = size.width / size.height;
+    const k = tanHalfFov * aspect;
+    const targetNoseNdcX = size.width < 920 ? 0.04 : 0.08;
+
+    p0Cam.copy(viaOriginVec).applyMatrix4(persp.matrixWorldInverse);
+    uCam.copy(viaPlusXWorld).transformDirection(persp.matrixWorldInverse);
+
+    const denom = uCam.x + targetNoseNdcX * k * uCam.z;
+    const dWorld =
+      Math.abs(denom) > 1e-4
+        ? -(p0Cam.x + targetNoseNdcX * k * p0Cam.z) / denom
+        : -18.5;
+    const clampedDWorld = THREE.MathUtils.clamp(dWorld, -34, -4);
+    const noseLocalMm = clampedDWorld / M_SCALE;
+    const leadOriginMm = noseLocalMm - 27000;
+
+    trainRef.current.position.x = leadOriginMm + 85000;
     trainRef.current.position.y = 14 + Math.sin(clock.getElapsedTime() * 1.6) * 18;
+    if (statorRef.current) {
+      statorRef.current.position.x = noseLocalMm - 14000;
+    }
+
+    noseWorldCheck
+      .copy(viaOriginVec)
+      .addScaledVector(viaPlusXWorld, clampedDWorld);
+    noseWorldCheck.y += (MG.floorY + 1400) * M_SCALE;
+    const noseZView = -noseWorldCheck.clone().applyMatrix4(persp.matrixWorldInverse).z;
+    noseNdcCheck.copy(noseWorldCheck).project(persp);
+    (window as unknown as { __conduitMaglevDebug?: unknown }).__conduitMaglevDebug = {
+      noseScreenPx: ((noseNdcCheck.x + 1) * 0.5) * size.width,
+      noseScreenPy: ((1 - noseNdcCheck.y) * 0.5) * size.height,
+      noseZView,
+      pageWidth: size.width,
+    };
   });
 
   const beamX0 = -350000;
-  const beamX1 = 70000;
+  const beamX1 = 90000;
   const beamLen = beamX1 - beamX0;
   const beamMid = (beamX0 + beamX1) / 2;
 
   const pierStations = useMemo(() => {
     const xs: number[] = [];
-    for (let px = 62000; px >= -334000; px -= 22000) {
+    for (let px = 84000; px >= -334000; px -= 22000) {
       xs.push(px);
     }
     return xs;
@@ -207,7 +256,7 @@ export function AmbientWorld() {
     <group name="ambient-world">
       <InfiniteFloorGrid />
 
-      <group position={[-24.9, 0, -7.7]} rotation={[0, -1.773, 0]} scale={M_SCALE}>
+      <group position={VIA_ORIGIN} rotation={[0, VIA_YAW, 0]} scale={M_SCALE}>
         {/* Continuous prestressed concrete box-girder guideway */}
         <AmbientPart partId={0.055} tone={0.85}>
           <ProfileShell
@@ -226,7 +275,7 @@ export function AmbientWorld() {
           <Box c={[beamMid, 3080, -1520]} s={[beamLen, 140, 160]} />
           <Box c={[beamMid, 3080, 1520]} s={[beamLen, 140, 160]} />
           <Box c={[beamMid, 2400, -1380]} s={[beamLen, 210, 180]} />
-          <group position={[-74000, 2400, -1250]}>
+          <group ref={statorRef} position={[-40000, 2400, -1250]}>
             <StatorPack x0={-26000} x1={28000} side={-1} />
           </group>
         </AmbientPart>

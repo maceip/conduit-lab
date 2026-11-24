@@ -8,7 +8,7 @@ import { Tree } from './components/Tree';
 import { PartsLegend, PlateMeta, TitleColumn } from './components/Plate';
 import { currentMachine, hasMachine, lineage, machineById, useMachine } from './machines';
 import { CameraRig, Guides, InkRenderer, MotionDriver } from './scene';
-import { AmbientWorld } from './scene/AmbientWorld';
+import { AmbientWorld, VIA_ORIGIN, VIA_YAW } from './scene/AmbientWorld';
 import { SECTION_PLANE } from './scene/Part';
 import { TP } from './machines/turboprop/data';
 import { isAmbient, isEmbed, restoreAll, selectMachine, useStudio } from './state';
@@ -158,8 +158,8 @@ function useParentPlateControl() {
   }, []);
 }
 
-const VIA_P0 = new THREE.Vector3(-24.9, 0, -7.7);
-const VIA_NORMAL = new THREE.Vector3(0.979, 0, 0.201).normalize();
+const VIA_P0 = new THREE.Vector3(...VIA_ORIGIN);
+const VIA_NORMAL = new THREE.Vector3(-Math.sin(VIA_YAW), 0, -Math.cos(VIA_YAW)).normalize();
 const ambientLayout = {
   modalLeftRatio: null as number | null,
   modalTopRatio: null as number | null,
@@ -223,11 +223,12 @@ function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group
 
     // Position the cutaway turboprop in the upper-left sky directly behind the diagonal
     // Maglev train tracks so the elevated guideway passes cleanly in front of it and
-    // the engine silhouette reads clearly above the top edge of the hero glass card.
-    const targetDiamPx = THREE.MathUtils.clamp(Math.min(w * 0.16, h * 0.28), 115, 192);
-    const idealHubPx = modalLeftPx + Math.min(350, w * 0.30);
-    const targetPropPx = THREE.MathUtils.clamp(idealHubPx, Math.min(w * 0.28, 220), Math.min(w * 0.46, modalRightPx + 18));
-    const targetPropPy = THREE.MathUtils.clamp(Math.max(modalTopPx * 0.72, h * 0.135), 76, Math.min(h * 0.21, 136));
+    // the engine silhouette reads clearly above the top edge of the hero glass card,
+    // leaving the upper-right open for the closer Shanghai Maglev.
+    const targetDiamPx = THREE.MathUtils.clamp(Math.min(w * 0.165, h * 0.29), 118, 196);
+    const idealHubPx = modalLeftPx + Math.min(285, w * 0.25);
+    const targetPropPx = THREE.MathUtils.clamp(idealHubPx, Math.min(w * 0.24, 195), Math.min(w * 0.39, modalRightPx));
+    const targetPropPy = THREE.MathUtils.clamp(modalTopPx * 0.76, 82, Math.min(h * 0.24, 148));
 
     const ndcX = (targetPropPx / w) * 2 - 1;
     const ndcY = 1 - (targetPropPy / h) * 2;
