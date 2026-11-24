@@ -63,12 +63,16 @@ const StateIcon: React.FC<{ state: ObligationState; size?: number }> = ({ state,
 };
 
 const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
-  const [workbenchTab, setWorkbenchTab] = useState<'obligations' | 'live'>('obligations');
+  const initialCrateParam =
+    typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('crate') : null;
+  const [workbenchTab, setWorkbenchTab] = useState<'obligations' | 'live'>(() =>
+    initialCrateParam ? 'live' : 'obligations',
+  );
   const [mode, setMode] = useState<ObligationState>('verified');
   const [expandedLine, setExpandedLine] = useState<number>(8);
 
   const showcase: ProofShowcaseItem[] = ratchet?.proof_showcase ?? [];
-  const [selectedProofCrate, setSelectedProofCrate] = useState<string>('');
+  const [selectedProofCrate, setSelectedProofCrate] = useState<string>(initialCrateParam ?? '');
   const [sourceCache, setSourceCache] = useState<Record<string, string>>({});
   const [sourceError, setSourceError] = useState<string | null>(null);
   const [loadingSource, setLoadingSource] = useState(false);
@@ -124,12 +128,12 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
   return (
     <section className="ch-spec-row" id="proofs">
       <div className="ch-prose-col">
-        <h2 className="ch-section-title">Tests check examples. Proofs check every input.</h2>
+        <h2 className="ch-section-title">What proofs catch that unit tests miss</h2>
 
         <p className="ch-prose-text">
-          Verus compiles Rust code and its specification into Z3 queries: does <em>any</em> input
-          violate this contract? An <code>UNSAT</code> verdict proves the implementation across all
-          possible inputs; a <code>SAT</code> verdict returns the concrete breaking value.
+          A unit test only checks the inputs you thought to write down. Verus turns your Rust
+          function and its contract into Z3 queries: if <em>any</em> input can break the rules, Z3
+          hands back the exact value that fails; if none can, the function holds for every input.
         </p>
 
         <div className="ch-state-selector ch-state-compact" role="group" aria-label="Verus obligation states">

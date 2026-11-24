@@ -276,6 +276,10 @@ test("dedicated workbench.html: 4-state Verus workbench, fix-typo action, and li
   await page.goto("/");
   await page.getByTestId("cta-workbench").click();
   await expect(page).toHaveURL(/workbench\.html$/);
+  await expect(page.locator("#proofs h2.ch-section-title")).toHaveText(
+    "What proofs catch that unit tests miss"
+  );
+  await expect(page.locator("body")).not.toContainText("Tests check examples.");
   await expect(page.getByTestId("verus-file")).toHaveText("browser/url/src/percent.rs");
   await expect(page.getByTestId("inlay-state-8")).toHaveText("verified");
 
@@ -306,6 +310,11 @@ test("dedicated workbench.html: 4-state Verus workbench, fix-typo action, and li
   await page.getByTestId("proof-crate-vjs_vm").click();
   await expect(page.getByTestId("live-proof-file")).toHaveText("browser/vjs-vm/src/compiler_proof.rs");
   await expect(page.getByTestId("live-proof-source")).toContainText("CompCert");
+
+  // Direct ?crate= deep-link opens workbench directly on that crate's live Verus proof
+  await page.goto("/workbench.html?crate=vjs_object");
+  await expect(page.getByTestId("live-proof-file")).toHaveText("browser/vjs-object/src/invariants_proof.rs");
+  await expect(page.getByTestId("live-proof-source")).toContainText("Prototype");
 });
 
 test("footer theme switch toggles dark/light mode cleanly, syncs Inkwork hero backdrop, and persists", async ({ page }) => {
@@ -567,12 +576,27 @@ test("hero synchronized browser flowchart and browser wireframe treemap mirror c
   await expect(page.getByTestId("treemap-cell-dawn")).toHaveAttribute("data-active", "true");
   await expect(inspector).toContainText("Not implementing directly");
 
-  // Click vurl in right treemap -> synchronizes active state back to left flowchart & shows live vurl count
+  // Click vurl in right treemap -> synchronizes active state back to left flowchart & opens live vurl Verus proof right beneath the vurl row of crates-table
   const vurlCrate = ratchet.crates.find((c) => c.name === "vurl");
   await page.getByTestId("treemap-cell-vurl").click();
   await expect(page.getByTestId("flowchart-node-vurl")).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByTestId("flowchart-node-vurl")).toHaveAttribute("data-active", "true");
   await expect(inspector).toContainText(`${vurlCrate.verified.toLocaleString("en-US")} proof queries`);
+  await expect(page.getByTestId("crate-proof-row")).toBeVisible();
+  await expect(page.getByTestId("inline-proof-file")).toHaveText("browser/url/src/ipv6.rs");
+  await expect(page.getByTestId("inline-proof-source")).toContainText("lemma_set_view");
+
+  // Clicking a row directly in crates-table switches the inline Verus proof to that row's proof and supports full-file toggle
+  await page.getByTestId("crate-row-vjs_object").click();
+  await expect(page.getByTestId("inline-proof-file")).toHaveText("browser/vjs-object/src/invariants_proof.rs");
+  await expect(page.getByTestId("inline-proof-source")).toContainText("theorem_prototype_chain_acyclic");
+  await expect(page.getByTestId("inline-proof-open-workbench")).toHaveAttribute(
+    "href",
+    "workbench.html?crate=vjs_object"
+  );
+  await page.getByTestId("inline-proof-toggle-full").click();
+  await expect(page.getByTestId("inline-proof-toggle-full")).toHaveText("Show proof excerpt");
+  await page.getByTestId("inline-proof-toggle-full").click();
 
   // Hovering individual items in BrowserAnatomyTreemap must NEVER scroll the page or shift layout heights
   for (const vw of [1280, 850]) {

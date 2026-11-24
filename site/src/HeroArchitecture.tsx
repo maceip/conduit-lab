@@ -178,17 +178,48 @@ function resolveLiveState(sub: BrowserSubsystem, ratchet: Ratchet | null): LiveS
   };
 }
 
+export const SUBSYSTEM_PRIMARY_CRATE: Record<string, string> = {
+  vurl: 'vurl',
+  vjs: 'vjs',
+  webidl: 'vjs_webidl',
+  vwasm: 'vwasm',
+};
+
 export interface SubsystemSelection {
   selectedId: string;
   setSelectedId: React.Dispatch<React.SetStateAction<string>>;
   hoveredId: string | null;
   setHoveredId: React.Dispatch<React.SetStateAction<string | null>>;
+  expandedCrate: string | null;
+  openCrateProof: (crateName: string | null, opts?: { scrollIntoView?: boolean }) => void;
 }
 
 export function useSubsystemSelection(): SubsystemSelection {
   const [selectedId, setSelectedId] = useState<string>('vjs');
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  return { selectedId, setSelectedId, hoveredId, setHoveredId };
+  const [expandedCrate, setExpandedCrate] = useState<string | null>(null);
+
+  const openCrateProof = (crateName: string | null, opts?: { scrollIntoView?: boolean }) => {
+    setExpandedCrate(crateName);
+    if (crateName && opts?.scrollIntoView && typeof window !== 'undefined') {
+      requestAnimationFrame(() => {
+        const row = document.querySelector(`[data-testid="crate-row-${crateName}"]`);
+        if (!row) return;
+        const rect = row.getBoundingClientRect();
+        const targetTop = Math.max(0, window.scrollY + rect.top - 76);
+        window.scrollTo({ top: targetTop, behavior: 'smooth' });
+      });
+    }
+  };
+
+  return {
+    selectedId,
+    setSelectedId,
+    hoveredId,
+    setHoveredId,
+    expandedCrate,
+    openCrateProof,
+  };
 }
 
 export const BrowserPipelinePanel: React.FC<{
@@ -315,11 +346,24 @@ export const BrowserPipelinePanel: React.FC<{
           ) : (
             <span>{activeSub.boundary}</span>
           )}
-          {activeSub.ownership === 'verified' && (
-            <a className="ch-mono-link" href="#ratchet">
-              Crate ledger →
-            </a>
-          )}
+          {(() => {
+            const primaryCrate = SUBSYSTEM_PRIMARY_CRATE[activeSub.id];
+            return (
+              activeSub.ownership === 'verified' &&
+              primaryCrate && (
+                <a
+                  className="ch-mono-link"
+                  href={`#crate-row-${primaryCrate}`}
+                  onClick={(ev) => {
+                    ev.preventDefault();
+                    selection.openCrateProof(primaryCrate, { scrollIntoView: true });
+                  }}
+                >
+                  View Verus proof →
+                </a>
+              )
+            );
+          })()}
         </div>
       </div>
     </section>
@@ -377,7 +421,13 @@ export const BrowserAnatomyTreemap: React.FC<{
         data-active={isActive}
         aria-pressed={isSelected}
         data-testid={`treemap-cell-${sub.id}`}
-        onClick={() => setSelectedId(sub.id)}
+        onClick={() => {
+          setSelectedId(sub.id);
+          const primaryCrate = SUBSYSTEM_PRIMARY_CRATE[sub.id];
+          if (primaryCrate) {
+            selection.openCrateProof(primaryCrate, { scrollIntoView: true });
+          }
+        }}
         onMouseEnter={() => setHoveredId(sub.id)}
         onMouseLeave={() => setHoveredId(null)}
         onFocus={() => setHoveredId(sub.id)}

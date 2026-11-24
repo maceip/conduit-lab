@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   NR,
   allCratesOk,
   blobUrl,
   crateOk,
+  loadText,
   ratchetTotals,
   sumDifferentialCases,
   sumTrusted,
@@ -14,17 +15,94 @@ import { TRADEOFFS } from './content/tradeoffs';
 import { FUEL_THEOREM } from './content/vjs';
 import { VURL_DAG_EDGES, VURL_DAG_NODES } from './content/vurl';
 import { BROWSER_SUBSYSTEMS, type SubsystemSelection } from './HeroArchitecture';
-import { IconChevron, IconExternal } from './icons';
+import { IconArrowRight, IconChevron, IconExternal } from './icons';
 import { ProofDag, Source } from './parts';
 
 const CRATE_TO_SUBSYSTEM = new Map<string, string>(
   BROWSER_SUBSYSTEMS.flatMap((s) => s.crates.map((crateName) => [crateName, s.id] as const)),
 );
 
+const VERUS_CLAUSE_RE =
+  /^\s*(pub\s+)?(open\s+|closed\s+)?(proof\s+fn|spec\s+fn)\b|^\s*(requires|ensures|decreases|invariant|assert)\b/;
+
+function extractProofWindow(text: string, fullFile: boolean): { startLine: number; lines: string[]; totalLines: number } {
+  const all = text.split('\n');
+  if (fullFile) {
+    return { startLine: 1, lines: all, totalLines: all.length };
+  }
+  let idx = all.findIndex((l) => /^\s*(pub\s+)?proof\s+fn\b/.test(l));
+  if (idx < 0) idx = all.findIndex((l) => /^\s*pub\s+(open\s+)?spec\s+fn\b/.test(l));
+  if (idx < 0) idx = 0;
+  let start = idx;
+  while (start > 0 && /^\s*(\/\/\/|#\[)/.test(all[start - 1])) {
+    start -= 1;
+  }
+  return {
+    startLine: start + 1,
+    lines: all.slice(start, start + 48),
+    totalLines: all.length,
+  };
+}
+
 const SectionStatus: React.FC<{
   ratchet: Ratchet | null;
   selection?: SubsystemSelection;
 }> = ({ ratchet, selection }) => {
+  const [localExpanded, setLocalExpanded] = useState<string | null>(null);
+  const [fullFileMode, setFullFileMode] = useState<boolean>(false);
+  const [proofCache, setProofCache] = useState<Record<string, string>>({});
+  const [proofError, setProofError] = useState<string | null>(null);
+  const [loadingProof, setLoadingProof] = useState<boolean>(false);
+
+  const expandedCrate = selection ? selection.expandedCrate : localExpanded;
+  const toggleCrateProof = (crateName: string) => {
+    const next = expandedCrate === crateName ? null : crateName;
+    setFullFileMode(false);
+    if (selection) {
+      const subId = CRATE_TO_SUBSYSTEM.get(crateName);
+      if (subId) selection.setSelectedId(subId);
+      selection.openCrateProof(next, { scrollIntoView: false });
+    } else {
+      setLocalExpanded(next);
+    }
+  };
+
+  const activeCrateObj = expandedCrate
+    ? ratchet?.crates.find((c) => c.name === expandedCrate) ?? null
+    : null;
+  const activeProofUrl = activeCrateObj?.proof_source ?? null;
+
+  useEffect(() => {
+    setFullFileMode(false);
+  }, [expandedCrate]);
+
+  useEffect(() => {
+    if (!activeProofUrl) return;
+    if (proofCache[activeProofUrl]) {
+      setProofError(null);
+      return;
+    }
+    let cancelled = false;
+    setLoadingProof(true);
+    setProofError(null);
+    loadText(activeProofUrl)
+      .then((txt) => {
+        if (!cancelled) {
+          setProofCache((prev) => ({ ...prev, [activeProofUrl]: txt }));
+          setLoadingProof(false);
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setProofError(`Could not load ${activeProofUrl} (${(err as Error).message}).`);
+          setLoadingProof(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeProofUrl, proofCache]);
+
   const activeSubId = selection ? (selection.hoveredId ?? selection.selectedId) : null;
   const vurl = ratchet?.crates.find((c) => c.name === 'vurl');
   const vurlOk = crateOk(vurl);
@@ -88,53 +166,147 @@ const SectionStatus: React.FC<{
                 const ok = crateOk(c);
                 const subId = CRATE_TO_SUBSYSTEM.get(c.name) ?? null;
                 const isSubActive = Boolean(subId && activeSubId === subId);
+                const isExpanded = expandedCrate === c.name;
+                const showcaseMeta = ratchet.proof_showcase?.find((p) => p.crate === c.name);
+                const repoFilePath = showcaseMeta?.file ?? c.proof_source ?? NR;
+                const rawProofText = c.proof_source ? proofCache[c.proof_source] : undefined;
+                const proofWin = rawProofText ? extractProofWindow(rawProofText, fullFileMode) : null;
+
                 return (
-                  <tr
-                    key={c.name}
-                    data-sub-active={isSubActive ? 'true' : undefined}
-                    onMouseEnter={() => {
-                      if (subId && selection) selection.setHoveredId(subId);
-                    }}
-                    onMouseLeave={() => {
-                      if (subId && selection) selection.setHoveredId(null);
-                    }}
-                  >
-                    <td className="ch-mono ch-nowrap">
-                      <span
-                        className="ch-status-dot"
-                        data-tone={ok ? 'proved' : 'fail'}
-                        aria-hidden="true"
-                      />
-                      <strong>{c.name}</strong>
-                    </td>
-                    <td>
-                      <div className="ch-cell-primary">{c.scope ?? NR}</div>
-                      {c.theorem && <div className="ch-cell-sub">{c.theorem}</div>}
-                    </td>
-                    <td className="ch-mono ch-num" data-tone={ok ? 'proved' : 'fail'}>
-                      {c.verified.toLocaleString('en-US')}
-                    </td>
-                    <td className="ch-mono ch-num" data-tone={t === 0 ? 'proved' : 'fail'}>
-                      {t === null ? NR : t}
-                    </td>
-                    <td className="ch-mono ch-num">{c.verify_seconds}s</td>
-                    <td className="ch-mono ch-num">
-                      {c.tests_passed}/{c.tests_passed + c.tests_failed}
-                    </td>
-                    <td className="ch-mono ch-nowrap">
-                      {c.proof_source && (
-                        <Source href={c.proof_source}>
-                          proof <IconExternal size={11} />
-                        </Source>
-                      )}
-                      {c.proof_source && c.log && ' · '}
-                      {c.log && (
-                        <Source href={c.log}>
-                          log <IconExternal size={11} />
-                        </Source>
-                      )}
-                    </td>
-                  </tr>
+                  <React.Fragment key={c.name}>
+                    <tr
+                      id={`crate-row-${c.name}`}
+                      className="ch-crate-row-clickable"
+                      data-testid={`crate-row-${c.name}`}
+                      data-sub-active={isSubActive ? 'true' : undefined}
+                      data-expanded={isExpanded ? 'true' : undefined}
+                      onClick={(ev) => {
+                        if ((ev.target as HTMLElement).closest('a, button')) return;
+                        toggleCrateProof(c.name);
+                      }}
+                      onMouseEnter={() => {
+                        if (subId && selection) selection.setHoveredId(subId);
+                      }}
+                      onMouseLeave={() => {
+                        if (subId && selection) selection.setHoveredId(null);
+                      }}
+                    >
+                      <td className="ch-mono ch-nowrap">
+                        <span
+                          className="ch-status-dot"
+                          data-tone={ok ? 'proved' : 'fail'}
+                          aria-hidden="true"
+                        />
+                        <strong>{c.name}</strong>
+                      </td>
+                      <td>
+                        <div className="ch-cell-primary">{c.scope ?? NR}</div>
+                        {c.theorem && <div className="ch-cell-sub">{c.theorem}</div>}
+                      </td>
+                      <td className="ch-mono ch-num" data-tone={ok ? 'proved' : 'fail'}>
+                        {c.verified.toLocaleString('en-US')}
+                      </td>
+                      <td className="ch-mono ch-num" data-tone={t === 0 ? 'proved' : 'fail'}>
+                        {t === null ? NR : t}
+                      </td>
+                      <td className="ch-mono ch-num">{c.verify_seconds}s</td>
+                      <td className="ch-mono ch-num">
+                        {c.tests_passed}/{c.tests_passed + c.tests_failed}
+                      </td>
+                      <td className="ch-mono ch-nowrap">
+                        {c.proof_source && (
+                          <button
+                            type="button"
+                            className="ch-proof-toggle-btn"
+                            aria-expanded={isExpanded}
+                            data-testid={`toggle-proof-${c.name}`}
+                            onClick={() => toggleCrateProof(c.name)}
+                          >
+                            {isExpanded ? 'hide ▴' : 'proof ▾'}
+                          </button>
+                        )}
+                        {c.proof_source && c.log && ' · '}
+                        {c.log && (
+                          <Source href={c.log}>
+                            log <IconExternal size={11} />
+                          </Source>
+                        )}
+                      </td>
+                    </tr>
+
+                    {isExpanded && (
+                      <tr className="ch-proof-expand-row" data-testid="crate-proof-row">
+                        <td colSpan={7} className="ch-proof-expand-cell">
+                          <div className="ch-inline-proof-contain">
+                            <div className="ch-inline-proof-card">
+                              <div className="ch-inline-proof-head">
+                                <div className="ch-inline-proof-meta">
+                                  {c.proof_source ? (
+                                    <Source href={c.proof_source}>
+                                      <strong data-testid="inline-proof-file">{repoFilePath}</strong>{' '}
+                                      <IconExternal size={11} />
+                                    </Source>
+                                  ) : (
+                                    <strong data-testid="inline-proof-file">{repoFilePath}</strong>
+                                  )}
+                                  <span className="ch-inline-proof-stats">
+                                    {c.verified.toLocaleString('en-US')} verified · {c.verify_seconds}s
+                                  </span>
+                                </div>
+
+                                <div className="ch-inline-proof-actions">
+                                  {proofWin && (
+                                    <button
+                                      type="button"
+                                      className="ch-inline-proof-mode-btn"
+                                      data-testid="inline-proof-toggle-full"
+                                      onClick={() => setFullFileMode((prev) => !prev)}
+                                    >
+                                      {fullFileMode
+                                        ? 'Show proof excerpt'
+                                        : `Full file (${proofWin.totalLines.toLocaleString('en-US')} lines)`}
+                                    </button>
+                                  )}
+                                  <a
+                                    className="ch-mono-link"
+                                    href={`workbench.html?crate=${encodeURIComponent(c.name)}`}
+                                    data-testid="inline-proof-open-workbench"
+                                  >
+                                    Proof workbench <IconArrowRight size={11} />
+                                  </a>
+                                </div>
+                              </div>
+
+                              <div className="ch-inline-proof-code" data-testid="inline-proof-source">
+                                {loadingProof && !proofWin ? (
+                                  <div className="ch-code-empty">Fetching {c.proof_source}…</div>
+                                ) : proofError ? (
+                                  <div className="ch-code-empty">{proofError}</div>
+                                ) : proofWin ? (
+                                  proofWin.lines.map((lineText, i) => {
+                                    const lineNo = proofWin.startLine + i;
+                                    const isClause = VERUS_CLAUSE_RE.test(lineText);
+                                    return (
+                                      <div
+                                        key={lineNo}
+                                        className="ch-code-row ch-code-row-plain"
+                                        data-verus-clause={isClause ? 'true' : undefined}
+                                      >
+                                        <span className="ch-lineno">{lineNo}</span>
+                                        <span className="ch-code-text">{lineText || '\u00a0'}</span>
+                                      </div>
+                                    );
+                                  })
+                                ) : (
+                                  <div className="ch-code-empty">{NR}</div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 );
               })}
             </tbody>
