@@ -213,7 +213,26 @@ test("navbar, hero pitch, section headers, and footer theme toggle match streaml
   await page.goto("/");
   await expect(page.getByTestId("verus-code-workbench")).toHaveCount(0);
   const ids = await page.locator("main > section").evaluateAll((ss) => ss.map((s) => s.id));
-  expect(ids).toEqual(["ratchet", "scope", "coverage"]);
+  expect(ids).toEqual(["how-proofs-work", "ratchet", "scope", "coverage"]);
+
+  // Simple-function proof intro sits directly before Browser Engine Components and supports 3-step & bug-injection interaction
+  const proofIntro = page.getByTestId("proof-intro");
+  await expect(proofIntro.locator("h2.ch-section-title")).toHaveText("How a Proof Is Built on One Function");
+  await expect(page.getByTestId("intro-z3-verdict")).toHaveAttribute("data-tone", "proved");
+  await expect(page.getByTestId("intro-vc-formula")).toContainText("UNSAT");
+
+  await page.getByTestId("proof-intro-step-spec").click();
+  await expect(page.getByTestId("proof-intro-step-spec")).toHaveAttribute("aria-selected", "true");
+  await page.getByTestId("proof-intro-step-contract").click();
+  await expect(page.getByTestId("proof-intro-step-contract")).toHaveAttribute("aria-selected", "true");
+
+  await page.getByTestId("intro-mode-bug").click();
+  await expect(page.getByTestId("intro-z3-verdict")).toHaveAttribute("data-tone", "fail");
+  await expect(page.getByTestId("intro-file-label")).toHaveText("illustrative bug — not in vurl");
+  await expect(page.getByTestId("intro-vc-formula")).toContainText("n = 10");
+  await page.getByTestId("intro-mode-verified").click();
+  await expect(page.getByTestId("intro-z3-verdict")).toHaveAttribute("data-tone", "proved");
+  await expect(page.getByTestId("intro-file-label")).toHaveText("browser/url/src/percent.rs");
 
   // Navbar dropped Architecture, Scope, CVEs; GitHub is an icon; theme switcher moved to footer
   const navTargets = await page.locator(".ch-nav a").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
@@ -533,6 +552,7 @@ test("missing ratchet.json and stats.json show load-error and not recorded", asy
   await page.goto("/");
   await expect(page.getByTestId("load-error")).toBeVisible();
   await expect(page.getByTestId("load-error")).toContainText("HTTP 404");
+  await expect(page.getByTestId("intro-vc-formula")).toContainText("not recorded");
   await expect(page.getByTestId("stat-verified queries")).toHaveText("not recorded");
   await expect(page.getByTestId("stat-trusted items")).toHaveText("not recorded");
   await expect(page.getByTestId("stat-re-verify time")).toHaveText("not recorded");

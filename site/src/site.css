@@ -2244,6 +2244,151 @@ td[data-tone='fail'] {
   padding: 9px 0;
 }
 
+/* ========================================================================== */
+/* Simple-Function Proof Construction Intro (#how-proofs-work)                */
+/* ========================================================================== */
+.ch-proof-intro-section {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  scroll-margin-top: 68px;
+}
+
+.ch-proof-intro-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 780px;
+}
+
+.ch-proof-intro-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (min-width: 1120px) {
+  .ch-proof-intro-grid {
+    grid-template-columns: minmax(290px, 0.9fr) minmax(0, 1.1fr);
+    gap: 26px;
+  }
+}
+
+.ch-proof-steps-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ch-proof-step-btn {
+  appearance: none;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  background: var(--ch-bg-card);
+  border: 1px solid var(--ch-border-subtle);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 130ms ease, background-color 130ms ease;
+}
+
+.ch-proof-step-btn:hover {
+  background: var(--ch-bg-card-hover);
+  border-color: var(--ch-border-strong);
+}
+
+.ch-proof-step-btn[data-active='true'] {
+  border-color: var(--ch-accent-bdr);
+  background: var(--ch-accent-dim);
+}
+
+.ch-proof-step-top {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+
+.ch-proof-step-num {
+  font-family: var(--ch-font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ch-accent-text);
+  flex-shrink: 0;
+}
+
+.ch-proof-step-title {
+  font-family: var(--ch-font-sans);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ch-text-primary);
+}
+
+.ch-proof-step-body {
+  margin: 0;
+  font-family: var(--ch-font-sans);
+  font-size: 13px;
+  line-height: 1.54;
+  color: var(--ch-text-secondary);
+}
+
+.ch-proof-intro-bridge {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.58;
+  color: var(--ch-text-muted);
+}
+
+.ch-proof-intro-bridge code {
+  font-family: var(--ch-font-mono);
+  font-size: 0.9em;
+  padding: 1px 4px;
+  background: var(--ch-bg-card);
+  border: 1px solid var(--ch-border-subtle);
+  border-radius: 2px;
+  color: var(--ch-text-primary);
+}
+
+.ch-proof-intro-card {
+  background: var(--ch-bg-code);
+  border: 1px solid var(--ch-border-subtle);
+  border-radius: 4px;
+  overflow: hidden;
+  font-family: var(--ch-font-mono);
+  min-width: 0;
+}
+
+.ch-intro-code-lines {
+  padding: 8px 0;
+  overflow-x: auto;
+}
+
+.ch-intro-verdict {
+  padding: 12px 14px;
+  border-top: 1px solid var(--ch-border-subtle);
+  background: var(--ch-bg-card);
+  font-family: var(--ch-font-sans);
+  font-size: 13px;
+}
+
+.ch-intro-verdict[data-tone='proved'] {
+  border-top-color: var(--ch-status-proved-bdr);
+}
+
+.ch-intro-verdict[data-tone='fail'] {
+  border-top-color: var(--ch-status-fail-bdr);
+}
+
+.ch-intro-verdict .ch-inlay-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
 .ch-ce-table {
   margin-top: 10px;
   display: flex;

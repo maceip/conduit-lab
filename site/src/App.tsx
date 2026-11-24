@@ -20,6 +20,7 @@ import {
   useSubsystemSelection,
 } from './HeroArchitecture';
 import SectionCoverage from './SectionCoverage';
+import SectionProofIntro from './SectionProofIntro';
 import SectionWhy from './SectionWhy';
 import SectionStatus from './SectionStatus';
 
@@ -49,6 +50,7 @@ export default function App() {
         return;
       }
       const target =
+        document.getElementById('how-proofs-work') ??
         document.querySelector('[data-testid="honesty-card"]') ??
         document.getElementById('ratchet');
       if (!target) return;
@@ -271,6 +273,7 @@ export default function App() {
               {error}
             </div>
           )}
+          <SectionProofIntro ratchet={ratchet} />
           <SectionStatus ratchet={ratchet} selection={archSelection} />
           <SectionWhy ratchet={ratchet} />
           <SectionCoverage />
