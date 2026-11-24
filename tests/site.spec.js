@@ -279,8 +279,31 @@ test("navbar, hero pitch, section headers, and footer theme toggle match streaml
   expect(aluCheck.allScrewed, "machined nav buttons must render flush screw/rivet details").toBe(true);
   expect(aluCheck.allDivided, "machined nav buttons must have vertical panel seam dividers").toBe(true);
 
-  // Clear first-principles hero pitch, Goldman industrial display font & section headers
+  // Clear first-principles hero pitch, recolored CØNDUIT stencil logotype, Goldman industrial display font & section headers
   const lede = page.getByTestId("lede");
+  const wordmark = page.getByTestId("hero-conduit-wordmark");
+  await expect(wordmark).toBeVisible();
+  const wordmarkCheck = await wordmark.evaluate((svg) => {
+    const h1 = document.querySelector('[data-testid="lede"] h1');
+    const svgRect = svg.getBoundingClientRect();
+    const h1Rect = h1.getBoundingClientRect();
+    const firstGroupFill = svg.querySelector("g")?.getAttribute("fill") || "";
+    const stops = Array.from(svg.querySelectorAll("linearGradient stop")).map((s) =>
+      getComputedStyle(s).stopColor
+    );
+    return {
+      pathCount: svg.querySelectorAll("path").length,
+      aboveH1: svgRect.bottom <= h1Rect.top + 2 && svgRect.width > 200,
+      hasGradientFill: firstGroupFill.startsWith("url(#ch-wordmark-grad-"),
+      filter: getComputedStyle(svg).filter || "",
+      stops,
+    };
+  });
+  expect(wordmarkCheck.pathCount).toBe(14);
+  expect(wordmarkCheck.aboveH1, "CØNDUIT wordmark must crown the hero glass card above h1").toBe(true);
+  expect(wordmarkCheck.hasGradientFill).toBe(true);
+  expect(wordmarkCheck.filter).toContain("drop-shadow");
+
   await expect(lede.locator("h1")).toHaveText("A formally verified browser engine.");
   const h1Font = await lede.locator("h1").evaluate((el) => getComputedStyle(el).fontFamily);
   expect(h1Font).toContain("Goldman");
