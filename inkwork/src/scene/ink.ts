@@ -242,11 +242,12 @@ export const compositeFragment = /* glsl */ `
     float rel = uOrtho > 0.5 ? abs(d1 - d0) / 5.0 : abs(d1 - d0) / d0;
     float dEdge = smoothstep(t, t * 2.2, rel);
     if (abs(s.a - id0) > 0.002) {
-      if (uAmbient > 0.5) return vec4(dEdge, 0.0, sel, 1.0);
+      if (uAmbient > 0.5) return vec4(0.0, 0.0, sel, 1.0);
       return vec4(1.0, 0.0, sel, 0.0);
     }
     vec3 n1 = s.rgb * 2.0 - 1.0;
     float nEdge = smoothstep(0.18, 0.45, 1.0 - dot(n0, n1));
+    if (uAmbient > 0.5) return vec4(0.0, nEdge, sel, dEdge);
     return vec4(dEdge, nEdge, sel, 0.0);
   }
 
@@ -297,10 +298,11 @@ export const compositeFragment = /* glsl */ `
     dirs[4] = vec2(0.7, 0.7); dirs[5] = vec2(-0.7, -0.7); dirs[6] = vec2(0.7, -0.7); dirs[7] = vec2(-0.7, 0.7);
     for (int i = 0; i < 8; i++) {
       float w = i < 4 ? 1.0 : 0.6;
+      float seamW = (uAmbient > 0.5 && i >= 4) ? 0.0 : w;
       vec2 uvN = vUv + dirs[i] * o;
       if (texture2D(tDepth, uvN).x < 0.99999) sceneD = min(sceneD, linearDepth(uvN));
       vec4 r = edgeAt(vUv, dirs[i] * o, n0, s.a, d0, bg);
-      e = max(e, vec4(r.x * w, r.y * w, r.z * step(0.01, max(r.x, r.w)), r.w * w));
+      e = max(e, vec4(r.x * w, r.y * w, r.z * step(0.01, max(r.x, r.w)), r.w * seamW));
     }
     // Outlines get a second, wider ring in plate/drawing mode; ambient hero stays true 1px hairline.
     if (uAmbient < 0.5) {
@@ -342,14 +344,14 @@ export const compositeFragment = /* glsl */ `
     }
 
     float sil = clamp(e.x, 0.0, 1.0);
-    float seam = clamp(e.w, 0.0, 1.0) * (1.0 - 0.30 * smoothstep(26.0, 74.0, sceneD));
-    float outline = uAmbient > 0.5 ? max(sil * 0.92, seam * 0.56) : sil * 0.94;
+    float seam = clamp(e.w, 0.0, 1.0) * (1.0 - 0.32 * smoothstep(54.0, 105.0, sceneD));
+    float outline = uAmbient > 0.5 ? max(sil * 0.86, seam * 0.42) : sil * 0.94;
     float crease = uAmbient > 0.5
-      ? clamp(e.y, 0.0, 1.0) * 0.36 * (1.0 - 0.52 * smoothstep(32.0, 92.0, sceneD))
+      ? clamp(e.y, 0.0, 1.0) * 0.28 * (1.0 - 0.52 * smoothstep(54.0, 105.0, sceneD))
       : clamp(e.y, 0.0, 1.0) * mix(0.55, 0.94, uDrawing);
     float ink = max(outline, crease);
     float selected = max(e.z, selHere * step(0.01, outline));
-    vec3 baseInk = uAmbient > 0.5 ? mix(uFace, uInk, mix(0.68, 0.90, sil)) : uInk;
+    vec3 baseInk = uAmbient > 0.5 ? mix(uFace, uInk, mix(0.66, 0.86, sil)) : uInk;
     vec3 inkCol = mix(baseInk, uAccent, selected * 0.9);
 
     if (uHidden > 0.5 && !bg) {

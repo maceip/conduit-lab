@@ -343,8 +343,47 @@ body {
 }
 
 /* ========================================================================== */
-/* 2-Column Stage Layout + Sticky Right Browser Anatomy Treemap               */
+/* Clean Hero Stage + Full-Width Proof Intro + 2-Column Components Stage      */
 /* ========================================================================== */
+.ch-hero-shell {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-bottom: 1px solid var(--ch-border-subtle);
+  background: var(--ch-bg-canvas);
+}
+
+.ch-hero {
+  position: relative;
+  z-index: 2;
+  max-width: 1420px;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 446px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 146px 28px 38px;
+  pointer-events: none;
+  overflow-anchor: none;
+}
+
+.ch-intro-band {
+  width: 100%;
+  background: var(--ch-bg-canvas);
+  border-bottom: 1px solid var(--ch-border-subtle);
+}
+
+.ch-intro-band-inner {
+  max-width: 1420px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 44px 28px 46px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 .ch-stage-layout {
   --ch-rail-compact-w: clamp(146px, 14vw, 190px);
   --ch-rail-expand-w: clamp(114px, 13vw, 192px);
@@ -360,51 +399,29 @@ body {
     max(16px, calc((100% - 1420px) / 2 + 28px));
 }
 
-.ch-hero-backdrop-shell {
-  grid-column: 1 / -1;
-  grid-row: 1;
-  position: relative;
-  overflow: hidden;
-  border-bottom: 1px solid var(--ch-border-subtle);
-  background: var(--ch-bg-canvas);
-  z-index: 0;
-}
-
-.ch-hero {
+.ch-pipeline-slot {
   grid-column: 2 / 3;
   grid-row: 1;
   position: relative;
   z-index: 2;
-  min-height: 620px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 152px 24px 34px 0;
-  pointer-events: none;
+  padding: 38px 24px 0 0;
+  min-width: 0;
   overflow-anchor: none;
 }
 
 .ch-sticky-treemap-rail {
   grid-column: 3 / 5;
-  grid-row: 1 / 4;
+  grid-row: 1 / 3;
   z-index: 6;
   align-self: start;
   justify-self: end;
   width: 100%;
   position: sticky;
   top: 68px;
-  margin-top: 152px;
+  margin-top: 38px;
   margin-bottom: 48px;
   pointer-events: none;
   overflow-anchor: none;
-}
-
-.ch-scoreboard-bg {
-  grid-column: 1 / -1;
-  grid-row: 2;
-  background: var(--ch-bg-bar);
-  border-bottom: 1px solid var(--ch-border-subtle);
-  z-index: 0;
 }
 
 .ch-hero-backdrop {
@@ -1678,13 +1695,19 @@ body {
 
 .ch-stage-layout .ch-spec-container {
   grid-column: 2 / 4;
-  grid-row: 3;
+  grid-row: 2;
   position: relative;
   z-index: 2;
   max-width: none;
   margin: 0;
-  padding: 44px 20px 72px 0;
+  padding: 36px 20px 72px 0;
   min-width: 0;
+}
+
+@media (min-width: 761px) {
+  .ch-stage-layout #ratchet > .ch-spec-row-flush {
+    padding-right: calc(var(--ch-rail-expand-w) + 4px);
+  }
 }
 
 [data-testid='crates-table'] tbody tr[data-sub-active='true'] {
@@ -2258,7 +2281,7 @@ td[data-tone='fail'] {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-width: 780px;
+  max-width: 860px;
 }
 
 .ch-proof-intro-grid {
@@ -2268,11 +2291,76 @@ td[data-tone='fail'] {
   align-items: start;
 }
 
-@media (min-width: 1120px) {
+@media (min-width: 1020px) {
   .ch-proof-intro-grid {
-    grid-template-columns: minmax(290px, 0.9fr) minmax(0, 1.1fr);
+    grid-template-columns: minmax(340px, 1.02fr) minmax(0, 0.98fr);
     gap: 26px;
   }
+}
+
+.ch-step-code-snippet {
+  margin: 2px 0 2px;
+  padding: 8px 10px;
+  background: var(--ch-bg-code);
+  border: 1px solid var(--ch-border-subtle);
+  border-radius: 3px;
+  font-family: var(--ch-font-mono);
+  font-size: 11.5px;
+  line-height: 1.52;
+  color: var(--ch-text-primary);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.ch-proof-step-btn[data-active='true'] .ch-step-code-snippet {
+  border-color: var(--ch-accent-bdr);
+}
+
+.ch-step-code-line {
+  min-height: 1.52em;
+}
+
+/* Semantic Verus & Rust token colors inside proof walkthrough */
+.ch-tok-spec {
+  color: var(--ch-accent-text);
+  font-weight: 600;
+}
+
+.ch-tok-kw {
+  color: #82b4ff;
+  font-weight: 500;
+}
+
+[data-theme='light'] .ch-tok-kw {
+  color: #1d4ed8;
+}
+
+.ch-tok-ty {
+  color: var(--ch-status-warn);
+  font-weight: 500;
+}
+
+.ch-tok-fn {
+  color: var(--ch-text-primary);
+  font-weight: 700;
+}
+
+.ch-tok-num {
+  color: #c59cff;
+}
+
+[data-theme='light'] .ch-tok-num {
+  color: #6d28d9;
+}
+
+.ch-tok-cmt {
+  color: var(--ch-text-muted);
+  font-style: italic;
+}
+
+.ch-tok-fail {
+  color: var(--ch-status-fail);
+  font-weight: 700;
 }
 
 .ch-proof-steps-col {
@@ -3170,10 +3258,7 @@ td[data-tone='fail'] {
 }
 
 @media (min-width: 761px) and (max-width: 980px) {
-  .ch-stage-layout .ch-hero {
-    padding-right: 16px;
-  }
-  .ch-stage-layout .ch-scoreboard-strip {
+  .ch-pipeline-slot {
     padding-right: 16px;
   }
   .ch-stage-layout .ch-spec-container {
@@ -3239,32 +3324,32 @@ td[data-tone='fail'] {
   }
   .ch-hero {
     min-height: 0;
-    padding: 124px 0 22px;
+    padding: 124px 16px 24px;
+  }
+  .ch-intro-band-inner {
+    padding: 32px 16px 36px;
+  }
+  .ch-pipeline-slot {
+    grid-column: 2 / 3;
+    grid-row: 1;
+    padding: 28px 0 0;
   }
   .ch-sticky-treemap-rail {
     grid-column: 2 / 3;
     grid-row: 2;
     position: static;
     justify-self: stretch;
-    margin: 16px 0 22px;
+    margin: 16px 0 8px;
     pointer-events: auto;
   }
   .ch-browser-map-panel,
   .ch-browser-map-panel[data-compact='true'] {
     width: 100%;
   }
-  .ch-scoreboard-bg {
-    grid-row: 3;
-  }
-  .ch-stage-layout .ch-scoreboard-strip {
-    grid-column: 2 / 3;
-    grid-row: 3;
-    padding: 0;
-  }
   .ch-stage-layout .ch-spec-container {
     grid-column: 2 / 3;
-    grid-row: 4;
-    padding: 32px 0 52px;
+    grid-row: 3;
+    padding: 28px 0 52px;
   }
   .ch-table-card {
     -webkit-overflow-scrolling: touch;

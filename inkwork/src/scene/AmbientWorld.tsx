@@ -19,14 +19,17 @@ import { AmbientPart, M } from './Part';
 const F = MG.floorY;
 const R = MG.roofY;
 export const VIA_ORIGIN: [number, number, number] = [-19.6, -0.5, -2.8];
+export const FLOOR_Y = -0.492;
 export const VIA_YAW = -1.773;
-const M_SCALE = 0.0009;
+const M_SCALE = 0.00086;
 const viaOriginVec = new THREE.Vector3(...VIA_ORIGIN);
 const viaPlusXWorld = new THREE.Vector3(Math.cos(VIA_YAW), 0, -Math.sin(VIA_YAW)).normalize();
 const p0Cam = new THREE.Vector3();
 const uCam = new THREE.Vector3();
 const noseWorldCheck = new THREE.Vector3();
 const noseNdcCheck = new THREE.Vector3();
+const centerWorldCheck = new THREE.Vector3();
+const centerNdcCheck = new THREE.Vector3();
 
 /** Closed exterior carbody cross-section matching AeroNose u=0 arch. */
 function fullShellShape() {
@@ -76,7 +79,7 @@ function InfiniteFloorGrid() {
       for (let i = 0; i < segs; i += 1) {
         const z0 = -span + ((span * 2) * i) / segs;
         const z1 = -span + ((span * 2) * (i + 1)) / segs;
-        positions.push(x, -0.492, z0, x, -0.492, z1);
+        positions.push(x, FLOOR_Y, z0, x, FLOOR_Y, z1);
       }
     }
     for (let z = -span; z <= span; z += step) {
@@ -84,7 +87,7 @@ function InfiniteFloorGrid() {
       for (let i = 0; i < segs; i += 1) {
         const x0 = -span + ((span * 2) * i) / segs;
         const x1 = -span + ((span * 2) * (i + 1)) / segs;
-        positions.push(x0, -0.492, z, x1, -0.492, z);
+        positions.push(x0, FLOOR_Y, z, x1, FLOOR_Y, z);
       }
     }
 
@@ -235,41 +238,51 @@ export function AmbientWorld() {
     persp.updateMatrixWorld();
     persp.updateProjectionMatrix();
 
-    // Solve along the viaduct's own X axis so the TR08 nose apex (+27,000 mm) always
-    // projects into the upper-right stage (~53% from left edge), keeping the Maglev
-    // close and unobstructed at every viewport width (760px split-pane through 4K).
+    // Solve along the viaduct's own X axis so the lead TR08 car midpoint (+14,100 mm)
+    // projects right near horizontal center (ndcX ≈ 0.04, ~52% across the hero stage)
+    // at every viewport width, centering the Maglev while its trailing coaches sweep
+    // diagonally toward the upper-right horizon.
     const tanHalfFov = Math.tan(THREE.MathUtils.degToRad(persp.fov * 0.5));
     const aspect = size.width / size.height;
     const k = tanHalfFov * aspect;
-    const targetNoseNdcX = size.width < 920 ? 0.04 : 0.08;
+    const targetCenterNdcX = 0.04;
 
     p0Cam.copy(viaOriginVec).applyMatrix4(persp.matrixWorldInverse);
     uCam.copy(viaPlusXWorld).transformDirection(persp.matrixWorldInverse);
 
-    const denom = uCam.x + targetNoseNdcX * k * uCam.z;
-    const dWorld =
+    const denom = uCam.x + targetCenterNdcX * k * uCam.z;
+    const centerDWorld =
       Math.abs(denom) > 1e-4
-        ? -(p0Cam.x + targetNoseNdcX * k * p0Cam.z) / denom
-        : -18.5;
-    const clampedDWorld = THREE.MathUtils.clamp(dWorld, -34, -4);
-    const noseLocalMm = clampedDWorld / M_SCALE;
-    const leadOriginMm = noseLocalMm - 27000;
+        ? -(p0Cam.x + targetCenterNdcX * k * p0Cam.z) / denom
+        : -14.5;
+    const clampedCenterDWorld = THREE.MathUtils.clamp(centerDWorld, -32, 4);
+    const centerLocalMm = clampedCenterDWorld / M_SCALE;
+    const leadOriginMm = centerLocalMm - 14100;
+    const noseLocalMm = leadOriginMm + 27000;
 
     trainRef.current.position.x = leadOriginMm + 85000;
     trainRef.current.position.y = 14 + Math.sin(clock.getElapsedTime() * 1.6) * 18;
     if (statorRef.current) {
-      statorRef.current.position.x = noseLocalMm - 14000;
+      statorRef.current.position.x = centerLocalMm;
     }
 
     noseWorldCheck
       .copy(viaOriginVec)
-      .addScaledVector(viaPlusXWorld, clampedDWorld);
+      .addScaledVector(viaPlusXWorld, noseLocalMm * M_SCALE);
     noseWorldCheck.y += (MG.floorY + 1400) * M_SCALE;
     const noseZView = -noseWorldCheck.clone().applyMatrix4(persp.matrixWorldInverse).z;
     noseNdcCheck.copy(noseWorldCheck).project(persp);
+
+    centerWorldCheck
+      .copy(viaOriginVec)
+      .addScaledVector(viaPlusXWorld, clampedCenterDWorld);
+    centerWorldCheck.y += (MG.floorY + 1400) * M_SCALE;
+    centerNdcCheck.copy(centerWorldCheck).project(persp);
+
     (window as unknown as { __conduitMaglevDebug?: unknown }).__conduitMaglevDebug = {
       noseScreenPx: ((noseNdcCheck.x + 1) * 0.5) * size.width,
       noseScreenPy: ((1 - noseNdcCheck.y) * 0.5) * size.height,
+      centerScreenPx: ((centerNdcCheck.x + 1) * 0.5) * size.width,
       noseZView,
       pageWidth: size.width,
     };

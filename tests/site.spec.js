@@ -111,9 +111,8 @@ test("unified hero renders turboprop + diagonal maglev viaduct behind translucen
   expect(glassStyle.backdrop).toContain("blur(");
   expect(glassStyle.bgImage).toContain("0.24");
 
-  // Verify Maglev stays on the upper-right elevated viaduct while the cutaway turboprop is grounded
-  // on the proving-ground floor in the open center atrium (desktop) or lower-right floor (narrow split-pane),
-  // with zero topbar/border clipping and Browser Anatomy Treemap aligned beside hero modal.
+  // Verify clean shorter Hero (zero flowchart/treemap in hero), centered Maglev, grounded cutaway turboprop,
+  // and BrowserPipeline + BrowserAnatomyTreemap rendered AFTER #how-proofs-work
   for (const vw of [800, 850, 1080, 1280, 1440]) {
     await page.setViewportSize({ width: vw, height: 820 });
     await expect
@@ -124,35 +123,34 @@ test("unified hero renders turboprop + diagonal maglev viaduct behind translucen
         const maglevDebug = await bgFrame
           .locator("html")
           .evaluate(() => window.__conduitMaglevDebug || null);
-        const sideBySide = await page.evaluate(() => {
-          const glass = document.querySelector('[data-testid="hero-glass"]')?.getBoundingClientRect();
+        const layoutOk = await page.evaluate(() => {
+          const hero = document.querySelector('[data-testid="lede"]')?.getBoundingClientRect();
+          const intro = document.querySelector('[data-testid="proof-intro"]')?.getBoundingClientRect();
+          const flow = document.querySelector('[data-testid="browser-flowchart"]')?.getBoundingClientRect();
           const tmap = document.querySelector('[data-testid="browser-treemap"]')?.getBoundingClientRect();
-          if (!glass || !tmap) return false;
-          return Math.abs(tmap.top - glass.top) <= 6 && tmap.left >= glass.right - 1;
+          if (!hero || !intro || !flow || !tmap) return false;
+          return (
+            hero.height < 530 &&
+            hero.bottom < intro.top &&
+            intro.bottom <= flow.top + 2 &&
+            intro.bottom <= tmap.top + 2 &&
+            Math.abs(tmap.top - flow.top) <= 6 &&
+            tmap.left >= flow.right - 1
+          );
         });
-        if (!propDebug || !maglevDebug || !sideBySide) return false;
+        if (!propDebug || !maglevDebug || !layoutOk) return false;
         const groundedOnFloor =
           Math.abs(propDebug.worldBaseY - propDebug.floorY) < 0.01 &&
-          propDebug.zView < propDebug.railZView - 6 &&
-          propDebug.topBladeScreenPy > 40 &&
-          propDebug.baseScreenPy < propDebug.pageHeight - 8;
-        const zoneValid =
-          vw >= 1050
-            ? propDebug.placementZone === "atrium" &&
-              propDebug.hubScreenPx > propDebug.modalRightPx &&
-              propDebug.spinnerScreenPx < propDebug.treemapLeftPx - 10 &&
-              propDebug.baseScreenPy < propDebug.flowchartTopPx - 8
-            : propDebug.placementZone === "lower-right" &&
-              propDebug.tailScreenPx > propDebug.flowchartRightPx &&
-              propDebug.spinnerScreenPx < vw - 16 &&
-              propDebug.topBladeScreenPy > propDebug.treemapBottomPx;
+          propDebug.zView < propDebug.railZView - 5 &&
+          propDebug.topBladeScreenPy > 30 &&
+          propDebug.baseScreenPy < propDebug.pageHeight - 4 &&
+          propDebug.hubScreenPx > propDebug.modalRightPx;
         return (
           propDebug.pageWidth === vw &&
           groundedOnFloor &&
-          zoneValid &&
           maglevDebug.pageWidth === vw &&
-          maglevDebug.noseScreenPx > vw * 0.38 &&
-          maglevDebug.noseScreenPx < vw * 0.78 &&
+          maglevDebug.centerScreenPx > vw * 0.40 &&
+          maglevDebug.centerScreenPx < vw * 0.64 &&
           maglevDebug.noseZView < 54
         );
       })
@@ -160,12 +158,13 @@ test("unified hero renders turboprop + diagonal maglev viaduct behind translucen
   }
   await page.setViewportSize({ width: 1280, height: 820 });
 
-  // Verify Browser Anatomy Treemap starts 2-column at top, then shrinks to 1 column (vjs on top, others stacked below) when scrolled down to Evolving Verification Process Components
+  // Verify Browser Anatomy Treemap starts 2-column alongside BrowserPipelinePanel, then shrinks to 1 column (vjs on top, others stacked below) when scrolled down to Evolving Verification Process Components / crates-table
+  await page.getByTestId("pipeline-slot").scrollIntoViewIfNeeded();
   await expect(page.getByTestId("browser-treemap")).toHaveAttribute("data-compact", "false");
   const topWidth = await page.getByTestId("browser-treemap").evaluate((el) => el.getBoundingClientRect().width);
   expect(topWidth).toBeGreaterThan(280);
 
-  await page.getByTestId("honesty-card").scrollIntoViewIfNeeded();
+  await page.getByTestId("crates-table").scrollIntoViewIfNeeded();
   await page.evaluate(() => window.scrollBy(0, 120));
   await expect(page.getByTestId("browser-treemap")).toHaveAttribute("data-compact", "true");
 
@@ -228,11 +227,16 @@ test("navbar, hero pitch, section headers, and footer theme toggle match streaml
   await page.goto("/");
   await expect(page.getByTestId("verus-code-workbench")).toHaveCount(0);
   const ids = await page.locator("main > section").evaluateAll((ss) => ss.map((s) => s.id));
-  expect(ids).toEqual(["how-proofs-work", "ratchet", "scope", "coverage"]);
+  expect(ids).toEqual(["ratchet", "scope", "coverage"]);
 
-  // Simple-function proof intro sits directly before Browser Engine Components and supports 3-step & bug-injection interaction
+  // Simple-function proof intro sits directly before BrowserPipeline/BrowserAnatomyTreemap and renders color-coded Verus code inside all 3 step cards
   const proofIntro = page.getByTestId("proof-intro");
   await expect(proofIntro.locator("h2.ch-section-title")).toHaveText("How a Proof Is Built on One Function");
+  await expect(page.getByTestId("step-snippet-spec")).toContainText("pub open spec fn upper_hex_digit");
+  await expect(page.getByTestId("step-snippet-contract")).toContainText("requires n < 16");
+  await expect(page.getByTestId("step-snippet-solver")).toContainText("solve(r != upper_hex_digit(n))");
+  const specTokenCount = await proofIntro.locator(".ch-tok-spec").count();
+  expect(specTokenCount, "step cards must render stylized color-coded Verus tokens").toBeGreaterThan(4);
   await expect(page.getByTestId("intro-z3-verdict")).toHaveAttribute("data-tone", "proved");
   await expect(page.getByTestId("intro-vc-formula")).toContainText("UNSAT");
 
@@ -640,7 +644,18 @@ test("hero synchronized browser flowchart and browser wireframe treemap mirror c
   // Hovering individual items in BrowserAnatomyTreemap must NEVER scroll the page or shift layout heights
   for (const vw of [1280, 850]) {
     await page.setViewportSize({ width: vw, height: 860 });
-    for (const scrollTarget of [0, 320, 560, 920]) {
+    const scrollTargets = await page.evaluate(() => {
+      const pipeTop =
+        window.scrollY +
+        document.querySelector('[data-testid="pipeline-slot"]').getBoundingClientRect().top -
+        68;
+      const cratesTop =
+        window.scrollY +
+        document.querySelector('[data-testid="crates-table"]').getBoundingClientRect().top -
+        80;
+      return [Math.max(0, Math.round(pipeTop)), Math.round(cratesTop), Math.round(cratesTop + 320)];
+    });
+    for (const scrollTarget of scrollTargets) {
       await page.evaluate(
         (y) =>
           new Promise((resolve) => {

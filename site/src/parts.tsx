@@ -90,12 +90,8 @@ export const AmbientMachineBackdrop: React.FC<{
     const heroRect = wrap.getBoundingClientRect();
     if (heroRect.width <= 0 || heroRect.height <= 0) return;
     const glass = document.querySelector('[data-testid="hero-glass"]');
-    const flowchart = document.querySelector('[data-testid="browser-flowchart"]');
-    const treemap = document.querySelector('[data-testid="browser-treemap"]');
     const glassRect = glass?.getBoundingClientRect();
     if (!glassRect) return;
-    const flowRect = flowchart?.getBoundingClientRect();
-    const tmapRect = treemap?.getBoundingClientRect();
     win.postMessage(
       {
         type: 'conduit-hero-layout',
@@ -103,10 +99,6 @@ export const AmbientMachineBackdrop: React.FC<{
         modalTopRatio: (glassRect.top - heroRect.top) / heroRect.height,
         modalRightRatio: (glassRect.right - heroRect.left) / heroRect.width,
         modalBottomRatio: (glassRect.bottom - heroRect.top) / heroRect.height,
-        flowchartTopRatio: flowRect ? (flowRect.top - heroRect.top) / heroRect.height : null,
-        flowchartRightRatio: flowRect ? (flowRect.right - heroRect.left) / heroRect.width : null,
-        treemapLeftRatio: tmapRect ? (tmapRect.left - heroRect.left) / heroRect.width : null,
-        treemapBottomRatio: tmapRect ? (tmapRect.bottom - heroRect.top) / heroRect.height : null,
       },
       '*',
     );

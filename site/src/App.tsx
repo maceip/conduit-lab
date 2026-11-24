@@ -45,17 +45,13 @@ export default function App() {
         setTreemapCompact(true);
         return;
       }
-      if (window.scrollY <= 36) {
-        setTreemapCompact(false);
-        return;
-      }
       const target =
-        document.getElementById('how-proofs-work') ??
-        document.querySelector('[data-testid="honesty-card"]') ??
+        document.querySelector('[data-testid="crates-table"]') ??
+        document.querySelector('[data-testid="crates-table-missing"]') ??
         document.getElementById('ratchet');
       if (!target) return;
       const top = target.getBoundingClientRect().top;
-      setTreemapCompact((prev) => (prev ? top < 585 : top <= 550));
+      setTreemapCompact((prev) => (prev ? top < 570 : top <= 535));
     };
     syncCompact();
     window.addEventListener('scroll', syncCompact, { passive: true });
@@ -154,38 +150,123 @@ export default function App() {
         </div>
       </header>
 
-      {/* 2-Column Stage Layout: Main Column (Hero + Scoreboard + Spec) + Sticky Right Browser Anatomy Treemap */}
-      <div className="ch-stage-layout" data-testid="stage-layout">
-        <div className="ch-hero-backdrop-shell">
-          <AmbientMachineBackdrop
-            machine="turboprop"
-            theme={theme}
-            testId="hero-turboprop-bg"
-          />
-        </div>
+      {/* Clean Hero Stage (No Flowchart or Treemap on the Hero) */}
+      <div className="ch-hero-shell">
+        <AmbientMachineBackdrop
+          machine="turboprop"
+          theme={theme}
+          testId="hero-turboprop-bg"
+        />
 
         <section className="ch-hero" data-testid="lede">
-          <div className="ch-hero-left-col">
-            <div className="ch-hero-glass" data-testid="hero-glass">
-              <h1 className="ch-h1">A formally verified browser engine.</h1>
-              <p className="ch-hero-prose">
-                CONDUIT is a browser engine built in Rust and proved with Verus and Z3—and an open
-                workbench for learning what formal verification can do, and where its limits are.
-              </p>
-              <div className="ch-hero-actions">
-                <a className="ch-cta-primary" href="workbench.html" data-testid="cta-workbench">
-                  <span>Open proof workbench</span>
-                  <IconArrowRight size={13} />
-                </a>
-                <a className="ch-cta-secondary" href="#ratchet">
-                  <span>Browser engine components</span>
-                </a>
-              </div>
+          <div className="ch-hero-glass" data-testid="hero-glass">
+            <h1 className="ch-h1">A formally verified browser engine.</h1>
+            <p className="ch-hero-prose">
+              CONDUIT is a browser engine built in Rust and proved with Verus and Z3—and an open
+              workbench for learning what formal verification can do, and where its limits are.
+            </p>
+            <div className="ch-hero-actions">
+              <a className="ch-cta-primary" href="workbench.html" data-testid="cta-workbench">
+                <span>Open proof workbench</span>
+                <IconArrowRight size={13} />
+              </a>
+              <a className="ch-cta-secondary" href="#how-proofs-work">
+                <span>How a proof is built</span>
+              </a>
             </div>
-
-            <BrowserPipelinePanel ratchet={ratchet} selection={archSelection} />
           </div>
         </section>
+      </div>
+
+      {/* Full-Width Live Verification Ratchet Telemetry Strip */}
+      <section
+        className="ch-scoreboard-strip"
+        aria-label="Live Verification Ratchet Telemetry"
+        data-testid="ratchet-stats"
+      >
+        <div className="ch-scoreboard-inner">
+          <div className="ch-metrics-grid">
+            <StatTile
+              value={totals ? totals.verified.toLocaleString('en-US') : NR}
+              label="verified proof queries"
+              hint={
+                totals
+                  ? `${totals.functions_by_mode.exec.toLocaleString('en-US')} exec · ${totals.functions_by_mode.proof.toLocaleString('en-US')} proof fns`
+                  : undefined
+              }
+              tone={totals ? (ok ? 'proved' : 'fail') : 'neutral'}
+              testId="stat-verified queries"
+            />
+            <StatTile
+              value={trusted === null ? NR : String(trusted)}
+              label="trusted items"
+              hint="assume · admit · unsafe"
+              tone={trusted === null ? 'neutral' : trusted === 0 ? 'proved' : 'fail'}
+              testId="stat-trusted items"
+            />
+            <StatTile
+              value={totals ? `${totals.verify_seconds}s` : NR}
+              label="re-verify time"
+              hint={totals ? `${totals.source_lines.toLocaleString('en-US')} lines of Rust` : undefined}
+              tone="neutral"
+              testId="stat-re-verify time"
+            />
+            <StatTile
+              value={diffCases !== null ? diffCases.toLocaleString('en-US') : NR}
+              label="differential spec cases"
+              hint="tc39/test262 · WHATWG · Wasm"
+              tone={diffCases !== null ? (ok ? 'proved' : 'fail') : 'neutral'}
+              testId="stat-differential cases"
+            />
+          </div>
+
+          <div className="ch-digest-stack" data-testid="provenance-pills">
+            <button
+              type="button"
+              className="ch-digest-pill"
+              onClick={() => copyDigest('verus', ratchet?.verus ?? null)}
+              title="Copy Verus toolchain revision"
+            >
+              <span className="ch-digest-left">
+                {copiedId === 'verus' ? 'copied' : `verus ${ratchet?.verus ?? NR}`}
+              </span>
+              <IconCopy size={11} />
+            </button>
+
+            <button
+              type="button"
+              className="ch-digest-pill"
+              onClick={() => copyDigest('z3', z3ver)}
+              title="Copy Z3 solver version"
+            >
+              <span className="ch-digest-left">
+                {copiedId === 'z3' ? 'copied' : `z3 ${z3ver ?? NR}`}
+              </span>
+              <span className="ch-digest-meta">
+                {ratchet?.inputs_sha256 ? ratchet.inputs_sha256.slice(0, 8) : NR}
+              </span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Full-Width Simple-Function Proof Construction Intro (Before BrowserPipeline & Treemap) */}
+      <div className="ch-intro-band">
+        <div className="ch-intro-band-inner">
+          {error && (
+            <div className="ch-load-error" role="alert" data-testid="load-error">
+              {error}
+            </div>
+          )}
+          <SectionProofIntro ratchet={ratchet} />
+        </div>
+      </div>
+
+      {/* 2-Column Architecture & Components Stage (Rendered After the Simple-Function Intro) */}
+      <div className="ch-stage-layout" data-testid="stage-layout">
+        <div className="ch-pipeline-slot" data-testid="pipeline-slot">
+          <BrowserPipelinePanel ratchet={ratchet} selection={archSelection} />
+        </div>
 
         <div className="ch-sticky-treemap-rail" data-testid="sticky-treemap-rail">
           <BrowserAnatomyTreemap
@@ -195,85 +276,7 @@ export default function App() {
           />
         </div>
 
-        <div className="ch-scoreboard-bg" aria-hidden="true" />
-        <section
-          className="ch-scoreboard-strip"
-          aria-label="Live Verification Ratchet Telemetry"
-          data-testid="ratchet-stats"
-        >
-          <div className="ch-scoreboard-inner">
-            <div className="ch-metrics-grid">
-              <StatTile
-                value={totals ? totals.verified.toLocaleString('en-US') : NR}
-                label="verified proof queries"
-                hint={
-                  totals
-                    ? `${totals.functions_by_mode.exec.toLocaleString('en-US')} exec · ${totals.functions_by_mode.proof.toLocaleString('en-US')} proof fns`
-                    : undefined
-                }
-                tone={totals ? (ok ? 'proved' : 'fail') : 'neutral'}
-                testId="stat-verified queries"
-              />
-              <StatTile
-                value={trusted === null ? NR : String(trusted)}
-                label="trusted items"
-                hint="assume · admit · unsafe"
-                tone={trusted === null ? 'neutral' : trusted === 0 ? 'proved' : 'fail'}
-                testId="stat-trusted items"
-              />
-              <StatTile
-                value={totals ? `${totals.verify_seconds}s` : NR}
-                label="re-verify time"
-                hint={totals ? `${totals.source_lines.toLocaleString('en-US')} lines of Rust` : undefined}
-                tone="neutral"
-                testId="stat-re-verify time"
-              />
-              <StatTile
-                value={diffCases !== null ? diffCases.toLocaleString('en-US') : NR}
-                label="differential spec cases"
-                hint="tc39/test262 · WHATWG · Wasm"
-                tone={diffCases !== null ? (ok ? 'proved' : 'fail') : 'neutral'}
-                testId="stat-differential cases"
-              />
-            </div>
-
-            <div className="ch-digest-stack" data-testid="provenance-pills">
-              <button
-                type="button"
-                className="ch-digest-pill"
-                onClick={() => copyDigest('verus', ratchet?.verus ?? null)}
-                title="Copy Verus toolchain revision"
-              >
-                <span className="ch-digest-left">
-                  {copiedId === 'verus' ? 'copied' : `verus ${ratchet?.verus ?? NR}`}
-                </span>
-                <IconCopy size={11} />
-              </button>
-
-              <button
-                type="button"
-                className="ch-digest-pill"
-                onClick={() => copyDigest('z3', z3ver)}
-                title="Copy Z3 solver version"
-              >
-                <span className="ch-digest-left">
-                  {copiedId === 'z3' ? 'copied' : `z3 ${z3ver ?? NR}`}
-                </span>
-                <span className="ch-digest-meta">
-                  {ratchet?.inputs_sha256 ? ratchet.inputs_sha256.slice(0, 8) : NR}
-                </span>
-              </button>
-            </div>
-          </div>
-        </section>
-
         <main className="ch-spec-container">
-          {error && (
-            <div className="ch-load-error" role="alert" data-testid="load-error">
-              {error}
-            </div>
-          )}
-          <SectionProofIntro ratchet={ratchet} />
           <SectionStatus ratchet={ratchet} selection={archSelection} />
           <SectionWhy ratchet={ratchet} />
           <SectionCoverage />

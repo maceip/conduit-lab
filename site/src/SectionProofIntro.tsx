@@ -5,37 +5,75 @@ import { Source } from './parts';
 
 type StepId = 'spec' | 'contract' | 'solver';
 
-interface IntroStep {
-  id: StepId;
-  num: string;
-  title: string;
-  body: string;
-  highlightLines: number[];
-}
+function renderStylizedVerusLine(text: string): React.ReactNode {
+  const commentIdx = text.indexOf('//');
+  const codePart = commentIdx >= 0 ? text.slice(0, commentIdx) : text;
+  const commentPart = commentIdx >= 0 ? text.slice(commentIdx) : '';
 
-const INTRO_STEPS: IntroStep[] = [
-  {
-    id: 'spec',
-    num: '01',
-    title: 'Write what "correct" means in pure math (spec fn)',
-    body: 'upper_hex_digit defines the target ASCII byte over unbounded natural numbers (nat) with zero overflow risk. Verus erases spec fn before codegen, so it adds zero runtime cost.',
-    highlightLines: [1, 2, 3],
-  },
-  {
-    id: 'contract',
-    num: '02',
-    title: 'Attach requires & ensures to executable Rust',
-    body: 'requires n < 16 forces every caller to prove its input is a 4-bit nibble before compiling—which also proves 0x30 + n and 0x41 + n - 10 cannot overflow u8. ensures promises the returned byte matches the spec.',
-    highlightLines: [5, 6, 7],
-  },
-  {
-    id: 'solver',
-    num: '03',
-    title: 'Z3 negates ensures across every possible input',
-    body: 'Instead of running sample tests, Verus treats n as an 8-bit symbolic bitvector and asks Z3 to find any n < 16 where r != upper_hex_digit(n). UNSAT proves no buggy input exists; SAT returns the exact breaking value.',
-    highlightLines: [6, 7, 10, 12],
-  },
-];
+  const tokenRe =
+    /\b(pub|open|spec|proof|fn|requires|ensures|decreases|invariant|if|else|as|let|assume|solve|UNSAT|SAT)\b|\b(nat|u8|BitVec)\b|\b(upper_hex_digit|upper_hex)\b|(0x[0-9a-fA-F]+|\b\d+\b)/g;
+
+  const nodes: React.ReactNode[] = [];
+  let last = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+
+  while ((match = tokenRe.exec(codePart)) !== null) {
+    if (match.index > last) {
+      nodes.push(codePart.slice(last, match.index));
+    }
+    const tok = match[0];
+    if (match[1]) {
+      const isSpecKw =
+        tok === 'spec' ||
+        tok === 'proof' ||
+        tok === 'requires' ||
+        tok === 'ensures' ||
+        tok === 'assume' ||
+        tok === 'solve' ||
+        tok === 'UNSAT';
+      const isFailKw = tok === 'SAT';
+      nodes.push(
+        <span
+          key={key++}
+          className={isFailKw ? 'ch-tok-fail' : isSpecKw ? 'ch-tok-spec' : 'ch-tok-kw'}
+        >
+          {tok}
+        </span>,
+      );
+    } else if (match[2]) {
+      nodes.push(
+        <span key={key++} className="ch-tok-ty">
+          {tok}
+        </span>,
+      );
+    } else if (match[3]) {
+      nodes.push(
+        <span key={key++} className="ch-tok-fn">
+          {tok}
+        </span>,
+      );
+    } else {
+      nodes.push(
+        <span key={key++} className="ch-tok-num">
+          {tok}
+        </span>,
+      );
+    }
+    last = match.index + tok.length;
+  }
+  if (last < codePart.length) {
+    nodes.push(codePart.slice(last));
+  }
+  if (commentPart) {
+    nodes.push(
+      <span key={key++} className="ch-tok-cmt">
+        {commentPart}
+      </span>,
+    );
+  }
+  return nodes;
+}
 
 const SectionProofIntro: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
   const [activeStep, setActiveStep] = useState<StepId>('solver');
@@ -43,8 +81,62 @@ const SectionProofIntro: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) =
 
   const totals = ratchetTotals(ratchet);
   const vurlCrate = ratchet?.crates.find((c) => c.name === 'vurl');
-  const stepObj = INTRO_STEPS.find((s) => s.id === activeStep) ?? INTRO_STEPS[2];
-  const highlighted = new Set<number>(stepObj.highlightLines);
+
+  const stepHighlights: Record<StepId, number[]> = {
+    spec: [1, 2, 3],
+    contract: [5, 6, 7],
+    solver: [6, 7, 10, 12],
+  };
+  const highlighted = new Set<number>(stepHighlights[activeStep]);
+
+  const stepCards: Array<{
+    id: StepId;
+    num: string;
+    title: string;
+    snippet: string[];
+    body: string;
+  }> = [
+    {
+      id: 'spec',
+      num: '01',
+      title: 'Write what "correct" means in pure math',
+      snippet: [
+        'pub open spec fn upper_hex_digit(n: nat) -> u8 {',
+        '    if n < 10 { (0x30 + n) as u8 } else { (0x41 + n - 10) as u8 }',
+        '}',
+      ],
+      body: 'Defined over unbounded nat so the specification itself cannot overflow; erased before Rust codegen for zero runtime cost.',
+    },
+    {
+      id: 'contract',
+      num: '02',
+      title: 'Attach requires & ensures to real Rust',
+      snippet: [
+        'fn upper_hex(n: u8) -> (r: u8)',
+        '    requires n < 16,                         // caller proves nibble bound',
+        '    ensures  r == upper_hex_digit(n as nat), // return byte matches spec',
+        `{ if n < 10 { 0x30 + n } else { ${bugInjected ? '0x41 + n - 9' : '0x41 + n - 10'} } }`,
+      ],
+      body: 'Every caller must prove n < 16 at compile time—which also proves 0x30 + n and 0x41 + n - 10 never overflow u8.',
+    },
+    {
+      id: 'solver',
+      num: '03',
+      title: 'Z3 negates ensures across every possible input',
+      snippet: bugInjected
+        ? [
+            'let n: BitVec<8>;  assume(n < 16);',
+            'let r = if n < 10 { 0x30 + n } else { 0x41 + n - 9 };',
+            'solve(r != upper_hex_digit(n))  // SAT -> n = 10 ("B" != "A")',
+          ]
+        : [
+            'let n: BitVec<8>;  assume(n < 16);',
+            'let r = if n < 10 { 0x30 + n } else { 0x41 + n - 10 };',
+            'solve(r != upper_hex_digit(n))  // UNSAT -> 0 bugs exist',
+          ],
+      body: 'Instead of running sample tests, Z3 solves one symbolic bitvector equation for any failing n < 16.',
+    },
+  ];
 
   const codeLines: Array<{ lineNo: number; text: string }> = [
     { lineNo: 1, text: 'pub open spec fn upper_hex_digit(n: nat) -> u8 {' },
@@ -83,9 +175,9 @@ const SectionProofIntro: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) =
       </div>
 
       <div className="ch-proof-intro-grid">
-        {/* Left: 3-step construction rail */}
+        {/* Left: 3 code-bearing construction cards (01, 02, 03) */}
         <div className="ch-proof-steps-col" role="tablist" aria-label="Steps to construct a Verus proof">
-          {INTRO_STEPS.map((st) => {
+          {stepCards.map((st) => {
             const isActive = activeStep === st.id;
             return (
               <button
@@ -102,6 +194,15 @@ const SectionProofIntro: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) =
                   <span className="ch-proof-step-num">{st.num}</span>
                   <strong className="ch-proof-step-title">{st.title}</strong>
                 </div>
+
+                <pre className="ch-step-code-snippet" data-testid={`step-snippet-${st.id}`}>
+                  {st.snippet.map((line, idx) => (
+                    <div key={idx} className="ch-step-code-line">
+                      {renderStylizedVerusLine(line)}
+                    </div>
+                  ))}
+                </pre>
+
                 <p className="ch-proof-step-body">{st.body}</p>
               </button>
             );
@@ -110,14 +211,14 @@ const SectionProofIntro: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) =
           <p className="ch-proof-intro-bridge">
             Scaling this exact pattern—adding loop <code>invariant</code>s and inductive{' '}
             <code>proof fn</code> lemmas for unbounded byte slices and ASTs—produces every verified
-            component in the table below.{' '}
+            component below.{' '}
             <a className="ch-mono-link" href="workbench.html" data-testid="intro-to-workbench">
               Open full Proof Workbench <IconArrowRight size={11} />
             </a>
           </p>
         </div>
 
-        {/* Right: Real upper_hex Verus function + interactive bug toggle + Z3 query */}
+        {/* Right: Full upper_hex Verus module + interactive bug toggle + Z3 query */}
         <div className="ch-proof-intro-card" data-testid="proof-intro-card">
           <div className="ch-code-header">
             <div className="ch-workbench-tabs" role="group" aria-label="Contract verification mode">
@@ -170,7 +271,9 @@ const SectionProofIntro: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) =
                   data-state={isBugLine ? 'fail' : isHi ? 'proved' : undefined}
                 >
                   <span className="ch-lineno">{ln.lineNo}</span>
-                  <span className="ch-code-text">{ln.text || '\u00a0'}</span>
+                  <span className="ch-code-text">
+                    {ln.text ? renderStylizedVerusLine(ln.text) : '\u00a0'}
+                  </span>
                 </div>
               );
             })}

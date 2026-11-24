@@ -8,7 +8,7 @@ import { Tree } from './components/Tree';
 import { PartsLegend, PlateMeta, TitleColumn } from './components/Plate';
 import { currentMachine, hasMachine, lineage, machineById, useMachine } from './machines';
 import { CameraRig, Guides, InkRenderer, MotionDriver } from './scene';
-import { AmbientWorld, VIA_ORIGIN, VIA_YAW } from './scene/AmbientWorld';
+import { AmbientWorld, FLOOR_Y, VIA_ORIGIN, VIA_YAW } from './scene/AmbientWorld';
 import { SECTION_PLANE } from './scene/Part';
 import { TP } from './machines/turboprop/data';
 import { isAmbient, isEmbed, restoreAll, selectMachine, useStudio } from './state';
@@ -160,17 +160,12 @@ function useParentPlateControl() {
 
 const VIA_P0 = new THREE.Vector3(...VIA_ORIGIN);
 const VIA_NORMAL = new THREE.Vector3(-Math.sin(VIA_YAW), 0, -Math.cos(VIA_YAW)).normalize();
-const FLOOR_Y = -0.492;
 const ANCHOR_LOCAL_X = 120;
 const ambientLayout = {
   modalLeftRatio: null as number | null,
   modalTopRatio: null as number | null,
   modalRightRatio: null as number | null,
   modalBottomRatio: null as number | null,
-  flowchartTopRatio: null as number | null,
-  flowchartRightRatio: null as number | null,
-  treemapLeftRatio: null as number | null,
-  treemapBottomRatio: null as number | null,
 };
 const ambBaseWorld = new THREE.Vector3();
 const ambRayPerZ = new THREE.Vector3();
@@ -179,31 +174,19 @@ const ambProjPt = new THREE.Vector3();
 
 function fallbackModalBounds(w: number, h: number) {
   if (w <= 760) {
-    const modalBottom = Math.min(h * 0.54, 500);
     return {
       left: 16,
       top: 124,
       right: w - 16,
-      bottom: modalBottom,
-      flowchartTop: modalBottom + 16,
-      flowchartRight: w - 16,
-      treemapLeft: 16,
-      treemapBottom: h,
+      bottom: Math.min(h * 0.85, 420),
     };
   }
-  const gutter = Math.max(16, (w - 1420) * 0.5 + 28);
-  const railW = Math.min(382, Math.max(260, w * 0.27));
-  const treemapLeft = w - gutter - railW;
-  const mainRight = treemapLeft - 24;
+  const gutter = Math.max(20, (w - 1420) * 0.5 + 28);
   return {
     left: gutter,
-    top: 152,
-    right: Math.min(mainRight, gutter + 600),
-    bottom: Math.min(453, h * 0.60),
-    flowchartTop: Math.min(469, h * 0.62),
-    flowchartRight: mainRight,
-    treemapLeft,
-    treemapBottom: Math.min(604, h - 110),
+    top: 150,
+    right: Math.min(w - gutter - 180, gutter + 580),
+    bottom: Math.min(h - 32, 398),
   };
 }
 
@@ -245,20 +228,12 @@ function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group
         modalTopRatio?: number;
         modalRightRatio?: number;
         modalBottomRatio?: number;
-        flowchartTopRatio?: number | null;
-        flowchartRightRatio?: number | null;
-        treemapLeftRatio?: number | null;
-        treemapBottomRatio?: number | null;
       } | null;
       if (data?.type === 'conduit-hero-layout') {
         if (typeof data.modalLeftRatio === 'number') ambientLayout.modalLeftRatio = data.modalLeftRatio;
         if (typeof data.modalTopRatio === 'number') ambientLayout.modalTopRatio = data.modalTopRatio;
         if (typeof data.modalRightRatio === 'number') ambientLayout.modalRightRatio = data.modalRightRatio;
         if (typeof data.modalBottomRatio === 'number') ambientLayout.modalBottomRatio = data.modalBottomRatio;
-        ambientLayout.flowchartTopRatio = typeof data.flowchartTopRatio === 'number' ? data.flowchartTopRatio : null;
-        ambientLayout.flowchartRightRatio = typeof data.flowchartRightRatio === 'number' ? data.flowchartRightRatio : null;
-        ambientLayout.treemapLeftRatio = typeof data.treemapLeftRatio === 'number' ? data.treemapLeftRatio : null;
-        ambientLayout.treemapBottomRatio = typeof data.treemapBottomRatio === 'number' ? data.treemapBottomRatio : null;
       }
     };
     window.addEventListener('message', onMsg);
@@ -279,52 +254,35 @@ function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group
     const modalTopPx = ambientLayout.modalTopRatio !== null ? ambientLayout.modalTopRatio * h : fb.top;
     const modalRightPx = ambientLayout.modalRightRatio !== null ? ambientLayout.modalRightRatio * w : fb.right;
     const modalBottomPx = ambientLayout.modalBottomRatio !== null ? ambientLayout.modalBottomRatio * h : fb.bottom;
-    const flowchartTopPx = ambientLayout.flowchartTopRatio !== null ? ambientLayout.flowchartTopRatio * h : fb.flowchartTop;
-    const flowchartRightPx = ambientLayout.flowchartRightRatio !== null ? ambientLayout.flowchartRightRatio * w : fb.flowchartRight;
-    const treemapLeftPx = ambientLayout.treemapLeftRatio !== null ? ambientLayout.treemapLeftRatio * w : fb.treemapLeft;
-    const treemapBottomPx = ambientLayout.treemapBottomRatio !== null ? ambientLayout.treemapBottomRatio * h : fb.treemapBottom;
 
-    const atriumWidth = treemapLeftPx - modalRightPx;
+    const rightStageWidth = w - modalRightPx - 24;
     let targetBasePx: number;
     let targetBasePy: number;
     let targetDiamPx: number;
-    let placementZone: 'atrium' | 'lower-right' | 'mobile';
+    let placementZone: 'atrium' | 'mobile';
 
     if (w <= 760) {
       placementZone = 'mobile';
-      targetDiamPx = THREE.MathUtils.clamp(w * 0.32, 108, 132);
-      targetBasePx = w * 0.50;
-      // On single-column mobile, crown the top of `.ch-hero-glass` so the cutaway core &
-      // propeller read crisply in the open upper stage while the stand tucks behind the frosted card.
-      targetBasePy = THREE.MathUtils.clamp(modalTopPx + targetDiamPx * 0.56, 158, modalTopPx + 82);
-    } else if (atriumWidth >= 115) {
+      targetDiamPx = THREE.MathUtils.clamp(w * 0.30, 104, 128);
+      targetBasePx = w * 0.28;
+      targetBasePy = THREE.MathUtils.clamp(modalTopPx + targetDiamPx * 0.52, 148, modalTopPx + 76);
+    } else {
       placementZone = 'atrium';
       targetDiamPx = THREE.MathUtils.clamp(
-        Math.min(atriumWidth * 0.55, h * 0.222),
-        132,
-        172,
+        Math.min(rightStageWidth * 0.34, h * 0.32),
+        118,
+        166,
       );
       const rightSpanPx = 0.65 * targetDiamPx;
       const leftSpanPx = 0.72 * targetDiamPx;
-      const maxBasePx = treemapLeftPx - rightSpanPx - 18;
-      const idealCenterPx = modalRightPx + atriumWidth * 0.49;
-      const minBasePx = Math.min(maxBasePx, modalRightPx + leftSpanPx * 0.78);
-      targetBasePx =
-        atriumWidth >= leftSpanPx + rightSpanPx + 24
-          ? THREE.MathUtils.clamp(idealCenterPx, modalRightPx + leftSpanPx + 10, maxBasePx)
-          : Math.min(maxBasePx, Math.max(minBasePx, modalRightPx + atriumWidth * 0.36));
-      targetBasePy = THREE.MathUtils.clamp(flowchartTopPx - 34, h * 0.47, h - 52);
-    } else {
-      placementZone = 'lower-right';
-      const availW = Math.max(180, w - flowchartRightPx);
-      const availH = Math.max(108, h - treemapBottomPx);
-      targetDiamPx = THREE.MathUtils.clamp(
-        Math.min(availW * 0.42, (availH - 28) * 0.88),
-        94,
-        122,
+      const minBasePx = modalRightPx + leftSpanPx + 24;
+      const maxBasePx = Math.max(minBasePx, w - rightSpanPx - 28);
+      targetBasePx = THREE.MathUtils.clamp(
+        modalRightPx + rightStageWidth * 0.54,
+        minBasePx,
+        maxBasePx,
       );
-      targetBasePx = flowchartRightPx + availW * 0.48;
-      targetBasePy = h - 26;
+      targetBasePy = THREE.MathUtils.clamp(Math.min(modalBottomPx + 8, h - 34), h * 0.68, h - 28);
     }
 
     const ndcX = (targetBasePx / w) * 2 - 1;
@@ -380,10 +338,7 @@ function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group
       modalLeftPx,
       modalTopPx,
       modalRightPx,
-      flowchartTopPx,
-      flowchartRightPx,
-      treemapLeftPx,
-      treemapBottomPx,
+      modalBottomPx,
       targetBasePx,
       targetBasePy,
       targetPropPx: hubScreen.x,

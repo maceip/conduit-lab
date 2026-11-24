@@ -125,7 +125,7 @@ export function InkRenderer({ lineWidth = 1.15, hatch = 1 }: { lineWidth?: numbe
     // ambient hero uses a true sub-pixel drafting hairline so dense blades/rotors stay razor-sharp.
     const drawingLine = layout ? THREE.MathUtils.clamp(Math.min(size.width, size.height * 1.7) / 1300, 0.7, 1.2) : 1;
     uniforms.uLine.value = ambientMode
-      ? 0.72 * Math.max(1, dpr * 0.72)
+      ? 0.56 * Math.max(1, dpr * 0.62)
       : lineWidth * Math.max(1, dpr * 0.85) * drawingLine;
 
     const background = scene.background;
