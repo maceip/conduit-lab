@@ -3,7 +3,7 @@ import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import { currentMachine, machineById } from '../machines';
 import type { MachineDef } from '../machines/types';
-import { editOf, partEdits, partVisible, useStudio } from '../state';
+import { editOf, isAmbient, partEdits, partVisible, useStudio } from '../state';
 import { createInkMaterial } from './ink';
 import { deepProgress, partDef, partOffset } from './explode';
 
@@ -89,6 +89,7 @@ function PartBody({ id, tone, children }: { id: string; tone: number; children: 
   }, [materials]);
 
   useFrame((_, dt) => {
+    if (isAmbient) return;
     const { selected, hovered } = useStudio.getState();
     const g = group.current;
     if (g) {
@@ -158,30 +159,36 @@ function PartBody({ id, tone, children }: { id: string; tone: number; children: 
   return (
     <PartContext.Provider value={materials}>
       <AssemblyContext.Provider value={childAssembly(machineById(machineId), id)}>
-        <group
-          ref={group}
-          name={`part-${id}`}
-          onClick={onClick}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
-          onDoubleClick={(event) => {
-            if (!partVisible(id)) return;
-            event.stopPropagation();
-            const { localExplode } = useStudio.getState();
-            select({ selected: id, localExplode: localExplode === id ? null : id, explode: 0 });
-          }}
-          onPointerOver={(event) => {
-            if (!partVisible(id)) return;
-            event.stopPropagation();
-            select({ hovered: id });
-            document.body.style.cursor = useStudio.getState().moveMode ? 'grab' : 'pointer';
-          }}
-          onPointerOut={() => { if (useStudio.getState().hovered === id) select({ hovered: null }); if (!drag.current) document.body.style.cursor = ''; }}
-        >
-          {children}
-        </group>
+        {isAmbient ? (
+          <group ref={group} name={`part-${id}`}>
+            {children}
+          </group>
+        ) : (
+          <group
+            ref={group}
+            name={`part-${id}`}
+            onClick={onClick}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            onDoubleClick={(event) => {
+              if (!partVisible(id)) return;
+              event.stopPropagation();
+              const { localExplode } = useStudio.getState();
+              select({ selected: id, localExplode: localExplode === id ? null : id, explode: 0 });
+            }}
+            onPointerOver={(event) => {
+              if (!partVisible(id)) return;
+              event.stopPropagation();
+              select({ hovered: id });
+              document.body.style.cursor = useStudio.getState().moveMode ? 'grab' : 'pointer';
+            }}
+            onPointerOut={() => { if (useStudio.getState().hovered === id) select({ hovered: null }); if (!drag.current) document.body.style.cursor = ''; }}
+          >
+            {children}
+          </group>
+        )}
       </AssemblyContext.Provider>
     </PartContext.Provider>
   );

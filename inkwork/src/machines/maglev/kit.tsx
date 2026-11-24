@@ -99,15 +99,17 @@ function noseStationRing(u: number, floorY: number, roofY: number, halfW: number
   }
 
   if (hasWrap) {
-    // Inverted-U lower contour: -z flank down to ySkirt, step to -innerZ, up to yBelly, across beam, down +innerZ, out to +z
+    // Smoothly blend outer flank tangent from wrap-skirt corner into yMid as skirtDrop tapers to 0
+    const wrapBlend = Math.min(1, skirtDrop / 420);
+    const yFlank = yMid - (yMid - (ySkirt + hBody * 0.14)) * wrapBlend;
     return [
       [yBelly, 0],
       [yBelly, innerZ],
       [ySkirt + skirtDrop * 0.12, innerZ + (w - innerZ) * 0.22],
       [ySkirt, w * 0.96],
-      [ySkirt + hBody * 0.14, w],
+      [yFlank, w],
       ...upper,
-      [ySkirt + hBody * 0.14, -w],
+      [yFlank, -w],
       [ySkirt, -w * 0.96],
       [ySkirt + skirtDrop * 0.12, -(innerZ + (w - innerZ) * 0.22)],
       [yBelly, -innerZ],
@@ -152,13 +154,20 @@ function resampleRing(pts: Array<[number, number]>, count: number): Array<[numbe
   return out;
 }
 
-function buildLoftedNose(x0: number, x1: number, floorY: number, roofY: number, halfW: number): THREE.BufferGeometry {
-  const key = `mg-tr08-nose-v3-${x0}-${x1}`;
+function buildLoftedNose(
+  x0: number,
+  x1: number,
+  floorY: number,
+  roofY: number,
+  halfW: number,
+  hollow = true,
+): THREE.BufferGeometry {
+  const key = `mg-tr08-nose-v5-${x0}-${x1}-${hollow ? 'h' : 's'}`;
   const cached = shellCache.get(key);
   if (cached) return cached;
 
-  const steps = 30;
-  const ringPts = 32;
+  const steps = 32;
+  const ringPts = 48;
   const outerRings: Array<{ x: number; pts: Array<[number, number]> }> = [];
   const innerRings: Array<{ x: number; pts: Array<[number, number]> }> = [];
 
@@ -168,11 +177,13 @@ function buildLoftedNose(x0: number, x1: number, floorY: number, roofY: number, 
     const u = 0.65 * lin + 0.35 * Math.sin((lin * Math.PI) / 2);
     const x = x0 + (x1 - x0) * u;
     outerRings.push({ x, pts: resampleRing(noseStationRing(u, floorY, roofY, halfW, 0), ringPts) });
-    const ui = Math.min(u, 0.965);
-    innerRings.push({
-      x: Math.min(x, x1 - 95),
-      pts: resampleRing(noseStationRing(ui, floorY, roofY, halfW, 95), ringPts),
-    });
+    if (hollow) {
+      const ui = Math.min(u, 0.965);
+      innerRings.push({
+        x: Math.min(x, x1 - 95),
+        pts: resampleRing(noseStationRing(ui, floorY, roofY, halfW, 95), ringPts),
+      });
+    }
   }
 
   const positions: number[] = [];
@@ -192,8 +203,6 @@ function buildLoftedNose(x0: number, x1: number, floorY: number, roofY: number, 
   for (let i = 0; i < steps; i += 1) {
     const r0 = outerRings[i];
     const r1 = outerRings[i + 1];
-    const in0 = innerRings[i];
-    const in1 = innerRings[i + 1];
     for (let j = 0; j < ringPts; j += 1) {
       const jn = (j + 1) % ringPts;
       pushQuad(
@@ -202,12 +211,16 @@ function buildLoftedNose(x0: number, x1: number, floorY: number, roofY: number, 
         [r1.x, r1.pts[jn][0], r1.pts[jn][1]],
         [r0.x, r0.pts[jn][0], r0.pts[jn][1]],
       );
-      pushQuad(
-        [in0.x, in0.pts[j][0], in0.pts[j][1]],
-        [in0.x, in0.pts[jn][0], in0.pts[jn][1]],
-        [in1.x, in1.pts[jn][0], in1.pts[jn][1]],
-        [in1.x, in1.pts[j][0], in1.pts[j][1]],
-      );
+      if (hollow) {
+        const in0 = innerRings[i];
+        const in1 = innerRings[i + 1];
+        pushQuad(
+          [in0.x, in0.pts[j][0], in0.pts[j][1]],
+          [in0.x, in0.pts[jn][0], in0.pts[jn][1]],
+          [in1.x, in1.pts[jn][0], in1.pts[jn][1]],
+          [in1.x, in1.pts[j][0], in1.pts[j][1]],
+        );
+      }
     }
   }
 
@@ -215,7 +228,6 @@ function buildLoftedNose(x0: number, x1: number, floorY: number, roofY: number, 
   const yApex = floorY + 820;
   const tipCenter: [number, number, number] = [x1 + 55, yApex, 0];
   const o0 = outerRings[0];
-  const i0 = innerRings[0];
   for (let j = 0; j < ringPts; j += 1) {
     const jn = (j + 1) % ringPts;
     pushTri(
@@ -223,12 +235,15 @@ function buildLoftedNose(x0: number, x1: number, floorY: number, roofY: number, 
       tipCenter,
       [tip.x, tip.pts[jn][0], tip.pts[jn][1]],
     );
-    pushQuad(
-      [o0.x, o0.pts[j][0], o0.pts[j][1]],
-      [o0.x, o0.pts[jn][0], o0.pts[jn][1]],
-      [i0.x, i0.pts[jn][0], i0.pts[jn][1]],
-      [i0.x, i0.pts[j][0], i0.pts[j][1]],
-    );
+    if (hollow) {
+      const i0 = innerRings[0];
+      pushQuad(
+        [o0.x, o0.pts[j][0], o0.pts[j][1]],
+        [o0.x, o0.pts[jn][0], o0.pts[jn][1]],
+        [i0.x, i0.pts[jn][0], i0.pts[jn][1]],
+        [i0.x, i0.pts[j][0], i0.pts[j][1]],
+      );
+    }
   }
 
   const geo = new THREE.BufferGeometry();
@@ -252,11 +267,11 @@ function buildNoseSurfaceRibbon(
   side: 1 | -1,
   outset = 26,
 ): THREE.BufferGeometry {
-  const key = `mg-ribbon-${keySuffix}-${side}`;
+  const key = `mg-ribbon-v2-${keySuffix}-${side}`;
   const cached = shellCache.get(key);
   if (cached) return cached;
 
-  const segs = 14;
+  const segs = 18;
   const positions: number[] = [];
   const pushQuad = (
     a: [number, number, number],
@@ -290,10 +305,10 @@ function buildNoseSurfaceRibbon(
     const o11: [number, number, number] = [xb, y1b, zOnShell(u1, y1b, outset)];
     const o10: [number, number, number] = [xb, y0b, zOnShell(u1, y0b, outset)];
 
-    const b00: [number, number, number] = [xa, y0a, zOnShell(u0, y0a, -8)];
-    const b01: [number, number, number] = [xa, y1a, zOnShell(u0, y1a, -8)];
-    const b11: [number, number, number] = [xb, y1b, zOnShell(u1, y1b, -8)];
-    const b10: [number, number, number] = [xb, y0b, zOnShell(u1, y0b, -8)];
+    const b00: [number, number, number] = [xa, y0a, zOnShell(u0, y0a, -22)];
+    const b01: [number, number, number] = [xa, y1a, zOnShell(u0, y1a, -22)];
+    const b11: [number, number, number] = [xb, y1b, zOnShell(u1, y1b, -22)];
+    const b10: [number, number, number] = [xb, y0b, zOnShell(u1, y0b, -22)];
 
     if (side === 1) {
       pushQuad(o00, o10, o11, o01);
@@ -318,8 +333,8 @@ function buildNoseSurfaceRibbon(
  * strictly convex parabolic profile, wrap-around lower bogie skirts,
  * sweeping forward cheatlines, coupler nose-cone seam, and flush twin LED headlights.
  */
-export function AeroNose({ x0, x1, floorY, roofY, halfW }: {
-  x0: number; x1: number; floorY: number; roofY: number; halfW: number;
+export function AeroNose({ x0, x1, floorY, roofY, halfW, hollow = true }: {
+  x0: number; x1: number; floorY: number; roofY: number; halfW: number; hollow?: boolean;
 }) {
   // Forward-sweeping SMT cheatline tapering from passenger beltline (F+1320) down toward the nose tip
   const upperBand = (u: number): [number, number] => {
@@ -343,15 +358,15 @@ export function AeroNose({ x0, x1, floorY, roofY, halfW }: {
 
   return (
     <>
-      <M clip geo={buildLoftedNose(x0, x1, floorY, roofY, halfW)} />
+      <M clip geo={buildLoftedNose(x0, x1, floorY, roofY, halfW, hollow)} />
       {/* Forward-sweeping SMT cheatlines along both cab cheeks */}
-      <M clip geo={buildNoseSurfaceRibbon('band-hi', x0, x1, floorY, roofY, halfW, 0, 0.80, upperBand, 1, 22)} />
-      <M clip geo={buildNoseSurfaceRibbon('band-hi', x0, x1, floorY, roofY, halfW, 0, 0.80, upperBand, -1, 22)} />
-      <M clip geo={buildNoseSurfaceRibbon('band-lo', x0, x1, floorY, roofY, halfW, 0, 0.76, lowerBand, 1, 22)} />
-      <M clip geo={buildNoseSurfaceRibbon('band-lo', x0, x1, floorY, roofY, halfW, 0, 0.76, lowerBand, -1, 22)} />
+      <M clip geo={buildNoseSurfaceRibbon('band-hi', x0, x1, floorY, roofY, halfW, 0, 0.80, upperBand, 1, 36)} />
+      <M clip geo={buildNoseSurfaceRibbon('band-hi', x0, x1, floorY, roofY, halfW, 0, 0.80, upperBand, -1, 36)} />
+      <M clip geo={buildNoseSurfaceRibbon('band-lo', x0, x1, floorY, roofY, halfW, 0, 0.76, lowerBand, 1, 36)} />
+      <M clip geo={buildNoseSurfaceRibbon('band-lo', x0, x1, floorY, roofY, halfW, 0, 0.76, lowerBand, -1, 36)} />
       {/* Flush sculpted twin LED headlight clusters */}
-      <M clip geo={buildNoseSurfaceRibbon('lamp', x0, x1, floorY, roofY, halfW, 0.72, 0.88, headlampPod, 1, 34)} />
-      <M clip geo={buildNoseSurfaceRibbon('lamp', x0, x1, floorY, roofY, halfW, 0.72, 0.88, headlampPod, -1, 34)} />
+      <M clip geo={buildNoseSurfaceRibbon('lamp', x0, x1, floorY, roofY, halfW, 0.72, 0.88, headlampPod, 1, 44)} />
+      <M clip geo={buildNoseSurfaceRibbon('lamp', x0, x1, floorY, roofY, halfW, 0.72, 0.88, headlampPod, -1, 44)} />
     </>
   );
 }

@@ -115,13 +115,18 @@ export function InkRenderer({ lineWidth = 1.15, hatch = 1 }: { lineWidth?: numbe
     uniforms.uFar.value = cam.far;
     uniforms.uOrtho.value = (cam as THREE.OrthographicCamera).isOrthographicCamera ? 1 : 0;
     uniforms.uSelId.value = selected ? (partDef(selected)?.index ?? -64) / 64 : -1;
+    const ambientMode = isAmbient && !layout ? 1 : 0;
     uniforms.uDrawing.value = layout ? 1 : 0;
-    uniforms.uAmbient.value = isAmbient && !layout ? 1 : 0;
+    uniforms.uAmbient.value = ambientMode;
+    inkUniforms.uAmbient.value = ambientMode;
     uniforms.uHidden.value = anyHidden ? 1 : 0;
     uniforms.uHatch.value = layout ? 0 : hatch;
-    // Small screens (phones) get finer drawing lines so the views do not clog up.
+    // Small screens (phones) get finer drawing lines so the views do not clog up;
+    // ambient hero uses a true sub-pixel drafting hairline so dense blades/rotors stay razor-sharp.
     const drawingLine = layout ? THREE.MathUtils.clamp(Math.min(size.width, size.height * 1.7) / 1300, 0.7, 1.2) : 1;
-    uniforms.uLine.value = lineWidth * Math.max(1, dpr * 0.85) * drawingLine;
+    uniforms.uLine.value = ambientMode
+      ? 0.72 * Math.max(1, dpr * 0.72)
+      : lineWidth * Math.max(1, dpr * 0.85) * drawingLine;
 
     const background = scene.background;
     scene.background = null;

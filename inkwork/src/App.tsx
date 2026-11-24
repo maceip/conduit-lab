@@ -160,30 +160,76 @@ function useParentPlateControl() {
 
 const VIA_P0 = new THREE.Vector3(...VIA_ORIGIN);
 const VIA_NORMAL = new THREE.Vector3(-Math.sin(VIA_YAW), 0, -Math.cos(VIA_YAW)).normalize();
+const FLOOR_Y = -0.492;
+const ANCHOR_LOCAL_X = 120;
 const ambientLayout = {
   modalLeftRatio: null as number | null,
   modalTopRatio: null as number | null,
   modalRightRatio: null as number | null,
+  modalBottomRatio: null as number | null,
+  flowchartTopRatio: null as number | null,
+  flowchartRightRatio: null as number | null,
+  treemapLeftRatio: null as number | null,
+  treemapBottomRatio: null as number | null,
 };
-const ambHubWorld = new THREE.Vector3();
+const ambBaseWorld = new THREE.Vector3();
 const ambRayPerZ = new THREE.Vector3();
 const ambScratch = new THREE.Vector3();
+const ambProjPt = new THREE.Vector3();
 
-function fallbackModalBounds(w: number, h: number): { left: number; top: number; right: number } {
-  const pad = w <= 760 ? 16 : 28;
-  const innerLeft = pad + Math.max(0, (w - pad * 2 - 1420) * 0.5);
-  const glassW = w < 680 ? w - pad * 2 : Math.min(575, w - pad * 2 - 235);
+function fallbackModalBounds(w: number, h: number) {
+  if (w <= 760) {
+    const modalBottom = Math.min(h * 0.54, 500);
+    return {
+      left: 16,
+      top: 124,
+      right: w - 16,
+      bottom: modalBottom,
+      flowchartTop: modalBottom + 16,
+      flowchartRight: w - 16,
+      treemapLeft: 16,
+      treemapBottom: h,
+    };
+  }
+  const gutter = Math.max(16, (w - 1420) * 0.5 + 28);
+  const railW = Math.min(382, Math.max(260, w * 0.27));
+  const treemapLeft = w - gutter - railW;
+  const mainRight = treemapLeft - 24;
   return {
-    left: innerLeft,
-    top: Math.min(92, h * 0.14),
-    right: innerLeft + Math.max(240, glassW),
+    left: gutter,
+    top: 152,
+    right: Math.min(mainRight, gutter + 600),
+    bottom: Math.min(453, h * 0.60),
+    flowchartTop: Math.min(469, h * 0.62),
+    flowchartRight: mainRight,
+    treemapLeft,
+    treemapBottom: Math.min(604, h - 110),
+  };
+}
+
+function projectToScreen(
+  localX: number,
+  localY: number,
+  rootPos: THREE.Vector3,
+  scalePerMm: number,
+  camera: THREE.PerspectiveCamera,
+  w: number,
+  h: number,
+): { x: number; y: number } {
+  ambProjPt
+    .set(rootPos.x + localX * scalePerMm, rootPos.y + localY * scalePerMm, rootPos.z)
+    .project(camera);
+  return {
+    x: (ambProjPt.x + 1) * 0.5 * w,
+    y: (1 - ambProjPt.y) * 0.5 * h,
   };
 }
 
 /**
- * Anchors `machine-root` in ambient hero mode in the upper-left quadrant strictly
- * behind the diagonal elevated Maglev viaduct rail (zView > railZView), leaving the
- * right side clear for the Maglev trainset and browser wireframe treemap.
+ * Grounds `machine-root` directly on the perspective floor grid (`y = FLOOR_Y`) in
+ * the open center proving-ground atrium between `.ch-hero-glass` and `.ch-browser-map-panel`
+ * (beneath and ahead of the elevated Maglev viaduct), shifting cleanly onto the
+ * lower-right proving ground floor on narrow split-pane viewports where the center gap closes.
  */
 function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group | null> }) {
   const { camera, size } = useThree() as unknown as {
@@ -198,14 +244,25 @@ function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group
         modalLeftRatio?: number;
         modalTopRatio?: number;
         modalRightRatio?: number;
+        modalBottomRatio?: number;
+        flowchartTopRatio?: number | null;
+        flowchartRightRatio?: number | null;
+        treemapLeftRatio?: number | null;
+        treemapBottomRatio?: number | null;
       } | null;
       if (data?.type === 'conduit-hero-layout') {
         if (typeof data.modalLeftRatio === 'number') ambientLayout.modalLeftRatio = data.modalLeftRatio;
         if (typeof data.modalTopRatio === 'number') ambientLayout.modalTopRatio = data.modalTopRatio;
         if (typeof data.modalRightRatio === 'number') ambientLayout.modalRightRatio = data.modalRightRatio;
+        if (typeof data.modalBottomRatio === 'number') ambientLayout.modalBottomRatio = data.modalBottomRatio;
+        ambientLayout.flowchartTopRatio = typeof data.flowchartTopRatio === 'number' ? data.flowchartTopRatio : null;
+        ambientLayout.flowchartRightRatio = typeof data.flowchartRightRatio === 'number' ? data.flowchartRightRatio : null;
+        ambientLayout.treemapLeftRatio = typeof data.treemapLeftRatio === 'number' ? data.treemapLeftRatio : null;
+        ambientLayout.treemapBottomRatio = typeof data.treemapBottomRatio === 'number' ? data.treemapBottomRatio : null;
       }
     };
     window.addEventListener('message', onMsg);
+    window.parent?.postMessage({ type: 'conduit-ambient-ready' }, '*');
     return () => window.removeEventListener('message', onMsg);
   }, []);
 
@@ -214,51 +271,97 @@ function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group
     if (!root || size.width <= 0 || size.height <= 0) return;
 
     camera.updateMatrixWorld();
+    camera.updateProjectionMatrix();
     const w = size.width;
     const h = size.height;
     const fb = fallbackModalBounds(w, h);
     const modalLeftPx = ambientLayout.modalLeftRatio !== null ? ambientLayout.modalLeftRatio * w : fb.left;
     const modalTopPx = ambientLayout.modalTopRatio !== null ? ambientLayout.modalTopRatio * h : fb.top;
     const modalRightPx = ambientLayout.modalRightRatio !== null ? ambientLayout.modalRightRatio * w : fb.right;
+    const modalBottomPx = ambientLayout.modalBottomRatio !== null ? ambientLayout.modalBottomRatio * h : fb.bottom;
+    const flowchartTopPx = ambientLayout.flowchartTopRatio !== null ? ambientLayout.flowchartTopRatio * h : fb.flowchartTop;
+    const flowchartRightPx = ambientLayout.flowchartRightRatio !== null ? ambientLayout.flowchartRightRatio * w : fb.flowchartRight;
+    const treemapLeftPx = ambientLayout.treemapLeftRatio !== null ? ambientLayout.treemapLeftRatio * w : fb.treemapLeft;
+    const treemapBottomPx = ambientLayout.treemapBottomRatio !== null ? ambientLayout.treemapBottomRatio * h : fb.treemapBottom;
 
-    // Position the cutaway turboprop in the upper-left sky directly behind the diagonal
-    // Maglev train tracks so the elevated guideway passes cleanly in front of it and
-    // the engine silhouette reads clearly above the top edge of the hero glass card,
-    // leaving the upper-right open for the closer Shanghai Maglev.
-    const targetDiamPx = THREE.MathUtils.clamp(Math.min(w * 0.165, h * 0.29), 118, 196);
-    const idealHubPx = modalLeftPx + Math.min(285, w * 0.25);
-    const targetPropPx = THREE.MathUtils.clamp(idealHubPx, Math.min(w * 0.24, 195), Math.min(w * 0.39, modalRightPx));
-    const targetPropPy = THREE.MathUtils.clamp(modalTopPx * 0.76, 82, Math.min(h * 0.24, 148));
+    const atriumWidth = treemapLeftPx - modalRightPx;
+    let targetBasePx: number;
+    let targetBasePy: number;
+    let targetDiamPx: number;
+    let placementZone: 'atrium' | 'lower-right' | 'mobile';
 
-    const ndcX = (targetPropPx / w) * 2 - 1;
-    const ndcY = 1 - (targetPropPy / h) * 2;
+    if (w <= 760) {
+      placementZone = 'mobile';
+      targetDiamPx = THREE.MathUtils.clamp(w * 0.32, 108, 132);
+      targetBasePx = w * 0.50;
+      // On single-column mobile, crown the top of `.ch-hero-glass` so the cutaway core &
+      // propeller read crisply in the open upper stage while the stand tucks behind the frosted card.
+      targetBasePy = THREE.MathUtils.clamp(modalTopPx + targetDiamPx * 0.56, 158, modalTopPx + 82);
+    } else if (atriumWidth >= 115) {
+      placementZone = 'atrium';
+      targetDiamPx = THREE.MathUtils.clamp(
+        Math.min(atriumWidth * 0.55, h * 0.222),
+        132,
+        172,
+      );
+      const rightSpanPx = 0.65 * targetDiamPx;
+      const leftSpanPx = 0.72 * targetDiamPx;
+      const maxBasePx = treemapLeftPx - rightSpanPx - 18;
+      const idealCenterPx = modalRightPx + atriumWidth * 0.49;
+      const minBasePx = Math.min(maxBasePx, modalRightPx + leftSpanPx * 0.78);
+      targetBasePx =
+        atriumWidth >= leftSpanPx + rightSpanPx + 24
+          ? THREE.MathUtils.clamp(idealCenterPx, modalRightPx + leftSpanPx + 10, maxBasePx)
+          : Math.min(maxBasePx, Math.max(minBasePx, modalRightPx + atriumWidth * 0.36));
+      targetBasePy = THREE.MathUtils.clamp(flowchartTopPx - 34, h * 0.47, h - 52);
+    } else {
+      placementZone = 'lower-right';
+      const availW = Math.max(180, w - flowchartRightPx);
+      const availH = Math.max(108, h - treemapBottomPx);
+      targetDiamPx = THREE.MathUtils.clamp(
+        Math.min(availW * 0.42, (availH - 28) * 0.88),
+        94,
+        122,
+      );
+      targetBasePx = flowchartRightPx + availW * 0.48;
+      targetBasePy = h - 26;
+    }
+
+    const ndcX = (targetBasePx / w) * 2 - 1;
+    const ndcY = 1 - (targetBasePy / h) * 2;
     const tanHalfFov = Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5));
     const aspect = w / h;
 
-    // Direction vector in world space per +1 unit of view-space depth Z_view
+    // World-space ray vector per +1 unit of view-space depth Z_view
     ambRayPerZ
       .set(ndcX * tanHalfFov * aspect, ndcY * tanHalfFov, -1)
       .transformDirection(camera.matrixWorld)
       .multiplyScalar(Math.hypot(ndcX * tanHalfFov * aspect, ndcY * tanHalfFov, 1));
 
-    // Exact Z_view of the Maglev viaduct plane along this pixel ray, plus +9.5 clearance behind the rail
     const numer = ambScratch.copy(VIA_P0).sub(camera.position).dot(VIA_NORMAL);
     const denom = ambRayPerZ.dot(VIA_NORMAL);
-    const railZView = Math.abs(denom) > 1e-4 ? numer / denom : 48;
-    const zView = THREE.MathUtils.clamp(railZView + 9.5, 42, 84);
+    const railZView = Math.abs(denom) > 1e-4 ? numer / denom : 40;
 
-    // Exact 3D world point projecting to (targetPropPx, targetPropPy) at depth zView
-    ambHubWorld
+    // Intersect camera ray directly with the perspective floor datum plane y = FLOOR_Y on desktop/tablet;
+    // on narrow single-column mobile where the upper stage sits above the floor horizon, place cleanly ahead of the viaduct.
+    const rawZView =
+      placementZone === 'mobile'
+        ? Math.max(24, railZView - 8)
+        : ambRayPerZ.y < -0.04
+          ? (FLOOR_Y - camera.position.y) / ambRayPerZ.y
+          : 26.5;
+    const zView = THREE.MathUtils.clamp(rawZView, 14, 52);
+
+    ambBaseWorld
       .set(ndcX * zView * tanHalfFov * aspect, ndcY * zView * tanHalfFov, -zView)
       .applyMatrix4(camera.matrixWorld);
 
-    // Scale S (world units per mm) so 2 * TP.propR (2160 mm) spans targetDiamPx vertically
     const scalePerMm = ((targetDiamPx / h) * (2 * zView * tanHalfFov)) / (2 * TP.propR);
     root.scale.setScalar(scalePerMm);
     root.position.set(
-      ambHubWorld.x - TP.hubX * scalePerMm,
-      ambHubWorld.y - TP.AY * scalePerMm,
-      ambHubWorld.z,
+      ambBaseWorld.x - ANCHOR_LOCAL_X * scalePerMm,
+      ambBaseWorld.y,
+      ambBaseWorld.z,
     );
     root.updateMatrixWorld();
 
@@ -266,12 +369,33 @@ function AmbientTurbopropRig({ rootRef }: { rootRef: React.RefObject<THREE.Group
       SECTION_PLANE.constant = root.position.z;
     }
 
+    const hubScreen = projectToScreen(TP.hubX, TP.AY, root.position, scalePerMm, camera, w, h);
+    const topBladeScreen = projectToScreen(TP.hubX, TP.AY + TP.propR, root.position, scalePerMm, camera, w, h);
+    const baseScreen = projectToScreen(580, 0, root.position, scalePerMm, camera, w, h);
+    const tailScreen = projectToScreen(TP.tailX, TP.AY, root.position, scalePerMm, camera, w, h);
+    const spinnerScreen = projectToScreen(TP.spinnerX1, TP.AY, root.position, scalePerMm, camera, w, h);
+
     (window as unknown as { __conduitPropDebug?: unknown }).__conduitPropDebug = {
+      placementZone,
       modalLeftPx,
       modalTopPx,
       modalRightPx,
-      targetPropPx,
-      targetPropPy,
+      flowchartTopPx,
+      flowchartRightPx,
+      treemapLeftPx,
+      treemapBottomPx,
+      targetBasePx,
+      targetBasePy,
+      targetPropPx: hubScreen.x,
+      targetPropPy: hubScreen.y,
+      hubScreenPx: hubScreen.x,
+      hubScreenPy: hubScreen.y,
+      topBladeScreenPy: topBladeScreen.y,
+      baseScreenPy: baseScreen.y,
+      tailScreenPx: tailScreen.x,
+      spinnerScreenPx: spinnerScreen.x,
+      worldBaseY: root.position.y,
+      floorY: FLOOR_Y,
       pageWidth: w,
       pageHeight: h,
       targetDiamPx,
@@ -352,8 +476,22 @@ export default function App() {
   const drawingMode = useStudio((s) => s.view === 'drawing');
   const moveMode = useStudio((s) => s.moveMode);
   const rootRef = useRef<THREE.Group>(null);
+  const [ambientActive, setAmbientActive] = useState(true);
   const [recording, setRecording] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!isAmbient) return;
+    const onMsg = (ev: MessageEvent) => {
+      const data = ev.data as { type?: string; active?: boolean } | null;
+      if (data?.type === 'conduit-ambient-active' && typeof data.active === 'boolean') {
+        setAmbientActive(data.active);
+      }
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
   const onExport = async (kind: 'plate' | 'video' | 'json') => {
     if (busy) return;
     if (kind === 'json') return exportJson();
@@ -375,12 +513,13 @@ export default function App() {
       )}
       <div className="stage">
         <Canvas
-          camera={{ position: [5.5, 6.45, 11.85], fov: 30, near: 0.5, far: 320 }}
+          frameloop={isAmbient && !ambientActive ? 'never' : 'always'}
+          camera={{ position: [5.5, 6.45, 11.85], fov: 30, near: isAmbient ? 2.0 : 0.5, far: 320 }}
           dpr={[1, 2]}
-          gl={{ antialias: false, alpha: true, preserveDrawingBuffer: true, toneMapping: THREE.NoToneMapping }}
+          gl={{ antialias: false, alpha: true, preserveDrawingBuffer: !isAmbient, toneMapping: THREE.NoToneMapping }}
           linear
           flat
-          onPointerMissed={() => { if (useStudio.getState().view !== 'drawing') clear({ selected: null }); }}
+          onPointerMissed={() => { if (!isAmbient && useStudio.getState().view !== 'drawing') clear({ selected: null }); }}
         >
           <MotionDriver />
           {Driver && <Driver key={`driver-${machine.id}`} />}

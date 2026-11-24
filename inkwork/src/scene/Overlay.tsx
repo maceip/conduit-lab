@@ -16,7 +16,12 @@ import { boltSetDef, partDef, partOffset, stageProgress } from './explode';
  * In embedded plates, shows the 6 curated primary subsystem landmarks by default
  * (fanned cleanly above/below the silhouette) plus any hovered or selected part.
  */
-export function Callout({ id, p }: { id: string; p: Vec3 }) {
+export function Callout(props: { id: string; p: Vec3 }) {
+  if (isAmbient) return null;
+  return <CalloutBody {...props} />;
+}
+
+function CalloutBody({ id, p }: { id: string; p: Vec3 }) {
   const machine = useMachine();
   const part = partDef(id);
   const anno = machine.annotations?.[id];
@@ -28,8 +33,8 @@ export function Callout({ id, p }: { id: string; p: Vec3 }) {
   const set = useStudio((s) => s.set);
   const nested = usePartDepth() > 1;
   const shown = useStudio((s) => !s.hidden.includes(id) && (!s.solo || s.solo === id));
-  const visibleByDefault = isAmbient ? false : isEmbed ? Boolean(landmark) : labels;
-  if (isAmbient || !part || nested || !shown || drawingMode || (!visibleByDefault && !selected && !hovered)) return null;
+  const visibleByDefault = isEmbed ? Boolean(landmark) : labels;
+  if (!part || nested || !shown || drawingMode || (!visibleByDefault && !selected && !hovered)) return null;
 
   const down = landmark?.rail === 'bottom';
   const leftSide = landmark?.slot === 0;

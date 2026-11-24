@@ -111,8 +111,10 @@ test("unified hero renders turboprop + diagonal maglev viaduct behind translucen
   expect(glassStyle.backdrop).toContain("blur(");
   expect(glassStyle.bgImage).toContain("0.24");
 
-  // Verify turboprop stays behind tracks AND closer Maglev stays clearly visible across viewports, while Browser Anatomy Treemap sits directly next to hero modal
-  for (const vw of [800, 850, 1080, 1440]) {
+  // Verify Maglev stays on the upper-right elevated viaduct while the cutaway turboprop is grounded
+  // on the proving-ground floor in the open center atrium (desktop) or lower-right floor (narrow split-pane),
+  // with zero topbar/border clipping and Browser Anatomy Treemap aligned beside hero modal.
+  for (const vw of [800, 850, 1080, 1280, 1440]) {
     await page.setViewportSize({ width: vw, height: 820 });
     await expect
       .poll(async () => {
@@ -129,12 +131,25 @@ test("unified hero renders turboprop + diagonal maglev viaduct behind translucen
           return Math.abs(tmap.top - glass.top) <= 6 && tmap.left >= glass.right - 1;
         });
         if (!propDebug || !maglevDebug || !sideBySide) return false;
+        const groundedOnFloor =
+          Math.abs(propDebug.worldBaseY - propDebug.floorY) < 0.01 &&
+          propDebug.zView < propDebug.railZView - 6 &&
+          propDebug.topBladeScreenPy > 40 &&
+          propDebug.baseScreenPy < propDebug.pageHeight - 8;
+        const zoneValid =
+          vw >= 1050
+            ? propDebug.placementZone === "atrium" &&
+              propDebug.hubScreenPx > propDebug.modalRightPx &&
+              propDebug.spinnerScreenPx < propDebug.treemapLeftPx - 10 &&
+              propDebug.baseScreenPy < propDebug.flowchartTopPx - 8
+            : propDebug.placementZone === "lower-right" &&
+              propDebug.tailScreenPx > propDebug.flowchartRightPx &&
+              propDebug.spinnerScreenPx < vw - 16 &&
+              propDebug.topBladeScreenPy > propDebug.treemapBottomPx;
         return (
           propDebug.pageWidth === vw &&
-          propDebug.targetPropPx > 50 &&
-          propDebug.targetPropPx < vw * 0.48 &&
-          propDebug.targetPropPy < 200 &&
-          propDebug.zView > propDebug.railZView + 4 &&
+          groundedOnFloor &&
+          zoneValid &&
           maglevDebug.pageWidth === vw &&
           maglevDebug.noseScreenPx > vw * 0.38 &&
           maglevDebug.noseScreenPx < vw * 0.78 &&

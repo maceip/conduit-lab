@@ -15,6 +15,7 @@ export const inkUniforms = {
   uPass: { value: 0 },
   uPeel: { value: null as THREE.Texture | null },
   uRes: { value: new THREE.Vector2(1, 1) },
+  uAmbient: { value: 0 },
 };
 
 export function rgb(hex: string): THREE.Vector3 {
@@ -101,6 +102,7 @@ const fragmentShader = /* glsl */ `
   uniform int uPass;
   uniform sampler2D uPeel;
   uniform vec2 uRes;
+  uniform float uAmbient;
   uniform float uPartId;
   uniform float uTone;
   uniform float uSelected;
@@ -134,7 +136,11 @@ const fragmentShader = /* glsl */ `
     float light = clamp(0.38 + 0.62 * key + 0.18 * fill, 0.0, 1.0);
     light = mix(light, 1.0, 1.0 - uTone);
     vec3 col = mix(uShade, uFace, light);
-    if (inner) col = mix(uCut, uFace, 0.25 + 0.35 * light);
+    if (inner) {
+      col = uAmbient > 0.5
+        ? mix(uShade, uFace, 0.44 + 0.30 * light)
+        : mix(uCut, uFace, 0.25 + 0.35 * light);
+    }
     col = mix(col, mix(uAccent, uFace, 0.72), uSelected * 0.85);
     col = mix(col, mix(uShade, uFace, 0.5), uHover * 0.5);
     // Alpha is the "shade" signal the composite uses for graphite hatching.
@@ -161,6 +167,7 @@ export function createInkMaterial({ partId, tone = 1, clip, accent }: InkMateria
       uPass: inkUniforms.uPass,
       uPeel: inkUniforms.uPeel,
       uRes: inkUniforms.uRes,
+      uAmbient: inkUniforms.uAmbient,
       uPartId: { value: partId },
       uTone: { value: tone },
       uSelected: { value: 0 },
@@ -219,17 +226,14 @@ export const compositeFragment = /* glsl */ `
     return uSelId > 0.0 && (abs(id - uSelId) < 0.004 || abs(id - fract(uSelId + 0.5)) < 0.004);
   }
 
-  // x: outline (silhouette, depth step, part boundary), y: crease, z: touches selected part
-  vec3 edgeAt(vec2 uv, vec2 o, vec3 n0, float id0, float d0, bool bg0) {
+  // x: silhouette / depth step, y: crease, z: touches selected part, w: internal part-ID seam
+  vec4 edgeAt(vec2 uv, vec2 o, vec3 n0, float id0, float d0, bool bg0) {
     vec2 uv1 = uv + o;
     bool bg1 = texture2D(tDepth, uv1).x >= 0.99999;
     vec4 s = texture2D(tNormal, uv1);
     float sel = (!bg1 && isSel(s.a)) ? 1.0 : 0.0;
-    if (bg0 != bg1) return vec3(1.0, 0.0, sel);
-    if (bg0) return vec3(0.0);
-    if (abs(s.a - id0) > 0.002) return vec3(1.0, 0.0, sel);
-    vec3 n1 = s.rgb * 2.0 - 1.0;
-    float nEdge = smoothstep(0.18, 0.45, 1.0 - dot(n0, n1));
+    if (bg0 != bg1) return vec4(1.0, 0.0, sel, 0.0);
+    if (bg0) return vec4(0.0);
     float d1 = linearDepth(uv1);
     // Surfaces seen edge-on change depth quickly per pixel; raise the bar there.
     float graze = 1.0 - clamp(abs(n0.z), 0.0, 1.0);
@@ -237,7 +241,13 @@ export const compositeFragment = /* glsl */ `
     // Orthographic cameras sit far away, so compare depth steps in scene units.
     float rel = uOrtho > 0.5 ? abs(d1 - d0) / 5.0 : abs(d1 - d0) / d0;
     float dEdge = smoothstep(t, t * 2.2, rel);
-    return vec3(dEdge, nEdge, sel);
+    if (abs(s.a - id0) > 0.002) {
+      if (uAmbient > 0.5) return vec4(dEdge, 0.0, sel, 1.0);
+      return vec4(1.0, 0.0, sel, 0.0);
+    }
+    vec3 n1 = s.rgb * 2.0 - 1.0;
+    float nEdge = smoothstep(0.18, 0.45, 1.0 - dot(n0, n1));
+    return vec4(dEdge, nEdge, sel, 0.0);
   }
 
   /** Outline strength inside one peeled layer (orthographic depth only). */
@@ -281,7 +291,7 @@ export const compositeFragment = /* glsl */ `
     float sceneD = bg ? 1e5 : d0;
 
     vec2 o = px * uLine;
-    vec3 e = vec3(0.0);
+    vec4 e = vec4(0.0);
     vec2 dirs[8];
     dirs[0] = vec2(1.0, 0.0); dirs[1] = vec2(-1.0, 0.0); dirs[2] = vec2(0.0, 1.0); dirs[3] = vec2(0.0, -1.0);
     dirs[4] = vec2(0.7, 0.7); dirs[5] = vec2(-0.7, -0.7); dirs[6] = vec2(0.7, -0.7); dirs[7] = vec2(-0.7, 0.7);
@@ -289,22 +299,25 @@ export const compositeFragment = /* glsl */ `
       float w = i < 4 ? 1.0 : 0.6;
       vec2 uvN = vUv + dirs[i] * o;
       if (texture2D(tDepth, uvN).x < 0.99999) sceneD = min(sceneD, linearDepth(uvN));
-      vec3 r = edgeAt(vUv, dirs[i] * o, n0, s.a, d0, bg);
-      e = max(e, vec3(r.xy * w, r.z * step(0.01, r.x)));
+      vec4 r = edgeAt(vUv, dirs[i] * o, n0, s.a, d0, bg);
+      e = max(e, vec4(r.x * w, r.y * w, r.z * step(0.01, max(r.x, r.w)), r.w * w));
     }
-    // Outlines get a second, wider ring so silhouettes read heavier than creases.
-    for (int i = 0; i < 4; i++) {
-      vec2 uvW = vUv + dirs[i] * o * 1.45;
-      if (texture2D(tDepth, uvW).x < 0.99999) sceneD = min(sceneD, linearDepth(uvW));
-      vec3 r = edgeAt(vUv, dirs[i] * o * 1.45, n0, s.a, d0, bg);
-      e.x = max(e.x, r.x * 0.45);
-      e.z = max(e.z, r.z * step(0.01, r.x));
+    // Outlines get a second, wider ring in plate/drawing mode; ambient hero stays true 1px hairline.
+    if (uAmbient < 0.5) {
+      for (int i = 0; i < 4; i++) {
+        vec2 uvW = vUv + dirs[i] * o * 1.45;
+        if (texture2D(tDepth, uvW).x < 0.99999) sceneD = min(sceneD, linearDepth(uvW));
+        vec4 r = edgeAt(vUv, dirs[i] * o * 1.45, n0, s.a, d0, bg);
+        e.x = max(e.x, r.x * 0.45);
+        e.z = max(e.z, r.z * step(0.01, r.x));
+      }
     }
     float selHere = (!bg && isSel(s.a)) ? 1.0 : 0.0;
 
     vec3 col = c.rgb;
     float alpha = bg ? 0.0 : 1.0;
     bool cut = !bg && s.a > 0.5;
+    float hatchStrength = uAmbient > 0.5 ? uHatch * 0.30 : uHatch;
 
     if (uDrawing > 0.5 && !bg) {
       // Engineering drawing: flat paper faces, the selected part lightly tinted,
@@ -317,22 +330,27 @@ export const compositeFragment = /* glsl */ `
         float h = hatchLines(gl_FragCoord.xy, dir, spacing);
         col = mix(col, mix(uInk, uAccent, selHere * 0.9), h * 0.85);
       }
-    } else if (!bg && uHatch > 0.0) {
+    } else if (!bg && hatchStrength > 0.0) {
       // Graphite: diagonal hatching on faces turned from the light, plus faint grain.
       vec2 p = gl_FragCoord.xy / max(1.0, uLine * 0.9);
       float shade = c.a;
       float line1 = 1.0 - smoothstep(0.0, 1.0, abs(fract((p.x + p.y) / 6.0) - 0.5) * 2.0 / 0.22);
       float line2 = 1.0 - smoothstep(0.0, 1.0, abs(fract((p.x - p.y) / 6.0) - 0.5) * 2.0 / 0.22);
       float h = line1 * smoothstep(0.3, 0.5, shade) + line2 * smoothstep(0.5, 0.7, shade);
-      col = mix(col, uInk, clamp(h, 0.0, 1.0) * 0.13 * uHatch);
-      col *= 1.0 - 0.03 * hash(floor(gl_FragCoord.xy)) * uHatch;
+      col = mix(col, uInk, clamp(h, 0.0, 1.0) * 0.13 * hatchStrength);
+      col *= 1.0 - 0.03 * hash(floor(gl_FragCoord.xy)) * hatchStrength;
     }
 
-    float outline = clamp(e.x, 0.0, 1.0) * 0.94;
-    float crease = clamp(e.y, 0.0, 1.0) * mix(0.55, 0.94, uDrawing);
+    float sil = clamp(e.x, 0.0, 1.0);
+    float seam = clamp(e.w, 0.0, 1.0) * (1.0 - 0.30 * smoothstep(26.0, 74.0, sceneD));
+    float outline = uAmbient > 0.5 ? max(sil * 0.92, seam * 0.56) : sil * 0.94;
+    float crease = uAmbient > 0.5
+      ? clamp(e.y, 0.0, 1.0) * 0.36 * (1.0 - 0.52 * smoothstep(32.0, 92.0, sceneD))
+      : clamp(e.y, 0.0, 1.0) * mix(0.55, 0.94, uDrawing);
     float ink = max(outline, crease);
     float selected = max(e.z, selHere * step(0.01, outline));
-    vec3 inkCol = mix(uInk, uAccent, selected * 0.9);
+    vec3 baseInk = uAmbient > 0.5 ? mix(uFace, uInk, mix(0.68, 0.90, sil)) : uInk;
+    vec3 inkCol = mix(baseInk, uAccent, selected * 0.9);
 
     if (uHidden > 0.5 && !bg) {
       // Hidden outlines: edges of the peeled layers, wherever no visible line

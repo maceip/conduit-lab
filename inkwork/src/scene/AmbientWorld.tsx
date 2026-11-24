@@ -8,14 +8,13 @@ import {
   DoorLeaf,
   FlushWindshield,
   ProfileShell,
-  StatorPack,
   Stripe,
   WindowBand,
   beamShape,
 } from '../machines/maglev/kit';
 import { OVERLAY_LAYER, ambientSceneDepth } from './InkRenderer';
 import { inkUniforms, paletteUniforms } from './ink';
-import { AmbientPart } from './Part';
+import { AmbientPart, M } from './Part';
 
 const F = MG.floorY;
 const R = MG.roofY;
@@ -158,6 +157,44 @@ function InfiniteFloorGrid() {
   return null;
 }
 
+/** Single merged BufferGeometry for all repeating concrete viaduct piers (1 draw call vs 100). */
+function buildViaductPiersGeo(xs: number[]): THREE.BufferGeometry {
+  const unit = new THREE.BoxGeometry(1, 1, 1).toNonIndexed();
+  const uPos = unit.getAttribute('position') as THREE.BufferAttribute;
+  const uNorm = unit.getAttribute('normal') as THREE.BufferAttribute;
+  const vPerBox = uPos.count;
+  const parts: Array<[number, number, number, number, number, number]> = [
+    [0, 90, 0, 2600, 180, 3200],
+    [0, 560, 0, 1500, 760, 1700],
+    [0, 1040, 0, 2400, 240, 3100],
+    [0, 1210, 760, 900, 110, 720],
+    [0, 1210, -760, 900, 110, 720],
+  ];
+  const totalVerts = xs.length * parts.length * vPerBox;
+  const positions = new Float32Array(totalVerts * 3);
+  const normals = new Float32Array(totalVerts * 3);
+  let ptr = 0;
+  for (const px of xs) {
+    for (const [dx, cy, cz, sx, sy, sz] of parts) {
+      const cx = px + dx;
+      for (let i = 0; i < vPerBox; i += 1) {
+        positions[ptr] = cx + uPos.getX(i) * sx;
+        positions[ptr + 1] = cy + uPos.getY(i) * sy;
+        positions[ptr + 2] = cz + uPos.getZ(i) * sz;
+        normals[ptr] = uNorm.getX(i);
+        normals[ptr + 1] = uNorm.getY(i);
+        normals[ptr + 2] = uNorm.getZ(i);
+        ptr += 3;
+      }
+    }
+  }
+  unit.dispose();
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
+  return geo;
+}
+
 /** Coupled trailing passenger coach matching the TR08 cross-section & window beltline. */
 function TrailingCoach({ x0, x1, keyTag }: { x0: number; x1: number; keyTag: string }) {
   const len = x1 - x0;
@@ -171,7 +208,6 @@ function TrailingCoach({ x0, x1, keyTag }: { x0: number; x1: number; keyTag: str
       </AmbientPart>
       <AmbientPart partId={0.175} tone={0.65}>
         <WindowBand x0={x0 + 2400} x1={x1 - 2400} y0={F + 1520} y1={F + 2420} z={-1850} side={-1} panes={9} />
-        <WindowBand x0={x0 + 2400} x1={x1 - 2400} y0={F + 1520} y1={F + 2420} z={1850} side={1} panes={9} />
         <DoorLeaf x={x0 + 1350} y0={F + 140} y1={F + 2320} z={-1850} side={-1} />
         <DoorLeaf x={x1 - 1350} y0={F + 140} y1={F + 2320} z={-1850} side={-1} />
       </AmbientPart>
@@ -244,13 +280,15 @@ export function AmbientWorld() {
   const beamLen = beamX1 - beamX0;
   const beamMid = (beamX0 + beamX1) / 2;
 
-  const pierStations = useMemo(() => {
+  const pierGeo = useMemo(() => {
     const xs: number[] = [];
     for (let px = 84000; px >= -334000; px -= 22000) {
       xs.push(px);
     }
-    return xs;
+    return buildViaductPiersGeo(xs);
   }, []);
+
+  useEffect(() => () => pierGeo.dispose(), [pierGeo]);
 
   return (
     <group name="ambient-world">
@@ -270,41 +308,34 @@ export function AmbientWorld() {
           <Box c={[beamMid, MG.beamTopY + 40, -(MG.beamW / 2 - 140)]} s={[beamLen, 80, 260]} />
         </AmbientPart>
 
-        {/* Long-stator linear motor packs & lateral guidance rails */}
+        {/* Long-stator linear motor rails & lateral guidance bars (clean hairlines, zero Nyquist tooth static) */}
         <AmbientPart partId={0.115} tone={0.78}>
           <Box c={[beamMid, 3080, -1520]} s={[beamLen, 140, 160]} />
           <Box c={[beamMid, 3080, 1520]} s={[beamLen, 140, 160]} />
           <Box c={[beamMid, 2400, -1380]} s={[beamLen, 210, 180]} />
           <group ref={statorRef} position={[-40000, 2400, -1250]}>
-            <StatorPack x0={-26000} x1={28000} side={-1} />
+            <Box c={[1000, 0, -120]} s={[54000, 560, 220]} />
+            <Box c={[1000, 160, -255]} s={[54000, 88, 42]} />
+            <Box c={[1000, -160, -255]} s={[54000, 88, 42]} />
           </group>
         </AmbientPart>
 
         {/* Repeating tapered concrete hammerhead viaduct piers stepping to infinity */}
         <AmbientPart partId={0.085} tone={0.88}>
-          {pierStations.map((px) => (
-            <group key={px}>
-              <Box c={[px, 90, 0]} s={[2600, 180, 3200]} />
-              <Box c={[px, 560, 0]} s={[1500, 760, 1700]} />
-              <Box c={[px, 1040, 0]} s={[2400, 240, 3100]} />
-              <Box c={[px, 1210, 760]} s={[900, 110, 720]} />
-              <Box c={[px, 1210, -760]} s={[900, 110, 720]} />
-            </group>
-          ))}
+          <M geo={pierGeo} />
         </AmbientPart>
 
         {/* Coupled 3-car Shanghai SMT Maglev (Transrapid TR08) trainset */}
         <group ref={trainRef}>
           <group position={[-85000, 0, 0]}>
             <AmbientPart partId={0.145} tone={0.82}>
-              <AeroNose x0={19800} x1={27000} floorY={F} roofY={R} halfW={MG.carWidth / 2} />
+              <AeroNose x0={19800} x1={27000} floorY={F} roofY={R} halfW={MG.carWidth / 2} hollow={false} />
               <ProfileShell k="amb-lead-shell" shape={fullShellShape()} x0={1200} x1={19800} />
               <Box c={[1050, F + 1950, 0]} s={[480, 3600, 3400]} />
             </AmbientPart>
             <AmbientPart partId={0.175} tone={0.65}>
               <FlushWindshield x0={19800} x1={27000} floorY={F} roofY={R} halfW={MG.carWidth / 2} />
               <WindowBand x0={4400} x1={17100} y0={F + 1520} y1={F + 2420} z={-1850} side={-1} panes={8} />
-              <WindowBand x0={4400} x1={17100} y0={F + 1520} y1={F + 2420} z={1850} side={1} panes={8} />
               <DoorLeaf x={18200} y0={F + 140} y1={F + 2320} z={-1850} side={-1} />
               <DoorLeaf x={3400} y0={F + 140} y1={F + 2320} z={-1850} side={-1} />
             </AmbientPart>

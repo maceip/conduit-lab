@@ -90,13 +90,24 @@ export const AmbientMachineBackdrop: React.FC<{
     const heroRect = wrap.getBoundingClientRect();
     if (heroRect.width <= 0 || heroRect.height <= 0) return;
     const glass = document.querySelector('[data-testid="hero-glass"]');
+    const flowchart = document.querySelector('[data-testid="browser-flowchart"]');
+    const treemap = document.querySelector('[data-testid="browser-treemap"]');
     const glassRect = glass?.getBoundingClientRect();
     if (!glassRect) return;
-    const modalLeftRatio = (glassRect.left - heroRect.left) / heroRect.width;
-    const modalTopRatio = (glassRect.top - heroRect.top) / heroRect.height;
-    const modalRightRatio = (glassRect.right - heroRect.left) / heroRect.width;
+    const flowRect = flowchart?.getBoundingClientRect();
+    const tmapRect = treemap?.getBoundingClientRect();
     win.postMessage(
-      { type: 'conduit-hero-layout', modalLeftRatio, modalTopRatio, modalRightRatio },
+      {
+        type: 'conduit-hero-layout',
+        modalLeftRatio: (glassRect.left - heroRect.left) / heroRect.width,
+        modalTopRatio: (glassRect.top - heroRect.top) / heroRect.height,
+        modalRightRatio: (glassRect.right - heroRect.left) / heroRect.width,
+        modalBottomRatio: (glassRect.bottom - heroRect.top) / heroRect.height,
+        flowchartTopRatio: flowRect ? (flowRect.top - heroRect.top) / heroRect.height : null,
+        flowchartRightRatio: flowRect ? (flowRect.right - heroRect.left) / heroRect.width : null,
+        treemapLeftRatio: tmapRect ? (tmapRect.left - heroRect.left) / heroRect.width : null,
+        treemapBottomRatio: tmapRect ? (tmapRect.bottom - heroRect.top) / heroRect.height : null,
+      },
       '*',
     );
   };
@@ -107,17 +118,58 @@ export const AmbientMachineBackdrop: React.FC<{
 
   useEffect(() => {
     const wrap = wrapRef.current;
-    if (!wrap || typeof ResizeObserver === 'undefined') return;
-    const glass = document.querySelector('[data-testid="hero-glass"]');
-    const ro = new ResizeObserver(() => syncHeroLayout());
-    ro.observe(wrap);
-    if (glass) ro.observe(glass);
+    if (!wrap) return;
+    const onReady = (ev: MessageEvent) => {
+      if (!iframeRef.current || ev.source !== iframeRef.current.contentWindow) return;
+      const data = ev.data as { type?: string } | null;
+      if (data?.type === 'conduit-ambient-ready') {
+        iframeRef.current.contentWindow?.postMessage({ type: 'conduit-theme', theme }, '*');
+        syncHeroLayout();
+      }
+    };
+    window.addEventListener('message', onReady);
+
+    const ro =
+      typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => syncHeroLayout()) : null;
+    if (ro) {
+      ro.observe(wrap);
+      for (const sel of [
+        '[data-testid="hero-glass"]',
+        '[data-testid="browser-flowchart"]',
+        '[data-testid="browser-treemap"]',
+      ]) {
+        const el = document.querySelector(sel);
+        if (el) ro.observe(el);
+      }
+    }
+
+    let inView = true;
+    const sendActive = () => {
+      const active = inView && document.visibilityState !== 'hidden';
+      iframeRef.current?.contentWindow?.postMessage({ type: 'conduit-ambient-active', active }, '*');
+    };
+    const io =
+      typeof IntersectionObserver !== 'undefined'
+        ? new IntersectionObserver(
+            (entries) => {
+              inView = entries.some((e) => e.isIntersecting);
+              sendActive();
+            },
+            { rootMargin: '120px 0px' },
+          )
+        : null;
+    io?.observe(wrap);
+    document.addEventListener('visibilitychange', sendActive);
     window.addEventListener('resize', syncHeroLayout);
+
     return () => {
-      ro.disconnect();
+      window.removeEventListener('message', onReady);
+      ro?.disconnect();
+      io?.disconnect();
+      document.removeEventListener('visibilitychange', sendActive);
       window.removeEventListener('resize', syncHeroLayout);
     };
-  }, []);
+  }, [theme]);
 
   return (
     <div ref={wrapRef} className="ch-hero-backdrop" aria-hidden="true" data-testid={testId}>
