@@ -2222,6 +2222,28 @@ td[data-tone='fail'] {
   color: var(--ch-text-secondary);
 }
 
+.ch-vc-formula {
+  margin: 9px 0 0;
+  padding: 8px 10px;
+  background: var(--ch-bg-code);
+  border: 1px solid var(--ch-border-subtle);
+  border-radius: 3px;
+  font-family: var(--ch-font-mono);
+  font-size: 11.5px;
+  line-height: 1.54;
+  color: var(--ch-text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ch-how-ledger {
+  margin: 2px 0 4px;
+}
+
+.ch-how-ledger .ch-arch-row {
+  padding: 9px 0;
+}
+
 .ch-ce-table {
   margin-top: 10px;
   display: flex;

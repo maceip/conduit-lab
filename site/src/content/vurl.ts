@@ -17,6 +17,7 @@ export interface VerusCodeLine {
     state: ObligationState;
     summary: string;
     detail: string;
+    vcFormula?: string;
     counterexample?: CounterexampleBinding[];
   };
 }
@@ -44,8 +45,10 @@ export const VURL_VERIFIED_LINES: VerusCodeLine[] = [
     text: '    ensures r == upper_hex_digit(n as nat),',
     obligation: {
       state: 'verified',
-      summary: 'UNSAT across all 16 valid inputs in one SMT query',
-      detail: 'Z3 proves the executable byte arithmetic equals the mathematical spec for every n in 0..16, not just sampled test inputs.',
+      summary: 'UNSAT across all 16 valid inputs in one symbolic Z3 query',
+      detail: 'Verus encodes n as an 8-bit symbolic bitvector, assumes n < 16, and asks Z3 to find any n where r != upper_hex_digit(n). Z3 proves those constraints contradict each other.',
+      vcFormula:
+        'assume: bvult(n, 0x10)\nbody:   r = ite(bvult(n, 0x0a), bvadd(0x30, n), bvsub(bvadd(0x41, n), 0x0a))\nnegate: assert(r != spec_upper_hex_digit(n))   // search for any failing n\nz3:     UNSAT  (0 counterexamples -> proved for every n < 16)',
     },
   },
   { lineNo: 9, lane: 'exec', text: '{ if n < 10 { 0x30 + n } else { 0x41 + n - 10 } }' },
@@ -68,8 +71,10 @@ export const VURL_VERIFIED_LINES: VerusCodeLine[] = [
     text: '        invariant spec_percent_encode(input@, set) == out@ + spec_percent_encode(input@.subrange(i as int, n as int), set),',
     obligation: {
       state: 'verified',
-      summary: 'Inductive remaining-work invariant',
-      detail: 'At every iteration, bytes already emitted concatenated with the spec of remaining input equals the full specification.',
+      summary: 'Inductive loop proof over unbounded slices (&[u8] of any length)',
+      detail: 'Instead of unrolling the loop, Z3 proves base case (i = 0), single-step preservation (i -> i + 1), and exit (i == n), covering every slice length at once.',
+      vcFormula:
+        'base (i = 0):    out == []  ==>  spec(input) == [] + spec(input[0..n])    [UNSAT]\nstep (i -> i+1): inv(i) && i < n  ==>  inv(i + 1)                         [UNSAT]\nexit (i == n):   inv(n)  ==>  out == spec(input)  for any slice length n  [UNSAT]',
     },
   },
   {
@@ -116,8 +121,10 @@ export const COUNTEREXAMPLE_LINES: VerusCodeLine[] = [
     text: '    ensures r < 15, // 1-char typo: real vurl postcondition is r < 16',
     obligation: {
       state: 'failed',
-      summary: 'Postcondition falsified — Z3 synthesizes a concrete breaking input',
-      detail: 'Instead of silently passing incomplete unit tests, Z3 returns the exact input byte that violates r < 15.',
+      summary: 'Postcondition falsified — Z3 solves the negated query (SAT)',
+      detail: 'Z3 searches for b satisfying is_ascii_hex_digit(b) && !(r < 15), finds a solution, and hands back the exact breaking byte.',
+      vcFormula:
+        'assume: is_ascii_hex_digit(b)\nbody:   r = ite(bvule(b, 0x39), bvsub(b, 0x30), bvadd(bvsub(bvand(b, 0xdf), 0x41), 10))\nnegate: assert(!(bvult(r, 15)))   // search for any hex byte with r >= 15\nz3:     SAT  -> counterexample found:',
       counterexample: [
         { symbol: 'b', sort: '(_ BitVec 8)', value: '0x46 ("F")' },
         { symbol: 'r', sort: '(_ BitVec 8)', value: '15  (violates r < 15)' },

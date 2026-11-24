@@ -277,11 +277,15 @@ test("dedicated workbench.html: 4-state Verus workbench, fix-typo action, and li
   await page.getByTestId("cta-workbench").click();
   await expect(page).toHaveURL(/workbench\.html$/);
   await expect(page.locator("#proofs h2.ch-section-title")).toHaveText(
-    "What proofs catch that unit tests miss"
+    "How Verus proves every possible input"
   );
+  await expect(page.getByTestId("how-verus-steps")).toContainText("Symbolic variables");
+  await expect(page.getByTestId("how-verus-steps")).toContainText("Negate ensures");
+  await expect(page.getByTestId("how-verus-steps")).toContainText("Loop induction");
   await expect(page.locator("body")).not.toContainText("Tests check examples.");
   await expect(page.getByTestId("verus-file")).toHaveText("browser/url/src/percent.rs");
   await expect(page.getByTestId("inlay-state-8")).toHaveText("verified");
+  await expect(page.getByTestId("z3-vc-formula")).toContainText("assert(r != spec_upper_hex_digit(n))");
 
   const overflow = await page
     .getByTestId("verus-code-workbench")

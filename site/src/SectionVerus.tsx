@@ -128,13 +128,39 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
   return (
     <section className="ch-spec-row" id="proofs">
       <div className="ch-prose-col">
-        <h2 className="ch-section-title">What proofs catch that unit tests miss</h2>
+        <h2 className="ch-section-title">How Verus proves every possible input</h2>
 
         <p className="ch-prose-text">
-          A unit test only checks the inputs you thought to write down. Verus turns your Rust
-          function and its contract into Z3 queries: if <em>any</em> input can break the rules, Z3
-          hands back the exact value that fails; if none can, the function holds for every input.
+          Verus never runs your function on inputs one by one. Instead, it compiles Rust into
+          symbolic equations and asks Z3 whether a bug is mathematically possible:
         </p>
+
+        <dl className="ch-arch-ledger ch-how-ledger" data-testid="how-verus-steps">
+          <div className="ch-arch-row">
+            <dt>1. Symbolic variables, not sample values</dt>
+            <dd>
+              In <code>upper_hex(n: u8)</code> (line 6), <code>n</code> becomes an unknown 8-bit
+              symbol rather than a test literal, turning the <code>if / else</code> body into one
+              equation.
+            </dd>
+          </div>
+          <div className="ch-arch-row">
+            <dt>2. Negate ensures &amp; search for a counterexample</dt>
+            <dd>
+              Verus assumes <code>requires</code> (<code>n &lt; 16</code>) and asks Z3 to solve{' '}
+              <code>!ensures</code>. <code>UNSAT</code> means zero breaking inputs exist;{' '}
+              <code>SAT</code> hands back the exact input that fails.
+            </dd>
+          </div>
+          <div className="ch-arch-row">
+            <dt>3. Loop induction for unbounded slices</dt>
+            <dd>
+              A slice <code>&amp;[u8]</code> (line 11) can have any length, so Z3 proves your loop{' '}
+              <code>invariant</code> (line 14) holds at <code>i = 0</code> and survives one step{' '}
+              <code>i → i + 1</code> while <code>decreases n - i</code> shrinks to 0.
+            </dd>
+          </div>
+        </dl>
 
         <div className="ch-state-selector ch-state-compact" role="group" aria-label="Verus obligation states">
           {OBLIGATION_STATES.map((st) => (
@@ -276,6 +302,11 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
                           <strong>{line.obligation.summary}</strong>
                         </div>
                         <p className="ch-inlay-detail">{line.obligation.detail}</p>
+                        {line.obligation.vcFormula && (
+                          <pre className="ch-vc-formula" data-testid="z3-vc-formula">
+                            {line.obligation.vcFormula}
+                          </pre>
+                        )}
                         {line.obligation.counterexample && (
                           <div className="ch-ce-table" data-testid="z3-counterexample">
                             {line.obligation.counterexample.map((row) => (
