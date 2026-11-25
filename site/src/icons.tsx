@@ -93,22 +93,25 @@ export const IconGitHub: React.FC<IconProps> = ({ size = 16, className }) => (
 
 const CONDUIT_STENCIL_GLYPHS = [
   // C — semicircular arc with sheared terminals
-  'M 46.5 0.0 H 131.2 L 121.9 18.1 H 46.5 C 29.5 18.1 18.05 31.2 18.05 50.0 C 18.05 68.8 29.5 81.9 46.5 81.9 H 121.9 L 131.2 100.0 H 46.5 C 18.2 100.0 0.0 80.5 0.0 50.0 C 0.0 19.5 18.2 0.0 46.5 0.0 Z',
-  // Ø — stadium ring with 45° stencil channels + stepped central laser spindle
-  'M 255.6 3.0 L 241.6 16.15 H 170.5 C 160.8 16.15 154.95 22.0 154.95 31.5 V 68.5 C 154.95 76.6 158.4 81.8 164.6 83.6 L 152.2 96.2 C 143.0 90.8 138.65 81.6 138.65 69.5 V 30.5 C 138.65 11.8 149.8 0.0 168.5 0.0 H 245.5 C 249.4 0.0 252.8 1.0 255.6 3.0 Z M 261.2 5.2 C 270.0 10.8 274.45 19.8 274.45 30.5 V 69.5 C 274.45 88.2 263.3 100.0 244.6 100.0 H 168.5 C 164.2 100.0 160.4 99.1 157.4 97.6 L 170.8 83.6 H 242.6 C 252.3 83.6 258.3 77.8 258.3 68.5 V 31.5 C 258.3 23.2 254.6 18.0 248.5 16.4 Z M 239.4 16.1 L 241.7 16.1 L 173.4 83.8 L 170.8 83.8 Z M 227.6 26.2 L 233.8 26.2 L 190.6 69.0 L 184.4 69.0 Z',
-  // N — isolated left pillar + vertical-cut diagonal + right stem
-  'M 290.6 0.0 H 310.3 V 100.0 H 290.6 Z M 313.4 1.8 L 396.35 72.0 V 0.0 H 416.1 V 100.0 H 395.8 L 313.4 30.8 Z',
+  'M 46.5 0.0 H 131.2 L 121.9 18.4 H 46.5 C 29.5 18.4 18.3 31.2 18.3 50.0 C 18.3 68.8 29.5 81.6 46.5 81.6 H 121.9 L 131.2 100.0 H 46.5 C 18.2 100.0 0.0 80.5 0.0 50.0 C 0.0 19.5 18.2 0.0 46.5 0.0 Z',
+  // Ø — stadium ring with optically crisp 45° stencil channels + stepped central laser spindle
+  'M 254.4 2.6 L 239.6 16.4 H 170.5 C 160.8 16.4 155.1 22.2 155.1 31.5 V 68.5 C 155.1 76.4 158.4 81.4 163.6 83.4 L 150.6 96.0 C 142.4 90.5 138.65 81.4 138.65 69.5 V 30.5 C 138.65 11.8 149.8 0.0 168.5 0.0 H 244.8 C 248.6 0.0 251.8 0.9 254.4 2.6 Z M 262.4 6.0 C 270.4 11.6 274.45 20.2 274.45 30.5 V 69.5 C 274.45 88.2 263.3 100.0 244.6 100.0 H 168.5 C 164.6 100.0 161.1 99.2 158.2 97.9 L 172.0 83.6 H 242.6 C 252.3 83.6 258.1 77.8 258.1 68.5 V 31.5 C 258.1 23.5 254.9 18.4 249.4 16.6 Z M 237.8 15.8 L 241.6 15.8 L 173.8 84.0 L 169.8 84.0 Z M 226.8 25.8 L 234.4 25.8 L 191.2 69.2 L 183.6 69.2 Z',
+  // N — isolated left pillar + crisp stencil gap + vertical-cut diagonal + right stem
+  'M 290.2 0.0 H 309.8 V 100.0 H 290.2 Z M 314.8 1.8 L 396.35 71.6 V 0.0 H 416.1 V 100.0 H 395.6 L 314.8 31.2 Z',
   // D — continuous rounded-right loop with open left-stem stencil slot
-  'M 433.2 0.0 H 520.5 C 539.2 0.0 550.2 11.8 550.2 30.5 V 69.5 C 550.2 88.2 539.2 100.0 520.5 100.0 H 433.2 V 43.2 H 451.85 V 81.2 H 518.0 C 526.6 81.2 531.45 76.2 531.45 67.6 V 32.4 C 531.45 23.8 526.6 18.25 518.0 18.25 H 451.85 V 25.7 H 433.2 Z',
+  'M 433.2 0.0 H 520.5 C 539.2 0.0 550.2 11.8 550.2 30.5 V 69.5 C 550.2 88.2 539.2 100.0 520.5 100.0 H 433.2 V 43.8 H 451.85 V 81.2 H 518.0 C 526.6 81.2 531.45 76.2 531.45 67.6 V 32.4 C 531.45 23.8 526.6 18.4 518.0 18.4 H 451.85 V 25.2 H 433.2 Z',
   // U — twin vertical stems into flat-bottomed stadium arc
   'M 565.85 0.0 H 584.5 V 68.0 C 584.5 76.6 589.5 81.3 598.2 81.3 H 634.5 C 643.2 81.3 648.25 76.6 648.25 68.0 V 0.0 H 666.85 V 69.5 C 666.85 88.2 655.8 100.0 637.0 100.0 H 595.7 C 576.9 100.0 565.85 88.2 565.85 69.5 Z',
   // I — solid pillar
   'M 684.0 0.0 H 702.65 V 100.0 H 684.0 Z',
   // T — sheared top crossbar + centered stem
-  'M 718.6 0.0 H 806.2 L 799.1 18.2 H 769.65 V 100.0 H 751.15 V 18.2 H 724.6 Z',
+  'M 718.6 0.0 H 806.2 L 799.1 18.4 H 769.65 V 100.0 H 751.15 V 18.4 H 724.6 Z',
 ];
 
-export const ConduitHeroWordmark: React.FC<{ className?: string }> = ({ className }) => {
+export const ConduitWordmark: React.FC<{ className?: string; testId?: string }> = ({
+  className,
+  testId = 'brand-conduit-wordmark',
+}) => {
   const uid = React.useId().replace(/:/g, '');
   const gradId = `ch-wordmark-grad-${uid}`;
   const sheenId = `ch-wordmark-sheen-${uid}`;
@@ -117,18 +120,18 @@ export const ConduitHeroWordmark: React.FC<{ className?: string }> = ({ classNam
       viewBox="0 0 806.2 100"
       role="img"
       aria-label="CONDUIT"
-      data-testid="hero-conduit-wordmark"
-      className={className ? `ch-hero-wordmark ${className}` : 'ch-hero-wordmark'}
+      data-testid={testId}
+      className={className ? `ch-brand-wordmark ${className}` : 'ch-brand-wordmark'}
     >
       <defs>
         <linearGradient id={gradId} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor="var(--ch-wordmark-hi)" />
-          <stop offset="44%" stopColor="var(--ch-wordmark-mid)" />
+          <stop offset="46%" stopColor="var(--ch-wordmark-mid)" />
           <stop offset="100%" stopColor="var(--ch-wordmark-lo)" />
         </linearGradient>
         <linearGradient id={sheenId} x1="0%" y1="0%" x2="52%" y2="85%">
-          <stop offset="0%" stopColor="var(--ch-wordmark-flare)" stopOpacity="0.38" />
-          <stop offset="48%" stopColor="var(--ch-wordmark-flare)" stopOpacity="0.10" />
+          <stop offset="0%" stopColor="var(--ch-wordmark-flare)" stopOpacity="0.34" />
+          <stop offset="48%" stopColor="var(--ch-wordmark-flare)" stopOpacity="0.09" />
           <stop offset="100%" stopColor="var(--ch-wordmark-flare)" stopOpacity="0" />
         </linearGradient>
       </defs>

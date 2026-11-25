@@ -12,7 +12,7 @@ import {
   type Ratchet,
   type Stats,
 } from './data';
-import { ConduitHeroWordmark, IconArrowRight, IconCopy, IconGitHub } from './icons';
+import { ConduitWordmark, IconArrowRight, IconCopy, IconGitHub } from './icons';
 import { AmbientMachineBackdrop, StatTile } from './parts';
 import {
   BrowserAnatomyTreemap,
@@ -108,9 +108,8 @@ export default function App() {
   return (
     <div className="ch-page-shell" id="top" data-testid="conduit-shell">
       <header className="ch-topbar" data-testid="machined-topbar">
-        <a className="ch-brand ch-alu-panel" href="#top">
-          <span className="ch-brand-dot" aria-hidden="true" />
-          <span>CONDUIT</span>
+        <a className="ch-brand ch-alu-panel" href="#top" aria-label="CONDUIT">
+          <ConduitWordmark />
         </a>
 
         <div className="ch-topbar-spacer" aria-hidden="true" />
@@ -160,10 +159,7 @@ export default function App() {
 
         <section className="ch-hero" data-testid="lede">
           <div className="ch-hero-glass" data-testid="hero-glass">
-            <div className="ch-hero-title-lockup">
-              <ConduitHeroWordmark />
-              <h1 className="ch-h1">A formally verified browser engine.</h1>
-            </div>
+            <h1 className="ch-h1">A formally verified browser engine.</h1>
             <p className="ch-hero-prose">
               CONDUIT is a browser engine built in Rust and proved with Verus and Z3—and an open
               workbench for learning what formal verification can do, and where its limits are.

@@ -279,31 +279,31 @@ test("navbar, hero pitch, section headers, and footer theme toggle match streaml
   expect(aluCheck.allScrewed, "machined nav buttons must render flush screw/rivet details").toBe(true);
   expect(aluCheck.allDivided, "machined nav buttons must have vertical panel seam dividers").toBe(true);
 
-  // Clear first-principles hero pitch, recolored CØNDUIT stencil logotype, Goldman industrial display font & section headers
+  // Stylized CØNDUIT stencil SVG logotype sits small in the top-left machined brand plate (not in the hero), and hero is restored
   const lede = page.getByTestId("lede");
-  const wordmark = page.getByTestId("hero-conduit-wordmark");
+  await expect(lede.locator("svg[data-testid='brand-conduit-wordmark']")).toHaveCount(0);
+  await expect(lede.locator("svg[data-testid='hero-conduit-wordmark']")).toHaveCount(0);
+  const wordmark = page.getByTestId("machined-topbar").getByTestId("brand-conduit-wordmark");
   await expect(wordmark).toBeVisible();
   const wordmarkCheck = await wordmark.evaluate((svg) => {
-    const h1 = document.querySelector('[data-testid="lede"] h1');
     const svgRect = svg.getBoundingClientRect();
-    const h1Rect = h1.getBoundingClientRect();
+    const barRect = svg.closest('[data-testid="machined-topbar"]').getBoundingClientRect();
     const firstGroupFill = svg.querySelector("g")?.getAttribute("fill") || "";
-    const stops = Array.from(svg.querySelectorAll("linearGradient stop")).map((s) =>
-      getComputedStyle(s).stopColor
-    );
     return {
       pathCount: svg.querySelectorAll("path").length,
-      aboveH1: svgRect.bottom <= h1Rect.top + 2 && svgRect.width > 200,
+      inTopLeft: svgRect.left < 60 && svgRect.top >= barRect.top && svgRect.bottom <= barRect.bottom,
+      compactSize: svgRect.height >= 11 && svgRect.height <= 16 && svgRect.width < 130,
       hasGradientFill: firstGroupFill.startsWith("url(#ch-wordmark-grad-"),
       filter: getComputedStyle(svg).filter || "",
-      stops,
     };
   });
   expect(wordmarkCheck.pathCount).toBe(14);
-  expect(wordmarkCheck.aboveH1, "CØNDUIT wordmark must crown the hero glass card above h1").toBe(true);
+  expect(wordmarkCheck.inTopLeft, "CØNDUIT wordmark must sit inside the top-left machined brand plate").toBe(true);
+  expect(wordmarkCheck.compactSize, "CØNDUIT top-left wordmark must stay compact (~13px tall)").toBe(true);
   expect(wordmarkCheck.hasGradientFill).toBe(true);
   expect(wordmarkCheck.filter).toContain("drop-shadow");
 
+  // Clear first-principles hero pitch, Goldman industrial display font & section headers
   await expect(lede.locator("h1")).toHaveText("A formally verified browser engine.");
   const h1Font = await lede.locator("h1").evaluate((el) => getComputedStyle(el).fontFamily);
   expect(h1Font).toContain("Goldman");
@@ -513,6 +513,7 @@ test("section 5 (#coverage): 20-CVE appendix is collapsed at bottom by default a
 
 test("workbench.html navbar uses GitHub icon and places theme toggle in footer", async ({ page }) => {
   await page.goto("/workbench.html");
+  await expect(page.getByTestId("workbench-back").getByTestId("brand-conduit-wordmark")).toBeVisible();
   await expect(page.locator(".ch-topbar [data-testid='theme-switch']")).toHaveCount(0);
   await expect(page.locator(".ch-footer [data-testid='theme-switch']")).toBeVisible();
   const githubLink = page.getByTestId("nav-github");

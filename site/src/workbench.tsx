@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './site.css';
 import { NR, REPO, blobUrl, fmtDate, loadJson, type Ratchet } from './data';
-import { IconGitHub } from './icons';
+import { ConduitWordmark, IconGitHub } from './icons';
 import SectionVerus from './SectionVerus';
 
 function WorkbenchApp() {
@@ -40,9 +40,16 @@ function WorkbenchApp() {
   return (
     <div className="ch-page-shell" data-testid="workbench-shell">
       <header className="ch-topbar" data-testid="machined-topbar">
-        <a className="ch-brand ch-alu-panel" href="./" data-testid="workbench-back">
-          <span className="ch-brand-dot" aria-hidden="true" />
-          <span>← CONDUIT</span>
+        <a
+          className="ch-brand ch-alu-panel"
+          href="./"
+          data-testid="workbench-back"
+          aria-label="Back to CONDUIT"
+        >
+          <span className="ch-brand-back" aria-hidden="true">
+            ←
+          </span>
+          <ConduitWordmark />
         </a>
 
         <div className="ch-topbar-spacer" aria-hidden="true" />
