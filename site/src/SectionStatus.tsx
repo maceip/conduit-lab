@@ -8,6 +8,7 @@ import {
   ratchetTotals,
   sumDifferentialCases,
   sumTrusted,
+  treeUrl,
   trustedTotal,
   type Ratchet,
 } from './data';
@@ -157,6 +158,7 @@ const SectionStatus: React.FC<{
                 <th className="ch-num">Trusted</th>
                 <th className="ch-num">Verify</th>
                 <th className="ch-num">Tests</th>
+                <th>Code</th>
                 <th>Artifacts</th>
               </tr>
             </thead>
@@ -213,6 +215,15 @@ const SectionStatus: React.FC<{
                       <td className="ch-mono ch-num">
                         {c.tests_passed}/{c.tests_passed + c.tests_failed}
                       </td>
+                      <td className="ch-mono ch-nowrap" data-testid={`crate-code-${c.name}`}>
+                        {c.path ? (
+                          <Source href={treeUrl(c.path)}>
+                            code <IconExternal size={11} />
+                          </Source>
+                        ) : (
+                          NR
+                        )}
+                      </td>
                       <td className="ch-mono ch-nowrap">
                         {c.proof_source && (
                           <button
@@ -236,7 +247,7 @@ const SectionStatus: React.FC<{
 
                     {isExpanded && (
                       <tr className="ch-proof-expand-row" data-testid="crate-proof-row">
-                        <td colSpan={7} className="ch-proof-expand-cell">
+                        <td colSpan={8} className="ch-proof-expand-cell">
                           <div className="ch-inline-proof-contain">
                             <div className="ch-inline-proof-card">
                               <div className="ch-inline-proof-head">
@@ -328,6 +339,11 @@ const SectionStatus: React.FC<{
                   <td className="ch-mono ch-num">{totals.verify_seconds}s</td>
                   <td className="ch-mono ch-num">
                     {totals.tests_passed}/{totals.tests_passed + totals.tests_failed}
+                  </td>
+                  <td className="ch-mono ch-nowrap">
+                    <Source href={treeUrl('browser')}>
+                      browser/ <IconExternal size={11} />
+                    </Source>
                   </td>
                   <td className="ch-mono">
                     <Source href="browser/ratchet.json">ratchet.json</Source>

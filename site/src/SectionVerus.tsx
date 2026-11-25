@@ -145,11 +145,11 @@ const SectionVerus: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) => {
             </dd>
           </div>
           <div className="ch-arch-row">
-            <dt>2. Negate ensures &amp; search for a counterexample</dt>
+            <dt>2. Search for any input that breaks the rule</dt>
             <dd>
-              Verus assumes <code>requires</code> (<code>n &lt; 16</code>) and asks Z3 to solve{' '}
-              <code>!ensures</code>. <code>UNSAT</code> means zero breaking inputs exist;{' '}
-              <code>SAT</code> hands back the exact input that fails.
+              Verus assumes valid inputs (<code>n &lt; 16</code>) and asks Z3 to find any input
+              where the promised output fails. <code>UNSAT</code> means none exist; <code>SAT</code>{' '}
+              returns the exact failing input.
             </dd>
           </div>
           <div className="ch-arch-row">

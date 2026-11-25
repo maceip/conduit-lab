@@ -170,3 +170,4 @@ export const fmtDate = (iso: string | undefined): string =>
 export const REPO = 'https://github.com/maceip/conduit-lab';
 export const BRANCH = 'main';
 export const blobUrl = (path: string) => `${REPO}/blob/${BRANCH}/${path}`;
+export const treeUrl = (path: string) => `${REPO}/tree/${BRANCH}/${path}`;

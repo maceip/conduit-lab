@@ -229,9 +229,14 @@ test("navbar, hero pitch, section headers, and footer theme toggle match streaml
   const ids = await page.locator("main > section").evaluateAll((ss) => ss.map((s) => s.id));
   expect(ids).toEqual(["ratchet", "scope", "coverage"]);
 
-  // Simple-function proof intro sits directly before BrowserPipeline/BrowserAnatomyTreemap and renders color-coded Verus code inside all 3 step cards
+  // Simple-function proof intro sits directly before BrowserPipeline/BrowserAnatomyTreemap, uses plain English titles, and renders color-coded Verus code inside all 3 step cards
   const proofIntro = page.getByTestId("proof-intro");
   await expect(proofIntro.locator("h2.ch-section-title")).toHaveText("How a Proof Is Built on One Function");
+  await expect(page.getByTestId("proof-intro-step-spec")).toContainText("Define the right answer in plain math");
+  await expect(page.getByTestId("proof-intro-step-contract")).toContainText("Add input and output rules to the Rust function");
+  await expect(page.getByTestId("proof-intro-step-solver")).toContainText("Ask Z3 to find any input that gives the wrong answer");
+  await expect(proofIntro).not.toContainText("Attach requires & ensures");
+  await expect(proofIntro).not.toContainText("negates ensures");
   await expect(page.getByTestId("step-snippet-spec")).toContainText("pub open spec fn upper_hex_digit");
   await expect(page.getByTestId("step-snippet-contract")).toContainText("requires n < 16");
   await expect(page.getByTestId("step-snippet-solver")).toContainText("solve(r != upper_hex_digit(n))");
@@ -341,7 +346,7 @@ test("dedicated workbench.html: 4-state Verus workbench, fix-typo action, and li
     "How Verus proves every possible input"
   );
   await expect(page.getByTestId("how-verus-steps")).toContainText("Symbolic variables");
-  await expect(page.getByTestId("how-verus-steps")).toContainText("Negate ensures");
+  await expect(page.getByTestId("how-verus-steps")).toContainText("Search for any input that breaks the rule");
   await expect(page.getByTestId("how-verus-steps")).toContainText("Loop induction");
   await expect(page.locator("body")).not.toContainText("Tests check examples.");
   await expect(page.getByTestId("verus-file")).toHaveText("browser/url/src/percent.rs");
@@ -403,6 +408,11 @@ test("section 3 (#ratchet): 11-crate ledger, scope boundary, and collapsible eng
   await expect(cratesTable.locator("tbody tr")).toHaveCount(ratchet.crates.length);
   for (const c of ratchet.crates) {
     await expect(cratesTable).toContainText(c.name);
+    const codeLink = page.getByTestId(`crate-code-${c.name}`).locator("a");
+    await expect(codeLink).toHaveAttribute(
+      "href",
+      `https://github.com/maceip/conduit-lab/tree/main/${c.path}`
+    );
   }
 
   // Disclosure card stays accurate and never truncates
@@ -740,7 +750,7 @@ test("hero synchronized browser flowchart and browser wireframe treemap mirror c
       .getByTestId("crates-table")
       .locator("thead th")
       .evaluateAll((ths) => ths.filter((th) => getComputedStyle(th).display !== "none").length);
-    expect(visibleHeaders, `all 7 crates-table columns must render at ${vw}px`).toBe(7);
+    expect(visibleHeaders, `all 8 crates-table columns must render at ${vw}px`).toBe(8);
 
     const honestyOverflow = await page
       .getByTestId("honesty-card")

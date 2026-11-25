@@ -3287,7 +3287,7 @@ td[data-tone='fail'] {
   }
 }
 
-@media (min-width: 761px) and (max-width: 980px) {
+@media (min-width: 761px) and (max-width: 1080px) {
   .ch-pipeline-slot {
     padding-right: 16px;
   }
@@ -3296,7 +3296,7 @@ td[data-tone='fail'] {
   }
   [data-testid='crates-table'] th,
   [data-testid='crates-table'] td:not(.ch-proof-expand-cell) {
-    padding: 5px 4px;
+    padding: 5px 3.5px;
     font-size: 11px;
   }
   [data-testid='crates-table'] .ch-cell-sub,
@@ -3307,7 +3307,7 @@ td[data-tone='fail'] {
   [data-testid='crates-table'] tr > td:nth-child(2) {
     overflow-wrap: anywhere;
   }
-  [data-testid='crates-table'] tr > td:nth-child(7) {
+  [data-testid='crates-table'] tr > td:nth-child(8) {
     white-space: normal;
   }
 }

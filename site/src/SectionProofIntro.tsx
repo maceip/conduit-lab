@@ -99,30 +99,30 @@ const SectionProofIntro: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) =
     {
       id: 'spec',
       num: '01',
-      title: 'Write what "correct" means in pure math',
+      title: 'Define the right answer in plain math',
       snippet: [
         'pub open spec fn upper_hex_digit(n: nat) -> u8 {',
         '    if n < 10 { (0x30 + n) as u8 } else { (0x41 + n - 10) as u8 }',
         '}',
       ],
-      body: 'Defined over unbounded nat so the specification itself cannot overflow; erased before Rust codegen for zero runtime cost.',
+      body: 'Written with math integers that cannot overflow, then stripped out at compile time for zero runtime cost.',
     },
     {
       id: 'contract',
       num: '02',
-      title: 'Attach requires & ensures to real Rust',
+      title: 'Add input and output rules to the Rust function',
       snippet: [
         'fn upper_hex(n: u8) -> (r: u8)',
-        '    requires n < 16,                         // caller proves nibble bound',
-        '    ensures  r == upper_hex_digit(n as nat), // return byte matches spec',
+        '    requires n < 16,                         // valid input: 0..15',
+        '    ensures  r == upper_hex_digit(n as nat), // promised output',
         `{ if n < 10 { 0x30 + n } else { ${bugInjected ? '0x41 + n - 9' : '0x41 + n - 10'} } }`,
       ],
-      body: 'Every caller must prove n < 16 at compile time—which also proves 0x30 + n and 0x41 + n - 10 never overflow u8.',
+      body: 'Callers may only pass 0..15, and the function promises its returned byte always matches step 01 without overflowing.',
     },
     {
       id: 'solver',
       num: '03',
-      title: 'Z3 negates ensures across every possible input',
+      title: 'Ask Z3 to find any input that gives the wrong answer',
       snippet: bugInjected
         ? [
             'let n: BitVec<8>;  assume(n < 16);',
@@ -132,9 +132,9 @@ const SectionProofIntro: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) =
         : [
             'let n: BitVec<8>;  assume(n < 16);',
             'let r = if n < 10 { 0x30 + n } else { 0x41 + n - 10 };',
-            'solve(r != upper_hex_digit(n))  // UNSAT -> 0 bugs exist',
+            'solve(r != upper_hex_digit(n))  // UNSAT -> no such input exists',
           ],
-      body: 'Instead of running sample tests, Z3 solves one symbolic bitvector equation for any failing n < 16.',
+      body: 'Instead of testing a few examples, Z3 solves one equation for a bug. When none exists, every valid input is proved.',
     },
   ];
 
@@ -209,9 +209,9 @@ const SectionProofIntro: React.FC<{ ratchet: Ratchet | null }> = ({ ratchet }) =
           })}
 
           <p className="ch-proof-intro-bridge">
-            Scaling this exact pattern—adding loop <code>invariant</code>s and inductive{' '}
-            <code>proof fn</code> lemmas for unbounded byte slices and ASTs—produces every verified
-            component below.{' '}
+            Repeating this same pattern—with loop rules (<code>invariant</code>) and helper proofs (
+            <code>proof fn</code>) for variable-length slices and syntax trees—produces every
+            verified crate below.{' '}
             <a className="ch-mono-link" href="workbench.html" data-testid="intro-to-workbench">
               Open full Proof Workbench <IconArrowRight size={11} />
             </a>
